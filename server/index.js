@@ -1,9 +1,10 @@
-require("dotenv").config({ path: "./.env" });
+require('dotenv').config({ path: './.env' });
 
 // Necessary barebone imports
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+
 const uri = process.env.MONGODB_URI;
 const port = process.env.PORT;
 
@@ -13,12 +14,12 @@ mongoose.connect(uri);
 const database = mongoose.connection;
 
 database.on('error', (err) => {
-    console.error(err);
+  console.error(err);
 });
 
 database.once('connected', () => {
-    console.log('Database connected!');
-})
+  console.log('Database connected!');
+});
 
 // Model imports
 require('./models/testModel');
@@ -34,10 +35,9 @@ app.use(express.json());
 app.use('/test', testRouter);
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
-})
-
-app.listen(port, () => {
-    console.log(`Server started at port ${port}`);
+  res.send('Hello World!');
 });
 
+app.listen(port, () => {
+  console.log(`Server started at port ${port}`);
+});
