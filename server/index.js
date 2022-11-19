@@ -23,9 +23,11 @@ database.once('connected', () => {
 
 // Model imports
 require('./models/testModel');
+require('./models/eventModel');
 
 // Route imports
 const testRouter = require('./routes/testRoutes');
+const eventRouter = require('./routes/eventRoutes');
 
 // Start the Node Express server
 const app = express();
@@ -33,6 +35,7 @@ app.use(cors());
 app.use(express.json());
 // Use the api routes
 app.use('/test', testRouter);
+app.use('/event', eventRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
