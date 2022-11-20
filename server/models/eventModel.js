@@ -1,6 +1,20 @@
 const mongoose = require('mongoose');
 
-// Example of a model schema to validate and structure documents
+// model schema to validate and structure documents
+// const locationCoordsSchema = new mongoose.Schema({
+//   required: true,
+//   // TBD
+// });
+
+const dateSchema = new mongoose.Schema({
+  day: {
+    requred: true,
+    day: String,
+    date: String,
+    recurring: Boolean,
+  },
+});
+
 const timeSchema = new mongoose.Schema({
   startTime: {
     required: true,
@@ -12,6 +26,13 @@ const timeSchema = new mongoose.Schema({
   },
 });
 
+// const locationSchema = new mongoose.Schema({
+//   required: true,
+//   address: String,
+//   specialinstructions: String,
+//   coordinates: locationCoordsSchema,
+// });
+
 const eventSchema = new mongoose.Schema({
   title: {
     required: true,
@@ -19,35 +40,32 @@ const eventSchema = new mongoose.Schema({
   },
   date: {
     required: true,
-    type: Number,
+    type: dateSchema,
   },
   time: {
     required: true,
     type: timeSchema,
   },
-  /*
-  location: {
-    required: true,
-    address: String,
-    specialinstructions: String,
-  },
-  nonprofits: {
-    required: true,
-    type: [String],
-  }
-  description: {
-    required: true,
-    type: String,
-  }
-  images: {
-    required: true,
-    type: [String]
-  }
-  tags: {
-    required: true,
-    type: [String]
-  }
-  */
+  // location: {
+  //   required: true,
+  //   type: locationSchema,
+  // },
+  // nonprofits: {
+  //   required: true,
+  //   type: [String],
+  // },
+  // description: {
+  //   required: true,
+  //   type: String,
+  // },
+  // images: {
+  //   required: true,
+  //   type: [String],
+  // },
+  // tags: {
+  //   required: true,
+  //   type: [String],
+  // },
 });
 
 module.exports = mongoose.model('Event', eventSchema);
