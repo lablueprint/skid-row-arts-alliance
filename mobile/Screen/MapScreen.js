@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button, StyleSheet, Text, View,
 } from 'react-native';
@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
 });
 
 function MapScreen() {
+  const [events, setEvents] = useState([]);
   const test = async () => {
     console.log(URL);
     try {
@@ -28,10 +29,33 @@ function MapScreen() {
     }
   };
 
+  const getEvents = async () => {
+    console.log(URL);
+    try {
+      const result = await axios.get(`${URL}/event/get`);
+      return result.data;
+      // console.log(result.data);
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  useEffect(() => {
+    const eventList = getEvents();
+    setEvents(eventList);
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text>Map Screen</Text>
       <Button title="Test" onPress={test} />
+      <Button title="getEvents" onPress={getEvents} />
+      {events.length > 0 && events.map((event) => (<Text>{event.title}</Text>))}
+      {/* <FlatList
+        data={events}
+        renderItem={({ event }) => <Text>{event.title}</Text>}
+      /> */}
     </View>
   );
 }
