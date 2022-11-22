@@ -1,17 +1,28 @@
 const mongoose = require('mongoose');
 
-// model schema to validate and structure documents
-// const locationCoordsSchema = new mongoose.Schema({
-//   required: true,
-//   // TBD
-// });
+const locationCoordsSchema = new mongoose.Schema({
+  latitude: {
+    required: true,
+    type: Number,
+  },
+  longitude: {
+    required: true,
+    type: Number,
+  },
+});
 
 const dateSchema = new mongoose.Schema({
   day: {
-    requred: true,
-    day: String,
-    date: String,
-    recurring: Boolean,
+    required: true,
+    type: String,
+  },
+  date: {
+    required: true,
+    type: String,
+  },
+  recurring: {
+    required: true,
+    type: Boolean,
   },
 });
 
@@ -26,12 +37,24 @@ const timeSchema = new mongoose.Schema({
   },
 });
 
-// const locationSchema = new mongoose.Schema({
-//   required: true,
-//   address: String,
-//   specialinstructions: String,
-//   coordinates: locationCoordsSchema,
-// });
+const locationSchema = new mongoose.Schema({
+  name: {
+    required: true,
+    type: String,
+  },
+  address: {
+    required: true,
+    type: String,
+  },
+  specialinstructions: {
+    required: true,
+    type: String,
+  },
+  coordinates: {
+    required: true,
+    type: locationCoordsSchema,
+  },
+});
 
 const eventSchema = new mongoose.Schema({
   title: {
@@ -46,26 +69,26 @@ const eventSchema = new mongoose.Schema({
     required: true,
     type: timeSchema,
   },
-  // location: {
-  //   required: true,
-  //   type: locationSchema,
-  // },
-  // nonprofits: {
-  //   required: true,
-  //   type: [String],
-  // },
-  // description: {
-  //   required: true,
-  //   type: String,
-  // },
-  // images: {
-  //   required: true,
-  //   type: [String],
-  // },
-  // tags: {
-  //   required: true,
-  //   type: [String],
-  // },
+  location: {
+    required: true,
+    type: locationSchema,
+  },
+  nonprofits: {
+    required: true,
+    type: [String],
+  },
+  description: {
+    required: true,
+    type: String,
+  },
+  images: {
+    required: true,
+    type: [String],
+  },
+  tags: {
+    required: true,
+    type: [String],
+  },
 });
 
 module.exports = mongoose.model('Event', eventSchema);

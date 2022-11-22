@@ -6,8 +6,9 @@ const eventController = require('../controllers/eventController');
 eventRouter.post('/post', eventController.createEvent);
 
 eventRouter.get('/get', eventController.getAllEvents);
-// eventRouter.get('/get', (req, res) => {
-//   res.send('Get Event API');
-// });
+
+eventRouter.patch('/update/:id', eventController.updateEvent);
+
+eventRouter.delete('/delete/:id', eventController.deleteEvent);
 
 module.exports = eventRouter;
