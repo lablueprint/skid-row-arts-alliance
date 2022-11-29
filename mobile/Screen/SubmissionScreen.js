@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import ArtSubmissionTextInput from '../Components/ArtSubmissionTextInput';
 
 const styles = StyleSheet.create({
   container: {
@@ -13,7 +14,7 @@ const styles = StyleSheet.create({
 function SubmissionScreen() {
   return (
     <View style={styles.container}>
-      <Text>Submission Screen</Text>
+      <ArtSubmissionTextInput />
     </View>
   );
 }
