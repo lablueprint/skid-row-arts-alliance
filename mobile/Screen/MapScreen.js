@@ -29,11 +29,31 @@ function MapScreen() {
     }
   };
 
+  const deleteEvent = async (id) => {
+    console.log(URL);
+    try {
+      const result = await axios.get(`${URL}/event/delete/` + id);
+      // Search events for element with id that we want
+      // delete from events
+      setEvents(events);
+      console.log(result.data);
+      return null;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
   const getEvents = async () => {
     console.log(URL);
     try {
       const result = await axios.get(`${URL}/event/get`);
-      const eventList = result.data.map((event) => (<Text>{event.title}</Text>));
+      const eventList = result.data.map((event) => (
+        <View>
+          <Text>{event.title}</Text>
+          <Button title="Delete" onPress={deleteEvent(event.id)} />
+        </View>
+      ));
       setEvents(eventList);
       console.log(result.data);
       return eventList;
