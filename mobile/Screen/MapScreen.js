@@ -33,8 +33,10 @@ function MapScreen() {
     console.log(URL);
     try {
       const result = await axios.get(`${URL}/event/get`);
-      return result.data;
-      // console.log(result.data);
+      const eventList = result.data.map((event) => (<Text>{event.title}</Text>));
+      setEvents(eventList);
+      console.log(result.data);
+      return eventList;
     } catch (err) {
       console.error(err);
       return err;
@@ -50,12 +52,8 @@ function MapScreen() {
     <View style={styles.container}>
       <Text>Map Screen</Text>
       <Button title="Test" onPress={test} />
-      <Button title="getEvents" onPress={getEvents} />
-      {events.length > 0 && events.map((event) => (<Text>{event.title}</Text>))}
-      {/* <FlatList
-        data={events}
-        renderItem={({ event }) => <Text>{event.title}</Text>}
-      /> */}
+      {/* <Button title="getEvents" onPress={getEvents} /> */}
+      <View>{events.length > 0 ? events : <Text>Nothing</Text>}</View>
     </View>
   );
 }
