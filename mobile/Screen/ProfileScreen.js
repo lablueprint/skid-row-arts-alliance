@@ -1,11 +1,11 @@
-import React from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
-import {Picker} from '@react-native-picker/picker';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, View, Button} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     padding: 25,
     // alignItems: "center",
     // justifyContent: "center",
@@ -13,10 +13,23 @@ const styles = StyleSheet.create({
 });
 
 function ProfileScreen() {
-  const [name, onChangeName] = React.useState("");
-  const [email, onChangeEmail] = React.useState("");
-  const [platform, setPlatform] = React.useState("");
-  const [tag, onChangeTag] = React.useState("");
+  const [name, onChangeName] = useState('');
+  const [email, onChangeEmail] = useState('');
+  const [platform, setPlatform] = useState('');
+  const [tag, onChangeTag] = useState('');
+  const [profileDetails, setProfileDetails] = useState({}); // on hit clear, store fields in object
+
+  const handleClear = () => {
+    setProfileDetails({
+      name,
+      email,
+      platform,
+      tag,
+    });
+    onChangeName('');
+    onChangeEmail('');
+    onChangeTag('');
+  };
 
   return (
     <View style={styles.container}>
@@ -45,6 +58,16 @@ function ProfileScreen() {
           value={tag}
         />
       </View>
+      <Button title="Clear" onPress={handleClear} />
+      <Text>
+        {profileDetails.name}
+        {'\n'}
+        {profileDetails.email}
+        {'\n'}
+        {profileDetails.platform}
+        {'\n'}
+        {profileDetails.tag}
+      </Text>
     </View>
   );
 }
