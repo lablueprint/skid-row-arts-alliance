@@ -23,7 +23,12 @@ const deleteSubmission = async (req, res) => {
 };
 
 const getSubmissions = async (req, res) => {
-  res.send('Hello all');
+  try {
+    const data = await Submission.find();
+    res.send(data);
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 const getSubmission = async (req, res) => {
