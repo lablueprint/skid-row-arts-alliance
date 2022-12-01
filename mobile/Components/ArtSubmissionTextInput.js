@@ -16,6 +16,25 @@ const ArtSubmissionTextInput = (onSubmit) => {
     console.log(URL);
     try {
       const result = await axios.post(`${URL}/submissions/post`, {
+        name: name, 
+        email: email, 
+        socials: {
+          platform: platform, 
+          tag: accountTag,
+        }, 
+        title: artworkTitle, 
+        description: description, 
+      });
+      console.log(result.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const load = async () => {
+    console.log(URL);
+    try {
+      const result = await axios.get(`${URL}/submissions/get`, {
         name: name, email: email, platform: platform, accountTag: accountTag, artworkTitle: artworkTitle, description: description, 
       });
       console.log(result.data);
@@ -68,6 +87,7 @@ const ArtSubmissionTextInput = (onSubmit) => {
       />
       <Button
         title="Load Gallery" 
+        onPress={load}
       />
     </View>
   );
