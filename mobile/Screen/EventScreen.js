@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Button, StyleSheet, Text, View, TextInput,
+  Button, StyleSheet, Text, View, TextInput, ScrollView,
 } from 'react-native';
 // import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
@@ -9,7 +9,6 @@ import { URL } from '@env';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
@@ -49,7 +48,8 @@ function EventScreen() {
   };
 
   const removeEvent = async (id) => {
-    console.log(URL);
+    // console.log(URL);
+    // console.log(id);
     try {
       const result = await axios.get(`${URL}/event/delete/${id}`);
       return result.data;
@@ -102,7 +102,7 @@ function EventScreen() {
   // generating React Native
   useEffect(() => {
     setReactEvents(events.map((event) => (
-      <View>
+      <View key={event._id}>
         <Text>{event.title}</Text>
         <Button title="deleteEvent" onPress={() => removeEvent(event._id)} />
       </View>
@@ -110,7 +110,7 @@ function EventScreen() {
   }, [events]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text>Map Screen</Text>
       <Text>Create Event</Text>
       <View>
@@ -139,11 +139,10 @@ function EventScreen() {
         </Picker> */}
         <Button title="Create Event" onPress={createEvent} />
       </View>
-      <Button title="getEvents" onPress={getEvents} />
       <View>
         {reactEvents}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
