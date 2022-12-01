@@ -1,10 +1,11 @@
 import React from 'react';
 import {
-  Button, StyleSheet, Text, View,
+  Button, StyleSheet, Text, ScrollView, StatusBar,
 } from 'react-native';
 import axios from 'axios';
 // eslint-disable-next-line import/no-unresolved
 import { URL } from '@env';
+import MapEvent from '../Components/MapEvent';
 
 const styles = StyleSheet.create({
   container: {
@@ -12,6 +13,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: StatusBar.currentHeight,
+  },
+  scrollView: {
+    padding: 20,
   },
 });
 
@@ -29,10 +34,13 @@ function MapScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.scrollView}>
       <Text>Map Screen</Text>
       <Button title="Test" onPress={test} />
-    </View>
+      <MapEvent />
+      <MapEvent />
+      <MapEvent />
+    </ScrollView>
   );
 }
 
