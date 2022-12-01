@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, Button} from 'react-native';
+import {
+  StyleSheet, Text, TextInput, View, Button,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 const styles = StyleSheet.create({
