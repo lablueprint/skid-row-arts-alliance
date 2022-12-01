@@ -50,8 +50,6 @@ function EventScreen() {
 
   const removeEvent = async (id) => {
     console.log(URL);
-    console.log(events);
-    console.log(id);
     try {
       const result = await axios.get(`${URL}/event/delete/${id}`);
       return result.data;
