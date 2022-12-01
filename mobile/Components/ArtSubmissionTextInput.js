@@ -1,8 +1,6 @@
 /* eslint-disable */
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Button, TextInput } from 'react-native';
-import axios from 'axios';
-import { URL } from '@env';
 
 const ArtSubmissionTextInput = (onSubmit) => {
   const [name, setName] = useState('');
@@ -31,20 +29,11 @@ const ArtSubmissionTextInput = (onSubmit) => {
     }
   };
 
-  const load = async () => {
-    console.log(URL);
-    try {
-      const result = await axios.get(`${URL}/submissions/get`);
-      // return result.data;
-      console.log(result.data);
-    } catch (err) {
-      console.error(err);
-      return err;
-    }
-  };
-
   return (
     <View>
+      <View>
+
+      </View>
       <TextInput
         styles={styles.input}
         placeholder='Name'
@@ -84,10 +73,6 @@ const ArtSubmissionTextInput = (onSubmit) => {
       <Button 
         title="Submit" 
         onPress={submit}
-      />
-      <Button
-        title="Load Gallery" 
-        onPress={load}
       />
     </View>
   );
