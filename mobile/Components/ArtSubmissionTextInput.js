@@ -1,16 +1,29 @@
 /* eslint-disable */
-
 import React, { useState } from 'react';
 import { View, StyleSheet, Button, TextInput } from 'react-native';
+import axios from 'axios';
+import { URL } from '@env';
 
-
-const ArtSubmissionTextInput = () => {
+const ArtSubmissionTextInput = (onSubmit) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [platform, setPlatform] = useState('');
   const [accountTag, setAccountTag] = useState('');
   const [artworkTitle, setArtworkTitle] = useState('');
   const [description, setDescription] = useState('');
+
+  const submit = async () => {
+    console.log(URL);
+    try {
+      const result = await axios.post(`${URL}/submissions/post`, {
+        name: name, email: email, platform: platform, accountTag: accountTag, artworkTitle: artworkTitle, description: description, 
+      });
+      console.log(result.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <View>
       <TextInput
@@ -50,7 +63,8 @@ const ArtSubmissionTextInput = () => {
         defaultValue={description}
       />
       <Button 
-        title="Submit"
+        title="Submit" 
+        onPress={submit}
       />
       <Button
         title="Load Gallery" 
