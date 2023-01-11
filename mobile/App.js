@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import MapScreen from './Screen/MapScreen';
 import GalleryScreen from './Screen/GalleryScreen';
 import SubmissionScreen from './Screen/SubmissionScreen';
+import SignUpScreen from './Screen/SignUpScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -11,6 +12,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Tab.Navigator>
+        <Tab.Screen name="SignUp" component={SignUpScreen} />
         <Tab.Screen name="Map" component={MapScreen} />
         <Tab.Screen name="Gallery" component={GalleryScreen} />
         <Tab.Screen name="Submission" component={SubmissionScreen} />
