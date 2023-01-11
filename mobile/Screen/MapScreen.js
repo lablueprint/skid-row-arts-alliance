@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import MapView from 'react-native-maps';
 import {
   Button, StyleSheet, Text, View,
 } from 'react-native';
@@ -11,27 +12,70 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
+  },
+  map: {
+    width: '100%',
+    height: '100%',
+  },
+  text: {
+    fontSize: 15,
+    backgroundColor: 'lightblue',
   },
 });
 
 function MapScreen() {
-  const test = async () => {
-    console.log(URL);
-    try {
-      const result = await axios.post(`${URL}/test/post`, {
-        name: 'James', age: 20,
-      });
-      console.log(result.data);
-    } catch (err) {
-      console.error(err);
-    }
+  const mapRef = useRef(null);
+  const [region, setRegion] = useState({
+    latitude: 34.0442,
+    longitude: -118.2439,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
+  const museumRegion = {
+    latitude: 34.051125,
+    longitude: -118.247752,
+    latitudeDelta: 0.002,
+    longitudeDelta: 0.002,
+  };
+  const churchRegion = {
+    latitude: 34.042487,
+    longitude: -118.245308,
+    latitudeDelta: 0.002,
+    longitudeDelta: 0.002,
+  };
+  const missionRegion = {
+    latitude: 34.042383,
+    longitude: -118.245800,
+    latitudeDelta: 0.002,
+    longitudeDelta: 0.002,
+  };
+  const goToMuseum = () => {
+    mapRef.current.animateToRegion(museumRegion, 3 * 1000);
+  };
+  const goToChurch = () => {
+    mapRef.current.animateToRegion(churchRegion, 3 * 1000);
+  };
+  const goToMission = () => {
+    mapRef.current.animateToRegion(missionRegion, 3 * 1000);
   };
 
   return (
     <View style={styles.container}>
-      <Text>Map Screen</Text>
-      <Button title="Test" onPress={test} />
+      <MapView
+        ref={mapRef}
+        style={styles.map}
+        initialRegion={{
+          latitude: 34.0442,
+          longitude: -118.2439,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
+        }}
+        onRegionChangeComplete={(region) => setRegion(region)}
+      />
+      <Button onPress={() => goToMuseum()} title="1) Museum" />
+      <Button onPress={() => goToChurch()} title="2) Church" />
+      <Button onPress={() => goToMission()} title="3) Mission" />
     </View>
   );
 }
