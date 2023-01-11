@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  StyleSheet, Text, View, ScrollView,
+  StyleSheet, TextInput, Text, View, ScrollView, Button,
 } from 'react-native';
 import axios from 'axios';
-import { URL } from '@env';
-import ArtSubmissionTextInput from '../Components/ArtSubmissionTextInput';
+
+const { URL } = process.env;
 
 const styles = StyleSheet.create({
   container: {
@@ -12,15 +12,62 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingTop: 10,
   },
   scrollView: {
-    backgroundColor: 'pink',
     marginHorizontal: 20,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  submissionsContainer: {
+    padding: 5,
+  },
+  submission: {
+    margin: 10,
   },
 });
 
 function SubmissionScreen() {
   const [submissions, setSubmissions] = useState([]);
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [platform, setPlatform] = useState('');
+  const [accountTag, setAccountTag] = useState('');
+  const [artworkTitle, setArtworkTitle] = useState('');
+  const [description, setDescription] = useState('');
+
+  function clearInput() {
+    setName('');
+    setEmail('');
+    setPlatform('');
+    setAccountTag('');
+    setArtworkTitle('');
+    setDescription('');
+  }
+
+  const submit = async () => {
+    try {
+      const result = await axios.post(`${URL}/submissions/post`, {
+        name,
+        email,
+        socials: {
+          platform,
+          tag: accountTag,
+        },
+        title: artworkTitle,
+        description,
+      });
+      setSubmissions((prev) => ([...prev, result.data]));
+      clearInput();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -30,24 +77,88 @@ function SubmissionScreen() {
     load().catch(console.error);
   }, []);
 
-  console.log(1, submissions);
-
   return (
     <ScrollView>
       <View style={styles.container}>
         <View>
-          {submissions.map((submission) => (
-            <View>
-              <Text>{submission.name}</Text>
-              <Text>{submission.email}</Text>
-              <Text>{submission.socials.platform}</Text>
-              <Text>{submission.socials.tag}</Text>
-              <Text>{submission.title}</Text>
-              <Text>{submission.description}</Text>
-            </View>
-          ))}
+          <TextInput
+            styles={styles.input}
+            placeholder="Name"
+            onChangeText={(newName) => setName(newName)}
+            defaultValue={name}
+          />
+          <TextInput
+            styles={styles.input}
+            placeholder="Email"
+            onChangeText={(newEmail) => setEmail(newEmail)}
+            defaultValue={email}
+          />
+          <TextInput
+            styles={styles.input}
+            placeholder="Social Media Platform"
+            onChangeText={(newPlatform) => setPlatform(newPlatform)}
+            defaultValue={platform}
+          />
+          <TextInput
+            styles={styles.input}
+            placeholder="Social Media Account Tag"
+            onChangeText={(newEmail) => setAccountTag(newEmail)}
+            defaultValue={accountTag}
+          />
+          <TextInput
+            styles={styles.input}
+            placeholder="Artwork Title"
+            onChangeText={(newArtwork) => setArtworkTitle(newArtwork)}
+            defaultValue={artworkTitle}
+          />
+          <TextInput
+            styles={styles.input}
+            placeholder="Artwork Description"
+            onChangeText={(newDescription) => setDescription(newDescription)}
+            defaultValue={description}
+          />
+          <Button
+            title="Submit"
+            onPress={submit}
+          />
         </View>
-        <ArtSubmissionTextInput />
+      </View>
+
+      <View style={styles.submissionsContainer}>
+        {submissions.map((submission) => (
+          <View style={styles.submission} key={submission._id}>
+            <Text>
+              Name:
+              {' '}
+              {submission.name}
+            </Text>
+            <Text>
+              Email:
+              {' '}
+              {submission.email}
+            </Text>
+            <Text>
+              Social Media Platform:
+              {' '}
+              {submission.socials.platform}
+            </Text>
+            <Text>
+              Social Media Account Tag:
+              {' '}
+              {submission.socials.tag}
+            </Text>
+            <Text>
+              Artwork Title:
+              {' '}
+              {submission.title}
+            </Text>
+            <Text>
+              Artwork Description:
+              {' '}
+              {submission.description}
+            </Text>
+          </View>
+        ))}
       </View>
     </ScrollView>
   );
