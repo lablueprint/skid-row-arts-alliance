@@ -6,7 +6,6 @@ import {
   Image,
 } from 'react-native';
 import axios from 'axios';
-// eslint-disable-next-line import/no-unresolved
 import { URL } from '@env';
 
 const styles = StyleSheet.create({
@@ -19,19 +18,20 @@ const styles = StyleSheet.create({
 });
 
 function GalleryScreen() {
-  const [imageURI, setImageURI] = useState('');
+  const [imageURI, setImageURI] = useState();
+  const [loadImages, setLoadImages] = useState(false);
 
   const getImage = async () => {
-    console.log(URL);
+    setLoadImages(false);
     try {
-      console.log('hello');
-      const result = await axios.get(`${URL}/artgallery/get`);
-      setImageURI(result.data);
-      console.log(result);
-      return result.data;
+      const res = await axios.get(`${URL}/artgallery/get`);
+      setImageURI(res.data);
+      return res.data;
     } catch (err) {
       console.error(err);
       return err;
+    } finally {
+      setLoadImages(true);
     }
   };
 
@@ -42,11 +42,12 @@ function GalleryScreen() {
   return (
     <View style={styles.container}>
       <Text>Gallery Screen</Text>
-      <Image
-        source={{
-          uri: imageURI,
-        }}
-      />
+      {loadImages ? (
+        <Image
+          style={{ width: 100, height: 100 }}
+          source={{ uri: imageURI }}
+        />
+      ) : <Text>Nothing</Text>}
     </View>
   );
 }
