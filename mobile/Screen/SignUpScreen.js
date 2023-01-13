@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
 import React, { useState } from 'react';
 import {
-  StyleSheet, Text, TextInput, View, Button, Alert,
+  StyleSheet, Text, TextInput, View, Button,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import * as SecureStore from 'expo-secure-store';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,11 +21,25 @@ const styles = StyleSheet.create({
   },
 });
 
+async function save(key, value) {
+  await SecureStore.setItemAsync(key, value);
+}
+
+async function getValueFor(key) {
+  // eslint-disable-next-line prefer-const
+  let result = await SecureStore.getItemAsync(key);
+  if (result) {
+    console.log(`🔐 Here's your value 🔐 \n${result}`);
+  } else {
+    console.log('No values stored under that key.');
+  }
+}
+
 function SignUpScreen({ navigation }) {
-  const [text, onChangeText] = React.useState('');
+  const [name, onChangeName] = React.useState('');
   const [email, onChangeEmail] = React.useState('');
+  const [socialPlatform, setSocialPlatform] = useState('');
   const [socialTag, onChangeSocialTag] = React.useState('');
-  const [selectedValue, setSelectedValue] = useState('java');
 
   return (
     <View style={styles.container}>
@@ -33,8 +49,8 @@ function SignUpScreen({ navigation }) {
         </Text>
         <TextInput
           style={styles.input}
-          onChangeText={onChangeText}
-          value={text}
+          onChangeText={onChangeName}
+          value={name}
         />
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -52,9 +68,9 @@ function SignUpScreen({ navigation }) {
           Social Media Platform
         </Text>
         <Picker
-          selectedValue={selectedValue}
+          selectedValue={socialPlatform}
           style={{ height: 220, width: 150 }}
-          onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+          onValueChange={(itemValue, itemIndex) => setSocialPlatform(itemValue)}
         >
           <Picker.Item label="Instagram" value="instagram" />
           <Picker.Item label="Twitter" value="twitter" />
@@ -72,8 +88,38 @@ function SignUpScreen({ navigation }) {
         />
       </View>
       <Button
-        title="Sign Up"
-        onPress={() => navigation.navigate('Home')}
+        title="Save"
+        onPress={() => {
+          save('name', name);
+          save('email', email);
+          save('socialTag', socialTag);
+          save('socialPlatform', socialPlatform);
+          // navigation.navigate('Home');
+        }}
+      />
+      <Button
+        title="Get Name"
+        onPress={() => {
+          getValueFor('name');
+        }}
+      />
+      <Button
+        title="Get Email"
+        onPress={() => {
+          getValueFor('email');
+        }}
+      />
+      <Button
+        title="Get Social Platform"
+        onPress={() => {
+          getValueFor('socialPlatform');
+        }}
+      />
+      <Button
+        title="Get Social Tag"
+        onPress={() => {
+          getValueFor('socialTag');
+        }}
       />
     </View>
   );
