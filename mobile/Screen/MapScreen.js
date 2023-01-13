@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import {
   Button, StyleSheet, Text, View,
 } from 'react-native';
@@ -72,7 +72,17 @@ function MapScreen() {
           longitudeDelta: 0.0421,
         }}
         onRegionChangeComplete={(region) => setRegion(region)}
-      />
+      >
+        <Marker
+          coordinate={{ latitude: museumRegion.latitude, longitude: museumRegion.longitude }}
+        />
+        <Marker
+          coordinate={{ latitude: churchRegion.latitude, longitude: churchRegion.longitude }}
+        />
+        <Marker
+          coordinate={{ latitude: missionRegion.latitude, longitude: missionRegion.longitude }}
+        />
+      </MapView>
       <Button onPress={() => goToMuseum()} title="1) Museum" />
       <Button onPress={() => goToChurch()} title="2) Church" />
       <Button onPress={() => goToMission()} title="3) Mission" />
