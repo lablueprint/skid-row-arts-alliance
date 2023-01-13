@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function MapScreen() {
+function MapScreen({navigation}) {
   const test = async () => {
     console.log(URL);
     try {
@@ -44,6 +44,7 @@ function MapScreen() {
       location={event.location}
       nonprofits={event.nonprofits}
       description={event.description}
+      navigation={navigation}
       />
 )}
     </ScrollView>
