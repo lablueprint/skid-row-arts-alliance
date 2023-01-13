@@ -35,13 +35,45 @@ function MapScreen() {
 
   return (
     <ScrollView style={styles.scrollView}>
-      <Text>Map Screen</Text>
-      <Button title="Test" onPress={test} />
-      <MapEvent />
-      <MapEvent />
-      <MapEvent />
+      {/* <Text>Map Screen</Text>
+      <Button title="Test" onPress={test} /> */}
+{events.map((event)=>
+      <MapEvent 
+      title={event.title}
+      date={event.date}
+      location={event.location}
+      nonprofits={event.nonprofits}
+      description={event.description}
+      />
+)}
     </ScrollView>
   );
 }
 
+const events = [{
+  title: "Volunteering",
+  date: "10/03/2023",
+  location:"3148 Rose Rd,LA",
+  nonprofits:"SRAA",
+  description: "helping artist hang artwork"
+},
+{
+  title:"Fundraiser",
+  date:"09/08/2023",
+  location:"4102 Daisy Rd, LA",
+  nonprofits:"SRAA, Apple",
+  description: "raising money for skid row artists"
+},
+{
+  title:"Information Session",
+  date:"03/05/2023",
+  location:"4123 Blue Rd, LA",
+  nonprofits:"SRAA, Google",
+  description: "information on the skid row artists"
+}
+]
+
+
+
 export default MapScreen;
+
