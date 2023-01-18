@@ -42,7 +42,7 @@ function SubmissionScreen() {
   const [artworkTitle, setArtworkTitle] = useState('');
   const [description, setDescription] = useState('');
 
-  const [image, setImage] = useState(null);
+  const [images, setImages] = useState([]);
 
   function clearInput() {
     setName('');
@@ -55,7 +55,6 @@ function SubmissionScreen() {
 
   const submit = async () => {
     try {
-      console.log('submitting');
       const result = await axios.post(`${URL}/submissions/post`, {
         name,
         email,
@@ -73,14 +72,6 @@ function SubmissionScreen() {
     }
   };
 
-  useEffect(() => {
-    const load = async () => {
-      const result = await axios.get(`${URL}/submissions/get`);
-      setSubmissions(result.data);
-    };
-    load().catch(console.error);
-  }, []);
-
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -89,21 +80,39 @@ function SubmissionScreen() {
       quality: 1,
     });
 
-    console.log(1, result);
-
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImages((prev) => ([...prev, result.assets[0].uri]));
+    }
+  };
+
+  const openCamera = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      return;
     }
 
-    console.log(2, image);
+    const result = await ImagePicker.launchCameraAsync();
+
+    if (!result.canceled) {
+      setImages((prev) => ([...prev, result.assets[0].uri]));
+    }
   };
+
+  useEffect(() => {
+    (async () => {
+      const result = await axios.get(`${URL}/submissions/get`);
+      setSubmissions(result.data);
+    })();
+  }, []);
 
   return (
     <ScrollView>
       <View style={styles.container}>
         <View>
           <Button title="Image" onPress={pickImage} />
-          {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+          <Button title="Camera" onPress={openCamera} />
+          {images.map((src) => <Image source={{ uri: src }} style={{ width: 200, height: 200 }} />)}
           <TextInput
             styles={styles.input}
             placeholder="Name"
