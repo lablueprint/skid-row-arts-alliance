@@ -7,21 +7,40 @@ const s3 = new AWS.S3({
   region: process.env.S3_REGION,
 });
 
+const imageList = ['test.png', 'test1.png', 'test2.png', 'test3.png'];
+
 const retrieveImage = async (req, res) => {
-  try {
-    await s3.getObject({
-      Bucket: 'test-sraa',
-      Key: 'test3.png',
-    }, (err, data) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send((`data:${data.ContentType};base64,${Buffer.from(data.Body, 'binary').toString('base64')}`));
-      }
-    });
-  } catch (err) {
-    console.error(err);
-  }
+  const s3Promises = imageList.map((key) => s3.getObject({
+    Bucket: 'test-sraa',
+    Key: key,
+  }).promise()
+    .then((data) => ({
+      ContentType: data.ContentType,
+      Encoding: `data:${data.ContentType};base64,${Buffer.from(data.Body, 'binary').toString('base64')}`,
+    })));
+  Promise.all(s3Promises)
+    .then((list) => res.send(list))
+    .catch((err) => console.log(err));
+
+  // try {
+  //   const encodingList = imageList.map((image) => {
+  //     const encoding = s3.getObject({
+  //       Bucket: 'test-sraa',
+  //       Key: image,
+  //     }, (err, data) => {
+  //       if (err) {
+  //         console.log(err);
+  //         return null;
+  //       }
+  //       return `data:${data.ContentType};base64,
+  // ${Buffer.from(data.Body, 'binary').toString('base64')}`;
+  //     });
+  //     return encoding;
+  //   });
+  //   res.send(encodingList);
+  // } catch (err) {
+  //   console.error(err);
+  // }
 };
 
 module.exports = {
