@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const Submission = require('../models/submissionModel');
 
 // Connect to the AWS S3 Storage
 const s3 = new AWS.S3({
@@ -7,40 +8,27 @@ const s3 = new AWS.S3({
   region: process.env.S3_REGION,
 });
 
-const imageList = ['test.png', 'test1.png', 'test2.png', 'test3.png'];
+// const imageList = ['0001Bulbasaur.png', '0004Charmander.png', '0007Squirtle.png'];
 
 const retrieveImage = async (req, res) => {
-  const s3Promises = imageList.map((key) => s3.getObject({
+  // S3 Key retrieval from MongoDB
+  // Empty `filter` means "match all documents"
+  const filter = {};
+  const allImages = await Submission.find(filter);
+
+  // Image retrieval from AWS S3
+  const s3Promises = allImages.map((image) => s3.getObject({
     Bucket: 'test-sraa',
-    Key: key,
+    Key: image.s3key,
   }).promise()
     .then((data) => ({
       ContentType: data.ContentType,
+      Key: image.s3key,
       Encoding: `data:${data.ContentType};base64,${Buffer.from(data.Body, 'binary').toString('base64')}`,
     })));
   Promise.all(s3Promises)
     .then((list) => res.send(list))
     .catch((err) => console.log(err));
-
-  // try {
-  //   const encodingList = imageList.map((image) => {
-  //     const encoding = s3.getObject({
-  //       Bucket: 'test-sraa',
-  //       Key: image,
-  //     }, (err, data) => {
-  //       if (err) {
-  //         console.log(err);
-  //         return null;
-  //       }
-  //       return `data:${data.ContentType};base64,
-  // ${Buffer.from(data.Body, 'binary').toString('base64')}`;
-  //     });
-  //     return encoding;
-  //   });
-  //   res.send(encodingList);
-  // } catch (err) {
-  //   console.error(err);
-  // }
 };
 
 module.exports = {

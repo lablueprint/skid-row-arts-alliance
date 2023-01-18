@@ -48,7 +48,7 @@ function GalleryScreen() {
             {
               imageURIs.map((imageURI) => (
                 <Image
-                  key={{ imageURI }}
+                  key={imageURI.key}
                   style={{ width: 100, height: 100 }}
                   source={{ uri: imageURI.Encoding }}
                 />
