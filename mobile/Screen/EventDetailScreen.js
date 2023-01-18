@@ -1,18 +1,16 @@
-
-import React from "react";
-import{
-    StyleSheet, Text, View, Button,
+import React from 'react';
+import {
+  Text, View,
 } from 'react-native';
 
-
-function EventDetailScreen(){
-    return(
+function EventDetailScreen() {
+  return (
     <View>
-        <Text>
-            Here is more details for the event.
-        </Text>
+      <Text>
+        Here is more details for the event.
+      </Text>
     </View>
-    );
+  );
 }
 
 export default EventDetailScreen;
