@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
-  StyleSheet, TextInput, Text, View, ScrollView, Button,
+  StyleSheet, TextInput, Text, View, ScrollView, Button, Image,
 } from 'react-native';
 import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
 
 const { URL } = process.env;
 
@@ -41,6 +42,8 @@ function SubmissionScreen() {
   const [artworkTitle, setArtworkTitle] = useState('');
   const [description, setDescription] = useState('');
 
+  const [image, setImage] = useState(null);
+
   function clearInput() {
     setName('');
     setEmail('');
@@ -52,6 +55,7 @@ function SubmissionScreen() {
 
   const submit = async () => {
     try {
+      console.log('submitting');
       const result = await axios.post(`${URL}/submissions/post`, {
         name,
         email,
@@ -77,10 +81,29 @@ function SubmissionScreen() {
     load().catch(console.error);
   }, []);
 
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(1, result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+
+    console.log(2, image);
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
         <View>
+          <Button title="Image" onPress={pickImage} />
+          {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
           <TextInput
             styles={styles.input}
             placeholder="Name"
