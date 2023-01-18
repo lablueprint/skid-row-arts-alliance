@@ -7,12 +7,12 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 
 const { width, height } = Dimensions.get('window');
 
 const CARD_HEIGHT = height / 4;
-const CARD_WIDTH = CARD_HEIGHT - 50;
+const CARD_WIDTH = CARD_HEIGHT + 50;
 
 const styles = StyleSheet.create({
   container: {
@@ -66,14 +66,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   marker: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 20,
+    height: 20,
+    borderRadius: 5,
     backgroundColor: 'rgba(130,4,150, 0.9)',
   },
   ring: {
-    width: 24,
-    height: 24,
+    width: 55,
+    height: 55,
     borderRadius: 12,
     backgroundColor: 'rgba(130,4,150, 0.3)',
     position: 'absolute',
@@ -197,6 +197,19 @@ function GalleryScreen() {
     return { scale, opacity };
   });
 
+  const markers = state.markers.map((marker, index) => {
+    const opacityStyle = {
+      opacity: interpolations[index].opacity,
+    };
+    return (
+      <Marker key={marker.id} coordinate={marker.coordinate}>
+        <Animated.View style={[styles.markerWrap, opacityStyle]}>
+          <View style={styles.marker} />
+        </Animated.View>
+      </Marker>
+    );
+  });
+
   return (
     <View style={styles.container}>
       <MapView
@@ -204,26 +217,7 @@ function GalleryScreen() {
         initialRegion={state.region}
         style={styles.container}
       >
-        {/* {state.markers.map((marker, index) => {
-          const scaleStyle = {
-            transform: [
-              {
-                scale: interpolations[index].scale,
-              },
-            ],
-          };
-          const opacityStyle = {
-            opacity: interpolations[index].opacity,
-          };
-          return (
-            <MapView.Marker key={index} coordinate={marker.coordinate}>
-              <Animated.View style={[styles.markerWrap, opacityStyle]}>
-                <Animated.View style={[styles.ring, scaleStyle]} />
-                <View style={styles.marker} />
-              </Animated.View>
-            </MapView.Marker>
-          );
-        })} */}
+        {markers}
       </MapView>
       <Animated.ScrollView
         horizontal
