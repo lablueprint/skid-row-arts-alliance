@@ -19,14 +19,14 @@ const styles = StyleSheet.create({
 });
 
 function GalleryScreen() {
-  const [imageURIs, setImageURIs] = useState([]);
+  const [allImageData, setAllImageData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
 
   const getImage = async () => {
     setLoadImages(false);
     try {
       const res = await axios.get(`${URL}/artgallery/get`);
-      setImageURIs(res.data);
+      setAllImageData(res.data);
       return res.data;
     } catch (err) {
       console.error(err);
@@ -47,12 +47,15 @@ function GalleryScreen() {
         loadImages ? (
           <>
             {
-              imageURIs.map((imageURI) => (
-                <Image
-                  key={imageURI.SubmissionData._id}
-                  style={{ width: 100, height: 100 }}
-                  source={{ uri: imageURI.Encoding }}
-                />
+              allImageData.map((imageData) => (
+                <>
+                  <Image
+                    key={imageData.SubmissionData._id}
+                    style={{ width: 100, height: 100 }}
+                    source={{ uri: imageData.Encoding }}
+                  />
+                  <Text>{imageData.SubmissionData.name}</Text>
+                </>
               ))
             }
           </>
