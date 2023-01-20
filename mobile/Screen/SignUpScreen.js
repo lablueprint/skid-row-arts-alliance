@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as SecureStore from 'expo-secure-store';
+import { serviceLogin } from '../redux/services';
 
 const styles = StyleSheet.create({
   container: {
@@ -25,21 +26,29 @@ async function save(key, value) {
   await SecureStore.setItemAsync(key, value);
 }
 
-async function getValueFor(key) {
-  // eslint-disable-next-line prefer-const
-  let result = await SecureStore.getItemAsync(key);
-  if (result) {
-    console.log(`🔐 Here's your value 🔐 \n${result}`);
-  } else {
-    console.log('No values stored under that key.');
-  }
-}
-
+// eslint-disable-next-line react/prop-types
 function SignUpScreen({ navigation }) {
   const [name, onChangeName] = React.useState('');
   const [email, onChangeEmail] = React.useState('');
   const [socialPlatform, setSocialPlatform] = useState('');
   const [socialTag, onChangeSocialTag] = React.useState('');
+
+  // Store input and navigate to Home screen
+  const handleSignUp = async () => {
+    try {
+      const userData = {
+        userName: name,
+        userEmail: email,
+        userSocialPlatform: socialPlatform,
+        userSocialTag: socialTag,
+      };
+      serviceLogin(userData);
+      // eslint-disable-next-line react/prop-types
+      navigation.navigate('Home');
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -70,7 +79,7 @@ function SignUpScreen({ navigation }) {
         <Picker
           selectedValue={socialPlatform}
           style={{ height: 220, width: 150 }}
-          onValueChange={(itemValue, itemIndex) => setSocialPlatform(itemValue)}
+          onValueChange={(itemValue) => setSocialPlatform(itemValue)}
         >
           <Picker.Item label="Instagram" value="instagram" />
           <Picker.Item label="Twitter" value="twitter" />
@@ -88,37 +97,13 @@ function SignUpScreen({ navigation }) {
         />
       </View>
       <Button
-        title="Save"
+        title="Sign Up"
         onPress={() => {
           save('name', name);
           save('email', email);
           save('socialTag', socialTag);
           save('socialPlatform', socialPlatform);
-          // navigation.navigate('Home');
-        }}
-      />
-      <Button
-        title="Get Name"
-        onPress={() => {
-          getValueFor('name');
-        }}
-      />
-      <Button
-        title="Get Email"
-        onPress={() => {
-          getValueFor('email');
-        }}
-      />
-      <Button
-        title="Get Social Platform"
-        onPress={() => {
-          getValueFor('socialPlatform');
-        }}
-      />
-      <Button
-        title="Get Social Tag"
-        onPress={() => {
-          getValueFor('socialTag');
+          handleSignUp();
         }}
       />
     </View>

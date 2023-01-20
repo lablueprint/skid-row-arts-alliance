@@ -3,6 +3,8 @@ import {
   StyleSheet, Text, TextInput, View, Button,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { useSelector } from 'react-redux';
+import { serviceUpdateUser } from '../redux/services';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,6 +17,7 @@ const styles = StyleSheet.create({
 });
 
 function ProfileScreen() {
+  const { user: currentUser } = useSelector((state) => state.auth);
   const [name, onChangeName] = useState('');
   const [email, onChangeEmail] = useState('');
   const [platform, setPlatform] = useState('');
@@ -33,8 +36,34 @@ function ProfileScreen() {
     onChangeTag('');
   };
 
+  const updatedUser = {
+    userName: name,
+    userEmail: email,
+    userSocialPlatform: platform,
+    userSocialTag: tag,
+  };
+
+  const handleUpdate = () => {
+    serviceUpdateUser(updatedUser);
+  };
+
+  // Display and edit profile info
   return (
     <View style={styles.container}>
+      <View>
+        <Text>
+          {currentUser.userName}
+        </Text>
+        <Text>
+          {currentUser.userEmail}
+        </Text>
+        <Text>
+          {currentUser.userSocialPlatform}
+        </Text>
+        <Text>
+          {currentUser.userSocialTag}
+        </Text>
+      </View>
       <View>
         <TextInput
           placeholder="Name"
@@ -48,11 +77,12 @@ function ProfileScreen() {
         />
         <Picker
           selectedValue={platform}
-          onValueChange={(currentPlatform) => setPlatform(currentPlatform)}
+          style={{ height: 220, width: 150 }}
+          onValueChange={(itemValue) => setPlatform(itemValue)}
         >
-          <Picker.Item label="Facebook" value="Facebook" />
-          <Picker.Item label="Instagram" value="Instagram" />
-          <Picker.Item label="Twitter" value="Twitter" />
+          <Picker.Item label="Instagram" value="instagram" />
+          <Picker.Item label="Twitter" value="twitter" />
+          <Picker.Item label="Facebook" value="facebook" />
         </Picker>
         <TextInput
           placeholder="Account Tag"
@@ -61,6 +91,7 @@ function ProfileScreen() {
         />
       </View>
       <Button title="Clear" onPress={handleClear} />
+      <Button title="Save" onPress={handleUpdate} />
       <Text>
         {profileDetails.name}
         {'\n'}
