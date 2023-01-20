@@ -1,13 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   Animated,
-  Image,
   Dimensions,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import MapCard from '../Components/MapCard';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,39 +26,6 @@ const styles = StyleSheet.create({
   },
   endPadding: {
     paddingRight: width - CARD_WIDTH,
-  },
-  card: {
-    padding: 10,
-    borderRadius: 8,
-    elevation: 2,
-    backgroundColor: '#FFF',
-    marginHorizontal: 10,
-    shadowColor: '#000',
-    shadowRadius: 5,
-    shadowOpacity: 0.3,
-    shadowOffset: { x: 2, y: -2 },
-    height: CARD_HEIGHT,
-    width: CARD_WIDTH,
-    overflow: 'hidden',
-  },
-  cardImage: {
-    flex: 3,
-    borderRadius: 8,
-    width: '100%',
-    height: '100%',
-    alignSelf: 'center',
-  },
-  textContent: {
-    flex: 1,
-  },
-  cardTitle: {
-    fontSize: 12,
-    marginTop: 5,
-    fontWeight: 'bold',
-  },
-  cardDescription: {
-    fontSize: 12,
-    color: '#444',
   },
   markerWrap: {
     alignItems: 'center',
@@ -93,7 +59,7 @@ function MapScreen() {
   const state = {
     markers: [
       {
-        id: 1,
+        id: 1, // TODO: change this temporary id
         coordinate: {
           latitude: 34.051060,
           longitude: -118.247910,
@@ -103,7 +69,7 @@ function MapScreen() {
         image: Images[0],
       },
       {
-        id: 2,
+        id: 2, // TODO: change this temporary id
         coordinate: {
           latitude: 34.046070,
           longitude: -118.247540,
@@ -113,7 +79,7 @@ function MapScreen() {
         image: Images[1],
       },
       {
-        id: 3,
+        id: 3, // TODO: change this temporary id
         coordinate: {
           latitude: 34.043580,
           longitude: -118.247680,
@@ -123,7 +89,7 @@ function MapScreen() {
         image: Images[2],
       },
       {
-        id: 4,
+        id: 4, // TODO: change this temporary id
         coordinate: {
           latitude: 34.044536,
           longitude: -118.244873,
@@ -237,22 +203,12 @@ function MapScreen() {
         contentContainerStyle={styles.endPadding}
       >
         {state.markers.map((marker) => (
-          // TODO: change this temporary id
-          <View style={styles.card} key={marker.id}>
-            <Image
-              source={marker.image}
-              style={styles.cardImage}
-              resizeMode="cover"
-            />
-            <View style={styles.textContent}>
-              <Text numberOfLines={1} style={styles.cardTitle}>
-                {marker.title}
-              </Text>
-              <Text numberOfLines={1} style={styles.cardDescription}>
-                {marker.description}
-              </Text>
-            </View>
-          </View>
+          <MapCard
+            id={marker.id} // TODO: change this temporary id
+            image={marker.image}
+            title={marker.title}
+            description={marker.description}
+          />
         ))}
       </Animated.ScrollView>
     </View>
