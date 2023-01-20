@@ -5,8 +5,9 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView from 'react-native-maps';
 import MapCard from '../Components/MapCard';
+import MapMarker from '../Components/MapMarker';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,25 +27,6 @@ const styles = StyleSheet.create({
   },
   endPadding: {
     paddingRight: width - CARD_WIDTH,
-  },
-  markerWrap: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  marker: {
-    width: 20,
-    height: 20,
-    borderRadius: 5,
-    backgroundColor: 'rgba(130,4,150, 0.9)',
-  },
-  ring: {
-    width: 55,
-    height: 55,
-    borderRadius: 12,
-    backgroundColor: 'rgba(130,4,150, 0.3)',
-    position: 'absolute',
-    borderWidth: 1,
-    borderColor: 'rgba(130,4,150, 0.5)',
   },
 });
 
@@ -112,8 +94,6 @@ function MapScreen() {
   mapRef.animation = new Animated.Value(0);
 
   useEffect(() => {
-    // We should detect when scrolling has stopped then animate
-    // We should just debounce the event listener here
     mapRef.animation.addListener(({ value }) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3);
       if (index >= state.markers.length) {
@@ -160,19 +140,6 @@ function MapScreen() {
     return { scale, opacity };
   });
 
-  const markers = state.markers.map((marker, index) => {
-    const opacityStyle = {
-      opacity: interpolations[index].opacity,
-    };
-    return (
-      <Marker key={marker.id} coordinate={marker.coordinate}>
-        <Animated.View style={[styles.markerWrap, opacityStyle]}>
-          <View style={styles.marker} />
-        </Animated.View>
-      </Marker>
-    );
-  });
-
   return (
     <View style={styles.container}>
       <MapView
@@ -180,7 +147,7 @@ function MapScreen() {
         initialRegion={state.region}
         style={styles.container}
       >
-        {markers}
+        <MapMarker state={state} interpolations={interpolations} />
       </MapView>
       <Animated.ScrollView
         horizontal
