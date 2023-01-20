@@ -89,8 +89,7 @@ const Images = [
   { uri: 'https://www.lehrerarchitects.com/wp-content/uploads/2017/12/JAMES-WOOD_06-1920x1100.jpg' },
 ];
 
-function GalleryScreen() {
-  const mapRef = useRef(null);
+function MapScreen() {
   const state = {
     markers: [
       {
@@ -142,12 +141,10 @@ function GalleryScreen() {
     },
   };
 
-  const [mounted, setMounted] = useState(false);
+  const mapRef = useRef(null);
+  mapRef.index = 0;
+  mapRef.animation = new Animated.Value(0);
 
-  if (!mounted) {
-    mapRef.index = 0;
-    mapRef.animation = new Animated.Value(0);
-  }
   useEffect(() => {
     // We should detect when scrolling has stopped then animate
     // We should just debounce the event listener here
@@ -262,4 +259,4 @@ function GalleryScreen() {
   );
 }
 
-export default GalleryScreen;
+export default MapScreen;
