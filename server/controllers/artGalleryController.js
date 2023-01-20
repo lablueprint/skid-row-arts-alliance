@@ -18,12 +18,12 @@ const retrieveImage = async (req, res) => {
 
   // Image retrieval from AWS S3
   const s3Promises = allImages.map((image) => s3.getObject({
-    Bucket: 'test-sraa',
-    Key: image.s3key,
+    Bucket: process.env.S3_BUCKET,
+    Key: image.s3keys[0],
   }).promise()
     .then((data) => ({
       ContentType: data.ContentType,
-      Key: image.s3key,
+      SubmissionData: image,
       Encoding: `data:${data.ContentType};base64,${Buffer.from(data.Body, 'binary').toString('base64')}`,
     })));
   Promise.all(s3Promises)

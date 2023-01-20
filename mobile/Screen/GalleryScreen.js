@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
@@ -48,7 +49,7 @@ function GalleryScreen() {
             {
               imageURIs.map((imageURI) => (
                 <Image
-                  key={imageURI.key}
+                  key={imageURI.SubmissionData._id}
                   style={{ width: 100, height: 100 }}
                   source={{ uri: imageURI.Encoding }}
                 />
