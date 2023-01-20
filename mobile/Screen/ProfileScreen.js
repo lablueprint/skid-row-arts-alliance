@@ -30,6 +30,7 @@ function ProfileScreen() {
     onChangeName('');
     onChangeEmail('');
     onChangeTag('');
+    setPlatform(''); // useState
   };
 
   return (

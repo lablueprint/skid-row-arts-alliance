@@ -7,7 +7,7 @@ import GalleryScreen from './Screen/GalleryScreen';
 import SubmissionScreen from './Screen/SubmissionScreen';
 import ProfileScreen from './Screen/ProfileScreen';
 import SignUpScreen from './Screen/SignUpScreen';
-import EventDetailScreen from "./Screen/EventDetailScreen";
+import EventDetailScreen from './Screen/EventDetailScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
