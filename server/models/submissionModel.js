@@ -32,9 +32,9 @@ const submissionSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  s3key: {
+  s3keys: {
     required: true,
-    type: String,
+    type: [String],
   },
 });
 
