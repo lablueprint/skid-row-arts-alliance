@@ -21,6 +21,8 @@ const getAllSubmissions = async (req, res) => {
       Key: submission.s3keys[0],
     }).promise());
     const imageDataList = Promise.all(s3Promises);
+
+    // Reformat data for response
     const responseList = (await imageDataList).map((data, idx) => ({
       ContentType: data.ContentType,
       SubmissionData: allSubmissions[idx],
