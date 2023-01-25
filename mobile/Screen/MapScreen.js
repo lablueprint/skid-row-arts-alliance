@@ -5,6 +5,7 @@ import {
 import axios from 'axios';
 // eslint-disable-next-line import/no-unresolved
 import { URL } from '@env';
+import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
   container: {
@@ -15,7 +16,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function MapScreen() {
+function MapScreen({ navigation }) {
   const test = async () => {
     console.log(URL);
     try {
@@ -32,8 +33,18 @@ function MapScreen() {
     <View style={styles.container}>
       <Text>Map Screen</Text>
       <Button title="Test" onPress={test} />
+      <Button
+        title="Return to Sign Up"
+        onPress={() => {
+          navigation.navigate('Sign Up');
+        }}
+      />
     </View>
   );
 }
 
 export default MapScreen;
+
+MapScreen.propTypes = {
+  navigation: PropTypes.shape({ navigate: PropTypes.func }).isRequired,
+};

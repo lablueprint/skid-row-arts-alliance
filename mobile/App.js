@@ -15,14 +15,12 @@ const Stack = createStackNavigator();
 
 function HomeStackScreen() {
   return (
-    <Provider store={store}>
-      <Tab.Navigator>
-        <Tab.Screen name="Map" component={MapScreen} />
-        <Tab.Screen name="Gallery" component={GalleryScreen} />
-        <Tab.Screen name="Submission" component={SubmissionScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
-      </Tab.Navigator>
-    </Provider>
+    <Tab.Navigator>
+      <Tab.Screen name="Map" component={MapScreen} />
+      <Tab.Screen name="Gallery" component={GalleryScreen} />
+      <Tab.Screen name="Submission" component={SubmissionScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
   );
 }
 

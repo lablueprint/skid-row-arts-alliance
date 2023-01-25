@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as SecureStore from 'expo-secure-store';
+import PropTypes from 'prop-types';
 import { serviceLogin } from '../redux/services';
 
 const styles = StyleSheet.create({
@@ -26,7 +27,6 @@ async function save(key, value) {
   await SecureStore.setItemAsync(key, value);
 }
 
-// eslint-disable-next-line react/prop-types
 function SignUpScreen({ navigation }) {
   const [name, onChangeName] = React.useState('');
   const [email, onChangeEmail] = React.useState('');
@@ -43,7 +43,6 @@ function SignUpScreen({ navigation }) {
         userSocialTag: socialTag,
       };
       serviceLogin(userData);
-      // eslint-disable-next-line react/prop-types
       navigation.navigate('Home');
     } catch (err) {
       console.log(err.message);
@@ -106,8 +105,18 @@ function SignUpScreen({ navigation }) {
           handleSignUp();
         }}
       />
+      <Button
+        title="Go to Map"
+        onPress={() => {
+          navigation.navigate('Home');
+        }}
+      />
     </View>
   );
 }
 
 export default SignUpScreen;
+
+SignUpScreen.propTypes = {
+  navigation: PropTypes.shape({ navigate: PropTypes.func }).isRequired,
+};
