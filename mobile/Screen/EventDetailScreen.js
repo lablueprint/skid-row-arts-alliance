@@ -1,11 +1,14 @@
 import React from 'react';
 import {
-  Text, View,
-} from 'react-native';
+  Title, Text, View,
+} from 'react-native-paper';
 
 function EventDetailScreen() {
   return (
     <View>
+      <Title>
+        Event details
+      </Title>
       <Text>
         Here is more details for the event.
       </Text>
