@@ -2,6 +2,7 @@ import React from 'react';
 import {
   StyleSheet, View, Image, Text, Dimensions,
 } from 'react-native';
+import PropTypes from 'prop-types';
 
 const { height } = Dimensions.get('window');
 const CARD_HEIGHT = height / 4;
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
 });
 
 function MapCard({
-  id, image, title, description
+  id, image, title, description,
 }) {
   return (
     <View style={styles.card} key={id}>
@@ -64,5 +65,17 @@ function MapCard({
     </View>
   );
 }
+
+MapCard.propTypes = {
+  id: PropTypes.number.isRequired,
+  image: PropTypes.shape(),
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string,
+};
+
+MapCard.defaultProps = {
+  image: '',
+  description: '',
+};
 
 export default MapCard;

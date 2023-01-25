@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Animated, View } from 'react-native';
 import { Marker } from 'react-native-maps';
+import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
   markerWrap: {
@@ -15,7 +16,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const MapMarker = ({ state, interpolations }) => {
+function MapMarker({ state, interpolations }) {
   const markers = state.markers.map((marker, index) => {
     const opacityStyle = {
       opacity: interpolations[index].opacity,
@@ -30,6 +31,24 @@ const MapMarker = ({ state, interpolations }) => {
   });
 
   return markers;
+}
+
+MapMarker.propTypes = {
+  state: PropTypes.shape({
+    markers: PropTypes.arrayOf(PropTypes.oneOfType([
+      PropTypes.number,
+      PropTypes.arrayOf(PropTypes.number),
+      PropTypes.string,
+      PropTypes.object,
+    ])).isRequired,
+    region: PropTypes.shape({
+      latitude: PropTypes.number,
+      longitude: PropTypes.number,
+      latitudeDelta: PropTypes.number,
+      longitudeDelta: PropTypes.number,
+    }).isRequired,
+  }).isRequired,
+  interpolations: PropTypes.arrayOf(PropTypes.shape).isRequired,
 };
 
 export default MapMarker;
