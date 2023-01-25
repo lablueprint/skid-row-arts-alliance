@@ -9,6 +9,7 @@ import SubmissionScreen from './Screen/SubmissionScreen';
 import ProfileScreen from './Screen/ProfileScreen';
 import SignUpScreen from './Screen/SignUpScreen';
 import store from './redux/store';
+import EventDetailScreen from './Screen/EventDetailScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -31,6 +32,7 @@ export default function App() {
         <Stack.Navigator>
           <Stack.Screen name="Sign Up" component={SignUpScreen} />
           <Stack.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false, gestureEnabled: false }} />
+          <Stack.Screen name="Event Details" component={EventDetailScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
