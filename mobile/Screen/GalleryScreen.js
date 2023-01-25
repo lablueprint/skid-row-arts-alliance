@@ -22,8 +22,8 @@ function GalleryScreen() {
   const [allImageData, setAllImageData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
 
-  const getImage = async () => {
-    setLoadImages(false);
+  const getAllSubmissions = async () => {
+    // setLoadImages(false);
     try {
       const res = await axios.get(`${URL}/artgallery/get`);
       setAllImageData(res.data);
@@ -37,7 +37,7 @@ function GalleryScreen() {
   };
 
   useEffect(() => {
-    getImage();
+    getAllSubmissions();
   }, []);
 
   return (

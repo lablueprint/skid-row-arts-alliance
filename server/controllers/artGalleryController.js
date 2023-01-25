@@ -8,29 +8,30 @@ const s3 = new AWS.S3({
   region: process.env.S3_REGION,
 });
 
-// const imageList = ['0001Bulbasaur.png', '0004Charmander.png', '0007Squirtle.png'];
+const getAllSubmissions = async (req, res) => {
+  try {
+    // S3 Key retrieval from MongoDB
+    // Empty `filter` means "match all documents"
+    const filter = {};
+    const allSubmissions = await Submission.find(filter);
 
-const retrieveImage = async (req, res) => {
-  // S3 Key retrieval from MongoDB
-  // Empty `filter` means "match all documents"
-  const filter = {};
-  const allImages = await Submission.find(filter);
-
-  // Image retrieval from AWS S3
-  const s3Promises = allImages.map((image) => s3.getObject({
-    Bucket: process.env.S3_BUCKET,
-    Key: image.s3keys[0],
-  }).promise()
-    .then((data) => ({
+    // Image retrieval from AWS S3
+    const s3Promises = await allSubmissions.map(async (submission) => s3.getObject({
+      Bucket: process.env.S3_BUCKET,
+      Key: submission.s3keys[0] ? submission.s3keys[0] : '0007Squirtle.png',
+    }).promise());
+    const imageDataList = Promise.all(s3Promises);
+    const responseList = (await imageDataList).map((data, idx) => ({
       ContentType: data.ContentType,
-      SubmissionData: image,
+      SubmissionData: allSubmissions[idx],
       Encoding: `data:${data.ContentType};base64,${Buffer.from(data.Body, 'binary').toString('base64')}`,
-    })));
-  Promise.all(s3Promises)
-    .then((list) => res.send(list))
-    .catch((err) => console.log(err));
+    }));
+    res.send(responseList);
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 module.exports = {
-  retrieveImage,
+  getAllSubmissions,
 };
