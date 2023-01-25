@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   StyleSheet, Text, TextInput, View, Button,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,6 +30,7 @@ function ProfileScreen() {
     onChangeName('');
     onChangeEmail('');
     onChangeTag('');
+    setPlatform(''); // useState
   };
 
   return (
@@ -46,14 +46,14 @@ function ProfileScreen() {
           onChangeText={onChangeEmail}
           value={email}
         />
-        <Picker
+        {/* <Picker
           selectedValue={platform}
           onValueChange={(currentPlatform) => setPlatform(currentPlatform)}
         >
           <Picker.Item label="Facebook" value="Facebook" />
           <Picker.Item label="Instagram" value="Instagram" />
           <Picker.Item label="Twitter" value="Twitter" />
-        </Picker>
+        </Picker> */}
         <TextInput
           placeholder="Account Tag"
           onChangeText={onChangeTag}

@@ -22,4 +22,10 @@ function SignUpScreen({ navigation }) {
   );
 }
 
+SignUpScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
+
 export default SignUpScreen;
