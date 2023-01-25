@@ -18,7 +18,7 @@ const getAllSubmissions = async (req, res) => {
     // Image retrieval from AWS S3
     const s3Promises = await allSubmissions.map(async (submission) => s3.getObject({
       Bucket: process.env.S3_BUCKET,
-      Key: submission.s3keys[0] ? submission.s3keys[0] : '0007Squirtle.png',
+      Key: submission.s3keys[0],
     }).promise());
     const imageDataList = Promise.all(s3Promises);
     const responseList = (await imageDataList).map((data, idx) => ({
