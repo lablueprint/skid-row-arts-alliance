@@ -42,6 +42,7 @@ function MapScreen() {
       {/* <Button title="Test" onPress={test} /> */}
       <Pdf
         source={source}
+        horizontal="true"
         onLoadComplete={(numberOfPages) => {
           console.log(`Number of pages: ${numberOfPages}`);
         }}
