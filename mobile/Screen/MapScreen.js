@@ -4,8 +4,10 @@ import {
   View,
   Animated,
   Dimensions,
+  Button,
 } from 'react-native';
 import MapView from 'react-native-maps';
+import PropTypes from 'prop-types';
 import MapCard from '../Components/MapCard';
 import MapMarker from '../Components/MapMarker';
 
@@ -37,7 +39,7 @@ const Images = [
   { uri: 'https://www.lehrerarchitects.com/wp-content/uploads/2017/12/JAMES-WOOD_06-1920x1100.jpg' },
 ];
 
-function MapScreen() {
+function MapScreen({ navigation }) {
   const state = {
     markers: [
       {
@@ -177,8 +179,17 @@ function MapScreen() {
             description={marker.description}
           />
         ))}
+        <Button
+        // BUTTON FOR TESTING ONLY
+          title="Return to Sign Up"
+          onPress={() => {
+            navigation.navigate('Sign Up');
+          }}
+        // BUTTON FOR TESTING ONLY
+        />
       </Animated.ScrollView>
     </View>
+
   );
 }
 
