@@ -10,6 +10,7 @@
   "dependencies": {
     "@config-plugins/react-native-blob-util": "^4.0.0",
     "@config-plugins/react-native-pdf": "^4.0.0",
+    "@miblanchard/react-native-slider": "^2.2.0",
     "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.1",
