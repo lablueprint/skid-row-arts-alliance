@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 // eslint-disable-next-line import/no-unresolved
 import { URL } from '@env';
-import MapEvent from '../Components/MapEvent';
+import Event from '../Components/Event';
 
 const styles = StyleSheet.create({
   container: {
@@ -26,7 +26,7 @@ const events = [{
   title: 'Volunteering',
   date: '10/03/2023',
   day: 'Monday',
-  location: '3148 Rose Rd,LA',
+  location: '3148 Rose Rd, LA',
   nonprofits: 'SRAA',
   description: 'helping artist hang artwork',
   time: '1:00-2:00pm',
@@ -74,13 +74,16 @@ function MapScreen({ navigation }) {
       {/* <Text>Map Screen</Text>
       <Button title="Test" onPress={test} /> */}
       {events.map((event) => (
-        <MapEvent
+        <Event
           id={event.id}
           title={event.title}
           date={event.date}
+          day={event.day}
           location={event.location}
+          time={event.time}
           nonprofits={event.nonprofits}
           description={event.description}
+          summary={event.summary}
           navigation={navigation}
         />
       ))}

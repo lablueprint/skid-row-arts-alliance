@@ -2,6 +2,7 @@ import React from 'react';
 import {
   StyleSheet, View, Text, ScrollView, Image,
 } from 'react-native';
+import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,19 +20,14 @@ const styles = StyleSheet.create({
 });
 
 function EventDetailScreen({
-  navigation, title, date, day, location, time, summary,
+  route,
 }) {
-  // navigation prop passing
-  const onPressEvent = () => {
-    const display = EventDetailScreen();
-    if (display) {
-      navigation.navigate('Event Details', {
-        title, date, day, location, time, summary,
-      });
-    }
-  };
+  const {
+    title, date, day, location, time, summary,
+  } = route.params;
+  console.log(title);
   return (
-    <ScrollView style={styles.container} onPress={onPressEvent}>
+    <ScrollView style={styles.container}>
       <Text style={{ fontSize: 30, fontWeight: 'bold' }}>{title}</Text>
       <Text>{date}</Text>
       <Text style={{ fontSize: 15, fontWeight: '10' }}>{location}</Text>
@@ -71,5 +67,18 @@ function EventDetailScreen({
     </ScrollView>
   );
 }
+
+EventDetailScreen.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
+      day: PropTypes.string.isRequired,
+      location: PropTypes.string.isRequired,
+      time: PropTypes.string.isRequired,
+      summary: PropTypes.string.isRequired,
+    }),
+  }).isRequired,
+};
 
 export default EventDetailScreen;
