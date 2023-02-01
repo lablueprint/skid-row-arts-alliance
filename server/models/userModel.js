@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   socialMedia: {
-    required: true,
+    required: false,
     type: socialSchema,
   },
   profilePicture: {
