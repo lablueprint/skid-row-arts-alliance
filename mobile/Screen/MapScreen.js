@@ -1,6 +1,6 @@
-import { React, useState, useRef } from 'react';
+import { React, useState } from 'react';
 import {
-  Dimensions, StyleSheet, Text, View, ScrollView,
+  Dimensions, StyleSheet, Text, View,
 } from 'react-native';
 // import axios from 'axios';
 // eslint-disable-next-line import/no-unresolved
@@ -36,7 +36,6 @@ function MapScreen() {
   //   }
   // };
   let ref;
-  const flipHorizontal = true;
   const [pages, setPages] = useState(1);
   const source = { uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf', cache: true };
   const [currentValue, setCurrentValue] = useState(1);
@@ -78,7 +77,7 @@ function MapScreen() {
         onSlidingStart={(newSliderValue) => console.log('on sliding start: ', newSliderValue)}
         onSlidingComplete={(newSliderValue) => handleOnSliderChange(newSliderValue)}
       />
-      <Button onPress={() => { ref.setPage(11); }}>Press</Button>
+      <Button onPress={() => { handleOnSliderChange(11); }}>Press</Button>
     </View>
   );
 }

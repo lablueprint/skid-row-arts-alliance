@@ -1,6 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import MapScreen from './Screen/MapScreen';
 import GalleryScreen from './Screen/GalleryScreen';
 import SubmissionScreen from './Screen/SubmissionScreen';
