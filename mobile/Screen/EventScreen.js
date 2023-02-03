@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 // eslint-disable-next-line import/no-unresolved
 import { URL } from '@env';
-import Event from '../Components/Event';
+import EventCard from '../Components/EventCard';
 
 const styles = StyleSheet.create({
   container: {
@@ -56,7 +56,7 @@ const events = [{
 },
 ];
 
-function MapScreen({ navigation }) {
+function EventScreen({ navigation }) {
   const test = async () => {
     console.log(URL);
     try {
@@ -74,7 +74,7 @@ function MapScreen({ navigation }) {
       {/* <Text>Map Screen</Text>
       <Button title="Test" onPress={test} /> */}
       {events.map((event) => (
-        <Event
+        <EventCard
           id={event.id}
           title={event.title}
           date={event.date}
@@ -91,10 +91,10 @@ function MapScreen({ navigation }) {
   );
 }
 
-MapScreen.propTypes = {
+EventScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
 };
 
-export default MapScreen;
+export default EventScreen;

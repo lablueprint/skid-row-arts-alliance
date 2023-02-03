@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import MapScreen from './Screen/MapScreen';
+import EventScreen from './Screen/EventScreen';
 import GalleryScreen from './Screen/GalleryScreen';
 import SubmissionScreen from './Screen/SubmissionScreen';
 import ProfileScreen from './Screen/ProfileScreen';
@@ -15,7 +15,7 @@ const Stack = createStackNavigator();
 function HomeStackScreen() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Map" component={MapScreen} />
+      <Tab.Screen name="Events" component={EventScreen} />
       <Tab.Screen name="Gallery" component={GalleryScreen} />
       <Tab.Screen name="Submission" component={SubmissionScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />

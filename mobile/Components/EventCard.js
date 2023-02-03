@@ -4,7 +4,7 @@ import {
 } from 'react-native-paper';
 import PropTypes from 'prop-types';
 
-function Event({
+function EventCard({
   title, date, day, location, time, nonprofits, description, summary, navigation,
 }) {
   const onPressEvent = () => {
@@ -62,7 +62,7 @@ function Event({
   );
 }
 
-Event.propTypes = {
+EventCard.propTypes = {
   title: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   day: PropTypes.string.isRequired,
@@ -76,4 +76,4 @@ Event.propTypes = {
   }).isRequired,
 };
 
-export default Event;
+export default EventCard;
