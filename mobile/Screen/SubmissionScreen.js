@@ -5,7 +5,7 @@ import {
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 
-const { URL } = process.env;
+import { URL } from '@env';
 
 const styles = StyleSheet.create({
   container: {
@@ -52,21 +52,30 @@ function SubmissionScreen() {
     setArtworkTitle('');
     setDescription('');
   }
+  const reader = new FileReader();
+  reader.addEventListener('loadend', async () => {
+    const blob = reader.result.replace(/^data:image\/\w+;base64,/, '');
+    const res = await axios.post(`${URL}/submissions/post`, {
+      name,
+      email,
+      socials: {
+        platform,
+        tag: accountTag,
+      },
+      title: artworkTitle,
+      description,
+      blob,
+    });
+    setSubmissions((prev) => ([...prev, res.data]));
+    clearInput();
+  });
 
   const submit = async () => {
     try {
-      const result = await axios.post(`${URL}/submissions/post`, {
-        name,
-        email,
-        socials: {
-          platform,
-          tag: accountTag,
-        },
-        title: artworkTitle,
-        description,
-      });
-      setSubmissions((prev) => ([...prev, result.data]));
-      clearInput();
+      fetch(images[0])
+        .then((res) => res.blob())
+        .then((blob) => reader.readAsDataURL(blob))
+        .catch((e) => console.error(e));
     } catch (err) {
       console.error(err);
     }
@@ -92,18 +101,25 @@ function SubmissionScreen() {
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync();
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
     if (!result.canceled) {
       setImages((prev) => ([...prev, result.assets[0].uri]));
     }
   };
 
+  const getSubmissions = async () => {
+    const result = await axios.get(`${URL}/submissions/get`);
+    setSubmissions(result.data);
+  };
+
   useEffect(() => {
-    (async () => {
-      const result = await axios.get(`${URL}/submissions/get`);
-      setSubmissions(result.data);
-    })();
+    getSubmissions();
   }, []);
 
   return (
@@ -112,7 +128,13 @@ function SubmissionScreen() {
         <View>
           <Button title="Image" onPress={pickImage} />
           <Button title="Camera" onPress={openCamera} />
-          {images.map((src) => <Image source={{ uri: src }} style={{ width: 200, height: 200 }} />)}
+          {images.map((src) => (
+            <Image
+              source={{ uri: src }}
+              key={src}
+              style={{ width: 200, height: 200 }}
+            />
+          ))}
           <TextInput
             styles={styles.input}
             placeholder="Name"

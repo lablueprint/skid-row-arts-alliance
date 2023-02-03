@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "aws-sdk": "^2.1308.0",
+    "body-parser": "^1.20.1"
+  }
+}
