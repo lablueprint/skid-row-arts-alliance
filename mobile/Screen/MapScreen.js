@@ -7,6 +7,7 @@ import axios from 'axios';
 // eslint-disable-next-line import/no-unresolved
 import { URL } from '@env';
 import EventCard from '../Components/EventCard';
+import ResourceCard from '../Components/ResourceCard';
 
 const styles = StyleSheet.create({
   container: {
@@ -56,7 +57,32 @@ const events = [{
 },
 ];
 
-function EventScreen({ navigation }) {
+const resources = [
+  {
+    id: 1,
+    title: 'Food Bank',
+    day: 'Mon-Fri',
+    time: '2-5pm',
+    location: '3148 Rose Rd, LA',
+  },
+  {
+    id: 2,
+    title: 'Shelter',
+    day: 'Tue, Thu',
+    time: '9am-5pm',
+    location: '4102 Daisy Rd, LA',
+  },
+  {
+    id: 3,
+    title: 'Mission',
+    day: 'Mon, Wed, Fri',
+    time: '9-10am',
+    location: '4123 Blue Rd, LA',
+  },
+
+];
+
+function MapScreen({ navigation }) {
   const test = async () => {
     console.log(URL);
     try {
@@ -87,14 +113,24 @@ function EventScreen({ navigation }) {
           navigation={navigation}
         />
       ))}
+      {resources.map((resource) => (
+        <ResourceCard
+          id={resource.id}
+          title={resource.title}
+          day={resource.day}
+          time={resource.time}
+          location={resource.location}
+          navigation={navigation}
+        />
+      ))}
     </ScrollView>
   );
 }
 
-EventScreen.propTypes = {
+MapScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
 };
 
-export default EventScreen;
+export default MapScreen;
