@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React from "react";
-import { View, Button } from "react-native";
+import { Button } from "react-native";
 
 const DeleteArt = () => {
   return(

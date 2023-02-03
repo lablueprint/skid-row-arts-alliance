@@ -1,3 +1,4 @@
+require('../models/submissionModel');
 const mongoose = require('mongoose');
 
 const Submission = mongoose.model('Submission');

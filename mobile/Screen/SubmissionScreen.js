@@ -51,6 +51,7 @@ function SubmissionScreen() {
     setAccountTag('');
     setArtworkTitle('');
     setDescription('');
+    setImages([]);
   }
   const reader = new FileReader();
   reader.addEventListener('loadend', async () => {

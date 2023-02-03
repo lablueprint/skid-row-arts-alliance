@@ -23,7 +23,6 @@ database.once('connected', () => {
 
 // Model imports
 require('./models/testModel');
-require('./models/submissionModel');
 
 // Route imports
 const testRouter = require('./routes/testRoutes');
