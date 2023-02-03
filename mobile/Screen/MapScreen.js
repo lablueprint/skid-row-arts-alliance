@@ -49,6 +49,8 @@ function MapScreen() {
         title: 'Skid Row History Museum and LA Poverty Department',
         description: '250 S Broadway | (213) 413-1077',
         image: Images[0],
+        startDate: new Date('2023-01-27T10:00:00'),
+        endDate: new Date('2023-01-27T11:00:00'),
       },
       {
         id: 2, // TODO: change this temporary id
@@ -59,6 +61,8 @@ function MapScreen() {
         title: 'Open Mic Night with Unkal Bean (King Eddy Saloon)',
         description: '131 E 5th St.',
         image: Images[1],
+        startDate: new Date('2023-02-04T17:00:00'),
+        endDate: new Date('2023-02-04T22:00:00'),
       },
       {
         id: 3, // TODO: change this temporary id
@@ -69,6 +73,8 @@ function MapScreen() {
         title: 'Piece by Piece (Star Apartments)',
         description: '240 E 6th St. | (323) 963-3372',
         image: Images[2],
+        startDate: new Date('2023-01-28T08:00:00'),
+        endDate: new Date('2023-01-28T09:00:00'),
       },
       {
         id: 4, // TODO: change this temporary id
@@ -79,6 +85,8 @@ function MapScreen() {
         title: 'Movies on the Nickel (James Wood Community Center',
         description: '400 E 5th St. | (213) 229-9602',
         image: Images[3],
+        startDate: new Date('2023-01-29T15:00:00'),
+        endDate: new Date('2023-01-29T16:00:00'),
       },
     ],
     region: {
@@ -175,6 +183,8 @@ function MapScreen() {
             image={marker.image}
             title={marker.title}
             description={marker.description}
+            startDate={marker.startDate}
+            endDate={marker.endDate}
           />
         ))}
       </Animated.ScrollView>

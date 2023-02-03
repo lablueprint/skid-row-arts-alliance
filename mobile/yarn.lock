@@ -3654,6 +3654,11 @@
     "path-browserify" "^1.0.0"
     "url-parse" "^1.5.9"
 
+"expo-calendar@~11.0.1":
+  "integrity" "sha512-I+vpz8O01vjdmYKyFom7etODwj1WDtimMIAy8q4k3AvU/8RdC12PoMu9WjT2EPJ4aAvpNIU7CBLzsgc3nRiKPw=="
+  "resolved" "https://registry.npmjs.org/expo-calendar/-/expo-calendar-11.0.1.tgz"
+  "version" "11.0.1"
+
 "expo-constants@~14.0.0", "expo-constants@~14.0.2":
   "integrity" "sha512-wzV3nrzTXTI8yG0tfas3fnqCfKV6YE+1GphEREyVDAShEB6mBInX1b6HgtpHFy2wOtnml+lPVmTCeGtjjLnZhA=="
   "resolved" "https://registry.npmjs.org/expo-constants/-/expo-constants-14.0.2.tgz"
