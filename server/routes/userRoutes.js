@@ -9,6 +9,6 @@ userRouter.get('/get', userController.getAllUserInfo);
 
 userRouter.patch('/update/:id', userController.updateUser);
 
-// userRouter.delete('/delete/:id', userController.deleteUser);
+userRouter.delete('/delete/:id', userController.deleteUser);
 
 module.exports = userRouter;

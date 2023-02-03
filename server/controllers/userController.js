@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 
 const User = mongoose.model('User');
 
-// Example of creating a document in the database
 const createUser = async (req, res) => {
   const user = new User(req.body);
   try {
@@ -33,21 +32,21 @@ const getAllUserInfo = async (req, res) => {
   }
 };
 
-// const deleteEvent = async (req, res) => {
-//   Event.findByIdAndRemove(req.params.id, (error, data) => {
-//     if (error) {
-//       console.error(error);
-//     } else {
-//       res.json({
-//         msg: data,
-//       });
-//     }
-//   });
-// };
+const deleteUser = async (req, res) => {
+  User.findByIdAndRemove(req.params.id, (error, data) => {
+    if (error) {
+      console.error(error);
+    } else {
+      res.json({
+        msg: data,
+      });
+    }
+  });
+};
 
 module.exports = {
   createUser,
   getAllUserInfo,
   updateUser,
-//   deleteEvent,
+  deleteUser,
 };
