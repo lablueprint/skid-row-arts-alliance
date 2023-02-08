@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
 
 function AddToCalendarButton({ eventName, eventStartDate, eventEndDate }) {
   const [calendarPermission, setCalendarPermission] = useState(null);
-  const [eventIdInCalendar, setEventIdInCalendar] = useState('');
 
   const requestCalendarPermissions = async () => {
     const { status } = await Calendar.requestCalendarPermissionsAsync();
@@ -36,17 +35,13 @@ function AddToCalendarButton({ eventName, eventStartDate, eventEndDate }) {
         const calendars = await Calendar.getCalendarsAsync();
         if (calendars.length > 0) {
           const defaultCalendar = calendars[0];
-          // Alert.alert(`${typeof eventDetails.title}`);
           const eventId = await Calendar.createEventAsync(defaultCalendar.id, {
             title: eventName,
             startDate: eventStartDate,
             endDate: eventEndDate,
           });
           Calendar.openEventInCalendar(eventId);
-          setEventIdInCalendar(eventId);
-          if (eventId) {
-            // Alert.alert(`${eventName} event created with id: ${eventId}`);
-          } else {
+          if (!eventId) {
             Alert.alert('Failed to create event');
           }
         } else {

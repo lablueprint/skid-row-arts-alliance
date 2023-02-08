@@ -203,4 +203,10 @@ function MapScreen({ navigation }) {
   );
 }
 
+MapScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
+
 export default MapScreen;

@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 });
 
 function MapCard({
-  id, image, title, description, startDate, endDate
+  id, image, title, description, startDate, endDate,
 }) {
   return (
     <View style={styles.card} key={id}>
