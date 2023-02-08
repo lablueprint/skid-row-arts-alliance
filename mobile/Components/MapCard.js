@@ -3,6 +3,7 @@ import {
   StyleSheet, View, Image, Text, Dimensions,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import AddCalendarButton from './AddCalendarButton';
 
 const { height } = Dimensions.get('window');
 const CARD_HEIGHT = height / 4;
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
 });
 
 function MapCard({
-  id, image, title, description,
+  id, image, title, description, startDate, endDate,
 }) {
   return (
     <View style={styles.card} key={id}>
@@ -62,6 +63,7 @@ function MapCard({
           {description}
         </Text>
       </View>
+      <AddCalendarButton eventName={title} eventStartDate={startDate} eventEndDate={endDate} />
     </View>
   );
 }
@@ -71,6 +73,8 @@ MapCard.propTypes = {
   image: PropTypes.shape(),
   title: PropTypes.string.isRequired,
   description: PropTypes.string,
+  startDate: PropTypes.instanceOf(Date).isRequired,
+  endDate: PropTypes.instanceOf(Date).isRequired,
 };
 
 MapCard.defaultProps = {
