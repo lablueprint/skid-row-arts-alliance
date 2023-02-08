@@ -1,7 +1,5 @@
 /* eslint-disable no-console */
-const mongoose = require('mongoose');
-
-const User = mongoose.model('User');
+const User = require('../models/userModel');
 
 const createUser = async (req, res) => {
   const user = new User(req.body);
