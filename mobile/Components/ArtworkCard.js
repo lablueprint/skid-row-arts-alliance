@@ -1,12 +1,14 @@
 // component that renders artwork cards on gallery screen
 import * as React from 'react';
 import {
-  View, Image, TouchableOpacity, ScrollView,
+  Image, TouchableOpacity,
 } from 'react-native';
-import { Card, Title, Text, Button } from 'react-native-paper';
+import { Card } from 'react-native-paper';
 import PropTypes from 'prop-types';
 
-function ArtworkCard({ title, Encoding, key, name, description, email, navigation, }) {
+function ArtworkCard({
+  title, Encoding, key, name, description, email, navigation,
+}) {
   const onPressEvent = () => {
     navigation.navigate('Artwork Details', {
       title,

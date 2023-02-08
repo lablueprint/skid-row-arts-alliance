@@ -3,14 +3,12 @@ import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
-  View,
-  Image,
   ScrollView,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
-import ArtworkCard from '../Components/ArtworkCard';
 import PropTypes from 'prop-types';
+import ArtworkCard from '../Components/ArtworkCard';
 
 const styles = StyleSheet.create({
   container: {
@@ -48,7 +46,6 @@ function GalleryScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.scrollView}>
-      {/* add scrollview here */}
       <Text>Gallery Screen</Text>
       {
         loadImages ? (
