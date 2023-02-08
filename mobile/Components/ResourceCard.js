@@ -5,7 +5,7 @@ import {
 import PropTypes from 'prop-types';
 
 function ResourceCard({
-  navigation, title, day, time, location,
+  navigation, title, day, time, location, url,
 }) {
   const onPressEvent = () => {
     navigation.navigate('Event Details', {
@@ -31,7 +31,7 @@ function ResourceCard({
           {location}
         </Paragraph>
       </Card.Content>
-      <Card.Cover source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg' }} />
+      <Card.Cover source={{ uri: url }} />
       <Card.Actions>
         <Button onPress={onPressEvent}>Details</Button>
       </Card.Actions>
@@ -43,7 +43,8 @@ ResourceCard.propTypes = {
   title: PropTypes.string.isRequired,
   day: PropTypes.string.isRequired,
   time: PropTypes.string.isRequired,
-  address: PropTypes.string.isRequired,
+  location: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
