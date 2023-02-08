@@ -126,6 +126,7 @@ function MapScreen({ navigation }) {
           title={resource.title}
           day={resource.day}
           time={resource.time}
+          summary={resource.summmary}
           url={resource.url}
           location={resource.location}
           navigation={navigation}

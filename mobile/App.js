@@ -8,6 +8,7 @@ import SubmissionScreen from './Screen/SubmissionScreen';
 import ProfileScreen from './Screen/ProfileScreen';
 import SignUpScreen from './Screen/SignUpScreen';
 import EventDetailScreen from './Screen/EventDetailScreen';
+import ResourceDetailScreen from './Screen/ResourceDetailScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -30,6 +31,7 @@ export default function App() {
         <Stack.Screen name="Sign Up" component={SignUpScreen} />
         <Stack.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false, gestureEnabled: false }} />
         <Stack.Screen name="Event Details" component={EventDetailScreen} />
+        <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
