@@ -30,6 +30,42 @@ const getAllUserInfo = async (req, res) => {
   }
 };
 
+const getSpecificUser = async (req, res) => {
+  User.findById(req.params.id, (error, data) => {
+    if (error) {
+      console.error(error);
+    } else {
+      res.json({
+        msg: data,
+      });
+    }
+  });
+};
+
+const getUserEvents = async (req, res) => {
+  User.find({ _id: req.params.id }, 'savedEvents -_id', (error, data) => {
+    if (error) {
+      console.error(error);
+    } else {
+      res.json({
+        msg: data,
+      });
+    }
+  });
+};
+
+const getUserArtwork = async (req, res) => {
+  User.find({ _id: req.params.id }, 'savedArtwork -_id', (error, data) => {
+    if (error) {
+      console.error(error);
+    } else {
+      res.json({
+        msg: data,
+      });
+    }
+  });
+};
+
 const deleteUser = async (req, res) => {
   User.findByIdAndRemove(req.params.id, (error, data) => {
     if (error) {
@@ -47,4 +83,7 @@ module.exports = {
   getAllUserInfo,
   updateUser,
   deleteUser,
+  getSpecificUser,
+  getUserEvents,
+  getUserArtwork,
 };
