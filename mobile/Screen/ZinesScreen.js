@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, ScrollView,
+  StyleSheet, ScrollView,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import ZineCard from '../Components/ZineCard';

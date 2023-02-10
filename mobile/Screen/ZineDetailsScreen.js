@@ -51,13 +51,7 @@ function ZineDetailsScreen({ navigation, route }) {
           setPages(numberOfPages);
         }}
         onPageChanged={(page) => {
-          console.log(`Current page: ${page}`);
-        }}
-        onError={(error) => {
-          console.log(error);
-        }}
-        onPressLink={(uri) => {
-          console.log(`Link pressed: ${uri}`);
+          handleOnSliderChange(page);
         }}
         style={styles.pdf}
       />
@@ -67,7 +61,6 @@ function ZineDetailsScreen({ navigation, route }) {
         maximumValue={pages}
         step={1}
         minimumTrackTintColor="orange"
-        onSlidingStart={(newSliderValue) => console.log('on sliding start: ', newSliderValue)}
         onSlidingComplete={(newSliderValue) => handleOnSliderChange(newSliderValue)}
       />
       <Button onPress={() => { handleOnSliderChange(11); }}>Press</Button>
@@ -76,9 +69,13 @@ function ZineDetailsScreen({ navigation, route }) {
 }
 
 ZineDetailsScreen.propTypes = {
-  title: PropTypes.string.isRequired,
-  date: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired,
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
+      url: PropTypes.string.isRequired,
+    }),
+  }).isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
