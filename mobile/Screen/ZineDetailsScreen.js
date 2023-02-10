@@ -48,7 +48,6 @@ function ZineDetailsScreen({ navigation, route }) {
         ref={(pdf) => { ref = pdf; }}
         horizontal
         onLoadComplete={(numberOfPages) => {
-          console.log(`Number of pages: ${numberOfPages}`);
           setPages(numberOfPages);
         }}
         onPageChanged={(page) => {
