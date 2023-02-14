@@ -28,7 +28,7 @@ const events = [{
   date: '10/03/2023',
   day: 'Monday',
   location: '3148 Rose Rd, LA',
-  nonprofits: 'SRAA',
+  organizations: 'SRAA',
   description: 'helping artist hang artwork',
   time: '1:00-2:00pm',
   summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
@@ -40,7 +40,7 @@ const events = [{
   date: '09/08/2023',
   day: 'Tuesday',
   location: '4102 Daisy Rd, LA',
-  nonprofits: 'SRAA, Apple',
+  organizations: 'SRAA, Apple',
   description: 'raising money for skid row artists',
   time: '1:00-2:00pm',
   summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
@@ -52,7 +52,7 @@ const events = [{
   date: '03/05/2023',
   day: 'Wednesday',
   location: '4123 Blue Rd, LA',
-  nonprofits: 'SRAA, Google',
+  organizations: 'SRAA, Google',
   description: 'information on the skid row artists',
   time: '1:00-2:00pm',
   summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
@@ -67,6 +67,9 @@ const resources = [
     day: 'Mon-Fri',
     time: '2-5pm',
     location: '3148 Rose Rd, LA',
+    number: '(123) 345 5678',
+    email: 'studio526@gmail.com',
+    website: 'studio526.com',
     url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
   },
   {
@@ -75,6 +78,9 @@ const resources = [
     day: 'Tue, Thu',
     time: '9am-5pm',
     location: '4102 Daisy Rd, LA',
+    number: '(123) 345 5678',
+    email: 'studio526@gmail.com',
+    website: 'studio526.com',
     url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
   },
   {
@@ -83,6 +89,9 @@ const resources = [
     day: 'Mon, Wed, Fri',
     time: '9-10am',
     location: '4123 Blue Rd, LA',
+    number: '(123) 345 5678',
+    email: 'studio526@gmail.com',
+    website: 'studio526.com',
     url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
   },
 
@@ -113,7 +122,7 @@ function MapScreen({ navigation }) {
           day={event.day}
           location={event.location}
           time={event.time}
-          nonprofits={event.nonprofits}
+          organizations={event.organizations}
           description={event.description}
           summary={event.summary}
           url={event.url}
@@ -130,6 +139,9 @@ function MapScreen({ navigation }) {
           url={resource.url}
           location={resource.location}
           navigation={navigation}
+          number={resource.number}
+          email={resource.email}
+          website={resource.website}
         />
       ))}
     </ScrollView>
