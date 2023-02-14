@@ -25,15 +25,45 @@ const getAllSubmissions = async (req, res) => {
     // Reformat data for response
     const responseList = (await imageDataList).map((data, idx) => ({
       ContentType: data.ContentType,
-      SubmissionData: allSubmissions[idx],
+      SubmissionId: allSubmissions[idx]._id,
       Encoding: `data:${data.ContentType};base64,${Buffer.from(data.Body, 'binary').toString('base64')}`,
     }));
     res.send(responseList);
   } catch (err) {
-    console.error(err);
+    console.log(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
+  }
+};
+
+const getSubmission = async (req, res) => {
+  try {
+    // Art submission retrieval from MongoDB
+    const submission = await Submission.findById(req.query.id);
+
+    // Image retrieval from AWS S3
+    const s3Promises = await submission.s3keys.map(async (s3key) => s3.getObject({
+      Bucket: process.env.S3_BUCKET,
+      Key: s3key,
+    }).promise());
+    const mediaDataList = Promise.all(s3Promises);
+
+    // Reformat data for response
+    const encodingList = (await mediaDataList).map((data) => (
+      `data:${data.ContentType};base64,${Buffer.from(data.Body, 'binary').toString('base64')}`
+    ));
+    res.send({
+      Encodings: encodingList,
+      Submission: submission,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
   }
 };
 
 module.exports = {
   getAllSubmissions,
+  getSubmission,
 };
