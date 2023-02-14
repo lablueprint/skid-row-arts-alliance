@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-
-const Event = mongoose.model('Event');
+const Event = require('../models/eventModel');
 
 // Example of creating a document in the database
 const createEvent = async (req, res) => {

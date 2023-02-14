@@ -26,7 +26,8 @@ require('./models/testModel');
 
 // Route imports
 const testRouter = require('./routes/testRoutes');
-const eventRouter = require('./routes/userRoutes');
+const eventRouter = require('./routes/eventRoutes');
+const userRouter = require('./routes/userRoutes');
 const artGalleryRouter = require('./routes/artGalleryRoutes');
 
 // Start the Node Express server
@@ -35,7 +36,8 @@ app.use(cors());
 app.use(express.json());
 // Use the api routes
 app.use('/test', testRouter);
-app.use('/user', eventRouter);
+app.use('/event', eventRouter);
+app.use('/user', userRouter);
 app.use('/artgallery', artGalleryRouter);
 
 app.get('/', (req, res) => {
