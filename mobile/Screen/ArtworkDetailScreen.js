@@ -26,7 +26,7 @@ function ArtworkDetailScreen({
     id,
   } = route.params;
   const [submission, setSubmission] = useState({});
-  const [encodings, setEncodings] = useState([]);
+  const [allMediaData, setAllMediaData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
 
   const getSubmission = async () => {
@@ -34,7 +34,7 @@ function ArtworkDetailScreen({
     try {
       const res = await axios.get(`${URL}/artgallery/getsubmission`, { params: { id } });
       setSubmission(res.data.Submission);
-      setEncodings(res.data.Encodings);
+      setAllMediaData(res.data.MediaData);
       return res.data;
     } catch (err) {
       console.error(err);
@@ -68,11 +68,14 @@ function ArtworkDetailScreen({
         loadImages ? (
           <>
             {
-              encodings.map((encoding) => (
-                <Image
-                  style={{ width: 200, height: 200 }}
-                  source={{ uri: encoding }}
-                />
+              allMediaData.map((mediaData) => (
+                (mediaData.ContentType[0] === 'i')
+                  ? (
+                    <Image
+                      style={{ width: 200, height: 200 }}
+                      source={{ uri: mediaData.Encoding }}
+                    />
+                  ) : <Text>video</Text>
               ))
             }
           </>

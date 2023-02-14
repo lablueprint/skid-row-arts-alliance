@@ -39,6 +39,8 @@ const getAllSubmissions = async (req, res) => {
 const getSubmission = async (req, res) => {
   try {
     // Art submission retrieval from MongoDB
+    console.log(req.query);
+    console.log(req.body);
     const submission = await Submission.findById(req.query.id);
 
     // Image retrieval from AWS S3
@@ -49,11 +51,14 @@ const getSubmission = async (req, res) => {
     const mediaDataList = Promise.all(s3Promises);
 
     // Reformat data for response
-    const encodingList = (await mediaDataList).map((data) => (
-      `data:${data.ContentType};base64,${Buffer.from(data.Body, 'binary').toString('base64')}`
+    const mediaData = (await mediaDataList).map((data) => (
+      {
+        ContentType: data.ContentType,
+        Encoding: `data:${data.ContentType};base64,${Buffer.from(data.Body, 'binary').toString('base64')}`,
+      }
     ));
     res.send({
-      Encodings: encodingList,
+      MediaData: mediaData,
       Submission: submission,
     });
   } catch (err) {
