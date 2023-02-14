@@ -40,7 +40,6 @@ const getSubmission = async (req, res) => {
   try {
     // Art submission retrieval from MongoDB
     console.log(req.query);
-    console.log(req.body);
     const submission = await Submission.findById(req.query.id);
 
     // Image retrieval from AWS S3
