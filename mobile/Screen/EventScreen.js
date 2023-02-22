@@ -57,6 +57,9 @@ const resources = [
     day: 'Mon-Fri',
     time: '2-5pm',
     location: '3148 Rose Rd, LA',
+    number: '(123) 345 5678',
+    email: 'studio526@gmail.com',
+    website: 'studio526.com',
     url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
   },
   {
@@ -65,6 +68,9 @@ const resources = [
     day: 'Tue, Thu',
     time: '9am-5pm',
     location: '4102 Daisy Rd, LA',
+    number: '(123) 345 5678',
+    email: 'studio526@gmail.com',
+    website: 'studio526.com',
     url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
   },
   {
@@ -73,6 +79,9 @@ const resources = [
     day: 'Mon, Wed, Fri',
     time: '9-10am',
     location: '4123 Blue Rd, LA',
+    number: '(123) 345 5678',
+    email: 'studio526@gmail.com',
+    website: 'studio526.com',
     url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
   },
 
