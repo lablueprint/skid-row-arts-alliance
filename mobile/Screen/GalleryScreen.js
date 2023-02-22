@@ -55,7 +55,7 @@ function GalleryScreen({ navigation }) {
                 <ArtworkCard
                   key={imageData.SubmissionData._id}
                   // style={{ width: 50, height: 50 }}
-                  Encoding={imageData.ImageURL}
+                  ImageURL={imageData.ImageURL}
                   title={imageData.SubmissionData.title}
                   name={imageData.SubmissionData.name}
                   description={imageData.SubmissionData.description}
