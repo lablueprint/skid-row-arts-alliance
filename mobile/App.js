@@ -12,6 +12,7 @@ import ArtworkDetailScreen from './Screen/ArtworkDetailScreen';
 import store from './redux/store';
 import EventDetailScreen from './Screen/EventDetailScreen';
 import EventScreen from './Screen/EventScreen';
+import ResourceDetailScreen from './Screen/ResourceDetailScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -37,6 +38,7 @@ export default function App() {
           <Stack.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false, gestureEnabled: false }} />
           <Stack.Screen name="Event Details" component={EventDetailScreen} />
           <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
+          <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
