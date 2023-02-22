@@ -6,6 +6,7 @@ const userController = require('../controllers/userController');
 userRouter.post('/post', userController.createUser);
 
 userRouter.get('/get', userController.getAllUserInfo);
+userRouter.get('/getEmail/:email', userController.getEmail);
 userRouter.get('/getUser/:id', userController.getSpecificUser);
 userRouter.get('/getEvents/:id', userController.getUserEvents);
 userRouter.get('/getArtwork/:id', userController.getUserArtwork);

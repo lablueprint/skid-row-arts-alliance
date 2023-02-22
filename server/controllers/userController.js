@@ -50,6 +50,18 @@ const getAllUserInfo = async (req, res) => {
   }
 };
 
+const getEmail = async (req, res) => {
+  User.find({ email: req.params.email }, 'email', (error, data) => {
+    if (error) {
+      console.error(error);
+    } else {
+      res.json({
+        msg: data,
+      });
+    }
+  });
+};
+
 const getSpecificUser = async (req, res) => {
   User.findById(req.params.id, (error, data) => {
     if (error) {
@@ -126,6 +138,7 @@ module.exports = {
   addUserEvent,
   addUserArtwork,
   deleteUser,
+  getEmail,
   getSpecificUser,
   getUserEvents,
   getUserArtwork,
