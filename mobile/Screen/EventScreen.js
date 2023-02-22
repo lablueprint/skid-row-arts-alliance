@@ -57,6 +57,7 @@ const resources = [
     day: 'Mon-Fri',
     time: '2-5pm',
     location: '3148 Rose Rd, LA',
+    summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
     number: '(123) 345 5678',
     email: 'studio526@gmail.com',
     website: 'studio526.com',
@@ -68,6 +69,7 @@ const resources = [
     day: 'Tue, Thu',
     time: '9am-5pm',
     location: '4102 Daisy Rd, LA',
+    summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
     number: '(123) 345 5678',
     email: 'studio526@gmail.com',
     website: 'studio526.com',
@@ -79,6 +81,7 @@ const resources = [
     day: 'Mon, Wed, Fri',
     time: '9-10am',
     location: '4123 Blue Rd, LA',
+    summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
     number: '(123) 345 5678',
     email: 'studio526@gmail.com',
     website: 'studio526.com',
@@ -113,10 +116,13 @@ function EventScreen({ navigation }) {
           title={resource.title}
           day={resource.day}
           time={resource.time}
-          summary={resource.summmary}
+          summary={resource.summary}
           url={resource.url}
           location={resource.location}
           navigation={navigation}
+          number={resource.number}
+          email={resource.email}
+          website={resource.website}
         />
       ))}
     </ScrollView>

@@ -42,7 +42,7 @@ function ResourceDetailScreen({
   route,
 }) {
   const {
-    title, day, time, location, summary, number, email, website,
+    title, day, time, location, number, email, website,
   } = route.params;
   return (
     <ScrollView style={styles.container}>
@@ -56,11 +56,6 @@ function ResourceDetailScreen({
       <Text>{location}</Text>
       <View style={styles.border} />
       <Text style={styles.h2}>{title}</Text>
-      <Text>
-        {' '}
-        {summary}
-        {' '}
-      </Text>
       <Text>
         {' '}
         {number}
