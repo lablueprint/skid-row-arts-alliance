@@ -3,11 +3,12 @@ import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
-  View,
-  Image,
+  ScrollView,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
+import PropTypes from 'prop-types';
+import ArtworkCard from '../Components/ArtworkCard';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,9 +17,12 @@ const styles = StyleSheet.create({
     alignItems: 'cnpmenter',
     justifyContent: 'center',
   },
+  scrollView: {
+    padding: 20,
+  },
 });
 
-function GalleryScreen() {
+function GalleryScreen({ navigation }) {
   const [allImageData, setAllImageData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
 
@@ -41,28 +45,36 @@ function GalleryScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.scrollView}>
       <Text>Gallery Screen</Text>
       {
         loadImages ? (
           <>
             {
               allImageData.map((imageData) => (
-                <>
-                  <Image
-                    key={imageData.SubmissionData._id}
-                    style={{ width: 100, height: 100 }}
-                    source={{ uri: imageData.Encoding }}
-                  />
-                  <Text>{imageData.SubmissionData.name}</Text>
-                </>
+                <ArtworkCard
+                  key={imageData.SubmissionData._id}
+                  // style={{ width: 50, height: 50 }}
+                  Encoding={imageData.Encoding}
+                  title={imageData.SubmissionData.title}
+                  name={imageData.SubmissionData.name}
+                  description={imageData.SubmissionData.description}
+                  email={imageData.SubmissionData.email}
+                  navigation={navigation}
+                />
               ))
             }
           </>
         ) : <Text>Nothing</Text>
       }
-    </View>
+    </ScrollView>
   );
 }
+
+GalleryScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
 
 export default GalleryScreen;
