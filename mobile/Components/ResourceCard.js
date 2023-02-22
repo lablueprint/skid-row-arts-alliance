@@ -21,6 +21,8 @@ function ResourceCard({
     });
   };
 
+  console.log(summary);
+
   return (
     <Card style={{ margin: 10 }}>
       <Card.Content style={{ paddingBottom: 10 }}>
