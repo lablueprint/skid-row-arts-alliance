@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Image,
+  StyleSheet, View, Text, ScrollView,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -26,6 +26,11 @@ const styles = StyleSheet.create({
   border: {
     borderBottomColor: '#8A8A8A',
     borderBottomWidth: '1.5',
+    marginVertical: 30,
+    marginBottom: 30,
+    marginRight: 20,
+    marginLeft: 20,
+
   },
   image: {
     width: 200,
@@ -37,13 +42,11 @@ function ResourceDetailScreen({
   route,
 }) {
   const {
-    title, date, day, location, time, summary, url,
+    title, day, time, location, summary, number, email, website,
   } = route.params;
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.h1}>{title}</Text>
-      <Text>{date}</Text>
-      <Text>{location}</Text>
       <View style={styles.border} />
       <View style={styles.square} />
       <Text>{day}</Text>
@@ -52,17 +55,26 @@ function ResourceDetailScreen({
       <View style={styles.square} />
       <Text>{location}</Text>
       <View style={styles.border} />
-      <Text style={styles.h2}>Event Description</Text>
+      <Text style={styles.h2}>{title}</Text>
       <Text>
         {' '}
         {summary}
         {' '}
       </Text>
-      <Text style={styles.h2}>Pictures</Text>
-      <Image
-        style={styles.image}
-        source={{ uri: url }}
-      />
+      <Text>
+        {' '}
+        {number}
+      </Text>
+      <Text>
+        {' '}
+        {email}
+        {' '}
+      </Text>
+      <Text>
+        {' '}
+        {website}
+        {' '}
+      </Text>
     </ScrollView>
   );
 }
@@ -76,7 +88,9 @@ ResourceDetailScreen.propTypes = {
       location: PropTypes.string.isRequired,
       time: PropTypes.string.isRequired,
       summary: PropTypes.string.isRequired,
-      url: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+      website: PropTypes.string.isRequired,
     }),
   }).isRequired,
 };

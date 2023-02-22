@@ -1,0 +1,48 @@
+import React from 'react';
+import {
+  View, Text,
+} from 'react-native';
+import PropTypes from 'prop-types';
+
+function OrganizationDetailScreen({ route }) {
+  const {
+    organization, summary, number, email, website,
+  } = route.params;
+  return (
+    <View>
+      <Text>{organization}</Text>
+      <Text>
+        {' '}
+        {summary}
+        {' '}
+      </Text>
+      <Text>
+        {' '}
+        {number}
+        {' '}
+      </Text>
+      <Text>
+        {' '}
+        {email}
+        {' '}
+      </Text>
+      <Text>
+        {' '}
+        {website}
+        {' '}
+      </Text>
+    </View>
+  );
+}
+
+OrganizationDetailScreen.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      organization: PropTypes.string.isRequired,
+      summary: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+      website: PropTypes.string.isRequired,
+    }),
+  }).isRequired,
+};

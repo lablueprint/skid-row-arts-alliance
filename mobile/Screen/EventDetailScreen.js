@@ -26,6 +26,10 @@ const styles = StyleSheet.create({
   border: {
     borderBottomColor: '#8A8A8A',
     borderBottomWidth: '1.5',
+    marginVertical: 30,
+    marginBottom: 30,
+    marginRight: 20,
+    marginLeft: 20,
   },
   image: {
     width: 200,
@@ -37,13 +41,12 @@ function EventDetailScreen({
   route,
 }) {
   const {
-    title, date, day, location, time, summary, url,
+    title, organizations, day, location, time, summary, url,
   } = route.params;
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.h1}>{title}</Text>
-      <Text>{date}</Text>
-      <Text>{location}</Text>
+      <Text>{organizations}</Text>
       <View style={styles.border} />
       <View style={styles.square} />
       <Text>{day}</Text>
@@ -71,7 +74,7 @@ EventDetailScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
       title: PropTypes.string.isRequired,
-      date: PropTypes.string.isRequired,
+      organizations: PropTypes.string.isRequired,
       day: PropTypes.string.isRequired,
       location: PropTypes.string.isRequired,
       time: PropTypes.string.isRequired,
