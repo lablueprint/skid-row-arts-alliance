@@ -21,7 +21,7 @@ function ArtworkDetailScreen({
   route,
 }) {
   const {
-    title, Encoding, key, name, description, email,
+    title, Encoding, name, description, email,
   } = route.params;
   return (
     <ScrollView style={styles.container}>
@@ -52,7 +52,6 @@ ArtworkDetailScreen.propTypes = {
     params: PropTypes.shape({
       title: PropTypes.string.isRequired,
       Encoding: PropTypes.string.isRequired,
-      key: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
