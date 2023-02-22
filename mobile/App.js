@@ -2,13 +2,16 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
 import MapScreen from './Screen/MapScreen';
 import GalleryScreen from './Screen/GalleryScreen';
 import SubmissionScreen from './Screen/SubmissionScreen';
 import ProfileScreen from './Screen/ProfileScreen';
 import SignUpScreen from './Screen/SignUpScreen';
+import ArtworkDetailScreen from './Screen/ArtworkDetailScreen';
+import store from './redux/store';
 import EventDetailScreen from './Screen/EventDetailScreen';
-import ResourceDetailScreen from './Screen/ResourceDetailScreen';
+import EventScreen from './Screen/EventScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -20,19 +23,22 @@ function HomeStackScreen() {
       <Tab.Screen name="Gallery" component={GalleryScreen} />
       <Tab.Screen name="Submission" component={SubmissionScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Events" component={EventScreen} />
     </Tab.Navigator>
   );
 }
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Sign Up" component={SignUpScreen} />
-        <Stack.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false, gestureEnabled: false }} />
-        <Stack.Screen name="Event Details" component={EventDetailScreen} />
-        <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Sign Up" component={SignUpScreen} />
+          <Stack.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false, gestureEnabled: false }} />
+          <Stack.Screen name="Event Details" component={EventDetailScreen} />
+          <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
