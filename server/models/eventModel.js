@@ -12,28 +12,17 @@ const locationCoordsSchema = new mongoose.Schema({
 });
 
 const dateSchema = new mongoose.Schema({
-  day: {
+  startDate: {
     required: true,
-    type: String,
+    type: Date,
   },
-  date: {
+  endDate: {
     required: true,
-    type: String,
+    type: Date,
   },
   recurring: {
     required: true,
     type: Boolean,
-  },
-});
-
-const timeSchema = new mongoose.Schema({
-  startTime: {
-    required: true,
-    type: String,
-  },
-  endTime: {
-    required: true,
-    type: String,
   },
 });
 
@@ -64,10 +53,6 @@ const eventSchema = new mongoose.Schema({
   date: {
     required: true,
     type: dateSchema,
-  },
-  time: {
-    required: true,
-    type: timeSchema,
   },
   location: {
     required: true,

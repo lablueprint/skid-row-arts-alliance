@@ -62,56 +62,56 @@ function MapScreen({ navigation }) {
   }, []);
 
   const state = {
-  //   markers: [
-  //     {
-  //       id: 1, // TODO: change this temporary id
-  //       coordinate: {
-  //         latitude: 34.051060,
-  //         longitude: -118.247910,
-  //       },
-  //       title: 'Skid Row History Museum and LA Poverty Department',
-  //       description: '250 S Broadway | (213) 413-1077',
-  //       image: Images[0],
-  //       startDate: new Date('2023-01-27T10:00:00'),
-  //       endDate: new Date('2023-01-27T11:00:00'),
-  //     },
-  //     {
-  //       id: 2, // TODO: change this temporary id
-  //       coordinate: {
-  //         latitude: 34.046070,
-  //         longitude: -118.247540,
-  //       },
-  //       title: 'Open Mic Night with Unkal Bean (King Eddy Saloon)',
-  //       description: '131 E 5th St.',
-  //       image: Images[1],
-  //       startDate: new Date('2023-02-04T17:00:00'),
-  //       endDate: new Date('2023-02-04T22:00:00'),
-  //     },
-  //     {
-  //       id: 3, // TODO: change this temporary id
-  //       coordinate: {
-  //         latitude: 34.043580,
-  //         longitude: -118.247680,
-  //       },
-  //       title: 'Piece by Piece (Star Apartments)',
-  //       description: '240 E 6th St. | (323) 963-3372',
-  //       image: Images[2],
-  //       startDate: new Date('2023-01-28T08:00:00'),
-  //       endDate: new Date('2023-01-28T09:00:00'),
-  //     },
-  //     {
-  //       id: 4, // TODO: change this temporary id
-  //       coordinate: {
-  //         latitude: 34.044536,
-  //         longitude: -118.244873,
-  //       },
-  //       title: 'Movies on the Nickel (James Wood Community Center',
-  //       description: '400 E 5th St. | (213) 229-9602',
-  //       image: Images[3],
-  //       startDate: new Date('2023-01-29T15:00:00'),
-  //       endDate: new Date('2023-01-29T16:00:00'),
-  //     },
-  //   ],
+    //   markers: [
+    //     {
+    //       id: 1, // TODO: change this temporary id
+    //       coordinate: {
+    //         latitude: 34.051060,
+    //         longitude: -118.247910,
+    //       },
+    //       title: 'Skid Row History Museum and LA Poverty Department',
+    //       description: '250 S Broadway | (213) 413-1077',
+    //       image: Images[0],
+    //       startDate: new Date('2023-01-27T10:00:00'),
+    //       endDate: new Date('2023-01-27T11:00:00'),
+    //     },
+    //     {
+    //       id: 2, // TODO: change this temporary id
+    //       coordinate: {
+    //         latitude: 34.046070,
+    //         longitude: -118.247540,
+    //       },
+    //       title: 'Open Mic Night with Unkal Bean (King Eddy Saloon)',
+    //       description: '131 E 5th St.',
+    //       image: Images[1],
+    //       startDate: new Date('2023-02-04T17:00:00'),
+    //       endDate: new Date('2023-02-04T22:00:00'),
+    //     },
+    //     {
+    //       id: 3, // TODO: change this temporary id
+    //       coordinate: {
+    //         latitude: 34.043580,
+    //         longitude: -118.247680,
+    //       },
+    //       title: 'Piece by Piece (Star Apartments)',
+    //       description: '240 E 6th St. | (323) 963-3372',
+    //       image: Images[2],
+    //       startDate: new Date('2023-01-28T08:00:00'),
+    //       endDate: new Date('2023-01-28T09:00:00'),
+    //     },
+    //     {
+    //       id: 4, // TODO: change this temporary id
+    //       coordinate: {
+    //         latitude: 34.044536,
+    //         longitude: -118.244873,
+    //       },
+    //       title: 'Movies on the Nickel (James Wood Community Center',
+    //       description: '400 E 5th St. | (213) 229-9602',
+    //       image: Images[3],
+    //       startDate: new Date('2023-01-29T15:00:00'),
+    //       endDate: new Date('2023-01-29T16:00:00'),
+    //     },
+    //   ],
     region: {
       latitude: 34.0442,
       longitude: -118.2439,
@@ -127,8 +127,8 @@ function MapScreen({ navigation }) {
   useEffect(() => {
     mapRef.animation.addListener(({ value }) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3);
-      if (index >= getAllEvents.length) {
-        index = getAllEvents.length - 1;
+      if (index >= allEvents.length) {
+        index = allEvents.length - 1;
       }
       if (index <= 0) {
         index = 0;
@@ -138,7 +138,7 @@ function MapScreen({ navigation }) {
       mapRef.regionTimeout = setTimeout(() => {
         if (mapRef.index !== index) {
           mapRef.index = index;
-          const { coordinate } = getAllEvents[index];
+          const { coordinate } = allEvents[index];
           mapRef.current.animateToRegion(
             {
               ...coordinate,
@@ -152,24 +152,24 @@ function MapScreen({ navigation }) {
     });
   }, []);
 
-  // const interpolations = allEvents.map((index) => {
-  //   const inputRange = [
-  //     (index - 1) * CARD_WIDTH,
-  //     index * CARD_WIDTH,
-  //     (index + 1) * CARD_WIDTH,
-  //   ];
-  //   const scale = mapRef.animation.interpolate({
-  //     inputRange,
-  //     outputRange: [1, 2.5, 1],
-  //     extrapolate: 'clamp',
-  //   });
-  //   const opacity = mapRef.animation.interpolate({
-  //     inputRange,
-  //     outputRange: [0.35, 1, 0.35],
-  //     extrapolate: 'clamp',
-  //   });
-  //   return { scale, opacity };
-  // });
+  const interpolations = allEvents.map((temp, index) => {
+    const inputRange = [
+      (index - 1) * CARD_WIDTH,
+      index * CARD_WIDTH,
+      (index + 1) * CARD_WIDTH,
+    ];
+    const scale = mapRef.animation.interpolate({
+      inputRange,
+      outputRange: [1, 2.5, 1],
+      extrapolate: 'clamp',
+    });
+    const opacity = mapRef.animation.interpolate({
+      inputRange,
+      outputRange: [0.35, 1, 0.35],
+      extrapolate: 'clamp',
+    });
+    return { scale, opacity };
+  });
 
   return (
     <View style={styles.container}>
@@ -178,7 +178,7 @@ function MapScreen({ navigation }) {
         initialRegion={state.region}
         style={styles.container}
       >
-        {/* <MapMarker state={state} interpolations={interpolations} /> */}
+        <MapMarker allEvents={allEvents} interpolations={interpolations} />
       </MapView>
       <Animated.ScrollView
         horizontal
@@ -207,8 +207,8 @@ function MapScreen({ navigation }) {
             image={{ uri: event.images[0] }}
             title={event.title}
             description={event.description}
-            startDate={new Date('2023-01-27T10:00:00')} // TODO: don't hardcode
-            endDate={new Date('2023-01-27T11:00:00')} // TODO: don't hardcode
+            startDate={new Date(event.startDate)} // TODO: don't hardcode
+            endDate={new Date(event.endDate)} // TODO: don't hardcode
           />
         ))}
         <Button
