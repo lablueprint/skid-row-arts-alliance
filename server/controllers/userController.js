@@ -21,6 +21,26 @@ const updateUser = async (req, res) => {
   });
 };
 
+const addUserEvent = async (req, res) => {
+  User.updateOne({ _id: req.params.id }, { $push: { savedEvents: req.body } }, (error, data) => {
+    if (error) {
+      console.log(error);
+    } else {
+      res.json(data);
+    }
+  });
+};
+
+const addUserArtwork = async (req, res) => {
+  User.updateOne({ _id: req.params.id }, { $push: { savedArtwork: req.body } }, (error, data) => {
+    if (error) {
+      console.log(error);
+    } else {
+      res.json(data);
+    }
+  });
+};
+
 const getAllUserInfo = async (req, res) => {
   try {
     const data = await User.find();
@@ -78,12 +98,37 @@ const deleteUser = async (req, res) => {
   });
 };
 
+const removerUserEvent = async (req, res) => {
+  User.updateOne({ _id: req.params.id }, { $pullAll: { savedEvents: req.body } }, (error, data) => {
+    if (error) {
+      console.log(error);
+    } else {
+      res.json(data);
+    }
+  });
+};
+
+const removeUserArtwork = async (req, res) => {
+  // eslint-disable-next-line max-len
+  User.updateOne({ _id: req.params.id }, { $pullAll: { savedArtwork: req.body } }, (error, data) => {
+    if (error) {
+      console.log(error);
+    } else {
+      res.json(data);
+    }
+  });
+};
+
 module.exports = {
   createUser,
   getAllUserInfo,
   updateUser,
+  addUserEvent,
+  addUserArtwork,
   deleteUser,
   getSpecificUser,
   getUserEvents,
   getUserArtwork,
+  removerUserEvent,
+  removeUserArtwork,
 };
