@@ -4,6 +4,8 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
+import * as VideoThumbnails from 'expo-video-thumbnails';
 
 import { URL } from '@env';
 
@@ -35,27 +37,84 @@ const styles = StyleSheet.create({
 function SubmissionScreen() {
   const [submissions, setSubmissions] = useState([]);
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [platform, setPlatform] = useState('');
-  const [accountTag, setAccountTag] = useState('');
-  const [artworkTitle, setArtworkTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState('R');
+  const [email, setEmail] = useState('R');
+  const [platform, setPlatform] = useState('R');
+  const [accountTag, setAccountTag] = useState('R');
+  const [artworkTitle, setArtworkTitle] = useState('R');
+  const [description, setDescription] = useState('R');
 
-  const [images, setImages] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [thumbnail, setThumbnail] = useState('');
 
-  function clearInput() {
+  const clearInput = () => {
     setName('');
     setEmail('');
     setPlatform('');
     setAccountTag('');
     setArtworkTitle('');
     setDescription('');
-    setImages([]);
-  }
-  const reader = new FileReader();
-  reader.addEventListener('loadend', async () => {
-    const blob = reader.result.replace(/^data:image\/\w+;base64,/, '');
+    setFiles([]);
+    setThumbnail('');
+  };
+
+  // const reader = new FileReader();
+  // reader.addEventListener('loadend', async () => {
+  //   const blob = reader.result.replace(/^.*base64,/, '');
+  //   const res = await axios.post(`${URL}/submissions/post`, {
+  //     name,
+  //     email,
+  //     socials: {
+  //       platform,
+  //       tag: accountTag,
+  //     },
+  //     title: artworkTitle,
+  //     description,
+  //     file: { uri: blob, type: files[0].type },
+  //   });
+  //   setSubmissions((prev) => ([...prev, res.data]));
+  //   clearInput();
+  // });
+
+  // const submit = async () => {
+  //   try {
+  //     fetch(files[0].uri)
+  //       .then((res) => res.blob())
+  //       .then((blob) => reader.readAsDataURL(blob))
+  //       .catch((e) => console.error(e));
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+  const read = async (file, reader) => {
+    try {
+      fetch(file)
+        .then((res) => res.blob())
+        .then((blob) => reader.readAsDataURL(blob))
+        .catch((e) => console.error(e));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const submit = async () => {
+    const fileArray = files.map((file) => {
+      const fReader = new FileReader();
+      return new Promise((resolve) => {
+        fReader.addEventListener('loadend', async () => {
+          resolve(fReader.result.replace(/^.*base64,/, ''));
+        });
+        read(file.uri, fReader);
+      });
+    });
+
+    const streams = await Promise.all(fileArray).catch((err) => console.error(err));
+    const objects = [];
+    for (let i = 0; i < files.length; i += 1) {
+      objects.push({ uri: streams[i], type: files[i].type });
+    }
+
     const res = await axios.post(`${URL}/submissions/post`, {
       name,
       email,
@@ -65,21 +124,11 @@ function SubmissionScreen() {
       },
       title: artworkTitle,
       description,
-      blob,
+      objects,
     });
-    setSubmissions((prev) => ([...prev, res.data]));
-    clearInput();
-  });
 
-  const submit = async () => {
-    try {
-      fetch(images[0])
-        .then((res) => res.blob())
-        .then((blob) => reader.readAsDataURL(blob))
-        .catch((e) => console.error(e));
-    } catch (err) {
-      console.error(err);
-    }
+    // setSubmissions((prev) => ([...prev, res.data]));
+    // clearInput();
   };
 
   const pickImage = async () => {
@@ -91,7 +140,7 @@ function SubmissionScreen() {
     });
 
     if (!result.canceled) {
-      setImages((prev) => ([...prev, result.assets[0].uri]));
+      setFiles((prev) => ([...prev, { uri: result.assets[0].uri, type: result.assets[0].type }]));
     }
   };
 
@@ -110,7 +159,18 @@ function SubmissionScreen() {
     });
 
     if (!result.canceled) {
-      setImages((prev) => ([...prev, result.assets[0].uri]));
+      setFiles((prev) => ([...prev, { uri: result.assets[0].uri, type: result.assets[0].type }]));
+    }
+  };
+
+  const openDocSelector = async () => {
+    const result = await DocumentPicker.getDocumentAsync({
+      multiple: true,
+      copyToCacheDirectory: true,
+    });
+
+    if (result.type === 'success') {
+      setFiles((prev) => ([...prev, { uri: result.uri, type: result.mimeType }]));
     }
   };
 
@@ -127,12 +187,15 @@ function SubmissionScreen() {
     <ScrollView>
       <View style={styles.container}>
         <View>
+          <Button title="Clear" onPress={clearInput} />
           <Button title="Image" onPress={pickImage} />
           <Button title="Camera" onPress={openCamera} />
-          {images.map((src) => (
+          <Button title="File" onPress={openDocSelector} />
+
+          {files.map((file, i) => (
             <Image
-              source={{ uri: src }}
-              key={src}
+              source={{ uri: file.uri }}
+              key={i}
               style={{ width: 200, height: 200 }}
             />
           ))}

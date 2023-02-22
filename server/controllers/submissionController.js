@@ -10,9 +10,7 @@ const s3 = new AWS.S3({
   secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
 });
 
-const createSubmission = async (req, res) => {
-  const image = req.body.blob;
-  const buf = Buffer.from(image, 'base64');
+const getFileName = (name, title) => {
   const d = new Date().toLocaleString();
   const date = d.slice(0, d.length - 3)
     .split('/')
@@ -20,23 +18,21 @@ const createSubmission = async (req, res) => {
     .split(' ')
     .join('_')
     .replace(',', '');
-  const keyString = `${date}_${req.body.name}_${req.body.title}`; // account for multiple images in the future
-  try {
-    await s3.upload({
-      Bucket: 'sraa-images',
-      Key: keyString,
-      ContentType: 'image/jpeg',
-      Body: buf,
-    }, (err, data) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(1, data);
-      }
-    });
-  } catch (err) {
-    console.error(err);
-  }
+  return `${date}_${name}_${title}`; // account for multiple images in the future
+};
+
+const createSubmission = async (req, res) => {
+  // S3
+  const { objects, name, title } = req.body;
+  const keyString = getFileName(name, title);
+
+  const s3Promises = await objects.map(async (object, index) => s3.putObject({
+    Bucket: process.env.S3_BUCKET,
+    Key: `${keyString}_${index}`,
+    ContentType: object.type,
+    Body: Buffer.from(object.uri, 'base64'),
+  }).promise());
+  Promise.all(s3Promises).catch((err) => console.error(err));
 
   // Mongo
   const submission = new Submission({
