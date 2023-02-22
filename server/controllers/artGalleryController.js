@@ -27,22 +27,10 @@ const getSubmission = async (req, res) => {
     console.log(req.query);
     const submission = await Submission.findById(req.query.id);
 
-    // Image retrieval from AWS S3
-    const s3Promises = await submission.s3keys.map(async (s3key) => s3.getObject({
-      Bucket: process.env.S3_BUCKET,
-      Key: s3key,
-    }).promise());
-    const mediaDataList = Promise.all(s3Promises);
-
     // Reformat data for response
-    const mediaData = (await mediaDataList).map((data) => (
-      {
-        ContentType: data.ContentType,
-        Encoding: `data:${data.ContentType};base64,${Buffer.from(data.Body, 'binary').toString('base64')}`,
-      }
-    ));
+    const mediaURLs = submission.s3keys.map((key) => (`https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${key}`));
     res.send({
-      MediaData: mediaData,
+      MediaURLs: mediaURLs,
       Submission: submission,
     });
   } catch (err) {
