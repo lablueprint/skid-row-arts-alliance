@@ -7,7 +7,7 @@ import { Card } from 'react-native-paper';
 import PropTypes from 'prop-types';
 
 function ArtworkCard({
-  Encoding, id, navigation,
+  ImageURL, id, navigation,
 }) {
   const onPressEvent = () => {
     navigation.navigate('Artwork Details', {
@@ -20,8 +20,7 @@ function ArtworkCard({
       <Card onPress={onPressEvent}>
         <Image // works with card.cover as well
           style={{ height: 250, width: 250 }}
-          key={id}
-          source={{ uri: Encoding }}
+          source={{ uri: ImageURL }}
         />
       </Card>
     </TouchableOpacity>
@@ -29,7 +28,7 @@ function ArtworkCard({
 }
 
 ArtworkCard.propTypes = {
-  Encoding: PropTypes.string.isRequired,
+  ImageURL: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
