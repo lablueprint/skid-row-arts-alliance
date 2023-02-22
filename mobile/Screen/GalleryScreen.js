@@ -27,7 +27,8 @@ function GalleryScreen({ navigation }) {
   const [loadImages, setLoadImages] = useState(false);
 
   const getAllSubmissions = async () => {
-    // setLoadImages(false);
+    setLoadImages(false);
+
     try {
       const res = await axios.get(`${URL}/artgallery/get`);
       setAllImageData(res.data);
@@ -53,13 +54,8 @@ function GalleryScreen({ navigation }) {
             {
               allImageData.map((imageData) => (
                 <ArtworkCard
-                  key={imageData.SubmissionData._id}
-                  // style={{ width: 50, height: 50 }}
                   ImageURL={imageData.ImageURL}
-                  title={imageData.SubmissionData.title}
-                  name={imageData.SubmissionData.name}
-                  description={imageData.SubmissionData.description}
-                  email={imageData.SubmissionData.email}
+                  id={imageData.SubmissionId}
                   navigation={navigation}
                 />
               ))

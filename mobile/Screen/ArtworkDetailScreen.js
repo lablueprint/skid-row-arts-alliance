@@ -1,8 +1,10 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet, Text, ScrollView, Image,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+import { URL } from '@env';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,28 +23,64 @@ function ArtworkDetailScreen({
   route,
 }) {
   const {
-    title, Encoding, name, description, email,
+    id,
   } = route.params;
+  const [submission, setSubmission] = useState({});
+  const [allMediaData, setAllMediaData] = useState([]);
+  const [loadImages, setLoadImages] = useState(false);
+
+  const getSubmission = async () => {
+    // setLoadImages(false);
+    try {
+      const res = await axios.get(`${URL}/artgallery/getsubmission`, { params: { id } });
+      setSubmission(res.data.Submission);
+      setAllMediaData(res.data.MediaData);
+      return res.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadImages(true);
+    }
+  };
+
+  useEffect(() => {
+    getSubmission();
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
         Title:
-        {title}
+        {submission.title}
       </Text>
       <Text>
         Name:
-        {name}
+        {submission.name}
         {'\n'}
         Description:
-        {description}
+        {submission.description}
         {'\n'}
         Email:
-        {email}
+        {submission.email}
       </Text>
-      <Image
-        style={{ width: 200, height: 200 }}
-        source={{ uri: Encoding }}
-      />
+      {
+        loadImages ? (
+          <>
+            {
+              allMediaData.map((mediaData) => (
+                (mediaData.ContentType[0] === 'i')
+                  ? (
+                    <Image
+                      style={{ width: 200, height: 200 }}
+                      source={{ uri: mediaData.Encoding }}
+                    />
+                  ) : <Text>video</Text>
+              ))
+            }
+          </>
+        ) : <Text>Nothing</Text>
+      }
     </ScrollView>
   );
 }
@@ -50,11 +88,7 @@ function ArtworkDetailScreen({
 ArtworkDetailScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      Encoding: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
     }),
   }).isRequired,
 };
