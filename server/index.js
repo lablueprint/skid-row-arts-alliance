@@ -2,6 +2,7 @@ require('dotenv').config({ path: './.env' });
 
 // Necessary barebone imports
 const express = require('express');
+const helmet = require('helmet');
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -17,10 +18,10 @@ const artGalleryRouter = require('./routes/artGalleryRoutes');
 // Start the Node Express server
 const app = express();
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 
 // Establish the session with mongoose
-
 app.use(session({
   secret: 'example XD',
   store: new MongoStore({
