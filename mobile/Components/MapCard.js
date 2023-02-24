@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
 });
 
 function MapCard({
-  id, image, title, description, startDate, endDate,
+  id, image, title, description, startDate, endDate, isEvent,
 }) {
   return (
     <View style={styles.card} key={id}>
@@ -63,7 +63,9 @@ function MapCard({
           {description}
         </Text>
       </View>
-      <AddCalendarButton eventName={title} eventStartDate={startDate} eventEndDate={endDate} />
+      {isEvent
+        // eslint-disable-next-line max-len
+        && <AddCalendarButton eventName={title} eventStartDate={startDate} eventEndDate={endDate} />}
     </View>
   );
 }
@@ -75,6 +77,7 @@ MapCard.propTypes = {
   description: PropTypes.string,
   startDate: PropTypes.instanceOf(Date).isRequired,
   endDate: PropTypes.instanceOf(Date).isRequired,
+  isEvent: PropTypes.bool.isRequired,
 };
 
 MapCard.defaultProps = {

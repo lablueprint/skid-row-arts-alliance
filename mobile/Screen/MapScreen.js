@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
 
 function MapScreen({ navigation }) {
   const [allEvents, setAllEvents] = useState([]);
+  const [allResources, setAllResources] = useState([]);
 
   const getAllEvents = async () => {
     try {
@@ -57,8 +58,21 @@ function MapScreen({ navigation }) {
     }
   };
 
+  const getAllResources = async () => {
+    try {
+      const result = await axios.get(`${URL}/resource/get`);
+      // const events = result.data;
+      setAllResources(result.data);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
   useEffect(() => {
     getAllEvents();
+    getAllResources();
   }, []);
 
   const state = {
@@ -152,7 +166,9 @@ function MapScreen({ navigation }) {
     });
   }, []);
 
-  const interpolations = allEvents.map((temp, index) => {
+  const combineCards = (array1, array2) => [...array1, ...array2];
+
+  const interpolations = combineCards(allEvents, allResources).map((temp, index) => {
     const inputRange = [
       (index - 1) * CARD_WIDTH,
       index * CARD_WIDTH,
@@ -178,7 +194,7 @@ function MapScreen({ navigation }) {
         initialRegion={state.region}
         style={styles.container}
       >
-        <MapMarker allEvents={allEvents} interpolations={interpolations} />
+        <MapMarker allCards={combineCards(allEvents, allResources)} interpolations={interpolations} />
       </MapView>
       <Animated.ScrollView
         horizontal
@@ -207,8 +223,21 @@ function MapScreen({ navigation }) {
             image={{ uri: event.images[0] }}
             title={event.title}
             description={event.description}
-            startDate={new Date(event.startDate)} // TODO: don't hardcode
-            endDate={new Date(event.endDate)} // TODO: don't hardcode
+            startDate={new Date(event.startDate)}
+            endDate={new Date(event.endDate)}
+            isEvent
+          />
+        ))}
+        {allResources.map((resource) => (
+          <MapCard
+            // eslint-disable-next-line no-underscore-dangle
+            id={resource._id}
+            image={{ uri: resource.icon }}
+            title={resource.title}
+            description={resource.description}
+            startDate={new Date(resource.startDate)}
+            endDate={new Date(resource.endDate)}
+            isEvent={false}
           />
         ))}
         <Button

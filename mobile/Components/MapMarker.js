@@ -16,12 +16,13 @@ const styles = StyleSheet.create({
   },
 });
 
-function MapMarker({ allEvents, interpolations }) {
-  const markers = allEvents.map((marker, index) => {
+function MapMarker({ allCards, interpolations }) {
+  const markers = allCards.map((marker, index) => {
     const opacityStyle = {
       opacity: interpolations[index].opacity,
     };
     return (
+      // eslint-disable-next-line no-underscore-dangle
       <Marker key={marker._id} coordinate={marker.location.coordinates}>
         <Animated.View style={[styles.markerWrap, opacityStyle]}>
           <View style={styles.marker} />
