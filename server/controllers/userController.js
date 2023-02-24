@@ -54,16 +54,16 @@ const getEmail = async (req, res) => {
   User.find({ email: req.params.email }, 'email', (error, data) => {
     if (error) {
       console.error(error);
+    } else if (data.length === 0) {
+      res.json(false);
     } else {
-      res.json({
-        msg: data,
-      });
+      res.json(true);
     }
   });
 };
 
 const getSpecificUser = async (req, res) => {
-  User.findById(req.params.id, (error, data) => {
+  User.findById(req.params.id, '-password', (error, data) => {
     if (error) {
       console.error(error);
     } else {
