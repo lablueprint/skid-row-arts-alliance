@@ -1,7 +1,7 @@
 const express = require('express');
 
 const resourceRouter = express.Router();
-const resourceController = require('../controllers/resourcesController');
+const resourceController = require('../controllers/resourceController');
 
 resourceRouter.post('/post', resourceController.createResource);
 

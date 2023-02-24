@@ -25,20 +25,22 @@ database.once('connected', () => {
 require('./models/testModel');
 
 // Route imports
-const testRouter = require('./routes/testRoutes');
-const eventRouter = require('./routes/eventRoutes');
-const userRouter = require('./routes/userRoutes');
 const artGalleryRouter = require('./routes/artGalleryRoutes');
+const eventRouter = require('./routes/eventRoutes');
+const resourceRouter = require('./routes/resourceRoutes');
+const testRouter = require('./routes/testRoutes');
+const userRouter = require('./routes/userRoutes');
 
 // Start the Node Express server
 const app = express();
 app.use(cors());
 app.use(express.json());
 // Use the api routes
-app.use('/test', testRouter);
-app.use('/event', eventRouter);
-app.use('/user', userRouter);
 app.use('/artgallery', artGalleryRouter);
+app.use('/event', eventRouter);
+app.use('/resource', resourceRouter);
+app.use('/test', testRouter);
+app.use('/user', userRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
