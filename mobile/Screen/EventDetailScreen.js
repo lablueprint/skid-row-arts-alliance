@@ -38,15 +38,26 @@ const styles = StyleSheet.create({
 });
 
 function EventDetailScreen({
-  route,
+  navigation, route,
 }) {
   const {
-    title, organizations, day, location, time, summary, url,
+    title, organizations, day, location, time, summary, url, number, email, website,
   } = route.params;
+
+  const onPressEvent = () => {
+    navigation.navigate('Organization Details', {
+      organizations,
+      summary,
+      number,
+      email,
+      website,
+    });
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.h1}>{title}</Text>
-      <Text>{organizations}</Text>
+      <Text onPress={onPressEvent}>{organizations}</Text>
       <View style={styles.border} />
       <View style={styles.square} />
       <Text>{day}</Text>
@@ -71,6 +82,9 @@ function EventDetailScreen({
 }
 
 EventDetailScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
   route: PropTypes.shape({
     params: PropTypes.shape({
       title: PropTypes.string.isRequired,
@@ -80,6 +94,9 @@ EventDetailScreen.propTypes = {
       time: PropTypes.string.isRequired,
       summary: PropTypes.string.isRequired,
       url: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
+      website: PropTypes.string.isRequired,
     }),
   }).isRequired,
 };

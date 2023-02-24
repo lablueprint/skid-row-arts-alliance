@@ -5,12 +5,27 @@ import {
 import PropTypes from 'prop-types';
 
 function EventCard({
-  title, date, day, location, time, organizations, description, summary, url, navigation,
+  title,
+  date,
+  day,
+  location,
+  time,
+  organizations,
+  description,
+  summary,
+  url,
+  navigation,
+  number,
+  email,
+  website,
 }) {
   const onPressEvent = () => {
     navigation.navigate('Event Details', {
       title,
       organizations,
+      number,
+      email,
+      website,
       date,
       day,
       location,
@@ -71,6 +86,9 @@ EventCard.propTypes = {
   location: PropTypes.string.isRequired,
   time: PropTypes.string.isRequired,
   organizations: PropTypes.string.isRequired,
+  number: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  website: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   summary: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,

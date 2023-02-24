@@ -1,16 +1,24 @@
 import React from 'react';
 import {
-  View, Text,
+  View, Text, StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
+const styles = StyleSheet.create({
+  h1: {
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+});
+
 function OrganizationDetailScreen({ route }) {
   const {
-    organization, summary, number, email, website,
+    organizations, summary, number, email, website,
   } = route.params;
+
   return (
     <View>
-      <Text>{organization}</Text>
+      <Text style={styles.h1}>{organizations}</Text>
       <Text>
         {' '}
         {summary}
@@ -38,7 +46,7 @@ function OrganizationDetailScreen({ route }) {
 OrganizationDetailScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      organization: PropTypes.string.isRequired,
+      organizations: PropTypes.string.isRequired,
       summary: PropTypes.string.isRequired,
       number: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
@@ -46,3 +54,5 @@ OrganizationDetailScreen.propTypes = {
     }),
   }).isRequired,
 };
+
+export default OrganizationDetailScreen;

@@ -44,7 +44,7 @@ function ResourceDetailScreen({
   const {
     title, day, time, location, summary, number, email, website,
   } = route.params;
-  console.log(summary);
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.h1}>{title}</Text>
