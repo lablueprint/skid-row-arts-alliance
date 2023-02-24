@@ -69,7 +69,7 @@ function MapCard({
 }
 
 MapCard.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   image: PropTypes.shape(),
   title: PropTypes.string.isRequired,
   description: PropTypes.string,
