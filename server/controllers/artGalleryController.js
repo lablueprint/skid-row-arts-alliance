@@ -1,4 +1,12 @@
+const AWS = require('aws-sdk');
 const Submission = require('../models/submissionModel');
+
+// Connect to the AWS S3 Storage
+const s3 = new AWS.S3({
+  accessKeyId: process.env.ACCESS_KEY_ID,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY,
+  region: process.env.S3_REGION,
+});
 
 const getAllSubmissions = async (req, res) => {
   try {
@@ -24,13 +32,23 @@ const getAllSubmissions = async (req, res) => {
 const getSubmission = async (req, res) => {
   try {
     // Art submission retrieval from MongoDB
-    console.log(req.query);
+    console.log(req);
     const submission = await Submission.findById(req.query.id);
 
-    // Reformat data for response
-    const mediaURLs = submission.s3keys.map((key) => (`https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${key}`));
+    // Retrieve data about S3 objects related to current submission
+    const s3Promises = submission.s3keys.map(async (key) => s3.getObject({
+      Bucket: process.env.S3_BUCKET,
+      Key: key,
+    }).promise());
+    const s3DataList = Promise.all(s3Promises);
+
+    // Construct list of objects mapping ContentType to Object URL from S3
+    const mediaDataList = (await s3DataList).map((data, idx) => ({
+      ContentType: data.ContentType,
+      MediaURL: `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${submission.s3keys[idx]}`,
+    }));
     res.send({
-      MediaURLs: mediaURLs,
+      MediaData: mediaDataList,
       Submission: submission,
     });
   } catch (err) {
