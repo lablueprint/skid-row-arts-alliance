@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   StyleSheet, Text, ScrollView, Image,
 } from 'react-native';
-import Video from 'react-native-video';
+import VideoPlayer from 'expo-video-player';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
@@ -70,7 +70,6 @@ function ArtworkDetailScreen({
           <>
             {
               allMediaData.map((mediaData) => {
-                console.log(mediaData);
                 const type = mediaData.ContentType.split('/')[0];
                 if (type === 'image') {
                   return (
@@ -81,13 +80,16 @@ function ArtworkDetailScreen({
                   );
                 }
                 if (type === 'video') {
-                  console.log('LOAD A VIDEO1');
                   return (
-                    <Video
-                      source={{ url: 'https://assets.mixkit.co/videos/download/mixkit-countryside-meadow-4075.mp4' }} // the video file
-                      paused={false} // make it start
-                      repeat
+                    <VideoPlayer
+                      videoProps={{
+                        shouldPlay: true,
+                        source: {
+                          uri: mediaData.MediaURL,
+                        },
+                      }}
                     />
+
                   );
                 }
                 return (

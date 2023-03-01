@@ -23,7 +23,7 @@ const getAllSubmissions = async (req, res) => {
     }));
     res.send(responseList);
   } catch (err) {
-    console.log(err);
+    console.err(err);
     res.status(err.statusCode ? err.statusCode : 400);
     res.send(err);
   }
@@ -32,7 +32,6 @@ const getAllSubmissions = async (req, res) => {
 const getSubmission = async (req, res) => {
   try {
     // Art submission retrieval from MongoDB
-    console.log(req);
     const submission = await Submission.findById(req.query.id);
 
     // Retrieve data about S3 objects related to current submission
@@ -52,7 +51,7 @@ const getSubmission = async (req, res) => {
       Submission: submission,
     });
   } catch (err) {
-    console.log(err);
+    console.err(err);
     res.status(err.statusCode ? err.statusCode : 400);
     res.send(err);
   }
