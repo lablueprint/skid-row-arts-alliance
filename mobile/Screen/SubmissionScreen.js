@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet, TextInput, Text, View, ScrollView, Button, Image,
 } from 'react-native';
@@ -37,15 +37,22 @@ const styles = StyleSheet.create({
 function SubmissionScreen() {
   const [submissions, setSubmissions] = useState([]);
 
-  const [name, setName] = useState('R');
-  const [email, setEmail] = useState('R');
-  const [platform, setPlatform] = useState('R');
-  const [accountTag, setAccountTag] = useState('R');
-  const [artworkTitle, setArtworkTitle] = useState('R');
-  const [description, setDescription] = useState('R');
+  const [name, setName] = useState('Ryan Kim');
+  const [email, setEmail] = useState('ryanswkim2003@gmail.com');
+  const [platform, setPlatform] = useState('Instagram');
+  const [accountTag, setAccountTag] = useState('@r.yankim');
+  const [artworkTitle, setArtworkTitle] = useState('My Art');
+  const [description, setDescription] = useState('So cool!');
+
+  const nameRef = useRef();
+  const emailRef = useRef();
+  const platformRef = useRef();
+  const accountRef = useRef();
+  const artworkRef = useRef();
+  const descriptionRef = useRef();
 
   const [files, setFiles] = useState([]);
-  const [thumbnail, setThumbnail] = useState('');
+  const [thumbnails, setThumbnails] = useState([]);
 
   const clearInput = () => {
     setName('');
@@ -55,37 +62,8 @@ function SubmissionScreen() {
     setArtworkTitle('');
     setDescription('');
     setFiles([]);
-    setThumbnail('');
+    setThumbnails([]);
   };
-
-  // const reader = new FileReader();
-  // reader.addEventListener('loadend', async () => {
-  //   const blob = reader.result.replace(/^.*base64,/, '');
-  //   const res = await axios.post(`${URL}/submissions/post`, {
-  //     name,
-  //     email,
-  //     socials: {
-  //       platform,
-  //       tag: accountTag,
-  //     },
-  //     title: artworkTitle,
-  //     description,
-  //     file: { uri: blob, type: files[0].type },
-  //   });
-  //   setSubmissions((prev) => ([...prev, res.data]));
-  //   clearInput();
-  // });
-
-  // const submit = async () => {
-  //   try {
-  //     fetch(files[0].uri)
-  //       .then((res) => res.blob())
-  //       .then((blob) => reader.readAsDataURL(blob))
-  //       .catch((e) => console.error(e));
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
 
   const read = async (file, reader) => {
     try {
@@ -97,7 +75,6 @@ function SubmissionScreen() {
       console.error(err);
     }
   };
-
   const submit = async () => {
     const fileArray = files.map((file) => {
       const fReader = new FileReader();
@@ -115,20 +92,40 @@ function SubmissionScreen() {
       objects.push({ uri: streams[i], type: files[i].type });
     }
 
-    const res = await axios.post(`${URL}/submissions/post`, {
-      name,
-      email,
-      socials: {
-        platform,
-        tag: accountTag,
-      },
-      title: artworkTitle,
-      description,
-      objects,
-    });
+    try {
+      const res = await axios.post(`${URL}/submissions/post`, {
+        name,
+        email,
+        socials: {
+          platform,
+          tag: accountTag,
+        },
+        title: artworkTitle,
+        description,
+        objects,
+      });
+      setSubmissions((prev) => ([...prev, res.data]));
+      clearInput();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-    // setSubmissions((prev) => ([...prev, res.data]));
-    // clearInput();
+  const addFile = async (fileURI, fileType) => {
+    console.log(fileURI);
+    setFiles((prev) => ([...prev, { uri: fileURI, type: fileType }]));
+    if (fileType.includes('image')) {
+      setThumbnails((prev) => ([...prev, fileURI]));
+    } else if (fileType.includes('video')) {
+      try {
+        const { videoToImageURI } = await VideoThumbnails.getThumbnailAsync(fileURI);
+        setThumbnails((prev) => ([...prev, videoToImageURI]));
+      } catch (err) {
+        console.error(err);
+      }
+    } else { // Implement default thumbnail in future if we have additional file types (e.g. audio)
+
+    }
   };
 
   const pickImage = async () => {
@@ -140,7 +137,7 @@ function SubmissionScreen() {
     });
 
     if (!result.canceled) {
-      setFiles((prev) => ([...prev, { uri: result.assets[0].uri, type: result.assets[0].type }]));
+      addFile(result.assets[0].uri, result.assets[0].type);
     }
   };
 
@@ -159,7 +156,7 @@ function SubmissionScreen() {
     });
 
     if (!result.canceled) {
-      setFiles((prev) => ([...prev, { uri: result.assets[0].uri, type: result.assets[0].type }]));
+      addFile(result.assets[0].uri, result.assets[0].type);
     }
   };
 
@@ -170,7 +167,7 @@ function SubmissionScreen() {
     });
 
     if (result.type === 'success') {
-      setFiles((prev) => ([...prev, { uri: result.uri, type: result.mimeType }]));
+      addFile(result.uri, result.mimeType);
     }
   };
 
@@ -183,6 +180,8 @@ function SubmissionScreen() {
     getSubmissions();
   }, []);
 
+  console.log(thumbnails);
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -192,9 +191,9 @@ function SubmissionScreen() {
           <Button title="Camera" onPress={openCamera} />
           <Button title="File" onPress={openDocSelector} />
 
-          {files.map((file, i) => (
+          {thumbnails.map((uri, i) => (
             <Image
-              source={{ uri: file.uri }}
+              source={{ uri }}
               key={i}
               style={{ width: 200, height: 200 }}
             />
@@ -204,36 +203,42 @@ function SubmissionScreen() {
             placeholder="Name"
             onChangeText={(newName) => setName(newName)}
             defaultValue={name}
+            ref={nameRef}
           />
           <TextInput
             styles={styles.input}
             placeholder="Email"
             onChangeText={(newEmail) => setEmail(newEmail)}
             defaultValue={email}
+            ref={emailRef}
           />
           <TextInput
             styles={styles.input}
             placeholder="Social Media Platform"
             onChangeText={(newPlatform) => setPlatform(newPlatform)}
             defaultValue={platform}
+            ref={platformRef}
           />
           <TextInput
             styles={styles.input}
             placeholder="Social Media Account Tag"
             onChangeText={(newEmail) => setAccountTag(newEmail)}
             defaultValue={accountTag}
+            ref={accountRef}
           />
           <TextInput
             styles={styles.input}
             placeholder="Artwork Title"
             onChangeText={(newArtwork) => setArtworkTitle(newArtwork)}
             defaultValue={artworkTitle}
+            ref={artworkRef}
           />
           <TextInput
             styles={styles.input}
             placeholder="Artwork Description"
             onChangeText={(newDescription) => setDescription(newDescription)}
             defaultValue={description}
+            ref={descriptionRef}
           />
           <Button
             title="Submit"
@@ -241,7 +246,6 @@ function SubmissionScreen() {
           />
         </View>
       </View>
-
       <View style={styles.submissionsContainer}>
         {submissions.map((submission) => (
           <View style={styles.submission} key={submission._id}>

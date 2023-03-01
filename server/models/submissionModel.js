@@ -32,6 +32,10 @@ const submissionSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  s3Keys: {
+    required: true,
+    type: [String],
+  },
 });
 
 module.exports = mongoose.model('Submission', submissionSchema);

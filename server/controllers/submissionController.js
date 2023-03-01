@@ -33,6 +33,12 @@ const createSubmission = async (req, res) => {
     Body: Buffer.from(object.uri, 'base64'),
   }).promise());
   Promise.all(s3Promises).catch((err) => console.error(err));
+  console.log('Done');
+
+  const s3Keys = [];
+  for (let i = 0; i < objects.length; i += 1) {
+    s3Keys.push(`${keyString}_${i}`);
+  }
 
   // Mongo
   const submission = new Submission({
@@ -41,7 +47,9 @@ const createSubmission = async (req, res) => {
     socials: req.body.socials,
     title: req.body.title,
     description: req.body.description,
+    s3Keys,
   });
+
   try {
     const response = await submission.save(submission);
     res.send(response);
