@@ -18,6 +18,7 @@ function EventCard({
   number,
   email,
   website,
+  tag,
 }) {
   const onPressEvent = () => {
     navigation.navigate('Event Details', {
@@ -68,6 +69,10 @@ function EventCard({
           {' '}
           {description}
         </Paragraph>
+        <Paragraph>
+          {' '}
+          {tag}
+        </Paragraph>
         <Paragraph>Tag0 | Tag1 | Tag2</Paragraph>
       </Card.Content>
       <Card.Cover source={{ uri: url }} />
@@ -92,6 +97,7 @@ EventCard.propTypes = {
   description: PropTypes.string.isRequired,
   summary: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
+  tag: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
