@@ -12,7 +12,7 @@ const db = require('./db');
 const port = process.env.PORT;
 
 // Route imports
-const eventRouter = require('./routes/userRoutes');
+const userRouter = require('./routes/userRoutes');
 const artGalleryRouter = require('./routes/artGalleryRoutes');
 
 // Start the Node Express server
@@ -32,7 +32,7 @@ app.use(session({
 }));
 
 // Use the api routes
-app.use('/user', eventRouter);
+app.use('/user', userRouter);
 app.use('/artgallery', artGalleryRouter);
 
 app.get('/', (req, res) => {
