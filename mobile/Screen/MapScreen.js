@@ -153,10 +153,8 @@ function MapScreen({ navigation }) {
 
       clearTimeout(mapRef.regionTimeout);
       mapRef.regionTimeout = setTimeout(() => {
-        console.log('mapRef.index: ', mapRef.index, ' index: ', index);
         if (mapRef.index !== index) {
           mapRef.index = index;
-          console.log(allCards[index]);
           const coordinate = allCards[index].location.coordinates;
           mapRef.current.animateToRegion(
             {
