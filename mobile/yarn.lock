@@ -1535,6 +1535,11 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@miblanchard/react-native-slider@^2.3.0":
+  "integrity" "sha512-KiAESUOP69eft8U43iD6xeX+s9ZetwiY/cXkGq1xL4nywb37cVnrxQeSi3+rAix8aHeJwXXeyPZkxmZQe0Hjbw=="
+  "resolved" "https://registry.npmjs.org/@miblanchard/react-native-slider/-/react-native-slider-2.3.0.tgz"
+  "version" "2.3.0"
+
 "@nodelib/fs.scandir@2.1.5":
   "integrity" "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="
   "resolved" "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
@@ -3713,7 +3718,7 @@
     "path-browserify" "^1.0.0"
     "url-parse" "^1.5.9"
 
-"expo-av@>=5.0.2":
+"expo-av@^13.2.1", "expo-av@>=5.0.2":
   "integrity" "sha512-mC0mYSzaOaZgXjzhW2l4Ag325JjH6q5IbptfwD7gkMOFYy7VPOMxEMUnetadbs3DDzmgE6vUWrTjUIUbwq59qg=="
   "resolved" "https://registry.npmjs.org/expo-av/-/expo-av-13.2.1.tgz"
   "version" "13.2.1"

@@ -28,7 +28,6 @@ function GalleryScreen({ navigation }) {
 
   const getAllSubmissions = async () => {
     setLoadImages(false);
-
     try {
       const res = await axios.get(`${URL}/artgallery/get`);
       setAllImageData(res.data);
@@ -43,6 +42,7 @@ function GalleryScreen({ navigation }) {
 
   useEffect(() => {
     getAllSubmissions();
+    console.log('load');
   }, []);
 
   return (

@@ -23,7 +23,7 @@ const getAllSubmissions = async (req, res) => {
     }));
     res.send(responseList);
   } catch (err) {
-    console.err(err);
+    console.error(err);
     res.status(err.statusCode ? err.statusCode : 400);
     res.send(err);
   }
@@ -51,7 +51,7 @@ const getSubmission = async (req, res) => {
       Submission: submission,
     });
   } catch (err) {
-    console.err(err);
+    console.error(err);
     res.status(err.statusCode ? err.statusCode : 400);
     res.send(err);
   }

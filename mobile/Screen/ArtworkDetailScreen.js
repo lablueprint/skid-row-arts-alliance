@@ -6,6 +6,8 @@ import VideoPlayer from 'expo-video-player';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
+import AudioPlayer from '../Components/AudioPlayer';
+// import { Audio } from 'expo-av';
 
 const styles = StyleSheet.create({
   container: {
@@ -83,17 +85,23 @@ function ArtworkDetailScreen({
                   return (
                     <VideoPlayer
                       videoProps={{
-                        shouldPlay: true,
+                        shouldPlay: false,
                         source: {
                           uri: mediaData.MediaURL,
                         },
                       }}
                     />
-
+                  );
+                }
+                if (type === 'audio') {
+                  return (
+                    <AudioPlayer
+                      source={mediaData.MediaURL}
+                    />
                   );
                 }
                 return (
-                  <Text>other</Text>
+                  <Text>Unsupported filetype</Text>
                 );
               })
             }
