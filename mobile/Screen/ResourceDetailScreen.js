@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Image,
+  StyleSheet, View, Text, ScrollView,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     marginRight: 20,
     marginLeft: 20,
+
   },
   image: {
     width: 200,
@@ -37,27 +38,16 @@ const styles = StyleSheet.create({
   },
 });
 
-function EventDetailScreen({
-  navigation, route,
+function ResourceDetailScreen({
+  route,
 }) {
   const {
-    title, organizations, day, location, time, summary, url, number, email, website,
+    title, day, time, location, summary, number, email, website,
   } = route.params;
-
-  const onPressEvent = () => {
-    navigation.navigate('Organization Details', {
-      organizations,
-      summary,
-      number,
-      email,
-      website,
-    });
-  };
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.h1}>{title}</Text>
-      <Text onPress={onPressEvent}>{organizations}</Text>
       <View style={styles.border} />
       <View style={styles.square} />
       <Text>{day}</Text>
@@ -66,34 +56,39 @@ function EventDetailScreen({
       <View style={styles.square} />
       <Text>{location}</Text>
       <View style={styles.border} />
-      <Text style={styles.h2}>Event Description</Text>
+      <Text style={styles.h2}>{title}</Text>
       <Text>
         {' '}
         {summary}
         {' '}
       </Text>
-      <Text style={styles.h2}>Pictures</Text>
-      <Image
-        style={styles.image}
-        source={{ uri: url }}
-      />
+      <Text>
+        {' '}
+        {number}
+      </Text>
+      <Text>
+        {' '}
+        {email}
+        {' '}
+      </Text>
+      <Text>
+        {' '}
+        {website}
+        {' '}
+      </Text>
     </ScrollView>
   );
 }
 
-EventDetailScreen.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func,
-  }).isRequired,
+ResourceDetailScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
       title: PropTypes.string.isRequired,
-      organizations: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
       day: PropTypes.string.isRequired,
       location: PropTypes.string.isRequired,
       time: PropTypes.string.isRequired,
       summary: PropTypes.string.isRequired,
-      url: PropTypes.string.isRequired,
       number: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
       website: PropTypes.string.isRequired,
@@ -101,4 +96,4 @@ EventDetailScreen.propTypes = {
   }).isRequired,
 };
 
-export default EventDetailScreen;
+export default ResourceDetailScreen;

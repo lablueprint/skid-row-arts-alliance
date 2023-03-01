@@ -22,6 +22,8 @@ const CARD_WIDTH = CARD_HEIGHT + 50;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   scrollView: {
     position: 'absolute',
@@ -201,6 +203,11 @@ function MapScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Button title="Workshop">Workshop</Button>
+      <Button title="Food">Food</Button>
+      <Button title="Shelter">Shelter</Button>
+      <Button title="Mission">Mission</Button>
+      <Button title="Shower/Laundry">Shower/Laundry</Button>
       <MapView
         ref={mapRef}
         initialRegion={state.region}
@@ -261,7 +268,6 @@ function MapScreen({ navigation }) {
           onPress={() => {
             navigation.navigate('Sign Up');
           }}
-        // BUTTON FOR TESTING ONLY
         />
       </Animated.ScrollView>
     </View>
