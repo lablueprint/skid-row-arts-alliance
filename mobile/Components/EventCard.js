@@ -4,11 +4,35 @@ import {
 } from 'react-native-paper';
 import PropTypes from 'prop-types';
 
-function MapEvent({
-  title, date, location, nonprofits, description, navigation,
+function EventCard({
+  title,
+  date,
+  day,
+  location,
+  time,
+  organizations,
+  description,
+  summary,
+  url,
+  navigation,
+  number,
+  email,
+  website,
 }) {
   const onPressEvent = () => {
-    navigation.navigate('Event Details');
+    navigation.navigate('Event Details', {
+      title,
+      organizations,
+      number,
+      email,
+      website,
+      date,
+      day,
+      location,
+      time,
+      summary,
+      url,
+    });
   };
 
   return (
@@ -25,14 +49,19 @@ function MapEvent({
           {date}
         </Paragraph>
         <Paragraph>
+          Time:
+          {' '}
+          {time}
+        </Paragraph>
+        <Paragraph>
           Location:
           {' '}
           {location}
         </Paragraph>
         <Paragraph>
-          Nonprofits:
+          Organizations:
           {' '}
-          {nonprofits}
+          {organizations}
         </Paragraph>
         <Paragraph>
           Description:
@@ -41,24 +70,31 @@ function MapEvent({
         </Paragraph>
         <Paragraph>Tag0 | Tag1 | Tag2</Paragraph>
       </Card.Content>
-      <Card.Cover source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg' }} />
+      <Card.Cover source={{ uri: url }} />
       <Card.Actions>
-        <Button onPress={() => onPressEvent(navigation)}>Details</Button>
+        <Button onPress={onPressEvent}>Details</Button>
         <Button>I&apos;m interested!</Button>
       </Card.Actions>
     </Card>
   );
 }
 
-MapEvent.propTypes = {
+EventCard.propTypes = {
   title: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
+  day: PropTypes.string.isRequired,
   location: PropTypes.string.isRequired,
-  nonprofits: PropTypes.string.isRequired,
+  time: PropTypes.string.isRequired,
+  organizations: PropTypes.string.isRequired,
+  number: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  website: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
+  summary: PropTypes.string.isRequired,
+  url: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
 };
 
-export default MapEvent;
+export default EventCard;

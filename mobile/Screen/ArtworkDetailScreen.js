@@ -21,7 +21,7 @@ function ArtworkDetailScreen({
   route,
 }) {
   const {
-    title, Encoding, key, name, description, email,
+    title, Encoding, name, description, email,
   } = route.params;
   return (
     <ScrollView style={styles.container}>
