@@ -8,11 +8,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  marker: {
+  eventMarker: {
     width: 20,
     height: 20,
     borderRadius: 5,
     backgroundColor: 'rgba(130,4,150, 0.9)',
+  },
+  resourceMarker: {
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    backgroundColor: 'rgba(255,127,80, 0.9)',
   },
 });
 
@@ -21,11 +27,12 @@ function MapMarker({ allCards, interpolations }) {
     const opacityStyle = {
       opacity: interpolations[index].opacity,
     };
+
     return (
       // eslint-disable-next-line no-underscore-dangle
       <Marker key={marker._id} coordinate={marker.location.coordinates}>
         <Animated.View style={[styles.markerWrap, opacityStyle]}>
-          <View style={styles.marker} />
+          <View style={marker.isResource ? styles.resourceMarker : styles.eventMarker} />
         </Animated.View>
       </Marker>
     );

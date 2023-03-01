@@ -74,6 +74,10 @@ const eventSchema = new mongoose.Schema({
     required: true,
     type: [String],
   },
+  isResource: {
+    required: true,
+    type: Boolean,
+  },
 });
 
 module.exports = mongoose.model('Event', eventSchema);

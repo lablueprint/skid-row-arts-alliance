@@ -134,6 +134,9 @@ function MapScreen({ navigation }) {
     },
   };
 
+  const combineCards = (array1, array2) => [...array1, ...array2];
+  const allCards = combineCards(allEvents, allResources);
+
   const mapRef = useRef(null);
   mapRef.index = 0;
   mapRef.animation = new Animated.Value(0);
@@ -141,8 +144,8 @@ function MapScreen({ navigation }) {
   useEffect(() => {
     mapRef.animation.addListener(({ value }) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3);
-      if (index >= allEvents.length) {
-        index = allEvents.length - 1;
+      if (index >= allCards.length) {
+        index = allCards.length - 1;
       }
       if (index <= 0) {
         index = 0;
@@ -150,9 +153,22 @@ function MapScreen({ navigation }) {
 
       clearTimeout(mapRef.regionTimeout);
       mapRef.regionTimeout = setTimeout(() => {
+        console.log('mapRef.index: ', mapRef.index, ' index: ', index);
         if (mapRef.index !== index) {
           mapRef.index = index;
-          const { coordinate } = allEvents[index];
+          console.log(allCards[index]);
+          const coordinate = allCards[index].location.coordinates;
+          mapRef.current.animateToRegion(
+            {
+              ...coordinate,
+              latitudeDelta: state.region.latitudeDelta,
+              longitudeDelta: state.region.longitudeDelta,
+            },
+            350,
+          );
+        }
+        else if (mapRef.index === 0 && index === 0) { // Default to first card location upon load
+          const coordinate = allCards[index].location.coordinates;
           mapRef.current.animateToRegion(
             {
               ...coordinate,
@@ -164,11 +180,9 @@ function MapScreen({ navigation }) {
         }
       }, 10);
     });
-  }, []);
+  }, [mapRef.animation]);
 
-  const combineCards = (array1, array2) => [...array1, ...array2];
-
-  const interpolations = combineCards(allEvents, allResources).map((temp, index) => {
+  const interpolations = allCards.map((temp, index) => {
     const inputRange = [
       (index - 1) * CARD_WIDTH,
       index * CARD_WIDTH,
@@ -194,7 +208,10 @@ function MapScreen({ navigation }) {
         initialRegion={state.region}
         style={styles.container}
       >
-        <MapMarker allCards={combineCards(allEvents, allResources)} interpolations={interpolations} />
+        <MapMarker
+          allCards={combineCards(allEvents, allResources)}
+          interpolations={interpolations}
+        />
       </MapView>
       <Animated.ScrollView
         horizontal
