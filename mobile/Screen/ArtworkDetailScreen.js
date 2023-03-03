@@ -49,6 +49,7 @@ function ArtworkDetailScreen({
 
   useEffect(() => {
     getSubmission();
+    console.log('load');
   }, []);
 
   return (

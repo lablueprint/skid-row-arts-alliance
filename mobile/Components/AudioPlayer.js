@@ -7,9 +7,9 @@ import { Slider } from '@miblanchard/react-native-slider';
 import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-  },
+  // container: {
+  //   alignItems: 'center',
+  // },
   slider: {
     width: '80%',
     height: 40,
@@ -21,61 +21,59 @@ const styles = StyleSheet.create({
 });
 
 function AudioPlayer({ source }) {
-  const [sound, setSound] = useState(null);
+  const [audio, setAudio] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
-  const [soundStatus, setSoundStatus] = useState();
   const [position, setPosition] = useState(0);
 
-  async function loadAudio() {
-    const newSound = await Audio.Sound.createAsync(
-      { uri: source },
-      { shouldPlay: false },
-    );
-    console.log('sound');
-    setSound(newSound);
-    const resStatus = await sound.getStatusAsync();
-    setSoundStatus(resStatus);
-    setDuration(resStatus.durationMillis);
-  }
-  useEffect(() => {
-    try {
-      loadAudio();
-    } catch (err) {
-      console.error(err);
-      console.log('fucked');
-    } finally {
-      console.log(soundStatus);
-      console.log(duration);
+  const onPlaybackStatusUpdate = (status) => {
+    if (status.isLoaded && !status.isBuffering) {
+      setPosition(status.positionMillis / status.durationMillis);
     }
+  };
+
+  useEffect(() => {
+    async function loadAudio() {
+      const { sound, status } = await Audio.Sound.createAsync(
+        { uri: source },
+        { shouldPlay: false },
+        onPlaybackStatusUpdate,
+      );
+      setAudio(sound);
+      await sound.getStatusAsync();
+      // console.log('hello');
+      setDuration(status.durationMillis);
+    }
+    loadAudio();
     return () => {
-      if (sound !== null) {
-        sound.unloadAsync();
+      if (audio !== null) {
+        audio.unloadAsync();
       }
     };
   }, []);
 
   const handlePlayPause = async () => {
-    if (sound === null) {
+    if (audio === null) {
       return;
     }
     if (isPlaying) {
-      await sound.pauseAsync();
+      await audio.pauseAsync();
     } else {
-      await sound.playAsync();
+      await audio.playAsync();
     }
     setIsPlaying(!isPlaying);
   };
 
   const handleScrub = async (value) => {
-    if (sound === null) {
+    if (audio === null) {
       return;
     }
-    await sound.setPositionAsync(value * duration);
+    await audio.setPositionAsync(value * duration);
     setPosition(value);
   };
 
-  const formatTime = (seconds) => {
+  const formatTime = (milliseconds) => {
+    const seconds = Math.floor(milliseconds / 1000);
     const pad = (num) => (`0${num}`).slice(-2);
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
@@ -83,18 +81,17 @@ function AudioPlayer({ source }) {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <Button title={isPlaying ? 'Pause' : 'Play'} onPress={handlePlayPause} />
       <Slider
         style={styles.slider}
         value={position}
-        // onValueChange={handleScrub}
+        onValueChange={handleScrub}
         minimumValue={0}
         maximumValue={1}
         minimumTrackTintColor="orange"
         maximumTrackTintColor="blue"
         thumbTintColor="green"
-        onSlidingComplete={(newSliderValue) => handleScrub(newSliderValue)}
       />
       <Text style={styles.timestamp}>{formatTime(position * duration)}</Text>
       <Text style={styles.timestamp}>{formatTime(duration)}</Text>

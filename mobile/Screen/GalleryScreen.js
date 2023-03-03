@@ -42,7 +42,7 @@ function GalleryScreen({ navigation }) {
 
   useEffect(() => {
     getAllSubmissions();
-    console.log('load');
+    // console.log('load');
   }, []);
 
   return (
