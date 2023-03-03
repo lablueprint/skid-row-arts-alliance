@@ -112,14 +112,13 @@ function SubmissionScreen() {
   };
 
   const addFile = async (fileURI, fileType) => {
-    console.log(fileURI);
     setFiles((prev) => ([...prev, { uri: fileURI, type: fileType }]));
     if (fileType.includes('image')) {
       setThumbnails((prev) => ([...prev, fileURI]));
     } else if (fileType.includes('video')) {
       try {
-        const { videoToImageURI } = await VideoThumbnails.getThumbnailAsync(fileURI);
-        setThumbnails((prev) => ([...prev, videoToImageURI]));
+        const res = await VideoThumbnails.getThumbnailAsync(fileURI);
+        setThumbnails((prev) => ([...prev, res.uri]));
       } catch (err) {
         console.error(err);
       }
@@ -179,8 +178,6 @@ function SubmissionScreen() {
   useEffect(() => {
     getSubmissions();
   }, []);
-
-  console.log(thumbnails);
 
   return (
     <ScrollView>
