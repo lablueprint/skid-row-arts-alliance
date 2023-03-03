@@ -11,8 +11,8 @@ import Pdf from 'react-native-pdf';
 const styles = StyleSheet.create({
   pdf: {
     flex: 1,
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width * 0.75,
+    height: Dimensions.get('window').height * 0.5,
   },
 });
 
