@@ -1,17 +1,18 @@
 require('dotenv').config({ path: './.env' });
 
-// Necessary barebone imports
+// Necessary imports
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
-// Connect to the MongoDB Database
-const db = require('./db');
+const passport = require('./utils/passportConfig');
+const db = require('./utils/db');
 
 const port = process.env.PORT;
 
 // Route imports
+const authRouter = require('./routes/authRoutes');
 const userRouter = require('./routes/userRoutes');
 const artGalleryRouter = require('./routes/artGalleryRoutes');
 
@@ -21,7 +22,7 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
-// Establish the session with mongoose
+// Establish the session and MongoDB connection
 app.use(session({
   secret: 'example XD',
   store: new MongoStore({
@@ -31,7 +32,12 @@ app.use(session({
   saveUninitialized: false,
 }));
 
+// Establish the session with passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Use the api routes
+app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/artgallery', artGalleryRouter);
 
