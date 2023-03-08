@@ -12,6 +12,10 @@ const sectionSchema = new mongoose.Schema({
 });
 
 const zineSchema = new mongoose.Schema({
+  url: {
+    required: true,
+    type: String,
+  },
   season: {
     required: true,
     type: String,

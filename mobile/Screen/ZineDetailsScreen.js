@@ -24,14 +24,15 @@ const styles = {
     position: 'relative',
   },
   panelHeader: {
-    height: 180,
+    height: 60,
     backgroundColor: '#b197fc',
-    justifyContent: 'flex-end',
-    padding: 24,
+    justifyContent: 'center',
+    padding: 10,
   },
   textHeader: {
-    fontSize: 28,
+    fontSize: 16,
     color: '#FFF',
+    alignItems: 'center',
   },
   icon: {
     alignItems: 'center',
@@ -55,38 +56,20 @@ const styles = {
   },
 };
 
-function ZineDetailsScreen({ draggableRange = { top: height + 180 - 64, bottom: 180 } }) {
-  const _draggedValue = useRef(new Animated.Value(180)).current;
+function ZineDetailsScreen() {
+  const draggedValue = useRef(new Animated.Value(180)).current;
+  const draggableRange = { top: height, bottom: 0 };
+  const { top } = draggableRange;
 
-  const { top, bottom } = draggableRange;
-
-  const backgoundOpacity = _draggedValue.interpolate({
+  const backgoundOpacity = draggedValue.interpolate({
     inputRange: [height - 48, height],
     outputRange: [1, 0],
     extrapolate: 'clamp',
   });
 
-  const iconTranslateY = _draggedValue.interpolate({
+  const iconTranslateY = draggedValue.interpolate({
     inputRange: [height - 56, height, top],
     outputRange: [0, 56, 180 - 32],
-    extrapolate: 'clamp',
-  });
-
-  const textTranslateY = _draggedValue.interpolate({
-    inputRange: [bottom, top],
-    outputRange: [0, 8],
-    extrapolate: 'clamp',
-  });
-
-  const textTranslateX = _draggedValue.interpolate({
-    inputRange: [bottom, top],
-    outputRange: [0, -112],
-    extrapolate: 'clamp',
-  });
-
-  const textScale = _draggedValue.interpolate({
-    inputRange: [bottom, top],
-    outputRange: [1, 0.7],
     extrapolate: 'clamp',
   });
 
@@ -98,27 +81,22 @@ function ZineDetailsScreen({ draggableRange = { top: height + 180 - 64, bottom: 
       <SlidingUpPanel
         ref={panel}
         draggableRange={draggableRange}
-        animatedValue={_draggedValue}
+        animatedValue={draggedValue}
         snappingPoints={[360]}
         height={height + 180}
         friction={0.5}
       >
         <View style={styles.panel}>
           <Animated.View
-            style={[styles.iconBg, { opacity: backgoundOpacity, transform: [{ translateY: iconTranslateY }] },
+            style={[styles.iconBg, {
+              opacity: backgoundOpacity,
+              transform: [{ translateY: iconTranslateY }],
+            },
             ]}
           />
           <View style={styles.panelHeader}>
-            <Animated.View
-              style={{
-                transform: [
-                  { translateY: textTranslateY },
-                  { translateX: textTranslateX },
-                  { scale: textScale },
-                ],
-              }}
-            >
-              <Text style={styles.textHeader}>Sliding Up Panel</Text>
+            <Animated.View>
+              <Text style={styles.textHeader}>Contents</Text>
             </Animated.View>
           </View>
         </View>
@@ -218,6 +196,7 @@ ZineDetailsScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
+
 };
 
 export default ZineDetailsScreen;
