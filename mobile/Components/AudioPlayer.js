@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
 import {
   Button, StyleSheet, Text, View,
 } from 'react-native';
 import { Slider } from '@miblanchard/react-native-slider';
 import PropTypes from 'prop-types';
+import { useFocusEffect } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
-  // container: {
-  //   alignItems: 'center',
-  // },
   slider: {
     width: '80%',
     height: 40,
@@ -50,6 +48,14 @@ function AudioPlayer({ source }) {
       }
     };
   }, []);
+
+  useFocusEffect(
+    useCallback(() => () => {
+      if (audio) {
+        audio.stopAsync();
+      }
+    }, [audio]),
+  );
 
   const handlePlayPause = async () => {
     if (audio === null) {
