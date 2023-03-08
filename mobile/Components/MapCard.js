@@ -64,8 +64,13 @@ function MapCard({
         </Text>
       </View>
       {isEvent
-        // eslint-disable-next-line max-len
-        && <AddCalendarButton eventName={title} eventStartDate={startDate} eventEndDate={endDate} />}
+      && (
+        <AddCalendarButton
+          eventName={title}
+          eventStartDate={startDate}
+          eventEndDate={endDate}
+        />
+      )}
     </View>
   );
 }

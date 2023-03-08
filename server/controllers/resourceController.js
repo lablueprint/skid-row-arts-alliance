@@ -11,13 +11,12 @@ const createResource = async (req, res) => {
 };
 
 const updateResource = async (req, res) => {
-  Resource.findByIdAndUpdate(req.params.id, req.body, (err, data) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.json(data);
-    }
-  });
+  try {
+    const data = await Resource.findByIdAndUpdate(req.params.id, req.body);
+    res.json(data);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const getAllResources = async (req, res) => {
@@ -30,15 +29,12 @@ const getAllResources = async (req, res) => {
 };
 
 const deleteResource = async (req, res) => {
-  Resource.findByIdAndRemove(req.params.id, (error, data) => {
-    if (error) {
-      console.error(error);
-    } else {
-      res.json({
-        msg: data,
-      });
-    }
-  });
+  try {
+    const data = await Resource.findByIdAndRemove(req.params.id);
+    res.json({ msg: data });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 module.exports = {
