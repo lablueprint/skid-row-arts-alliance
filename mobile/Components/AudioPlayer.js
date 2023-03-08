@@ -41,14 +41,11 @@ function AudioPlayer({ source }) {
       );
       setAudio(sound);
       await sound.getStatusAsync();
-      // console.log('hello');
       setDuration(status.durationMillis);
     }
     loadAudio();
     return () => {
-      console.log('cleanup1');
       if (audio) {
-        console.log('cleanup');
         audio.unloadAsync();
       }
     };
