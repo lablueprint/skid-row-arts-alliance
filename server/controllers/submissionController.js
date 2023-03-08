@@ -18,7 +18,7 @@ const getFileName = (name, title) => {
     .split(' ')
     .join('_')
     .replace(',', '');
-  return `${date}_${name}_${title}`; // account for multiple images in the future
+  return `${date}_${name}_${title}`;
 };
 
 const createSubmission = async (req, res) => {
@@ -26,21 +26,38 @@ const createSubmission = async (req, res) => {
   const { objects, name, title } = req.body;
   const keyString = getFileName(name, title);
 
-  const s3Promises = await objects.map(async (object, index) => s3.putObject({
-    Bucket: process.env.S3_BUCKET,
-    Key: `${keyString}_${index}`,
-    ContentType: object.type,
-    Body: Buffer.from(object.uri, 'base64'),
-  }).promise());
+  // Files
+  const s3Promises = await objects.slice(0, objects.length - 1)
+    .map(async (object, index) => s3.putObject({
+      Bucket: process.env.S3_BUCKET,
+      Key: `${keyString}_${index}.${(object.type.split('/')[1] === 'quicktime') ? 'mov' : object.type.split('/')[1]}`,
+      ContentType: object.type,
+      Body: Buffer.from(object.uri, 'base64'),
+    }).promise());
   Promise.all(s3Promises).catch((err) => console.error(err));
-  console.log('Done');
 
-  const s3Keys = [];
-  for (let i = 0; i < objects.length; i += 1) {
-    s3Keys.push(`${keyString}_${i}`);
+  // Thumbnail
+  try {
+    await s3.upload({
+      Bucket: process.env.S3_BUCKET,
+      Key: `${keyString}_thumbnail.${objects[objects.length - 1].type.split('/')[1]}`,
+      ContentType: objects[objects.length - 1].type,
+      Body: Buffer.from(objects[objects.length - 1].uri, 'base64'),
+    }, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+  } catch (err) {
+    console.error(err);
   }
 
   // Mongo
+  const s3Keys = [];
+  for (let i = 0; i < objects.length - 1; i += 1) {
+    s3Keys.push(`${keyString}_${i}`);
+  }
+
   const submission = new Submission({
     name: req.body.name,
     email: req.body.email,
@@ -48,6 +65,7 @@ const createSubmission = async (req, res) => {
     title: req.body.title,
     description: req.body.description,
     s3Keys,
+    thumbnail: `${keyString}_thumbnail`,
   });
 
   try {

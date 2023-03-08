@@ -37,12 +37,12 @@ const styles = StyleSheet.create({
 function SubmissionScreen() {
   const [submissions, setSubmissions] = useState([]);
 
-  const [name, setName] = useState('Ryan Kim');
-  const [email, setEmail] = useState('ryanswkim2003@gmail.com');
-  const [platform, setPlatform] = useState('Instagram');
-  const [accountTag, setAccountTag] = useState('@r.yankim');
-  const [artworkTitle, setArtworkTitle] = useState('My Art');
-  const [description, setDescription] = useState('So cool!');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [platform, setPlatform] = useState('');
+  const [accountTag, setAccountTag] = useState('');
+  const [artworkTitle, setArtworkTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   const nameRef = useRef();
   const emailRef = useRef();
@@ -53,6 +53,15 @@ function SubmissionScreen() {
 
   const [files, setFiles] = useState([]);
   const [thumbnails, setThumbnails] = useState([]);
+
+  function getType(uri, fileType) {
+    const splitted = uri.split('.');
+    const uriType = splitted[splitted.length - 1];
+    if (uriType === 'mov') {
+      return `${fileType}/quicktime`;
+    }
+    return `${fileType}/${uriType}`;
+  }
 
   const clearInput = () => {
     setName('');
@@ -65,31 +74,39 @@ function SubmissionScreen() {
     setThumbnails([]);
   };
 
-  const read = async (file, reader) => {
+  const readFileToBlob = async (file, reader) => {
     try {
-      fetch(file)
-        .then((res) => res.blob())
-        .then((blob) => reader.readAsDataURL(blob))
-        .catch((e) => console.error(e));
+      const res = await fetch(file);
+      const blob = await res.blob();
+      reader.readAsDataURL(blob);
     } catch (err) {
       console.error(err);
     }
   };
+
   const submit = async () => {
-    const fileArray = files.map((file) => {
+    const filesToSubmit = [];
+    files.forEach((f) => filesToSubmit.push(f));
+    if (thumbnails.length > 0) {
+      filesToSubmit.push({ uri: thumbnails[0], type: 'image/jpg' });
+    } else {
+      filesToSubmit.push({ uri: 'default', type: 'image/jpg' });
+    }
+
+    const fileArray = filesToSubmit.map((file) => {
       const fReader = new FileReader();
       return new Promise((resolve) => {
         fReader.addEventListener('loadend', async () => {
           resolve(fReader.result.replace(/^.*base64,/, ''));
         });
-        read(file.uri, fReader);
+        readFileToBlob(file.uri, fReader);
       });
     });
 
     const streams = await Promise.all(fileArray).catch((err) => console.error(err));
     const objects = [];
-    for (let i = 0; i < files.length; i += 1) {
-      objects.push({ uri: streams[i], type: files[i].type });
+    for (let i = 0; i < streams.length; i += 1) {
+      objects.push({ uri: streams[i], type: filesToSubmit[i].type });
     }
 
     try {
@@ -136,7 +153,8 @@ function SubmissionScreen() {
     });
 
     if (!result.canceled) {
-      addFile(result.assets[0].uri, result.assets[0].type);
+      const { uri, type } = result.assets[0];
+      addFile(uri, getType(uri, type));
     }
   };
 
@@ -155,18 +173,19 @@ function SubmissionScreen() {
     });
 
     if (!result.canceled) {
-      addFile(result.assets[0].uri, result.assets[0].type);
+      const { uri, type } = result.assets[0];
+      addFile(uri, getType(uri, type));
     }
   };
 
-  const openDocSelector = async () => {
+  const openFileSelector = async () => {
     const result = await DocumentPicker.getDocumentAsync({
       multiple: true,
       copyToCacheDirectory: true,
     });
 
     if (result.type === 'success') {
-      addFile(result.uri, result.mimeType);
+      addFile(result.uri, getType(result.uri, result.mimeType));
     }
   };
 
@@ -183,15 +202,15 @@ function SubmissionScreen() {
     <ScrollView>
       <View style={styles.container}>
         <View>
-          <Button title="Clear" onPress={clearInput} />
-          <Button title="Image" onPress={pickImage} />
-          <Button title="Camera" onPress={openCamera} />
-          <Button title="File" onPress={openDocSelector} />
+          <Button title="Clear Selections" onPress={clearInput} />
+          <Button title="Camera Roll" onPress={pickImage} />
+          <Button title="Use Camera" onPress={openCamera} />
+          <Button title="File Selector" onPress={openFileSelector} />
 
-          {thumbnails.map((uri, i) => (
+          {thumbnails.map((uri) => (
             <Image
               source={{ uri }}
-              key={i}
+              key={uri}
               style={{ width: 200, height: 200 }}
             />
           ))}
@@ -200,42 +219,54 @@ function SubmissionScreen() {
             placeholder="Name"
             onChangeText={(newName) => setName(newName)}
             defaultValue={name}
+            returnKeyType="next"
             ref={nameRef}
+            onSubmitEditing={() => { emailRef.current.focus(); }}
           />
           <TextInput
             styles={styles.input}
             placeholder="Email"
             onChangeText={(newEmail) => setEmail(newEmail)}
             defaultValue={email}
+            returnKeyType="next"
             ref={emailRef}
+            onSubmitEditing={() => { platformRef.current.focus(); }}
           />
           <TextInput
             styles={styles.input}
             placeholder="Social Media Platform"
             onChangeText={(newPlatform) => setPlatform(newPlatform)}
             defaultValue={platform}
+            returnKeyType="next"
             ref={platformRef}
+            onSubmitEditing={() => { accountRef.current.focus(); }}
           />
           <TextInput
             styles={styles.input}
             placeholder="Social Media Account Tag"
             onChangeText={(newEmail) => setAccountTag(newEmail)}
             defaultValue={accountTag}
+            returnKeyType="next"
             ref={accountRef}
+            onSubmitEditing={() => { artworkRef.current.focus(); }}
           />
           <TextInput
             styles={styles.input}
             placeholder="Artwork Title"
             onChangeText={(newArtwork) => setArtworkTitle(newArtwork)}
             defaultValue={artworkTitle}
+            returnKeyType="next"
             ref={artworkRef}
+            onSubmitEditing={() => { descriptionRef.current.focus(); }}
           />
           <TextInput
             styles={styles.input}
             placeholder="Artwork Description"
             onChangeText={(newDescription) => setDescription(newDescription)}
             defaultValue={description}
+            returnKeyType="next"
             ref={descriptionRef}
+            onSubmitEditing={() => { nameRef.current.focus(); }}
           />
           <Button
             title="Submit"
