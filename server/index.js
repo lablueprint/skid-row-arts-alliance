@@ -28,6 +28,7 @@ require('./models/testModel');
 const testRouter = require('./routes/testRoutes');
 const userRouter = require('./routes/userRoutes');
 const artGalleryRouter = require('./routes/artGalleryRoutes');
+const zineRouter = require('./routes/zineRoutes');
 
 // Start the Node Express server
 const app = express();
@@ -37,6 +38,7 @@ app.use(express.json());
 app.use('/test', testRouter);
 app.use('/user', userRouter);
 app.use('/artgallery', artGalleryRouter);
+app.use('/zine', zineRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

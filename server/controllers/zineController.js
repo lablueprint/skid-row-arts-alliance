@@ -39,6 +39,19 @@ const getSpecificZine = async (req, res) => {
   }
 };
 
+const getZineURL = async (req, res) => {
+  try {
+    const data = await Zine.find({ url: req.params.url }, 'url');
+    if (data.length === 0) {
+      res.json(false);
+    } else {
+      res.json(true);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const deleteZine = async (req, res) => {
   try {
     const data = await Zine.findByIdAndRemove(req.params.id);
@@ -56,4 +69,5 @@ module.exports = {
   updateZine,
   deleteZine,
   getSpecificZine,
+  getZineURL,
 };
