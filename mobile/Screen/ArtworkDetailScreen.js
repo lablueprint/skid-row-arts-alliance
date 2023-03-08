@@ -101,12 +101,12 @@ function ArtworkDetailScreen({
                   );
                 }
                 return (
-                  <Text>Unsupported filetype</Text>
+                  <Text>Unsupported media type</Text>
                 );
               })
             }
           </>
-        ) : <Text>Nothing</Text>
+        ) : <Text>Loading</Text>
       }
     </ScrollView>
   );
