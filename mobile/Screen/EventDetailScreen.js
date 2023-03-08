@@ -1,8 +1,10 @@
 import React from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Image,
+  StyleSheet, View, Text, ScrollView, Image, Button,
 } from 'react-native';
+import { URL } from '@env';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   container: {
@@ -41,8 +43,17 @@ function EventDetailScreen({
   navigation, route,
 }) {
   const {
-    title, organizations, day, location, time, summary, url, number, email, website,
+    id, title, organizations, day, location, time, summary, url, number, email, website,
   } = route.params;
+
+  const addSavedEvent = async (eventId) => {
+    try {
+      const res = await axios.patch(`${URL}/user/addEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
+      return res;
+    } catch (err) {
+      return err;
+    }
+  };
 
   const onPressEvent = () => {
     navigation.navigate('Organization Details', {
@@ -52,6 +63,10 @@ function EventDetailScreen({
       email,
       website,
     });
+  };
+
+  const onPressFavoriteEvent = () => {
+    addSavedEvent(id);
   };
 
   return (
@@ -77,6 +92,7 @@ function EventDetailScreen({
         style={styles.image}
         source={{ uri: url }}
       />
+      <Button onPress={onPressFavoriteEvent} title="Favorite Event"> Favorite Event </Button>
     </ScrollView>
   );
 }
@@ -87,6 +103,7 @@ EventDetailScreen.propTypes = {
   }).isRequired,
   route: PropTypes.shape({
     params: PropTypes.shape({
+      id: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
       organizations: PropTypes.string.isRequired,
       day: PropTypes.string.isRequired,
