@@ -55,6 +55,15 @@ function EventDetailScreen({
     }
   };
 
+  const removeSavedEvent = async (eventId) => {
+    try {
+      const res = await axios.patch(`${URL}/user/removeEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
+      return res;
+    } catch (err) {
+      return err;
+    }
+  };
+
   const onPressEvent = () => {
     navigation.navigate('Organization Details', {
       organizations,
@@ -65,8 +74,13 @@ function EventDetailScreen({
     });
   };
 
+  // one button toggles between these event handlers
   const onPressFavoriteEvent = () => {
     addSavedEvent(id);
+  };
+
+  const onPressUnfavoriteEvent = () => {
+    removeSavedEvent(id);
   };
 
   return (
@@ -93,6 +107,7 @@ function EventDetailScreen({
         source={{ uri: url }}
       />
       <Button onPress={onPressFavoriteEvent} title="Favorite Event"> Favorite Event </Button>
+      <Button onPress={onPressUnfavoriteEvent} title="Unfavorite Event"> Unfavorite Event </Button>
     </ScrollView>
   );
 }
