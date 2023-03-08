@@ -46,7 +46,9 @@ function AudioPlayer({ source }) {
     }
     loadAudio();
     return () => {
-      if (audio !== null) {
+      console.log('cleanup1');
+      if (audio) {
+        console.log('cleanup');
         audio.unloadAsync();
       }
     };

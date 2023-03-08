@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
 import AudioPlayer from '../Components/AudioPlayer';
-// import { Audio } from 'expo-av';
 
 const styles = StyleSheet.create({
   container: {
