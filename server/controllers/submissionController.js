@@ -30,7 +30,7 @@ const createSubmission = async (req, res) => {
   const s3Promises = await objects.slice(0, objects.length - 1)
     .map(async (object, index) => s3.putObject({
       Bucket: process.env.S3_BUCKET,
-      Key: `${keyString}_${index}.${(object.type.split('/')[1] === 'quicktime') ? 'mov' : object.type.split('/')[1]}`,
+      Key: `Submissions/${keyString}_${index}.${(object.type.split('/')[1] === 'quicktime') ? 'mov' : object.type.split('/')[1]}`,
       ContentType: object.type,
       Body: Buffer.from(object.uri, 'base64'),
     }).promise());
@@ -40,7 +40,7 @@ const createSubmission = async (req, res) => {
   try {
     await s3.upload({
       Bucket: process.env.S3_BUCKET,
-      Key: `${keyString}_thumbnail.${objects[objects.length - 1].type.split('/')[1]}`,
+      Key: `Thumbnails/${keyString}.${objects[objects.length - 1].type.split('/')[1]}`,
       ContentType: objects[objects.length - 1].type,
       Body: Buffer.from(objects[objects.length - 1].uri, 'base64'),
     }, (err) => {
