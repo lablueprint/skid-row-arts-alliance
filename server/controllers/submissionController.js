@@ -26,11 +26,18 @@ const createSubmission = async (req, res) => {
   const { objects, name, title } = req.body;
   const keyString = getFileName(name, title);
 
+  // Keys
+  const s3keys = [];
+  objects.slice(0, objects.length - 1).forEach((object, index) => {
+    s3keys.push(`Submissions/${keyString}_${index}.${(object.type.split('/')[1] === 'quicktime') ? 'mov' : object.type.split('/')[1]}`);
+  });
+  const thumbnail = `Thumbnails/${keyString}.${objects[objects.length - 1].type.split('/')[1]}`;
+
   // Files
   const s3Promises = await objects.slice(0, objects.length - 1)
     .map(async (object, index) => s3.putObject({
       Bucket: process.env.S3_BUCKET,
-      Key: `Submissions/${keyString}_${index}.${(object.type.split('/')[1] === 'quicktime') ? 'mov' : object.type.split('/')[1]}`,
+      Key: s3keys[index],
       ContentType: object.type,
       Body: Buffer.from(object.uri, 'base64'),
     }).promise());
@@ -40,7 +47,7 @@ const createSubmission = async (req, res) => {
   try {
     await s3.upload({
       Bucket: process.env.S3_BUCKET,
-      Key: `Thumbnails/${keyString}.${objects[objects.length - 1].type.split('/')[1]}`,
+      Key: thumbnail,
       ContentType: objects[objects.length - 1].type,
       Body: Buffer.from(objects[objects.length - 1].uri, 'base64'),
     }, (err) => {
@@ -53,19 +60,14 @@ const createSubmission = async (req, res) => {
   }
 
   // Mongo
-  const s3Keys = [];
-  for (let i = 0; i < objects.length - 1; i += 1) {
-    s3Keys.push(`${keyString}_${i}`);
-  }
-
   const submission = new Submission({
     name: req.body.name,
     email: req.body.email,
     socials: req.body.socials,
     title: req.body.title,
     description: req.body.description,
-    s3Keys,
-    thumbnail: `${keyString}_thumbnail`,
+    s3keys,
+    thumbnail,
   });
 
   try {
