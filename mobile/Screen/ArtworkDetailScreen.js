@@ -34,7 +34,7 @@ function ArtworkDetailScreen({
   const getSubmission = async () => {
     // setLoadImages(false);
     try {
-      const res = await axios.get(`${URL}/artgallery/getsubmission`, { params: { id } });
+      const res = await axios.get(`${URL}/submissions/getsubmission`, { params: { id } });
       setSubmission(res.data.Submission);
       setAllMediaData(res.data.MediaData);
       return res.data;

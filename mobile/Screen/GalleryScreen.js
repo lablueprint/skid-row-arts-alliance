@@ -29,7 +29,7 @@ function GalleryScreen({ navigation }) {
   const getAllSubmissions = async () => {
     setLoadImages(false);
     try {
-      const res = await axios.get(`${URL}/artgallery/get`);
+      const res = await axios.get(`${URL}/submissions/get`);
       setAllImageData(res.data);
       return res.data;
     } catch (err) {
