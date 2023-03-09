@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function MapMarker({ allCards, interpolations }) {
+function MapMarker({ allCards, interpolations, onMarkerPress }) {
   const markers = allCards.map((marker, index) => {
     const opacityStyle = {
       opacity: interpolations[index].opacity,
@@ -47,7 +47,7 @@ function MapMarker({ allCards, interpolations }) {
     }
 
     return (
-      <Marker key={marker._id} coordinate={marker.location.coordinates}>
+      <Marker key={marker._id} coordinate={marker.location.coordinates} onPress={() => onMarkerPress(index)}>
         <Animated.View style={[styles.markerWrap, opacityStyle]}>
           <View style={{ overflow: 'visible' }}>
             {marker.startDate ? (
@@ -72,6 +72,7 @@ function MapMarker({ allCards, interpolations }) {
 
 MapMarker.propTypes = {
   interpolations: PropTypes.arrayOf(PropTypes.shape).isRequired,
+  onMarkerPress: PropTypes.func.isRequired,
 };
 
 export default MapMarker;

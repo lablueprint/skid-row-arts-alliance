@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
 function MapScreen({ navigation }) {
   const [allEvents, setAllEvents] = useState([]);
   const [allResources, setAllResources] = useState([]);
+  const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
 
   const getAllEvents = async () => {
     try {
@@ -77,7 +78,7 @@ function MapScreen({ navigation }) {
   };
 
   const allCards = allEvents.concat(allResources);
-
+  const scrollViewRef = useRef(null);
   const mapRef = useRef(null);
   mapRef.index = 0;
   mapRef.animation = new Animated.Value(0);
@@ -124,6 +125,15 @@ function MapScreen({ navigation }) {
     return { scale, opacity };
   });
 
+  const onMarkerPress = (index) => {
+    mapRef.animation.setValue(index * CARD_WIDTH);
+    setActiveMarkerIndex(index);
+    scrollViewRef.current.scrollTo({
+      x: index * CARD_WIDTH,
+      animated: true,
+    });
+  };
+
   return (
     <View style={styles.container}>
       {/* To be implemented later */}
@@ -140,9 +150,12 @@ function MapScreen({ navigation }) {
         <MapMarker
           allCards={allCards}
           interpolations={interpolations}
+          onMarkerPress={onMarkerPress}
         />
+
       </MapView>
       <Animated.ScrollView
+        ref={scrollViewRef}
         horizontal
         scrollEventThrottle={1}
         showsHorizontalScrollIndicator={false}
