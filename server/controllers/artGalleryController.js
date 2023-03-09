@@ -15,6 +15,7 @@ const getAllSubmissions = async (req, res) => {
     const filter = {};
     const allSubmissions = await Submission.find(filter);
 
+    // TODO: remove default thumbnail in the future
     const thumbnailKeys = allSubmissions.map((submission) => (submission.thumbnail ? submission.thumbnail : '0007Squirtle.png'));
     // Reformat data for response
     const responseList = thumbnailKeys.map((key, idx) => ({
