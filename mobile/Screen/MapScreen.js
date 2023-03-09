@@ -16,7 +16,7 @@ import MapMarker from '../Components/MapMarker';
 const { width, height } = Dimensions.get('window');
 
 const CARD_HEIGHT = height / 4;
-const CARD_WIDTH = CARD_HEIGHT + 50;
+const CARD_WIDTH = CARD_HEIGHT + 70;
 
 const styles = StyleSheet.create({
   container: {
@@ -126,6 +126,7 @@ function MapScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      {/* To be implemented later */}
       {/* <Button title="Workshop">Workshop</Button>
       <Button title="Food">Food</Button>
       <Button title="Shelter">Shelter</Button>
@@ -177,7 +178,7 @@ function MapScreen({ navigation }) {
           <MapCard
             key={resource._id}
             id={resource._id}
-            image={{ uri: resource.icon }}
+            image={{ uri: resource.image }}
             title={resource.title}
             description={resource.description}
             startDate={new Date(resource.startDate)}
@@ -185,13 +186,6 @@ function MapScreen({ navigation }) {
             isEvent={false}
           />
         ))}
-        <Button
-          // BUTTON FOR TESTING ONLY
-          title="Return to Sign Up"
-          onPress={() => {
-            navigation.navigate('Sign Up');
-          }}
-        />
       </Animated.ScrollView>
     </View>
   );

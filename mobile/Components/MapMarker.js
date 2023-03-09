@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Animated, View } from 'react-native';
+import { StyleSheet, Animated, View, Image } from 'react-native';
 import { Marker } from 'react-native-maps';
 import PropTypes from 'prop-types';
 
@@ -8,17 +8,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  eventMarker: {
-    width: 20,
-    height: 20,
-    borderRadius: 5,
-    backgroundColor: 'rgba(130,4,150, 0.9)',
-  },
-  resourceMarker: {
-    width: 20,
-    height: 20,
-    borderRadius: 5,
-    backgroundColor: 'rgba(255,127,80, 0.9)',
+  marker: {
+    width: 50,
+    height: 50,
   },
 });
 
@@ -28,11 +20,48 @@ function MapMarker({ allCards, interpolations }) {
       opacity: interpolations[index].opacity,
     };
 
+    let markerImage;
+    if (!marker.startDate) { // Resources don't have startDates
+      switch (marker.resourceType) {
+        case 'food':
+          markerImage = require('../assets/foodIcon.png');
+          break;
+        case 'shelter':
+          markerImage = require('../assets/shelterIcon.png');
+          break;
+        case 'mission':
+          markerImage = require('../assets/missionIcon.png');
+          break;
+        case 'shower':
+          markerImage = require('../assets/showerLaundryIcon.png');
+          break;
+        case 'social':
+          markerImage = require('../assets/socialServiceIcon.png');
+          break;
+        case 'legal':
+          markerImage = require('../assets/legalServiceIcon.png');
+          break;
+        default:
+          markerImage = require('../assets/workshopIcon.png');
+      }
+    }
+
     return (
-      // eslint-disable-next-line no-underscore-dangle
       <Marker key={marker._id} coordinate={marker.location.coordinates}>
         <Animated.View style={[styles.markerWrap, opacityStyle]}>
-          <View style={marker.isResource ? styles.resourceMarker : styles.eventMarker} />
+          <View style={{ overflow: 'visible' }}>
+            {marker.startDate ? (
+              <Image
+                source={require('../assets/workshopIcon.png')}
+                style={[styles.marker]}
+              />
+            ) : (
+              <Image
+                source={markerImage}
+                style={[styles.marker]}
+              />
+            )}
+          </View>
         </Animated.View>
       </Marker>
     );

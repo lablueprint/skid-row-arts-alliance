@@ -35,7 +35,7 @@ const resourceSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  icon: {
+  image: {
     required: true,
     type: String,
   },
@@ -51,9 +51,9 @@ const resourceSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  isResource: {
+  resourceType: {
     required: true,
-    type: Boolean,
+    type: String,
   },
 });
 
