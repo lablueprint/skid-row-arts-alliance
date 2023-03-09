@@ -15,7 +15,7 @@ const getAllSubmissions = async (req, res) => {
     const filter = {};
     const allSubmissions = await Submission.find(filter);
 
-    const thumbnailKeys = allSubmissions.map((submission) => (submission.s3keys[0] ? submission.s3keys[0] : '0007Squirtle.png'));
+    const thumbnailKeys = allSubmissions.map((submission) => (submission.thumbnail ? submission.thumbnail : '0007Squirtle.png'));
     // Reformat data for response
     const responseList = thumbnailKeys.map((key, idx) => ({
       SubmissionData: allSubmissions[idx],
