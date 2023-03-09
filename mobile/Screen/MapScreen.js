@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import {
   StyleSheet,
+  Text,
   View,
   Animated,
   Dimensions,
+  Pressable,
   Button,
 } from 'react-native';
 import MapView from 'react-native-maps';
@@ -31,6 +33,11 @@ const styles = StyleSheet.create({
   },
   endPadding: {
     paddingRight: width - CARD_WIDTH,
+  },
+  button: {
+    height: 40,
+    width: 100,
+    backgroundColor: 'red',
   },
 });
 
@@ -154,11 +161,9 @@ function MapScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Button title="Workshop">Workshop</Button>
-      <Button title="Food">Food</Button>
-      <Button title="Shelter">Shelter</Button>
-      <Button title="Mission">Mission</Button>
-      <Button title="Shower/Laundry">Shower/Laundry</Button>
+      <Pressable style={styles.button}>
+        <Text>Workshop</Text>
+      </Pressable>
       <MapView
         ref={mapRef}
         initialRegion={state.region}
@@ -215,3 +220,9 @@ MapScreen.propTypes = {
 };
 
 export default MapScreen;
+/*
+<Button title="Food">Food</Button>
+<Button title="Shelter">Shelter</Button>
+<Button title="Mission">Mission</Button>
+<Button title="Shower/Laundry">Shower/Laundry</Button>
+*/

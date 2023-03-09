@@ -77,7 +77,7 @@ function EventCard({
       </Card.Content>
       <Card.Cover source={{ uri: url }} />
       <Card.Actions>
-        <Button onPress={onPressEvent}>Details</Button>
+        <Button onPress={() => onPressEvent}>Details</Button>
         <Button>I&apos;m interested!</Button>
       </Card.Actions>
     </Card>
