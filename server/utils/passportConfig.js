@@ -41,7 +41,6 @@ passport.use('jwt', new JWTStrategy(
       if (!userExists) {
         return done(null, false);
       }
-      console.log(userExists);
       return done(null, userExists);
     } catch (error) {
       return done(error, false);
