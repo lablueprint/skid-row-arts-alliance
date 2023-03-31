@@ -4,8 +4,6 @@ require('dotenv').config({ path: './.env' });
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
 const passport = require('./utils/passportConfig');
 const db = require('./utils/db');
 
@@ -22,19 +20,10 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
-// Establish the session and MongoDB connection
-app.use(session({
-  secret: 'example XD',
-  store: new MongoStore({
-    client: db.connect(),
-  }),
-  resave: false,
-  saveUninitialized: false,
-}));
-
-// Establish the session with passport
+// Initialize passport
 app.use(passport.initialize());
-app.use(passport.session());
+
+db.connect();
 
 // Use the api routes
 app.use('/auth', authRouter);

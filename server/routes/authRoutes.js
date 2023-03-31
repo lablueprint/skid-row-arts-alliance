@@ -1,37 +1,15 @@
 const express = require('express');
-
-const authRouter = express.Router();
 const passport = require('../utils/passportConfig');
 
-authRouter.post('/sign-up', (req, res, next) => {
-  passport.authenticate('sign-up', (err, user, info) => {
-    if (err) { return next(err); }
-    if (!user) { return res.json(info.message); }
-    return req.logIn(user, (e) => {
-      if (err) { return next(e); }
-      return res.json(user);
-    });
-  })(req, res, next);
-});
+const authRouter = express.Router();
+const authController = require('../controllers/authController');
 
-authRouter.post('/sign-in', (req, res, next) => {
-  passport.authenticate('sign-in', (err, user, info) => {
-    if (err) { return next(err); }
-    if (!user) { return res.json(info.message); }
-    return req.logIn(user, (e) => {
-      if (err) { return next(e); }
-      return res.json(user);
-    });
-  })(req, res, next);
-});
+authRouter.post('/sign-up', authController.signUp);
+authRouter.post('/sign-in', authController.signIn);
+authRouter.post('/sign-out', authController.signOut);
 
-authRouter.post('/sign-out', (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      res.status(404).json({ error: 'Unable to logout properly' });
-    }
-  });
-  res.send('Logging out');
+authRouter.get('/test', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.send(`Welcome, ${req.user.email}!`);
 });
 
 module.exports = authRouter;
