@@ -32,8 +32,8 @@ function ArtworkDetailScreen({
   const [loadImages, setLoadImages] = useState(false);
 
   const getSubmission = async () => {
-    // setLoadImages(false);
     try {
+      setLoadImages(false);
       const res = await axios.get(`${URL}/submissions/getsubmission`, { params: { id } });
       setSubmission(res.data.Submission);
       setAllMediaData(res.data.MediaData);

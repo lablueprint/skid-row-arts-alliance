@@ -27,8 +27,8 @@ function GalleryScreen({ navigation }) {
   const [loadImages, setLoadImages] = useState(false);
 
   const getAllSubmissions = async () => {
-    setLoadImages(false);
     try {
+      setLoadImages(false);
       const res = await axios.get(`${URL}/submissions/get`);
       setAllImageData(res.data);
       return res.data;
