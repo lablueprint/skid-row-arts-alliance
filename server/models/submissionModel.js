@@ -36,6 +36,10 @@ const submissionSchema = new mongoose.Schema({
     required: true,
     type: [String],
   },
+  thumbnail: {
+    required: true,
+    type: String,
+  },
 });
 
 module.exports = mongoose.model('Submission', submissionSchema);
