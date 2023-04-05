@@ -1,7 +1,9 @@
-import { React, useState, useRef } from 'react';
+import {
+  React, useState, useRef,
+} from 'react';
 import {
   StyleSheet, Text, View, Dimensions,
-  Animated,
+  Animated, ScrollView,
 } from 'react-native';
 import Pdf from 'react-native-pdf';
 import { Slider } from '@miblanchard/react-native-slider';
@@ -11,12 +13,17 @@ import PropTypes from 'prop-types';
 
 const { height } = Dimensions.get('window');
 
-const styles = {
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
-    alignItems: 'center',
+    backgroundColor: '#fff',
+    alignItems: 'stretch',
     justifyContent: 'center',
+  },
+  pdf: {
+    flex: 1,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
   panel: {
     flex: 1,
@@ -54,11 +61,23 @@ const styles = {
     borderRadius: 24,
     zIndex: 1,
   },
-};
+});
 
-function ZineDetailsScreen() {
+function ZineDetailsScreen({ navigation, route }) {
+  const {
+    title, date, contents, url,
+  } = route.params;
+  let ref;
+  const [pages, setPages] = useState(1);
+  const source = { uri: url, cache: true };
+  const [currentValue, setCurrentValue] = useState(1);
+  const handleOnSliderChange = (newValue) => {
+    const value = Number(newValue);
+    setCurrentValue(value);
+    ref.setPage(value);
+  };
   const draggedValue = useRef(new Animated.Value(180)).current;
-  const draggableRange = { top: height, bottom: 0 };
+  const draggableRange = { top: 670, bottom: 0 };
   const { top } = draggableRange;
 
   const backgoundOpacity = draggedValue.interpolate({
@@ -77,13 +96,41 @@ function ZineDetailsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text onPress={() => panel.current.show(360)}>Show panel</Text>
+      <Text>{title}</Text>
+      <Text>{date}</Text>
+      <Text onPress={() => panel.current.show(360)}>Table of Contents</Text>
+      <Button
+        title="Back to Zines"
+        onPress={() => {
+          navigation.navigate('Zine Gallery');
+        }}
+      />
+      <Pdf
+        source={source}
+        ref={(pdf) => { ref = pdf; }}
+        horizontal
+        onLoadComplete={(numberOfPages) => {
+          setPages(numberOfPages);
+        }}
+        onPageChanged={(page) => {
+          handleOnSliderChange(page);
+        }}
+        style={styles.pdf}
+      />
+      <Slider
+        value={currentValue}
+        minimumValue={1}
+        maximumValue={pages}
+        step={1}
+        minimumTrackTintColor="orange"
+        onSlidingComplete={(newSliderValue) => handleOnSliderChange(newSliderValue)}
+      />
       <SlidingUpPanel
         ref={panel}
         draggableRange={draggableRange}
         animatedValue={draggedValue}
         snappingPoints={[360]}
-        height={height + 180}
+        height={height}
         friction={0.5}
       >
         <View style={styles.panel}>
@@ -99,91 +146,19 @@ function ZineDetailsScreen() {
               <Text style={styles.textHeader}>Contents</Text>
             </Animated.View>
           </View>
+          <ScrollView>
+            {contents.map((content) => (
+              <Button onPress={() => { handleOnSliderChange(content.sectionPage); }}>
+                {content.sectionTitle}
+              </Button>
+            ))}
+          </ScrollView>
+          <View />
         </View>
       </SlidingUpPanel>
     </View>
   );
 }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'stretch',
-//     justifyContent: 'center',
-//   },
-//   panelHeader: {
-//     height: 180,
-//     backgroundColor: '#b197fc',
-//     justifyContent: 'flex-end',
-//     padding: 24,
-//   },
-//   textHeader: {
-//     fontSize: 28,
-//     color: '#FFF',
-//   },
-//   pdf: {
-//     flex: 1,
-//     width: Dimensions.get('window').width,
-//     height: Dimensions.get('window').height,
-//   },
-// });
-
-// function ZineDetailsScreen({ navigation, route }) {
-//   const { title, date, url } = route.params;
-//   let ref;
-//   let c;
-//   const [pages, setPages] = useState(1);
-//   const source = { uri: url, cache: true };
-//   const [currentValue, setCurrentValue] = useState(1);
-//   const handleOnSliderChange = (newValue) => {
-//     const value = Number(newValue);
-//     setCurrentValue(value);
-//     ref.setPage(value);
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Text>{title}</Text>
-//       <Text>{date}</Text>
-//       <Button
-//         title="Back to Zines"
-//         onPress={() => {
-//           navigation.navigate('Zine Gallery');
-//         }}
-//       />
-//       <Pdf
-//         source={source}
-//         ref={(pdf) => { ref = pdf; }}
-//         horizontal
-//         onLoadComplete={(numberOfPages) => {
-//           setPages(numberOfPages);
-//         }}
-//         onPageChanged={(page) => {
-//           handleOnSliderChange(page);
-//         }}
-//         style={styles.pdf}
-//       />
-//       <Slider
-//         value={currentValue}
-//         minimumValue={1}
-//         maximumValue={pages}
-//         step={1}
-//         minimumTrackTintColor="orange"
-//         onSlidingComplete={(newSliderValue) => handleOnSliderChange(newSliderValue)}
-//       />
-//       <SlidingUpPanel
-//       draggableRange={top: 180, bottom: 10}
-//       >
-//         <View style={styles.panelHeader} />
-//         <View style={styles.container}>
-//           <Text>Here is the content inside panel</Text>
-//           <Button onPress={() => { handleOnSliderChange(11); }}>Press</Button>
-//         </View>
-//       </SlidingUpPanel>
-//     </View>
-//   );
-// }
 
 ZineDetailsScreen.propTypes = {
   route: PropTypes.shape({
@@ -191,12 +166,17 @@ ZineDetailsScreen.propTypes = {
       title: PropTypes.string.isRequired,
       date: PropTypes.string.isRequired,
       url: PropTypes.string.isRequired,
+      contents: PropTypes.arrayOf(
+        PropTypes.shape({
+          sectionTitle: PropTypes.string.isRequired,
+          sectionPage: PropTypes.number.isRequired,
+        }),
+      ).isRequired,
     }),
   }).isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
-
 };
 
 export default ZineDetailsScreen;

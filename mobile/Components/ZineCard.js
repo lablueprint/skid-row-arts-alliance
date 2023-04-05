@@ -1,4 +1,6 @@
-import * as React from 'react';
+import {
+  React,
+} from 'react';
 import {
   StyleSheet, Dimensions,
 } from 'react-native';
@@ -17,9 +19,10 @@ const styles = StyleSheet.create({
 });
 
 function ZineCard({
-  title, date, url, navigation,
+  title, season, year, url, navigation, contents,
 }) {
   const source = { uri: url, cache: true };
+  const date = `${season} ${year}`;
   return (
     <Card>
       <Card.Content>
@@ -29,7 +32,9 @@ function ZineCard({
       <Button
         title="Details"
         onPress={() => {
-          navigation.navigate('Zine Details', { title, date, url });
+          navigation.navigate('Zine Details', {
+            title, date, url, contents,
+          });
         }}
       />
       <Pdf
@@ -43,11 +48,18 @@ function ZineCard({
 
 ZineCard.propTypes = {
   title: PropTypes.string.isRequired,
-  date: PropTypes.string.isRequired,
+  season: PropTypes.string.isRequired,
+  year: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
+  contents: PropTypes.arrayOf(
+    PropTypes.shape({
+      sectionTitle: PropTypes.string.isRequired,
+      sectionPage: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
 };
 
 export default ZineCard;
