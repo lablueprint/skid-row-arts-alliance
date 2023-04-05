@@ -25,7 +25,6 @@ database.once('connected', () => {
 require('./models/testModel');
 
 // Route imports
-const artGalleryRouter = require('./routes/artGalleryRoutes');
 const eventRouter = require('./routes/eventRoutes');
 const resourceRouter = require('./routes/resourceRoutes');
 const testRouter = require('./routes/testRoutes');
@@ -39,7 +38,6 @@ app.use(express.json({ limit: '200mb' }));
 app.use(express.urlencoded({ limit: '200mb', extended: true }));
 
 // Use the api routes
-app.use('/artgallery', artGalleryRouter);
 app.use('/event', eventRouter);
 app.use('/resource', resourceRouter);
 app.use('/test', testRouter);
