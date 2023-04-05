@@ -23,6 +23,7 @@
         "react-hooks/rules-of-hooks": "error", // part of react hooks
         /* We want to remove this so we don't have infinite read requests from Airtable */
         // 'react-hooks/exhaustive-deps': 'warn', // part of react hooks
-        "linebreak-style": 0
+        "linebreak-style": 0,
+        "no-underscore-dangle": "off"
     }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Animated, View } from 'react-native';
+import { StyleSheet, Animated, View, Image } from 'react-native';
 import { Marker } from 'react-native-maps';
 import PropTypes from 'prop-types';
 
@@ -9,22 +9,59 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   marker: {
-    width: 20,
-    height: 20,
-    borderRadius: 5,
-    backgroundColor: 'rgba(130,4,150, 0.9)',
+    width: 50,
+    height: 50,
   },
 });
 
-function MapMarker({ state, interpolations }) {
-  const markers = state.markers.map((marker, index) => {
+function MapMarker({ allCards, interpolations, onMarkerPress }) {
+  const markers = allCards.map((marker, index) => {
     const opacityStyle = {
       opacity: interpolations[index].opacity,
     };
+
+    let markerImage;
+    if (!marker.startDate) { // Resources don't have startDates
+      switch (marker.resourceType) {
+        case 'food':
+          markerImage = require('../assets/foodIcon.png');
+          break;
+        case 'shelter':
+          markerImage = require('../assets/shelterIcon.png');
+          break;
+        case 'mission':
+          markerImage = require('../assets/missionIcon.png');
+          break;
+        case 'shower':
+          markerImage = require('../assets/showerLaundryIcon.png');
+          break;
+        case 'social':
+          markerImage = require('../assets/socialServiceIcon.png');
+          break;
+        case 'legal':
+          markerImage = require('../assets/legalServiceIcon.png');
+          break;
+        default:
+          markerImage = require('../assets/workshopIcon.png');
+      }
+    }
+
     return (
-      <Marker key={marker.id} coordinate={marker.coordinate}>
+      <Marker key={marker._id} coordinate={marker.location.coordinates} onPress={() => onMarkerPress(index)}>
         <Animated.View style={[styles.markerWrap, opacityStyle]}>
-          <View style={styles.marker} />
+          <View style={{ overflow: 'visible' }}>
+            {marker.startDate ? (
+              <Image
+                source={require('../assets/workshopIcon.png')}
+                style={[styles.marker]}
+              />
+            ) : (
+              <Image
+                source={markerImage}
+                style={[styles.marker]}
+              />
+            )}
+          </View>
         </Animated.View>
       </Marker>
     );
@@ -34,21 +71,8 @@ function MapMarker({ state, interpolations }) {
 }
 
 MapMarker.propTypes = {
-  state: PropTypes.shape({
-    markers: PropTypes.arrayOf(PropTypes.oneOfType([
-      PropTypes.number,
-      PropTypes.arrayOf(PropTypes.number),
-      PropTypes.string,
-      PropTypes.object,
-    ])).isRequired,
-    region: PropTypes.shape({
-      latitude: PropTypes.number,
-      longitude: PropTypes.number,
-      latitudeDelta: PropTypes.number,
-      longitudeDelta: PropTypes.number,
-    }).isRequired,
-  }).isRequired,
   interpolations: PropTypes.arrayOf(PropTypes.shape).isRequired,
+  onMarkerPress: PropTypes.func.isRequired,
 };
 
 export default MapMarker;

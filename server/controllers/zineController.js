@@ -22,6 +22,7 @@ const updateZine = async (req, res) => {
 const getAllZines = async (req, res) => {
   try {
     const data = await Zine.find();
+    console.log(data);
     res.send(data);
   } catch (err) {
     console.error(err);
