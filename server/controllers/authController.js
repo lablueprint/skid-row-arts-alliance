@@ -1,14 +1,21 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
 const passport = require('../utils/passportConfig');
 
 const signUp = async (req, res) => {
-  const userExists = await User.findOne({ email: req.email });
+  const userExists = await User.findOne({ email: req.body.email });
   if (userExists) {
     return res.send('That user email already exists');
   }
-  const user = new User(req.body);
   try {
+    // Generate a salted passwordr
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hashSync(req.body.password, salt);
+    // Create a new user object
+    const secureUser = { ...req.body };
+    secureUser.password = hashedPassword;
+    const user = new User(secureUser);
     await user.save(user);
     // only need to send status? next process should be redirecting to log in screen?
     return res.send('User successfully created!');
