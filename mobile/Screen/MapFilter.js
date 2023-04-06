@@ -97,7 +97,6 @@ const resources = [
   },
 ];
 
-//   const food = resources.filter((resource) => resource.tag === 'Food');
 export default function MapFilter({ navigation }) {
   const [categories, setCategories] = useState({
     workshop: false,
@@ -184,10 +183,6 @@ export default function MapFilter({ navigation }) {
   };
   useEffect(() => { filter(); }, [count]);
 
-  // useEffect(() => { filter(); }, [categories]);
-  // TO DO: get rid of useEffect. When you hit apply, calls filter() -- done
-  // TO DO: make a SEPARATE filtered array for events and resources, call it filteredEvents
-  // TO DO: then use map function to map out filteredEvents and filteredResources arrays
   return (
     <ScrollView>
       <Button title="food" onPress={() => onPressCategories('food')} />
@@ -252,49 +247,3 @@ MapFilter.propTypes = {
     navigate: PropTypes.func,
   }).isRequired,
 };
-
-// return (
-//   <View>
-//      <Button title="food" onPress={() => onPressCategories('food')}> food </Button>
-//      <Button title="shelter" onPress={() => onPressCategories('shelter')}> shelter </Button>
-//      <Button title="mission" onPress={() => onPressCategories('shelter')}> shelter </Button>
-//   </View>
-// )
-
-// }
-
-// filter function that takes stuff in array by tags
-// workshop and then apply -> console.log the filtered elements
-
-// export default function MapFilterPractice() {
-//   const [categories, setCategories] = useState({ workshop: false, food: false, shelter: false });
-//   const onPressCategories = (property) => {
-//     console.log(categories);
-//     const updateCategories = { ...categories };
-//     updateCategories[property] = !categories[property];
-//     setCategories(updateCategories);
-//   };
-//   // onPress syntax: () =>
-//   return (
-//     <View>
-//       <Button title="workshop" onPress={() => onPressCategories('workshop')}> workshop </Button>
-//       <Text>
-//         workshop:
-//         {' '}
-//         {categories.workshop ? 'True' : 'False'}
-//       </Text>
-//       <Button title="food" onPress={() => onPressCategories('food')}> food </Button>
-//       <Text>
-//         food:
-//         {' '}
-//         {categories.food ? 'True' : 'False'}
-//       </Text>
-//       <Button title="shelter" onPress={() => onPressCategories('shelter')}> shelter </Button>
-//       <Text>
-//         shelter:
-//         {categories.shelter ? 'True' : 'False'}
-//       </Text>
-//     </View>
-
-//   );
-// }
