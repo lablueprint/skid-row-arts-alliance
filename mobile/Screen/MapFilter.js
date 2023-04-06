@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Button,
+  ScrollView, Button, Text,
 } from 'react-native';
+import PropTypes from 'prop-types';
+import EventCard from '../Components/EventCard';
+import ResourceCard from '../Components/ResourceCard';
 
 const events = [{
   id: 1,
@@ -95,7 +98,7 @@ const resources = [
 ];
 
 //   const food = resources.filter((resource) => resource.tag === 'Food');
-export default function MapFilterPractice() {
+export default function MapFilter({ navigation }) {
   const [categories, setCategories] = useState({
     workshop: false,
     food: false,
@@ -112,77 +115,143 @@ export default function MapFilterPractice() {
   };
 
   useEffect(() => { fillDatabase(); }, []);
-  const [sorted, setSorted] = useState([]);
+  const [filteredResources, setResources] = useState([]);
+  const [filteredEvents, setEvents] = useState([]);
 
   const filter = () => {
-    let largeArray = [];
+    let resourcesArray = [];
+    let eventsArray = [];
     let missionAdded = false;
 
+    // all events are workshops
     if (categories.workshop) {
-      const workshop = (database.filter((event) => event.tags === 'Workshop'));
-      largeArray = largeArray.concat(workshop);
+      const workshops = (database.filter((event) => event.tags === 'Workshop'));
+      eventsArray = eventsArray.concat(workshops);
     }
 
     if (categories.food) {
       const food = (database.filter((resource) => resource.tags === 'Food'));
-      largeArray = largeArray.concat(food);
+      resourcesArray = resourcesArray.concat(food);
 
       if (!missionAdded) {
         const mission = (database.filter((resource) => resource.tags === 'Mission'));
-        largeArray = largeArray.concat(mission);
+        resourcesArray = resourcesArray.concat(mission);
         missionAdded = true;
       }
     }
 
     if (categories.shelter) {
       const shelter = (database.filter((resource) => resource.tags === 'Shelter'));
-      largeArray = largeArray.concat(shelter);
+      resourcesArray = resourcesArray.concat(shelter);
 
       if (!missionAdded) {
         const mission = (database.filter((resource) => resource.tags === 'Mission'));
-        largeArray = largeArray.concat(mission);
+        resourcesArray = resourcesArray.concat(mission);
         missionAdded = true;
       }
     }
 
-    // TO DO: still needs work on all three
+    // all three
     if (categories.mission) {
       if (!missionAdded) {
         const mission = (database.filter((resource) => resource.tags === 'Mission'));
-        largeArray = largeArray.concat(mission);
+        resourcesArray = resourcesArray.concat(mission);
         missionAdded = true;
       }
     }
 
     // if all are false
     if (!categories.food && !categories.shelter && !categories.mission && !categories.workshop) {
-      largeArray = database;
+      resourcesArray = resources;
+      eventsArray = events;
     }
 
-    setSorted(largeArray);
+    setResources(resourcesArray);
+    setEvents(eventsArray);
   };
 
+  // update the true/false categories
   const onPressCategories = (property) => {
     const updateCategories = { ...categories };
     updateCategories[property] = !categories[property];
     setCategories(updateCategories);
   };
 
-  useEffect(() => { filter(); }, [categories]);
+  // call filter only when apply is implemented
+  const [count, setCount] = useState(0);
+  const onPressApply = () => {
+    setCount(count + 1);
+  };
+  useEffect(() => { filter(); }, [count]);
 
-  console.log(sorted);
-
-  // TO DO: when you hit apply, render all sorted array of objects
+  // useEffect(() => { filter(); }, [categories]);
+  // TO DO: get rid of useEffect. When you hit apply, calls filter() -- done
+  // TO DO: make a SEPARATE filtered array for events and resources, call it filteredEvents
+  // TO DO: then use map function to map out filteredEvents and filteredResources arrays
   return (
-    <View>
-      <Button title="food" onPress={() => onPressCategories('food')}> food </Button>
-      <Button title="shelter" onPress={() => onPressCategories('shelter')}> shelter </Button>
-      <Button title="mission" onPress={() => onPressCategories('mission')}> mission </Button>
-      <Button title="workshop" onPress={() => onPressCategories('workshop')}> workshop </Button>
-      <Button title="apply">apply</Button>
-    </View>
+    <ScrollView>
+      <Button title="food" onPress={() => onPressCategories('food')} />
+      <Text>
+        {categories.food ? 'True' : 'False'}
+      </Text>
+      <Button title="shelter" onPress={() => onPressCategories('shelter')} />
+      <Text>
+        {categories.shelter ? 'True' : 'False'}
+      </Text>
+      <Button title="mission" onPress={() => onPressCategories('mission')} />
+      <Text>
+        {categories.mission ? 'True' : 'False'}
+      </Text>
+      <Button title="workshop" onPress={() => onPressCategories('workshop')} />
+      <Text>
+        {categories.workshop ? 'True' : 'False'}
+      </Text>
+      <Button title="apply" onPress={() => onPressApply()}>apply</Button>
+
+      {filteredResources.map((resource) => (
+        <ResourceCard
+          id={resource.id}
+          title={resource.title}
+          day={resource.day}
+          time={resource.time}
+          summary={resource.summary}
+          url={resource.url}
+          location={resource.location}
+          navigation={navigation}
+          number={resource.number}
+          email={resource.email}
+          website={resource.website}
+          tag={resource.tag}
+        />
+      ))}
+      {filteredEvents.map((event) => (
+        <EventCard
+          id={event.id}
+          title={event.title}
+          date={event.date}
+          day={event.day}
+          location={event.location}
+          time={event.time}
+          organizations={event.organizations}
+          number={event.number}
+          email={event.email}
+          website={event.website}
+          description={event.description}
+          summary={event.summary}
+          url={event.url}
+          navigation={navigation}
+          tag={event.tag}
+        />
+      ))}
+    </ScrollView>
   );
 }
+
+MapFilter.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
 
 // return (
 //   <View>

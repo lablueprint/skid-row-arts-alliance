@@ -14,7 +14,7 @@ import EventDetailScreen from './Screen/EventDetailScreen';
 import EventScreen from './Screen/EventScreen';
 import ResourceDetailScreen from './Screen/ResourceDetailScreen';
 import OrganizationDetailScreen from './Screen/OrganizationDetailScreen';
-import MapFilterPractice from './Screen/MapFilterPractice';
+import MapFilter from './Screen/MapFilter';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -27,7 +27,7 @@ function HomeStackScreen() {
       <Tab.Screen name="Submission" component={SubmissionScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Events" component={EventScreen} />
-      <Tab.Screen name="Map Filter Practice" component={MapFilterPractice} />
+      <Tab.Screen name="Map Filter" component={MapFilter} />
     </Tab.Navigator>
   );
 }
