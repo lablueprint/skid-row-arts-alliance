@@ -81,7 +81,7 @@ function SignInScreen({ navigation }) {
         }}
       />
       <Button
-        title="Go to Map"
+        title="[DEV] Go to Map"
         onPress={() => {
           navigation.navigate('Home');
         }}

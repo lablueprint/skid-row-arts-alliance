@@ -158,12 +158,6 @@ function SignUpScreen({ navigation }) {
           navigation.navigate('Sign In');
         }}
       />
-      <Button
-        title="Go to Map"
-        onPress={() => {
-          navigation.navigate('Home');
-        }}
-      />
     </View>
   );
 }
