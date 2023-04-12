@@ -5,7 +5,7 @@ import axios from 'axios';
 import {
   Container, Typography, TextField, Button,
 } from '@mui/material';
-import { login } from '../../redux/sliceAuth';
+import { isTokenExpired, login } from '../../redux/sliceAuth';
 
 function SignInPage() {
   const { id, token } = useSelector((state) => state.sliceAuth);
@@ -20,17 +20,16 @@ function SignInPage() {
     const response = await axios.post('http://localhost:4000/auth/admin-sign-in', { username, password });
     if (response.data) {
       dispatch(login(response.data));
-      navigate('/gallery');
     } else {
       alert('Handle or password is incorrect');
     }
   };
 
   useEffect(() => {
-    if (id && token) {
+    if (!isTokenExpired(token) && id && token) {
       navigate('/gallery');
     }
-  }, []);
+  }, [id, token]);
 
   return (
     <Container>

@@ -1,5 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
+// eslint-disable-next-line camelcase
+import jwt_decode from 'jwt-decode';
 
 const admin = JSON.parse(localStorage.getItem('admin'));
 
@@ -24,5 +26,11 @@ export const sliceAuth = createSlice({
 });
 
 export const { login, logout } = sliceAuth.actions;
+
+export const isTokenExpired = (token) => {
+  const decodedToken = jwt_decode(token);
+  const currentTime = Date.now() / 1000;
+  return decodedToken.exp < currentTime;
+};
 
 export default sliceAuth.reducer;
