@@ -3,10 +3,9 @@ import React, { useState } from 'react';
 import {
   StyleSheet, Text, TextInput, View, Button,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import * as SecureStore from 'expo-secure-store';
 import PropTypes from 'prop-types';
-import { serviceLogin } from '../redux/services';
+import axios from 'axios';
+import { URL } from '@env';
 
 const styles = StyleSheet.create({
   container: {
@@ -23,27 +22,40 @@ const styles = StyleSheet.create({
   },
 });
 
-async function save(key, value) {
-  await SecureStore.setItemAsync(key, value);
-}
-
 function SignUpScreen({ navigation }) {
-  const [name, onChangeName] = React.useState('');
-  const [email, onChangeEmail] = React.useState('');
-  const [socialPlatform, setSocialPlatform] = useState('');
-  const [socialTag, onChangeSocialTag] = React.useState('');
+  const [firstName, onChangeFirstName] = useState('');
+  const [lastName, onChangeLastName] = useState('');
+  const [email, onChangeEmail] = useState('');
+  const [password, onChangePassword] = useState('');
+  const [bio, onChangeBio] = useState('');
+  const [instagramProfile, onChangeInstagramProfile] = useState('');
+  const [facebookProfile, onChangeFacebookProfile] = useState('');
+  const [twitterProfile, onChangeTwitterProfile] = useState('');
 
   // Store input and navigate to Home screen
   const handleSignUp = async () => {
     try {
       const userData = {
-        userName: name,
-        userEmail: email,
-        userSocialPlatform: socialPlatform,
-        userSocialTag: socialTag,
+        firstName,
+        lastName,
+        email,
+        password,
+        bio,
+        socialMedia: {
+          instagram: instagramProfile,
+          facebook: facebookProfile,
+          twitter: twitterProfile,
+        },
+        savedEvents: [],
+        savedArtwork: [],
+        userArtwork: [],
       };
-      serviceLogin(userData);
-      navigation.navigate('Home');
+      const res = await axios.post(`${URL}/auth/sign-up`, userData);
+      if (res.data.error) {
+        console.log(res.data.error);
+      } else {
+        navigation.navigate('Sign In');
+      }
     } catch (err) {
       console.log(err.message);
     }
@@ -51,14 +63,27 @@ function SignUpScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <Text>
+        Create an Account
+      </Text>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text>
-          Name
+          First Name
         </Text>
         <TextInput
           style={styles.input}
-          onChangeText={onChangeName}
-          value={name}
+          onChangeText={onChangeFirstName}
+          value={firstName}
+        />
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text>
+          Last Name
+        </Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeLastName}
+          value={lastName}
         />
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -73,36 +98,64 @@ function SignUpScreen({ navigation }) {
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text>
-          Social Media Platform
-        </Text>
-        <Picker
-          selectedValue={socialPlatform}
-          style={{ height: 220, width: 150 }}
-          onValueChange={(itemValue) => setSocialPlatform(itemValue)}
-        >
-          <Picker.Item label="Instagram" value="instagram" />
-          <Picker.Item label="Twitter" value="twitter" />
-          <Picker.Item label="Facebook" value="facebook" />
-        </Picker>
-      </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Text>
-          Social Media Tag
+          Password
         </Text>
         <TextInput
           style={styles.input}
-          onChangeText={onChangeSocialTag}
-          value={socialTag}
+          onChangeText={onChangePassword}
+          value={password}
+        />
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text>
+          Bio
+        </Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeBio}
+          value={bio}
+        />
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text>
+          Instagram Username
+        </Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeInstagramProfile}
+          value={instagramProfile}
+        />
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text>
+          Facebook Profile URL
+        </Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeFacebookProfile}
+          value={facebookProfile}
+        />
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text>
+          Twitter Username
+        </Text>
+        <TextInput
+          style={styles.input}
+          onChangeText={onChangeTwitterProfile}
+          value={twitterProfile}
         />
       </View>
       <Button
         title="Sign Up"
         onPress={() => {
-          save('name', name);
-          save('email', email);
-          save('socialTag', socialTag);
-          save('socialPlatform', socialPlatform);
           handleSignUp();
+        }}
+      />
+      <Button
+        title="Existing User?"
+        onPress={() => {
+          navigation.navigate('Sign In');
         }}
       />
       <Button
