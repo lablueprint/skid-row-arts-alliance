@@ -62,8 +62,9 @@ const adminSignUp = async (req, res) => {
     // Create a new admin object
     const secureAdmin = { ...req.body };
     secureAdmin.password = hashedPassword;
-    const admin = new Admin(secureUser);
+    const admin = new Admin(secureAdmin);
     await admin.save(admin);
+    
     // only need to send status? next process should be redirecting to log in screen?
     return res.send('User successfully created!');
   } catch (err) {
@@ -77,8 +78,8 @@ const adminSignIn = async (req, res, next) => {
     if (!user) { return res.json(info.message); }
     return req.login(user, { session: false }, (e) => {
       if (err) return next(e);
-      // replace secret
-      const token = jwt.sign({ id: user.id }, 'secret');
+      // replace secret and add an expiration
+      const token = jwt.sign({ id: user.id }, 'secret', { expiresIn: '1h' });
       return res.json({ id: user._id, token });
     });
   })(req, res, next);

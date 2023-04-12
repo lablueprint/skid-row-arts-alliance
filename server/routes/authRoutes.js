@@ -11,8 +11,7 @@ authRouter.post('/user-sign-out', authController.userSignOut);
 
 // admin sign in/sign up
 authRouter.post('/admin-sign-up', authController.adminSignUp);
-authRouter.post('/admin-sign-in')
-authRouter.post('/admin-sign-out')
+authRouter.post('/admin-sign-in', authController.adminSignIn);
 
 
 authRouter.get('/test', passport.authenticate('jwt', { session: false }), (req, res) => {

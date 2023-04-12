@@ -9,12 +9,8 @@ const adminSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  firstName: {
+  name: {
     required: true,
-    type: String,
-  },
-  lastName: {
-    required: false,
     type: String,
   },
 });
