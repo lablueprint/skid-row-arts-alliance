@@ -6,7 +6,7 @@ const passport = require('../utils/passportConfig');
 const signUp = async (req, res) => {
   const userExists = await User.findOne({ email: req.body.email });
   if (userExists) {
-    return res.send('That user email already exists');
+    return res.status(400).json({ error: 'That email already exists.' });
   }
   try {
     // Generate a salted passwordr
