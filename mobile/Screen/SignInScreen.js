@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {
   StyleSheet, Text, TextInput, View, Button,
 } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
@@ -24,10 +23,6 @@ const styles = StyleSheet.create({
   },
 });
 
-async function saveSecureStore(key, value) {
-  await SecureStore.setItemAsync(key, value);
-}
-
 function SignInScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
@@ -40,12 +35,10 @@ function SignInScreen({ navigation }) {
         password,
       };
       const res = await axios.post(`${URL}/auth/sign-in`, userData);
-      serviceLogin(userData);
       if (res.data.error) {
         console.log(res.data.error);
       } else {
-        saveSecureStore('id', res.data.id);
-        saveSecureStore('token', res.data.token);
+        serviceLogin(res.data);
         navigation.navigate('Home');
       }
     } catch (err) {
