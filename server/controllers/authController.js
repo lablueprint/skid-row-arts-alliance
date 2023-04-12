@@ -28,7 +28,7 @@ const signUp = async (req, res) => {
 const signIn = async (req, res, next) => {
   passport.authenticate('sign-in', (err, user, info) => {
     if (err) { return next(err); }
-    if (!user) { return res.json(info.message); }
+    if (!user) { return res.json({error: info.message}); }
     return req.logIn(user, { session: false }, (e) => {
       if (err) return next(e);
       // replace secret
