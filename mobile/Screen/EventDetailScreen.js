@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet, View, Text, ScrollView, Image, Button,
 } from 'react-native';
@@ -25,14 +25,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     margin: 40,
   },
-  border: {
-    borderBottomColor: '#8A8A8A',
-    borderBottomWidth: '1.5',
-    marginVertical: 30,
-    marginBottom: 30,
-    marginRight: 20,
-    marginLeft: 20,
-  },
+  // border: {
+  //   borderBottomColor: '#8A8A8A',
+  //   borderBottomWidth: '1.5',
+  //   marginVertical: 30,
+  //   marginBottom: 30,
+  //   marginRight: 20,
+  //   marginLeft: 20,
+  // },
   image: {
     width: 200,
     height: 200,
@@ -46,9 +46,32 @@ function EventDetailScreen({
     id, title, organizations, day, location, time, summary, url, number, email, website,
   } = route.params;
 
+  // need to check upon rendering
+  // (1) get all events, iterate thro for id
+
+  const [isEventFavorited, setIsEventFavorited] = useState(true);
+
+  const getSomeEvents = async () => {
+    try {
+      const res = await axios.get(`${URL}/user/getEvents/63e33e2f578ad1d80bd2a347`);
+      if ((res.data.msg[0].savedEvents.find((elm) => elm === id.toString())) === undefined) {
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    getSomeEvents().then((status) => setIsEventFavorited(status));
+  }, []);
+
   const addSavedEvent = async (eventId) => {
     try {
       const res = await axios.patch(`${URL}/user/addEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
+      setIsEventFavorited(true);
       return res;
     } catch (err) {
       return err;
@@ -58,10 +81,15 @@ function EventDetailScreen({
   const removeSavedEvent = async (eventId) => {
     try {
       const res = await axios.patch(`${URL}/user/removeEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
+      setIsEventFavorited(false);
       return res;
     } catch (err) {
       return err;
     }
+  };
+
+  const isEventSaved = async () => {
+    console.log(isEventFavorited);
   };
 
   const onPressEvent = () => {
@@ -81,6 +109,10 @@ function EventDetailScreen({
 
   const onPressUnfavoriteEvent = () => {
     removeSavedEvent(id);
+  };
+
+  const onPressIsEvent = () => {
+    isEventSaved(id);
   };
 
   return (
@@ -106,6 +138,7 @@ function EventDetailScreen({
         style={styles.image}
         source={{ uri: url }}
       />
+      <Button onPress={onPressIsEvent} title="Is the Event Saved HMM"> Favorite Event </Button>
       <Button onPress={onPressFavoriteEvent} title="Favorite Event"> Favorite Event </Button>
       <Button onPress={onPressUnfavoriteEvent} title="Unfavorite Event"> Unfavorite Event </Button>
     </ScrollView>
