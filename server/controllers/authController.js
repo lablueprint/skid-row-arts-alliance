@@ -12,12 +12,13 @@ const signUp = async (req, res) => {
     // Generate a salted passwordr
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hashSync(req.body.password, salt);
-    // Create a new user object
+    // Create a new user object with secure password
     const secureUser = { ...req.body };
     secureUser.password = hashedPassword;
+    // Save user in database
     const user = new User(secureUser);
     await user.save(user);
-    // only need to send status? next process should be redirecting to log in screen?
+    // Send success response
     return res.send('User successfully created!');
   } catch (err) {
     return res.status(404).json({ error: 'Unable to create a user properly' });
