@@ -8,6 +8,7 @@ import GalleryScreen from './Screen/GalleryScreen';
 import SubmissionScreen from './Screen/SubmissionScreen';
 import ProfileScreen from './Screen/ProfileScreen';
 import SignUpScreen from './Screen/SignUpScreen';
+import SignInScreen from './Screen/SignInScreen';
 import ArtworkDetailScreen from './Screen/ArtworkDetailScreen';
 import store from './redux/store';
 import EventDetailScreen from './Screen/EventDetailScreen';
@@ -35,6 +36,7 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen name="Sign In" component={SignInScreen} />
           <Stack.Screen name="Sign Up" component={SignUpScreen} />
           <Stack.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false, gestureEnabled: false }} />
           <Stack.Screen name="Event Details" component={EventDetailScreen} />
