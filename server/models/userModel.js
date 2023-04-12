@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
     type: socialSchema,
   },
   profilePicture: {
-    required: true,
+    required: false,
     type: String,
   },
   savedEvents: {
