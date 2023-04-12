@@ -13,7 +13,6 @@ const port = process.env.PORT;
 const authRouter = require('./routes/authRoutes');
 const eventRouter = require('./routes/eventRoutes');
 const resourceRouter = require('./routes/resourceRoutes');
-const testRouter = require('./routes/testRoutes');
 const submissionRouter = require('./routes/submissionRoutes');
 const userRouter = require('./routes/userRoutes');
 
@@ -35,7 +34,6 @@ app.use(express.urlencoded({ limit: '200mb', extended: true }));
 app.use('/auth', authRouter);
 app.use('/event', eventRouter);
 app.use('/resource', resourceRouter);
-app.use('/test', testRouter);
 app.use('/submissions', submissionRouter);
 app.use('/user', userRouter);
 
