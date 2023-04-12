@@ -24,7 +24,7 @@ const getAllEvents = async (req, res) => {
     // Reformat data for response
     const responseList = thumbnailKeys.map((key, idx) => ({
       EventData: allEvents[idx],
-      ImageURL: `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${key}`,
+      ImageURL: `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/MapCards/${key}`,
     }));
     res.send(responseList);
   } catch (err) {
