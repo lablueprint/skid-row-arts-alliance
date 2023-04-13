@@ -1,11 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import {
   StyleSheet,
-  Text,
   View,
   Animated,
   Dimensions,
-  Pressable,
   Button,
 } from 'react-native';
 import MapView from 'react-native-maps';
@@ -161,9 +159,6 @@ function MapScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Pressable style={styles.button}>
-        <Text>Workshop</Text>
-      </Pressable>
       <MapView
         ref={mapRef}
         initialRegion={state.region}

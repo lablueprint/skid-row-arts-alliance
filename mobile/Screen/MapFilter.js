@@ -1,10 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ScrollView, Button, Text,
+  TouchableOpacity, ScrollView, Text, StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import EventCard from '../Components/EventCard';
 import ResourceCard from '../Components/ResourceCard';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'flex-direction',
+    paddingHorizontal: 20,
+  },
+  button: {
+    width: '40%',
+    height: 45,
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: '#C0C0DC',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 7,
+  },
+  title: {
+    color: '#6666A9',
+    fontSize: 16,
+    fontFamily: 'Montserrat-Medium',
+  },
+});
 
 const events = [{
   id: 1,
@@ -120,43 +146,22 @@ export default function MapFilter({ navigation }) {
   const filter = () => {
     let resourcesArray = [];
     let eventsArray = [];
-    let missionAdded = false;
 
     // all events are workshops
     if (categories.workshop) {
-      const workshops = (database.filter((event) => event.tags === 'Workshop'));
-      eventsArray = eventsArray.concat(workshops);
+      eventsArray = eventsArray.concat(database.filter((event) => event.tags === 'Workshop'));
     }
 
     if (categories.food) {
-      const food = (database.filter((resource) => resource.tags === 'Food'));
-      resourcesArray = resourcesArray.concat(food);
-
-      if (!missionAdded) {
-        const mission = (database.filter((resource) => resource.tags === 'Mission'));
-        resourcesArray = resourcesArray.concat(mission);
-        missionAdded = true;
-      }
+      resourcesArray = resourcesArray.concat(database.filter((resource) => resource.tags === 'Food'));
     }
 
     if (categories.shelter) {
-      const shelter = (database.filter((resource) => resource.tags === 'Shelter'));
-      resourcesArray = resourcesArray.concat(shelter);
-
-      if (!missionAdded) {
-        const mission = (database.filter((resource) => resource.tags === 'Mission'));
-        resourcesArray = resourcesArray.concat(mission);
-        missionAdded = true;
-      }
+      resourcesArray = resourcesArray.concat(database.filter((resource) => resource.tags === 'Shelter'));
     }
 
-    // all three
-    if (categories.mission) {
-      if (!missionAdded) {
-        const mission = (database.filter((resource) => resource.tags === 'Mission'));
-        resourcesArray = resourcesArray.concat(mission);
-        missionAdded = true;
-      }
+    if (categories.food || categories.shelter || categories.mission) {
+      resourcesArray = resourcesArray.concat(database.filter((resource) => resource.tags === 'Mission'));
     }
 
     // if all are false
@@ -176,6 +181,10 @@ export default function MapFilter({ navigation }) {
     setCategories(updateCategories);
   };
 
+  const clearCategories = () => {
+    setCategories(false);
+  };
+
   // call filter only when apply is implemented
   const [count, setCount] = useState(0);
   const onPressApply = () => {
@@ -183,25 +192,45 @@ export default function MapFilter({ navigation }) {
   };
   useEffect(() => { filter(); }, [count]);
 
+  const [clearCount, setClearCount] = useState(0);
+  const onPressClear = () => {
+    setClearCount(clearCount + 1);
+  };
+
+  useEffect(() => { clearCategories(); }, [clearCount]);
+
   return (
-    <ScrollView>
-      <Button title="food" onPress={() => onPressCategories('food')} />
-      <Text>
-        {categories.food ? 'True' : 'False'}
-      </Text>
-      <Button title="shelter" onPress={() => onPressCategories('shelter')} />
-      <Text>
-        {categories.shelter ? 'True' : 'False'}
-      </Text>
-      <Button title="mission" onPress={() => onPressCategories('mission')} />
-      <Text>
-        {categories.mission ? 'True' : 'False'}
-      </Text>
-      <Button title="workshop" onPress={() => onPressCategories('workshop')} />
-      <Text>
-        {categories.workshop ? 'True' : 'False'}
-      </Text>
-      <Button title="apply" onPress={() => onPressApply()}>apply</Button>
+    <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity style={[styles.button, { width: 100 }]} title="food" onPress={() => onPressCategories('food')}>
+        <Text style={styles.title}>
+          Food
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { width: 110 }]} title="shelter" onPress={() => onPressCategories('shelter')}>
+        <Text style={styles.title}>
+          Shelter
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { width: 120 }]} title="mission" onPress={() => onPressCategories('mission')}>
+        <Text style={styles.title}>
+          Mission
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} title="workshop" onPress={() => onPressCategories('workshop')}>
+        <Text style={styles.title}>
+          Workshop
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { borderRadius: 4 }, { width: 140 }, { borderColor: '#424288' }]} title="apply" onPress={() => onPressClear()}>
+        <Text style={[styles.title, { color: '#424288' }, { fontWeight: '600' }]}>
+          Clear All
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, { borderRadius: 4 }, { width: 170 }, { backgroundColor: '#424288' }, { borderColor: '#424288' }]} title="apply" onPress={() => onPressApply()}>
+        <Text style={[styles.title, { color: 'white' }, { fontWeight: '600' }]}>
+          Apply
+        </Text>
+      </TouchableOpacity>
 
       {filteredResources.map((resource) => (
         <ResourceCard
