@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, Text, ScrollView, Image, Switch,
+  StyleSheet, View, Text, ScrollView, Image, Switch,
 } from 'react-native';
 import VideoPlayer from 'expo-video-player';
 import PropTypes from 'prop-types';
@@ -18,6 +18,10 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: '#D9D9D9',
     margin: 40,
+  },
+  heading: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
@@ -95,11 +99,13 @@ function ArtworkDetailScreen({
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
-        Title:
-        {submission.title}
-      </Text>
-      <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
+      <View style={styles.heading}>
+        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
+          Title:
+          {submission.title}
+        </Text>
+        <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
+      </View>
       <Text>
         Name:
         {submission.name}

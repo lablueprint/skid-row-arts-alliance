@@ -37,6 +37,10 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
   },
+  heading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 });
 
 function EventDetailScreen({
@@ -105,7 +109,7 @@ function EventDetailScreen({
 
   return (
     <ScrollView style={styles.container}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View style={styles.heading}>
         <Text style={styles.h1}>{title}</Text>
         <Switch value={isEventSaved} onValueChange={onPressToggleSavedEvent} title="Event Save Button" />
       </View>
