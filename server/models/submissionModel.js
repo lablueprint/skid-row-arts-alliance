@@ -10,7 +10,8 @@ const socialMediaSchema = new mongoose.Schema({
     type: String,
   },
 });
-
+// TODO: adjust the schema to have the status
+// requires updating frontend to account for status to display or not
 const submissionSchema = new mongoose.Schema({
   name: {
     required: true,
