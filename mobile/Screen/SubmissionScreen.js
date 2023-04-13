@@ -85,12 +85,13 @@ function SubmissionScreen() {
   };
 
   const submit = async () => {
+    let thumbnailExists = true;
     const filesToSubmit = [];
     files.forEach((f) => filesToSubmit.push(f));
     if (thumbnails.length > 0) {
       filesToSubmit.push({ uri: thumbnails[0], type: 'image/jpg' });
     } else {
-      filesToSubmit.push({ uri: 'default', type: 'image/jpg' });
+      thumbnailExists = false;
     }
 
     const fileArray = filesToSubmit.map((file) => {
@@ -120,6 +121,7 @@ function SubmissionScreen() {
         title: artworkTitle,
         description,
         objects,
+        thumbnailExists,
       });
       setSubmissions((prev) => ([...prev, res.data]));
       clearInput();
@@ -129,10 +131,11 @@ function SubmissionScreen() {
   };
 
   const addFile = async (fileURI, fileType) => {
-    setFiles((prev) => ([...prev, { uri: fileURI, type: fileType }]));
     if (fileType.includes('image')) {
+      setFiles((prev) => ([...prev, { uri: fileURI, type: Array.from(new Set(fileType.split('/'))).join('/') }]));
       setThumbnails((prev) => ([...prev, fileURI]));
     } else if (fileType.includes('video')) {
+      setFiles((prev) => ([...prev, { uri: fileURI, type: Array.from(new Set(fileType.split('/'))).join('/') }]));
       try {
         const res = await VideoThumbnails.getThumbnailAsync(fileURI);
         setThumbnails((prev) => ([...prev, res.uri]));
@@ -140,7 +143,8 @@ function SubmissionScreen() {
         console.error(err);
       }
     } else { // Implement default thumbnail in future if we have additional file types (e.g. audio)
-
+      console.log('Default');
+      setFiles((prev) => ([...prev, { uri: fileURI, type: Array.from(new Set(fileType.split('/').filter((type) => type !== 'mp4'))).join('/') }]));
     }
   };
 
@@ -273,42 +277,6 @@ function SubmissionScreen() {
             onPress={submit}
           />
         </View>
-      </View>
-      <View style={styles.submissionsContainer}>
-        {submissions.map((submission) => (
-          <View style={styles.submission} key={submission._id}>
-            <Text>
-              Name:
-              {' '}
-              {submission.name}
-            </Text>
-            <Text>
-              Email:
-              {' '}
-              {submission.email}
-            </Text>
-            <Text>
-              Social Media Platform:
-              {' '}
-              {submission.socials.platform}
-            </Text>
-            <Text>
-              Social Media Account Tag:
-              {' '}
-              {submission.socials.tag}
-            </Text>
-            <Text>
-              Artwork Title:
-              {' '}
-              {submission.title}
-            </Text>
-            <Text>
-              Artwork Description:
-              {' '}
-              {submission.description}
-            </Text>
-          </View>
-        ))}
       </View>
     </ScrollView>
   );

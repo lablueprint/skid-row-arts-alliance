@@ -21,18 +21,18 @@ const getFileName = (name, title) => {
 
 const createSubmission = async (req, res) => {
   // S3
-  const { objects, name, title } = req.body;
+  const { objects, name, title, thumbnailExists } = req.body;
   const keyString = getFileName(name, title);
 
   // Keys
   const s3keys = [];
-  objects.slice(0, objects.length - 1).forEach((object, index) => {
+  objects.slice(0, objects.length - thumbnailExists).forEach((object, index) => {
     s3keys.push(`Submissions/${keyString}_${index}.${(object.type.split('/')[1] === 'quicktime') ? 'mov' : object.type.split('/')[1]}`);
   });
-  const thumbnail = `Thumbnails/${keyString}.${objects[objects.length - 1].type.split('/')[1]}`;
+  const thumbnail = thumbnailExists ? `Thumbnails/${keyString}.${objects[objects.length - thumbnailExists].type.split('/')[1]}` : 'Thumbnails/default.jpg';
 
   // Files
-  const s3Promises = await objects.slice(0, objects.length - 1)
+  const s3Promises = await objects.slice(0, objects.length - thumbnailExists)
     .map(async (object, index) => s3.putObject({
       Bucket: process.env.S3_BUCKET,
       Key: s3keys[index],
@@ -42,19 +42,21 @@ const createSubmission = async (req, res) => {
   Promise.all(s3Promises).catch((err) => console.error(err));
 
   // Thumbnail
-  try {
-    await s3.upload({
-      Bucket: process.env.S3_BUCKET,
-      Key: thumbnail,
-      ContentType: objects[objects.length - 1].type,
-      Body: Buffer.from(objects[objects.length - 1].uri, 'base64'),
-    }, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
-  } catch (err) {
-    console.error(err);
+  if(thumbnailExists) {
+    try {
+      await s3.upload({
+        Bucket: process.env.S3_BUCKET,
+        Key: thumbnail,
+        ContentType: objects[objects.length - thumbnailExists].type,
+        Body: Buffer.from(objects[objects.length - thumbnailExists].uri, 'base64'),
+      }, (err) => {
+        if (err) {
+          console.log(err);
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   // Mongo
