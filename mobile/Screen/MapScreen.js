@@ -4,7 +4,6 @@ import {
   View,
   Animated,
   Dimensions,
-  Button,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
@@ -36,7 +35,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function MapScreen({ navigation }) {
+function MapScreen() {
   const [allEvents, setAllEvents] = useState([]);
   const [allResources, setAllResources] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
@@ -77,7 +76,8 @@ function MapScreen({ navigation }) {
     },
   };
 
-  const allCards = allEvents.concat(allResources);
+  const allCards = allEvents.map((event) => event.EventData)
+    .concat(allResources.map((resource) => resource.ResourceData));
   const scrollViewRef = useRef(null);
   const mapRef = useRef(null);
   mapRef.index = 0;
@@ -177,25 +177,25 @@ function MapScreen({ navigation }) {
       >
         {allEvents.map((event) => (
           <MapCard
-            key={event._id}
-            id={event._id}
-            image={{ uri: event.images[0] }}
-            title={event.title}
-            description={event.description}
-            startDate={new Date(event.startDate)}
-            endDate={new Date(event.endDate)}
+            key={event.EventData._id}
+            id={event.EventData._id}
+            image={{ uri: event.ImageURL }}
+            title={event.EventData.title}
+            description={event.EventData.description}
+            startDate={new Date(event.EventData.startDate)}
+            endDate={new Date(event.EventData.endDate)}
             isEvent
           />
         ))}
         {allResources.map((resource) => (
           <MapCard
-            key={resource._id}
-            id={resource._id}
-            image={{ uri: resource.image }}
-            title={resource.title}
-            description={resource.description}
-            startDate={new Date(resource.startDate)}
-            endDate={new Date(resource.endDate)}
+            key={resource.ResourceData._id}
+            id={resource.ResourceData._id}
+            image={{ uri: resource.ImageURL }}
+            title={resource.ResourceData.title}
+            description={resource.ResourceData.description}
+            startDate={new Date(resource.ResourceData.startDate)}
+            endDate={new Date(resource.ResourceData.endDate)}
             isEvent={false}
           />
         ))}
@@ -203,11 +203,5 @@ function MapScreen({ navigation }) {
     </View>
   );
 }
-
-MapScreen.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func,
-  }).isRequired,
-};
 
 export default MapScreen;

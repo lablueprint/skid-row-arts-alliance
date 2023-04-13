@@ -66,13 +66,13 @@ const eventSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  images: {
-    required: true,
-    type: [String],
-  },
   tags: {
     required: true,
     type: [String],
+  },
+  thumbnail: {
+    required: true,
+    type: String,
   },
 });
 

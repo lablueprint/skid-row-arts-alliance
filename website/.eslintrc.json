@@ -5,13 +5,17 @@
         "es2021": true
     },
     "extends": [
-        "airbnb-base"
+        "plugin:react/recommended",
+        "airbnb"
+    ],
+    "overrides": [
     ],
     "parserOptions": {
         "ecmaVersion": "latest"
     },
+    "plugins": [
+        "react"
+    ],
     "rules": {
-        "no-underscore-dangle": "off",
-        "linebreak-style": 0,
     }
 }

@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import {
   StyleSheet, Text, ScrollView, Image, Switch,
 } from 'react-native';
+import VideoPlayer from 'expo-video-player';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { URL } from '@env';
+import AudioPlayer from '../Components/AudioPlayer';
 
 const styles = StyleSheet.create({
   container: {
@@ -22,10 +25,27 @@ function ArtworkDetailScreen({
   route,
 }) {
   const {
-    id, title, Encoding, name, description, email,
+    id,
   } = route.params;
-
+  const [submission, setSubmission] = useState({});
+  const [allMediaData, setAllMediaData] = useState([]);
+  const [loadImages, setLoadImages] = useState(false);
   const [isArtSaved, setIsArtSaved] = useState(false);
+
+  const getSubmission = async () => {
+    try {
+      setLoadImages(false);
+      const res = await axios.get(`${URL}/submissions/getsubmission`, { params: { id } });
+      setSubmission(res.data.Submission);
+      setAllMediaData(res.data.MediaData);
+      return res.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadImages(true);
+    }
+  };
 
   const getSavedArt = async () => {
     try {
@@ -39,10 +59,6 @@ function ArtworkDetailScreen({
       return false;
     }
   };
-
-  useEffect(() => {
-    getSavedArt().then((status) => setIsArtSaved(status));
-  }, []);
 
   const addSavedArt = async (artId) => {
     try {
@@ -72,27 +88,69 @@ function ArtworkDetailScreen({
     }
   };
 
+  useEffect(() => {
+    getSavedArt().then((status) => setIsArtSaved(status));
+    getSubmission();
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
         Title:
-        {title}
+        {submission.title}
       </Text>
       <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
       <Text>
         Name:
-        {name}
+        {submission.name}
         {'\n'}
         Description:
-        {description}
+        {submission.description}
         {'\n'}
         Email:
-        {email}
+        {submission.email}
       </Text>
-      <Image
-        style={{ width: 200, height: 200 }}
-        source={{ uri: Encoding }}
-      />
+      {
+        loadImages ? (
+          <>
+            {
+              allMediaData.map((mediaData) => {
+                const type = mediaData.ContentType.split('/')[0];
+                if (type === 'image') {
+                  return (
+                    <Image
+                      style={{ width: 200, height: 200 }}
+                      source={{ uri: mediaData.MediaURL }}
+                    />
+                  );
+                }
+                if (type === 'video') {
+                  return (
+                    <VideoPlayer
+                      videoProps={{
+                        shouldPlay: false,
+                        source: {
+                          uri: mediaData.MediaURL,
+                        },
+                      }}
+                    />
+                  );
+                }
+                if (type === 'audio') {
+                  return (
+                    <AudioPlayer
+                      source={mediaData.MediaURL}
+                    />
+                  );
+                }
+                return (
+                  <Text>Unsupported media type</Text>
+                );
+              })
+            }
+          </>
+        ) : <Text>Loading</Text>
+      }
     </ScrollView>
   );
 }
@@ -100,13 +158,13 @@ function ArtworkDetailScreen({
 ArtworkDetailScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      id: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
       Encoding: PropTypes.string.isRequired,
       key: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
       description: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
     }),
   }).isRequired,
 };
