@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Image, Button,
+  StyleSheet, View, Text, ScrollView, Image, Switch,
 } from 'react-native';
 import { URL } from '@env';
 import PropTypes from 'prop-types';
@@ -46,9 +46,6 @@ function EventDetailScreen({
     id, title, organizations, day, location, time, summary, url, number, email, website,
   } = route.params;
 
-  // need to check upon rendering
-  // (1) get all events, iterate thro for id
-
   const [isEventFavorited, setIsEventFavorited] = useState(true);
 
   const getSomeEvents = async () => {
@@ -88,10 +85,6 @@ function EventDetailScreen({
     }
   };
 
-  const isEventSaved = async () => {
-    console.log(isEventFavorited);
-  };
-
   const onPressEvent = () => {
     navigation.navigate('Organization Details', {
       organizations,
@@ -102,22 +95,20 @@ function EventDetailScreen({
     });
   };
 
-  // one button toggles between these event handlers
-  const onPressFavoriteEvent = () => {
-    addSavedEvent(id);
-  };
-
-  const onPressUnfavoriteEvent = () => {
-    removeSavedEvent(id);
-  };
-
-  const onPressIsEvent = () => {
-    isEventSaved(id);
+  const onPressToggleFavoriteEvent = () => {
+    if (isEventFavorited) {
+      removeSavedEvent(id);
+    } else {
+      addSavedEvent(id);
+    }
   };
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.h1}>{title}</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text style={styles.h1}>{title}</Text>
+        <Switch value={isEventFavorited} onValueChange={onPressToggleFavoriteEvent} title="Event Save Button" />
+      </View>
       <Text onPress={onPressEvent}>{organizations}</Text>
       <View style={styles.border} />
       <View style={styles.square} />
@@ -138,9 +129,6 @@ function EventDetailScreen({
         style={styles.image}
         source={{ uri: url }}
       />
-      <Button onPress={onPressIsEvent} title="Is the Event Saved HMM"> Favorite Event </Button>
-      <Button onPress={onPressFavoriteEvent} title="Favorite Event"> Favorite Event </Button>
-      <Button onPress={onPressUnfavoriteEvent} title="Unfavorite Event"> Unfavorite Event </Button>
     </ScrollView>
   );
 }
