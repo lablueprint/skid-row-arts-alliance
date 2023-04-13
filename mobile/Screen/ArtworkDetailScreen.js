@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, Text, ScrollView, Image,
+  StyleSheet, Text, ScrollView, Image, Button,
 } from 'react-native';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 import VideoPlayer from 'expo-video-player';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -30,6 +32,18 @@ function ArtworkDetailScreen({
   const [submission, setSubmission] = useState({});
   const [allMediaData, setAllMediaData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
+
+  const handleShare = async (mediaUrl) => {
+    try {
+      const fileName = mediaUrl.substring(mediaUrl.lastIndexOf('/') + 1);
+      const fileUri = `${FileSystem.cacheDirectory}${Date.now()}${fileName}`;
+      const downloadObject = FileSystem.createDownloadResumable(mediaUrl, fileUri);
+      const { uri } = await downloadObject.downloadAsync();
+      await Sharing.shareAsync(uri);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const getSubmission = async () => {
     try {
@@ -74,29 +88,44 @@ function ArtworkDetailScreen({
                 const type = mediaData.ContentType.split('/')[0];
                 if (type === 'image') {
                   return (
-                    <Image
-                      style={{ width: 200, height: 200 }}
-                      source={{ uri: mediaData.MediaURL }}
-                    />
+                    <>
+                      <Image
+                        style={{ width: 200, height: 200 }}
+                        source={{ uri: mediaData.MediaURL }}
+                      />
+                      <Button title="Share" onPress={() => handleShare(mediaData.MediaURL)}>
+                        <Text>Share</Text>
+                      </Button>
+                    </>
                   );
                 }
                 if (type === 'video') {
                   return (
-                    <VideoPlayer
-                      videoProps={{
-                        shouldPlay: false,
-                        source: {
-                          uri: mediaData.MediaURL,
-                        },
-                      }}
-                    />
+                    <>
+                      <VideoPlayer
+                        videoProps={{
+                          shouldPlay: false,
+                          source: {
+                            uri: mediaData.MediaURL,
+                          },
+                        }}
+                      />
+                      <Button title="Share" onPress={() => handleShare(mediaData.MediaURL)}>
+                        <Text>Share</Text>
+                      </Button>
+                    </>
                   );
                 }
                 if (type === 'audio') {
                   return (
-                    <AudioPlayer
-                      source={mediaData.MediaURL}
-                    />
+                    <>
+                      <AudioPlayer
+                        source={mediaData.MediaURL}
+                      />
+                      <Button title="Share" onPress={() => handleShare(mediaData.MediaURL)}>
+                        <Text>Share</Text>
+                      </Button>
+                    </>
                   );
                 }
                 return (
