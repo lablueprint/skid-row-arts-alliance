@@ -46,7 +46,7 @@ function EventDetailScreen({
     id, title, organizations, day, location, time, summary, url, number, email, website,
   } = route.params;
 
-  const [isEventFavorited, setIsEventFavorited] = useState(true);
+  const [isEventSaved, setIsEventSaved] = useState(false);
 
   const getSomeEvents = async () => {
     try {
@@ -62,13 +62,13 @@ function EventDetailScreen({
   };
 
   useEffect(() => {
-    getSomeEvents().then((status) => setIsEventFavorited(status));
+    getSomeEvents().then((status) => setIsEventSaved(status));
   }, []);
 
   const addSavedEvent = async (eventId) => {
     try {
       const res = await axios.patch(`${URL}/user/addEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
-      setIsEventFavorited(true);
+      setIsEventSaved(true);
       return res;
     } catch (err) {
       return err;
@@ -78,7 +78,7 @@ function EventDetailScreen({
   const removeSavedEvent = async (eventId) => {
     try {
       const res = await axios.patch(`${URL}/user/removeEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
-      setIsEventFavorited(false);
+      setIsEventSaved(false);
       return res;
     } catch (err) {
       return err;
@@ -95,8 +95,8 @@ function EventDetailScreen({
     });
   };
 
-  const onPressToggleFavoriteEvent = () => {
-    if (isEventFavorited) {
+  const onPressToggleSavedEvent = () => {
+    if (isEventSaved) {
       removeSavedEvent(id);
     } else {
       addSavedEvent(id);
@@ -107,7 +107,7 @@ function EventDetailScreen({
     <ScrollView style={styles.container}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text style={styles.h1}>{title}</Text>
-        <Switch value={isEventFavorited} onValueChange={onPressToggleFavoriteEvent} title="Event Save Button" />
+        <Switch value={isEventSaved} onValueChange={onPressToggleSavedEvent} title="Event Save Button" />
       </View>
       <Text onPress={onPressEvent}>{organizations}</Text>
       <View style={styles.border} />
