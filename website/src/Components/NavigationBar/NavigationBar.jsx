@@ -15,7 +15,7 @@ function NavigationBar() {
   return (
     <div className="NavBar">
       <li>
-        <Link to="gallery">Gallery</Link>
+        <Link to="/">Gallery</Link>
       </li>
       <li>
         <Link to="zines">Zines</Link>

@@ -1,17 +1,14 @@
-import { React, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { React, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import {
   Container, Typography, TextField, Button,
 } from '@mui/material';
-import { isTokenExpired, login } from '../../redux/sliceAuth';
+import { login } from '../../redux/sliceAuth';
 
 function SignInPage() {
-  const { id, token } = useSelector((state) => state.sliceAuth);
   const dispatch = useDispatch();
   // Navigation functions to pages
-  const navigate = useNavigate();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -24,12 +21,6 @@ function SignInPage() {
       alert('Handle or password is incorrect');
     }
   };
-
-  useEffect(() => {
-    if (!isTokenExpired(token) && id && token) {
-      navigate('/gallery');
-    }
-  }, [id, token]);
 
   return (
     <Container>

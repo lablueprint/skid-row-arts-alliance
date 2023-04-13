@@ -1,8 +1,5 @@
-import { React, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { React } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { useNavigate } from 'react-router-dom';
-import { isTokenExpired } from '../../redux/sliceAuth';
 
 function GalleryPage() {
   const columns = [
@@ -29,15 +26,6 @@ function GalleryPage() {
       Date: '02/01/23',
     },
   ];
-
-  const { id, token } = useSelector((state) => state.sliceAuth);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isTokenExpired(token) || !id || !token) {
-      navigate('/');
-    }
-  }, [id, token]);
 
   return (
     <div style={{ width: '70%' }}>
