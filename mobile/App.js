@@ -11,6 +11,8 @@ import SignUpScreen from './Screen/SignUpScreen';
 import ArtworkDetailScreen from './Screen/ArtworkDetailScreen';
 import store from './redux/store';
 import EventDetailScreen from './Screen/EventDetailScreen';
+import ZinesScreen from './Screen/ZinesScreen';
+import ZineDetailsScreen from './Screen/ZineDetailsScreen';
 import EventScreen from './Screen/EventScreen';
 import ResourceDetailScreen from './Screen/ResourceDetailScreen';
 import OrganizationDetailScreen from './Screen/OrganizationDetailScreen';
@@ -25,6 +27,7 @@ function HomeStackScreen() {
       <Tab.Screen name="Gallery" component={GalleryScreen} />
       <Tab.Screen name="Submission" component={SubmissionScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Zines" component={ZinesScreen} />
       <Tab.Screen name="Events" component={EventScreen} />
     </Tab.Navigator>
   );
@@ -38,6 +41,8 @@ export default function App() {
           <Stack.Screen name="Sign Up" component={SignUpScreen} />
           <Stack.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false, gestureEnabled: false }} />
           <Stack.Screen name="Event Details" component={EventDetailScreen} />
+          <Stack.Screen name="Zine Gallery" component={ZinesScreen} />
+          <Stack.Screen name="Zine Details" component={ZineDetailsScreen} />
           <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
           <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
           <Stack.Screen name="Organization Details" component={OrganizationDetailScreen} />
