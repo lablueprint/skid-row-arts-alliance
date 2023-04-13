@@ -19,7 +19,7 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (token && isTokenExpired(token)) {
+    if (!token || isTokenExpired(token)) {
       navigate('/');
     }
   }, [token, navigate]);
