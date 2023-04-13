@@ -4,7 +4,6 @@ import {
   View,
   Animated,
   Dimensions,
-  Button,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
@@ -36,7 +35,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function MapScreen({ navigation }) {
+function MapScreen() {
   const [allEvents, setAllEvents] = useState([]);
   const [allResources, setAllResources] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
@@ -77,7 +76,8 @@ function MapScreen({ navigation }) {
     },
   };
 
-  const allCards = allEvents.map((event) => event.EventData).concat(allResources.map((resource) => resource.ResourceData));
+  const allCards = allEvents.map((event) => event.EventData)
+    .concat(allResources.map((resource) => resource.ResourceData));
   const scrollViewRef = useRef(null);
   const mapRef = useRef(null);
   mapRef.index = 0;
@@ -203,11 +203,5 @@ function MapScreen({ navigation }) {
     </View>
   );
 }
-
-MapScreen.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func,
-  }).isRequired,
-};
 
 export default MapScreen;
