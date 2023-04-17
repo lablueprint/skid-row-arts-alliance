@@ -37,13 +37,13 @@ function MapIcon({ focused }) {
   );
 }
 
-function EventIcon({ focused }) {
+function EventsIcon({ focused }) {
   return (
     <Image
       source={
         focused
-          ? require('./assets/navbar/eventSelected.png')
-          : require('./assets/navbar/event.png')
+          ? require('./assets/navbar/eventsSelected.png')
+          : require('./assets/navbar/events.png')
       }
       style={{ width: 30, height: 30 }}
     />
@@ -124,7 +124,7 @@ function HomeStackScreen() {
           name="Events"
           component={EventScreen}
           options={{
-            tabBarIcon: EventIcon,
+            tabBarIcon: EventsIcon,
           }}
         />
         <Tab.Screen
@@ -175,7 +175,7 @@ MapIcon.propTypes = {
   focused: PropTypes.bool.isRequired,
 };
 
-EventIcon.propTypes = {
+EventsIcon.propTypes = {
   focused: PropTypes.bool.isRequired,
 };
 
