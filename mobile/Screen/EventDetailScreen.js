@@ -25,14 +25,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     margin: 40,
   },
-  // border: {
-  //   borderBottomColor: '#8A8A8A',
-  //   borderBottomWidth: '1.5',
-  //   marginVertical: 30,
-  //   marginBottom: 30,
-  //   marginRight: 20,
-  //   marginLeft: 20,
-  // },
   image: {
     width: 200,
     height: 200,
@@ -55,7 +47,7 @@ function EventDetailScreen({
   const getSomeEvents = async () => {
     try {
       const res = await axios.get(`${URL}/user/getEvents/63e33e2f578ad1d80bd2a347`);
-      if ((res.data.msg[0].savedEvents.find((elm) => elm === id.toString())) === undefined) {
+      if ((res.data.msg[0].savedEvents.find((elem) => elem === id.toString())) === undefined) {
         return false;
       }
       return true;
