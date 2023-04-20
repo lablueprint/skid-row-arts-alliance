@@ -1,11 +1,12 @@
 /* eslint-disable no-console */
 import React, { useState } from 'react';
 import {
-  StyleSheet, Text, TextInput, View, Button, Alert, Keyboard,
+  StyleSheet, Text, TextInput, View, Button, Alert, Keyboard, Image,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as SecureStore from 'expo-secure-store';
 import PropTypes from 'prop-types';
+import * as ImagePicker from 'expo-image-picker';
 import { serviceLogin } from '../redux/services';
 import DotTextInput from '../Components/DotTextInput';
 
@@ -37,6 +38,10 @@ function SignUpScreen({ navigation }) {
   const [email, onChangeEmail] = React.useState('');
   const [password, onChangePassword] = React.useState('');
   const [confirmPassword, onChangeConfirmPassword] = React.useState('');
+
+  const [profilePicture, onChangeProfilePicture] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
+  const [image, setImage] = useState('');
 
   const [bio, onChangeBio] = React.useState('');
 
@@ -78,6 +83,39 @@ function SignUpScreen({ navigation }) {
       return true;
     }
     return false;
+  };
+
+  // Select profile pic
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const openCamera = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
   };
 
   // Store input and navigate to Home screen
@@ -205,6 +243,13 @@ function SignUpScreen({ navigation }) {
     return (
       <View style={styles.container}>
         <Text>Add a Profile Picture</Text>
+        <Button title="Set Profile Picture" onPress={pickImage} />
+        {image !== '' ? (
+          <Image
+            source={{ uri: image }}
+            style={{ width: 200, height: 200 }}
+          />
+        ) : ''}
         <Button
           title="Back"
           onPress={() => {
