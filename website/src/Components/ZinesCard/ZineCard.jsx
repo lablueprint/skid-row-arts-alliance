@@ -1,4 +1,6 @@
 import { Button, Box, Typography } from '@mui/material';
+import { Document, Page } from 'react-pdf/dist/esm/entry.webpack5';
+import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import PropTypes from 'prop-types';
 import { React } from 'react';
 
@@ -12,6 +14,7 @@ function ZineCard({
   const handleDeleteZineDetails = async () => {
     console.log(url);
   };
+
   return (
     <Box style={{ background: 'gray', margin: '10px' }}>
       <Typography variant="h6">{title}</Typography>
@@ -20,6 +23,11 @@ function ZineCard({
         {' '}
         {year}
       </Typography>
+      <Box>
+        <Document style={{ height: '50px' }} file={url}>
+          <Page pageNumber={1} renderTextLayer={false} height={250} />
+        </Document>
+      </Box>
       <Button variant="contained" onClick={() => handleEditZineDetails()}>Edit</Button>
       <Button variant="contained" onClick={() => handleDeleteZineDetails()}>Delete</Button>
     </Box>
