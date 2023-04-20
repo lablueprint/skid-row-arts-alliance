@@ -134,7 +134,6 @@ function EventScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.scrollView}>
-      {events.map((event) => (
       <View style={styles.buttonContainer}>
         <Button
           title="Select date"

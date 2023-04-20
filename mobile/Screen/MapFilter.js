@@ -200,7 +200,7 @@ export default function MapFilter({ navigation }) {
   useEffect(() => { clearCategories(); }, [clearCount]);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView>
       <TouchableOpacity style={[styles.button, { width: 100 }]} title="food" onPress={() => onPressCategories('food')}>
         <Text style={styles.title}>
           Food
