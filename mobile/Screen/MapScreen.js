@@ -4,6 +4,8 @@ import {
   View,
   Animated,
   Dimensions,
+  TouchableOpacity,
+  Text,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
@@ -22,6 +24,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
+    elevation: 1,
   },
   scrollView: {
     position: 'absolute',
@@ -34,13 +37,21 @@ const styles = StyleSheet.create({
     paddingRight: width - CARD_WIDTH,
   },
   button: {
-    height: 40,
-    width: 100,
-    backgroundColor: 'red',
+    width: '40%',
+    height: 45,
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: '#C0C0DC',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 7,
+    position: 'absolute',
+    zIndex: 1,
   },
 });
 
-function MapScreen() {
+function MapScreen({ navigation }) {
   const [allEvents, setAllEvents] = useState([]);
   const [allResources, setAllResources] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
@@ -139,8 +150,17 @@ function MapScreen() {
     });
   };
 
+  const onPressEvent = () => {
+    navigation.navigate('Filter');
+  };
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.button} onPress={() => onPressEvent()}>
+        <Text>
+          Filter
+        </Text>
+      </TouchableOpacity>
       <MapView
         ref={mapRef}
         initialRegion={state.region}
@@ -204,6 +224,12 @@ function MapScreen() {
 }
 
 export default MapScreen;
+
+MapScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
 /*
 <Button title="Food">Food</Button>
 <Button title="Shelter">Shelter</Button>
