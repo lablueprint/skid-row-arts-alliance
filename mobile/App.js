@@ -14,6 +14,7 @@ import EventDetailScreen from './Screen/EventDetailScreen';
 import EventScreen from './Screen/EventScreen';
 import ResourceDetailScreen from './Screen/ResourceDetailScreen';
 import OrganizationDetailScreen from './Screen/OrganizationDetailScreen';
+import LoginScreen from './Screen/LoginScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -36,6 +37,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Sign Up" component={SignUpScreen} />
+          <Stack.Screen name="Log In" component={LoginScreen} />
           <Stack.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false, gestureEnabled: false }} />
           <Stack.Screen name="Event Details" component={EventDetailScreen} />
           <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />

@@ -7,6 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 import * as SecureStore from 'expo-secure-store';
 import PropTypes from 'prop-types';
 import { serviceLogin } from '../redux/services';
+import DotTextInput from '../Components/DotTextInput';
 
 const styles = StyleSheet.create({
   container: {
@@ -128,6 +129,13 @@ function SignUpScreen({ navigation }) {
             }
           }}
         />
+        <Text>Already have an account?</Text>
+        <Button
+          title="Log in"
+          onPress={() => {
+            navigation.navigate('Log In');
+          }}
+        />
       </View>
     );
   }
@@ -151,13 +159,14 @@ function SignUpScreen({ navigation }) {
             <Text>
               Password
             </Text>
-            <TextInput
+            <DotTextInput value={password} onChangeText={onChangePassword} />
+            {/* <TextInput
               secureTextEntry
               style={styles.input}
               onChangeText={onChangePassword}
               value={password}
               autoCapitalize={false}
-            />
+            /> */}
             <Text>6 or more characters</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -222,6 +231,7 @@ function SignUpScreen({ navigation }) {
           style={styles.input}
           onChangeText={onChangeBio}
           value={bio}
+          maxLength={150}
         />
         <Button
           title="Back"
