@@ -1,11 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   View,
   Animated,
   Dimensions,
-  Button,
 } from 'react-native';
+import axios from 'axios';
+import { URL } from '@env';
 import MapView from 'react-native-maps';
 import PropTypes from 'prop-types';
 import MapCard from '../Components/MapCard';
@@ -14,7 +15,7 @@ import MapMarker from '../Components/MapMarker';
 const { width, height } = Dimensions.get('window');
 
 const CARD_HEIGHT = height / 4;
-const CARD_WIDTH = CARD_HEIGHT + 50;
+const CARD_WIDTH = CARD_HEIGHT + 70;
 
 const styles = StyleSheet.create({
   container: {
@@ -39,65 +40,39 @@ const styles = StyleSheet.create({
   },
 });
 
-const Images = [
-  { uri: 'http://overcomeandamplify.com/wp-content/uploads/2016/09/broadway-mall.jpg' },
-  { uri: 'https://img.ctykit.com/cdn/ca-dtla/images/tr:w-1800/king-eddy.jpg' },
-  { uri: 'https://images1.apartments.com/i2/KYlRC-2yNZXQSNh0JGMno_S-RIbHbS7bDROWLLtZ1uc/111/star-apartments-los-angeles-ca-primary-photo.jpg' },
-  { uri: 'https://www.lehrerarchitects.com/wp-content/uploads/2017/12/JAMES-WOOD_06-1920x1100.jpg' },
-];
+function MapScreen() {
+  const [allEvents, setAllEvents] = useState([]);
+  const [allResources, setAllResources] = useState([]);
+  const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
 
-function MapScreen({ navigation }) {
+  const getAllEvents = async () => {
+    try {
+      const result = await axios.get(`${URL}/event/get`);
+      setAllEvents(result.data);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  const getAllResources = async () => {
+    try {
+      const result = await axios.get(`${URL}/resource/get`);
+      setAllResources(result.data);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  useEffect(() => {
+    getAllEvents();
+    getAllResources();
+  }, []);
+
   const state = {
-    markers: [
-      {
-        id: 1, // TODO: change this temporary id
-        coordinate: {
-          latitude: 34.051060,
-          longitude: -118.247910,
-        },
-        title: 'Skid Row History Museum and LA Poverty Department',
-        description: '250 S Broadway | (213) 413-1077',
-        image: Images[0],
-        startDate: new Date('2023-01-27T10:00:00'),
-        endDate: new Date('2023-01-27T11:00:00'),
-      },
-      {
-        id: 2, // TODO: change this temporary id
-        coordinate: {
-          latitude: 34.046070,
-          longitude: -118.247540,
-        },
-        title: 'Open Mic Night with Unkal Bean (King Eddy Saloon)',
-        description: '131 E 5th St.',
-        image: Images[1],
-        startDate: new Date('2023-02-04T17:00:00'),
-        endDate: new Date('2023-02-04T22:00:00'),
-      },
-      {
-        id: 3, // TODO: change this temporary id
-        coordinate: {
-          latitude: 34.043580,
-          longitude: -118.247680,
-        },
-        title: 'Piece by Piece (Star Apartments)',
-        description: '240 E 6th St. | (323) 963-3372',
-        image: Images[2],
-        startDate: new Date('2023-01-28T08:00:00'),
-        endDate: new Date('2023-01-28T09:00:00'),
-      },
-      {
-        id: 4, // TODO: change this temporary id
-        coordinate: {
-          latitude: 34.044536,
-          longitude: -118.244873,
-        },
-        title: 'Movies on the Nickel (James Wood Community Center',
-        description: '400 E 5th St. | (213) 229-9602',
-        image: Images[3],
-        startDate: new Date('2023-01-29T15:00:00'),
-        endDate: new Date('2023-01-29T16:00:00'),
-      },
-    ],
     region: {
       latitude: 34.0442,
       longitude: -118.2439,
@@ -106,6 +81,9 @@ function MapScreen({ navigation }) {
     },
   };
 
+  const allCards = allEvents.map((event) => event.EventData)
+    .concat(allResources.map((resource) => resource.ResourceData));
+  const scrollViewRef = useRef(null);
   const mapRef = useRef(null);
   mapRef.index = 0;
   mapRef.animation = new Animated.Value(0);
@@ -113,18 +91,13 @@ function MapScreen({ navigation }) {
   useEffect(() => {
     mapRef.animation.addListener(({ value }) => {
       let index = Math.floor(value / CARD_WIDTH + 0.3);
-      if (index >= state.markers.length) {
-        index = state.markers.length - 1;
-      }
-      if (index <= 0) {
-        index = 0;
-      }
+      index = Math.max(0, Math.min(index, allCards.length - 1));
 
       clearTimeout(mapRef.regionTimeout);
       mapRef.regionTimeout = setTimeout(() => {
-        if (mapRef.index !== index) {
+        if ((mapRef.index !== index) || (mapRef.index === 0 && index === 0)) {
           mapRef.index = index;
-          const { coordinate } = state.markers[index];
+          const coordinate = allCards[index].location.coordinates;
           mapRef.current.animateToRegion(
             {
               ...coordinate,
@@ -136,9 +109,9 @@ function MapScreen({ navigation }) {
         }
       }, 10);
     });
-  }, []);
+  }, [mapRef.animation]);
 
-  const interpolations = state.markers.map((marker, index) => {
+  const interpolations = allCards.map((_, index) => {
     const inputRange = [
       (index - 1) * CARD_WIDTH,
       index * CARD_WIDTH,
@@ -157,6 +130,15 @@ function MapScreen({ navigation }) {
     return { scale, opacity };
   });
 
+  const onMarkerPress = (index) => {
+    mapRef.animation.setValue(index * CARD_WIDTH);
+    setActiveMarkerIndex(index);
+    scrollViewRef.current.scrollTo({
+      x: index * CARD_WIDTH,
+      animated: true,
+    });
+  };
+
   return (
     <View style={styles.container}>
       <MapView
@@ -164,9 +146,15 @@ function MapScreen({ navigation }) {
         initialRegion={state.region}
         style={styles.container}
       >
-        <MapMarker state={state} interpolations={interpolations} />
+        <MapMarker
+          allCards={allCards}
+          interpolations={interpolations}
+          onMarkerPress={onMarkerPress}
+        />
+
       </MapView>
       <Animated.ScrollView
+        ref={scrollViewRef}
         horizontal
         scrollEventThrottle={1}
         showsHorizontalScrollIndicator={false}
@@ -186,33 +174,34 @@ function MapScreen({ navigation }) {
         style={styles.scrollView}
         contentContainerStyle={styles.endPadding}
       >
-        {state.markers.map((marker) => (
+        {allEvents.map((event) => (
           <MapCard
-            id={marker.id} // TODO: change this temporary id
-            image={marker.image}
-            title={marker.title}
-            description={marker.description}
-            startDate={marker.startDate}
-            endDate={marker.endDate}
+            key={event.EventData._id}
+            id={event.EventData._id}
+            image={{ uri: event.ImageURL }}
+            title={event.EventData.title}
+            description={event.EventData.description}
+            startDate={new Date(event.EventData.startDate)}
+            endDate={new Date(event.EventData.endDate)}
+            isEvent
           />
         ))}
-        <Button
-        // BUTTON FOR TESTING ONLY
-          title="Return to Sign Up"
-          onPress={() => {
-            navigation.navigate('Sign Up');
-          }}
-        />
+        {allResources.map((resource) => (
+          <MapCard
+            key={resource.ResourceData._id}
+            id={resource.ResourceData._id}
+            image={{ uri: resource.ImageURL }}
+            title={resource.ResourceData.title}
+            description={resource.ResourceData.description}
+            startDate={new Date(resource.ResourceData.startDate)}
+            endDate={new Date(resource.ResourceData.endDate)}
+            isEvent={false}
+          />
+        ))}
       </Animated.ScrollView>
     </View>
   );
 }
-
-MapScreen.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func,
-  }).isRequired,
-};
 
 export default MapScreen;
 /*

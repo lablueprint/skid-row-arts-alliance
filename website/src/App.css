@@ -1,0 +1,8 @@
+.App {
+    display: flex;
+    position: relative;
+}
+
+.content {
+    width: 100%;
+}

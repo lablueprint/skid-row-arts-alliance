@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   ScrollView,
+  Button,
+  View,
+  Text,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import CalendarPicker from 'react-native-calendar-picker';
 import EventCard from '../Components/EventCard';
 import ResourceCard from '../Components/ResourceCard';
 
@@ -11,12 +15,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  buttonContainer: {
+    backgroundColor: '#DDDDDD',
+    borderRadius: 4,
+    margin: 20,
+    padding: 5,
+  },
 });
 
 const events = [{
   id: 1,
   title: 'Volunteering',
-  date: '10/03/2023',
+  date: new Date('2023-03-01T20:00:00.000Z'),
   day: 'Monday',
   location: '3148 Rose Rd, LA',
   organizations: 'BPlate',
@@ -32,7 +42,7 @@ const events = [{
 {
   id: 2,
   title: 'Fundraiser',
-  date: '09/08/2023',
+  date: new Date('2023-03-03T20:00:00.000Z'),
   day: 'Tuesday',
   location: '4102 Daisy Rd, LA',
   organizations: 'Studio 526',
@@ -48,7 +58,7 @@ const events = [{
 {
   id: 3,
   title: 'Information Session',
-  date: '03/05/2023',
+  date: new Date('2023-03-05T20:00:00.000Z'),
   day: 'Wednesday',
   location: '4123 Blue Rd, LA',
   organizations: 'Cafe 1919',
@@ -106,13 +116,52 @@ const resources = [
 ];
 
 function EventScreen({ navigation }) {
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const handleButtonPress = () => {
+    setShowCalendar(!showCalendar);
+  };
+
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    setShowCalendar(false);
+  };
+
+  const filteredEvents = events.filter(
+    (event) => !selectedDate || new Date(event.date) >= new Date(selectedDate),
+  );
+
   return (
     <ScrollView style={styles.scrollView}>
       {events.map((event) => (
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Select date"
+          color="#4C4C9B"
+          accessibilityLabel="Go to date picker"
+          onPress={handleButtonPress}
+        />
+      </View>
+      {showCalendar && (
+        <CalendarPicker
+          onDateChange={handleDateSelect}
+          selectedStartDate={selectedDate}
+          selectedEndDate={selectedDate}
+        />
+      )}
+      {selectedDate !== null && (
+        <Text style={{ textAlign: 'center' }}>
+          Date selected:
+          {' '}
+          { JSON.stringify(selectedDate).slice(1, 11) }
+        </Text>
+      )}
+      {filteredEvents.map((event) => (
         <EventCard
           id={event.id}
           title={event.title}
-          date={event.date}
+          date={event.date.toLocaleDateString('en-US')}
           day={event.day}
           location={event.location}
           time={event.time}
