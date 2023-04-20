@@ -1,12 +1,13 @@
 /* eslint-disable no-console */
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import {
   StyleSheet, Text, TextInput, View, Button,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
-import { serviceLogin } from '../redux/services';
+import { login } from '../redux/sliceAuth';
 
 const styles = StyleSheet.create({
   container: {
@@ -26,6 +27,7 @@ const styles = StyleSheet.create({
 function SignInScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
+  const dispatch = useDispatch();
 
   // Store input and navigate to Home screen
   const handleSignIn = async () => {
@@ -34,15 +36,16 @@ function SignInScreen({ navigation }) {
         email,
         password,
       };
+      console.log(URL);
       const res = await axios.post(`${URL}/auth/sign-in`, userData);
+      console.log(`${URL}/auth/sign-in`);
       if (res.data.error) {
         console.log(res.data.error);
       } else {
-        serviceLogin(res.data);
-        navigation.navigate('Home');
+        dispatch(login(res.data));
       }
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
     }
   };
 
