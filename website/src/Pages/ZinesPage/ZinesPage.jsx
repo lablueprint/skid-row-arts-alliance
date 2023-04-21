@@ -1,21 +1,22 @@
 import { React, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Box, Container, Typography } from '@mui/material';
 import axios from 'axios';
-import ZineCard from '../../Components/ZinesCard/ZineCard';
+import ZineCard from './ZineCard';
 
 function ZinesPage() {
+  const { count } = useSelector((state) => state.sliceAuth);
   const [zines, setZines] = useState([]);
 
   const getZines = async () => {
     const response = await axios.get('http://localhost:4000/zine/get');
-    console.log(response.data);
     setZines(response.data);
   };
 
   useEffect(() => {
     getZines();
-    console.log(zines);
-  }, []);
+  }, [count]);
+
   return (
     <Container>
       <Typography variant="h5">Published Zines</Typography>
