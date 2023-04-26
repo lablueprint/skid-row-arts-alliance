@@ -1,26 +1,14 @@
 /* eslint-disable no-underscore-dangle */
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   Text,
-  ScrollView,
+  SafeAreaView,
+  FlatList,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
 import PropTypes from 'prop-types';
 import ArtworkCard from '../Components/ArtworkCard';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'cnpmenter',
-    justifyContent: 'center',
-  },
-  scrollView: {
-    padding: 20,
-  },
-});
 
 function GalleryScreen({ navigation }) {
   const [allImageData, setAllImageData] = useState([]);
@@ -45,24 +33,24 @@ function GalleryScreen({ navigation }) {
   }, []);
 
   return (
-    <ScrollView style={styles.scrollView}>
-      <Text>Gallery Screen</Text>
-      {
-        loadImages ? (
-          <>
-            {
-              allImageData.map((imageData) => (
-                <ArtworkCard
-                  ImageURL={imageData.ImageURL}
-                  id={imageData.SubmissionData._id}
-                  navigation={navigation}
-                />
-              ))
-            }
-          </>
-        ) : <Text>Nothing</Text>
-      }
-    </ScrollView>
+    <SafeAreaView>
+      {loadImages ? (
+        <FlatList
+          data={allImageData}
+          renderItem={({ item }) => (
+            <ArtworkCard
+              ImageURL={item.ImageURL}
+              id={item.SubmissionData._id}
+              navigation={navigation}
+            />
+          )}
+          keyExtractor={(item) => item.SubmissionData._id}
+          numColumns={2}
+        />
+      ) : (
+        <Text>Loading...</Text>
+      )}
+    </SafeAreaView>
   );
 }
 
