@@ -1,5 +1,12 @@
 /* eslint-disable no-console */
+const AWS = require('aws-sdk');
 const User = require('../models/userModel');
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.ACCESS_KEY_ID,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY,
+  region: process.env.S3_REGION,
+});
 
 const createUser = async (req, res) => {
   const user = new User(req.body);
@@ -13,6 +20,7 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
+    console.log(req.body);
     const data = await User.findByIdAndUpdate(req.params.id, req.body);
     res.json(data);
   } catch (err) {
@@ -129,6 +137,64 @@ const removeUserArtwork = async (req, res) => {
   }
 };
 
+const addUserProfilePicture = async (req, res) => {
+  console.log('controller');
+  // res.send('Hello');
+  console.log('hello');
+  const image = req.body.blob;
+  console.log('poops');
+  const buf = Buffer.from(image, 'base64');
+  // const d = new Date().toLocaleString();
+  // const date = d.slice(0, d.length - 3)
+  //   .split('/')
+  //   .join('_')
+  //   .split(' ')
+  //   .join('_')
+  //   .replace(',', '');
+  const keyString = `ProfilePictures/${req.params.id}`;
+  console.log('poopies');
+  console.log(Object.keys(req.params.id));
+  console.log('kzwan');
+  console.log(Object.keys(req.body));
+  console.log(buf);
+  try {
+    await s3.upload({
+      Bucket: 'test-sraa',
+      Key: keyString,
+      ContentType: 'image/jpeg',
+      Body: buf,
+    }, (err, data) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(1, data);
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
+  console.log('s3');
+
+  // try {
+  //   const data = await User.updateOne({ _id: req.params.id }, { $push: { profilePicture: req.body } });
+  //   res.json(data);
+  // } catch (err) {
+  //   console.log(err);
+  // }
+  console.log('done');
+};
+
+const getUserProfilePicture = async (req, res) => {
+  try {
+    const data = await User.find({ _id: req.params.id }, 'profilePicture -_id');
+    res.json({
+      msg: data,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   createUser,
   getAllUserInfo,
@@ -142,4 +208,6 @@ module.exports = {
   getUserArtwork,
   removerUserEvent,
   removeUserArtwork,
+  addUserProfilePicture,
+  getUserProfilePicture,
 };
