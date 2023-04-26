@@ -151,7 +151,7 @@ function MapScreen({ navigation }) {
   };
 
   const onPressEvent = () => {
-    navigation.navigate('Filter');
+    navigation.navigate('Filter', { setAllEvents, setAllResources });
   };
 
   return (
@@ -196,13 +196,13 @@ function MapScreen({ navigation }) {
       >
         {allEvents.map((event) => (
           <MapCard
-            key={event.EventData._id}
-            id={event.EventData._id}
+            key={event._id}
+            id={event._id}
             image={{ uri: event.ImageURL }}
-            title={event.EventData.title}
-            description={event.EventData.description}
-            startDate={new Date(event.EventData.startDate)}
-            endDate={new Date(event.EventData.endDate)}
+            title={event.title}
+            description={event.description}
+            startDate={new Date(event.startDate)}
+            endDate={new Date(event.endDate)}
             isEvent
           />
         ))}

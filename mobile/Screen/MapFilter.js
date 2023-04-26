@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  TouchableOpacity, ScrollView, Text, StyleSheet,
+  View, TouchableOpacity, ScrollView, Text, StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import EventCard from '../Components/EventCard';
-import ResourceCard from '../Components/ResourceCard';
 
+/* TO DO: pull data from back-end, the reason it is not rendering right now is prolly because
+in MapScreen when you render MapCard it has MapCard and does resource.ResourceData */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -28,10 +28,10 @@ const styles = StyleSheet.create({
   title: {
     color: '#6666A9',
     fontSize: 16,
-    fontFamily: 'Montserrat-Medium',
   },
 });
 
+/*
 const events = [{
   id: 1,
   title: 'Volunteering',
@@ -46,7 +46,7 @@ const events = [{
   email: 'studio526@gmail.com',
   website: 'studio526.com',
   url: 'https:/upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-  tags: 'Workshop',
+  tags: 'Visual Art',
 },
 {
   id: 2,
@@ -62,7 +62,7 @@ const events = [{
   email: 'studio526@gmail.com',
   website: 'studio526.com',
   url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-  tags: 'Workshop',
+  tags: 'Film',
 },
 {
   id: 3,
@@ -78,7 +78,7 @@ const events = [{
   email: 'studio526@gmail.com',
   website: 'studio526.com',
   url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-  tags: 'Workshop',
+  tags: 'Music',
 }];
 
 const resources = [
@@ -122,14 +122,48 @@ const resources = [
     tags: 'Mission',
   },
 ];
-
-export default function MapFilter({ navigation }) {
+*/
+export default function MapFilter({ route }) {
+  const { setAllEvents, setAllResources } = route.params || {};
   const [categories, setCategories] = useState({
-    workshop: false,
+    visualArt: false,
+    film: false,
+    music: false,
     food: false,
     shelter: false,
     mission: false,
+    health: false,
+    legalServices: false,
+    socialServices: false,
+    shower: false,
   });
+
+  const getAllEvents = async () => {
+    try {
+      const result = await axios.get(`${URL}/event/get`);
+      setAllEvents(result.data);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  const getAllResources = async () => {
+    try {
+      const result = await axios.get(`${URL}/resource/get`);
+      setAllResources(result.data);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  useEffect(() => {
+    getAllEvents();
+    getAllResources();
+  }, []);
 
   const [database, setDatabase] = useState([]);
 
@@ -140,16 +174,22 @@ export default function MapFilter({ navigation }) {
   };
 
   useEffect(() => { fillDatabase(); }, []);
-  const [filteredResources, setResources] = useState([]);
-  const [filteredEvents, setEvents] = useState([]);
 
   const filter = () => {
     let resourcesArray = [];
     let eventsArray = [];
 
     // all events are workshops
-    if (categories.workshop) {
-      eventsArray = eventsArray.concat(database.filter((event) => event.tags === 'Workshop'));
+    if (categories.visualArt) {
+      eventsArray = eventsArray.concat(database.filter((event) => event.tags === 'Visual Art'));
+    }
+
+    if (categories.music) {
+      eventsArray = eventsArray.concat(database.filter((event) => event.tags === 'Music'));
+    }
+
+    if (categories.film) {
+      eventsArray = eventsArray.concat(database.filter((event) => event.tags === 'Film'));
     }
 
     if (categories.food) {
@@ -160,18 +200,33 @@ export default function MapFilter({ navigation }) {
       resourcesArray = resourcesArray.concat(database.filter((resource) => resource.tags === 'Shelter'));
     }
 
+    if (categories.health) {
+      resourcesArray = resourcesArray.concat(database.filter((resource) => resource.tags === 'Health'));
+    }
+    if (categories.legalServices) {
+      resourcesArray = resourcesArray.concat(database.filter((resource) => resource.tags === 'Legal Services'));
+    }
+    if (categories.socialServices) {
+      resourcesArray = resourcesArray.concat(database.filter((resource) => resource.tags === 'Social Services'));
+    }
+    if (categories.shower) {
+      resourcesArray = resourcesArray.concat(database.filter((resource) => resource.tags === 'Shower'));
+    }
+
     if (categories.food || categories.shelter || categories.mission) {
       resourcesArray = resourcesArray.concat(database.filter((resource) => resource.tags === 'Mission'));
     }
 
     // if all are false
-    if (!categories.food && !categories.shelter && !categories.mission && !categories.workshop) {
+    const allCategoriesAreFalse = Object.values(categories).every((value) => value === false);
+
+    if (allCategoriesAreFalse) {
       resourcesArray = resources;
       eventsArray = events;
     }
 
-    setResources(resourcesArray);
-    setEvents(eventsArray);
+    setAllResources(resourcesArray);
+    setAllEvents(eventsArray);
   };
 
   // update the true/false categories
@@ -199,80 +254,89 @@ export default function MapFilter({ navigation }) {
 
   useEffect(() => { clearCategories(); }, [clearCount]);
 
+  const eventCategories = [
+    {
+      title: 'Visual Art',
+      key: 'visualArt',
+    },
+    {
+      title: 'Film',
+      key: 'film',
+    },
+    {
+      title: 'Music',
+      key: 'music',
+    },
+    {
+      title: 'Miscellaneous',
+      key: 'miscellaneous',
+    },
+  ];
+
+  const resourceCategories = [
+    {
+      title: 'Food',
+      key: 'food',
+    },
+    {
+      title: 'Shelter',
+      key: 'shelter',
+    },
+    {
+      title: 'Mission',
+      key: 'mission',
+    },
+    {
+      title: 'Legal Services',
+      key: 'legalServices',
+    },
+    {
+      title: 'Social Services',
+      key: 'socialServices',
+    },
+    {
+      title: 'Shower',
+      key: 'shower',
+    },
+  ];
+
   return (
     <ScrollView>
-      <TouchableOpacity style={[styles.button, { width: 100 }]} title="food" onPress={() => onPressCategories('food')}>
-        <Text style={styles.title}>
-          Food
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { width: 110 }]} title="shelter" onPress={() => onPressCategories('shelter')}>
-        <Text style={styles.title}>
-          Shelter
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { width: 120 }]} title="mission" onPress={() => onPressCategories('mission')}>
-        <Text style={styles.title}>
-          Mission
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} title="workshop" onPress={() => onPressCategories('workshop')}>
-        <Text style={styles.title}>
-          Workshop
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { borderRadius: 4 }, { width: 140 }, { borderColor: '#424288' }]} title="apply" onPress={() => onPressClear()}>
-        <Text style={[styles.title, { color: '#424288' }, { fontWeight: '600' }]}>
-          Clear All
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, { borderRadius: 4 }, { width: 170 }, { backgroundColor: '#424288' }, { borderColor: '#424288' }]} title="apply" onPress={() => onPressApply()}>
-        <Text style={[styles.title, { color: 'white' }, { fontWeight: '600' }]}>
-          Apply
-        </Text>
-      </TouchableOpacity>
-
-      {filteredResources.map((resource) => (
-        <ResourceCard
-          id={resource.id}
-          title={resource.title}
-          day={resource.day}
-          time={resource.time}
-          summary={resource.summary}
-          url={resource.url}
-          location={resource.location}
-          navigation={navigation}
-          number={resource.number}
-          email={resource.email}
-          website={resource.website}
-          tag={resource.tag}
-        />
-      ))}
-      {filteredEvents.map((event) => (
-        <EventCard
-          id={event.id}
-          title={event.title}
-          date={event.date}
-          day={event.day}
-          location={event.location}
-          time={event.time}
-          organizations={event.organizations}
-          number={event.number}
-          email={event.email}
-          website={event.website}
-          description={event.description}
-          summary={event.summary}
-          url={event.url}
-          navigation={navigation}
-          tag={event.tag}
-        />
-      ))}
+      <Text style={styles.title}>Workshops</Text>
+      <View style={styles.container}>
+        {eventCategories.map((category) => (
+          <TouchableOpacity style={styles.button} onPress={() => onPressCategories(category.key)}>
+            <Text style={styles.title}>{category.title}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <Text style={styles.title}>Resources</Text>
+      <View style={styles.container}>
+        {resourceCategories.map((category) => (
+          <TouchableOpacity style={styles.button} onPress={() => onPressCategories(category.key)}>
+            <Text style={styles.title}>{category.title}</Text>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity style={[styles.button, { borderRadius: 4 }, { borderColor: '#424288' }]} title="apply" onPress={() => onPressClear()}>
+          <Text style={[styles.title, { color: '#424288' }, { fontWeight: '600' }]}>
+            Clear All
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, { borderRadius: 4 }, { backgroundColor: '#424288' }, { borderColor: '#424288' }]} title="apply" onPress={() => onPressApply()}>
+          <Text style={[styles.title, { color: 'white' }, { fontWeight: '600' }]}>
+            Apply
+          </Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
 
 MapFilter.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func,
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      setAllEvents: PropTypes.func.isRequired,
+      setAllResources: PropTypes.func.isRequired,
+    }).isRequired,
   }).isRequired,
 };
