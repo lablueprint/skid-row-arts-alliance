@@ -52,12 +52,12 @@ function SignUpScreen({ navigation }) {
       };
       const res = await axios.post(`${URL}/auth/sign-up`, userData);
       if (res.data.error) {
-        console.log(res.data.error);
+        console.error(res.data.error);
       } else {
         navigation.navigate('Sign In');
       }
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
     }
   };
 

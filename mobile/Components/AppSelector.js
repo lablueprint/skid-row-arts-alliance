@@ -1,16 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-// import MapScreen from '../Screen/MapScreen';
+import MapScreen from '../Screen/MapScreen';
 import GalleryScreen from '../Screen/GalleryScreen';
 import SubmissionScreen from '../Screen/SubmissionScreen';
 import ProfileScreen from '../Screen/ProfileScreen';
 import SignUpScreen from '../Screen/SignUpScreen';
 import SignInScreen from '../Screen/SignInScreen';
 import ArtworkDetailScreen from '../Screen/ArtworkDetailScreen';
-// import store from '../redux/store';
 import EventDetailScreen from '../Screen/EventDetailScreen';
 import EventScreen from '../Screen/EventScreen';
 import ResourceDetailScreen from '../Screen/ResourceDetailScreen';
@@ -23,7 +22,7 @@ const Stack = createStackNavigator();
 function HomeStackScreen() {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Map" component={GalleryScreen} />
+      <Tab.Screen name="Map" component={MapScreen} />
       <Tab.Screen name="Gallery" component={GalleryScreen} />
       <Tab.Screen name="Submission" component={SubmissionScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
@@ -34,8 +33,6 @@ function HomeStackScreen() {
 
 function AppSelector() {
   const { id, token } = useSelector((state) => state.auth);
-
-  // useEffect(() => console.log({ id, token }), [token]);
 
   return (
     (token && !isTokenExpired(token) && id) ? (
