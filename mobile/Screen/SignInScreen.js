@@ -38,11 +38,13 @@ function SignInScreen({ navigation }) {
       };
       console.log(URL);
       const res = await axios.post(`${URL}/auth/sign-in`, userData);
-      console.log(`${URL}/auth/sign-in`);
+      // console.log('got res');
+      // console.log(res.data);
       if (res.data.error) {
         console.log(res.data.error);
       } else {
         dispatch(login(res.data));
+        // console.log('login');
       }
     } catch (err) {
       console.error(err.message);
