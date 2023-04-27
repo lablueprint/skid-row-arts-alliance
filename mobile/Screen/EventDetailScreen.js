@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Image,
+  StyleSheet, View, Text, ScrollView, Image, Switch,
 } from 'react-native';
+import { URL } from '@env';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 
 const styles = StyleSheet.create({
   container: {
@@ -23,17 +25,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     margin: 40,
   },
-  border: {
-    borderBottomColor: '#8A8A8A',
-    borderBottomWidth: '1.5',
-    marginVertical: 30,
-    marginBottom: 30,
-    marginRight: 20,
-    marginLeft: 20,
-  },
   image: {
     width: 200,
     height: 200,
+  },
+  heading: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
@@ -41,8 +39,47 @@ function EventDetailScreen({
   navigation, route,
 }) {
   const {
-    title, organizations, day, location, time, summary, url, number, email, website,
+    id, title, organizations, day, location, time, summary, url, number, email, website,
   } = route.params;
+
+  const [isEventSaved, setIsEventSaved] = useState(false);
+
+  const getSomeEvents = async () => {
+    try {
+      const res = await axios.get(`${URL}/user/getEvents/63e33e2f578ad1d80bd2a347`);
+      if ((res.data.msg[0].savedEvents.find((elem) => elem === id.toString())) === undefined) {
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    getSomeEvents().then((status) => setIsEventSaved(status));
+  }, []);
+
+  const addSavedEvent = async (eventId) => {
+    try {
+      const res = await axios.patch(`${URL}/user/addEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
+      setIsEventSaved(true);
+      return res;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const removeSavedEvent = async (eventId) => {
+    try {
+      const res = await axios.patch(`${URL}/user/removeEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
+      setIsEventSaved(false);
+      return res;
+    } catch (err) {
+      return err;
+    }
+  };
 
   const onPressEvent = () => {
     navigation.navigate('Organization Details', {
@@ -54,9 +91,20 @@ function EventDetailScreen({
     });
   };
 
+  const onPressToggleSavedEvent = () => {
+    if (isEventSaved) {
+      removeSavedEvent(id);
+    } else {
+      addSavedEvent(id);
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.h1}>{title}</Text>
+      <View style={styles.heading}>
+        <Text style={styles.h1}>{title}</Text>
+        <Switch value={isEventSaved} onValueChange={onPressToggleSavedEvent} title="Event Save Button" />
+      </View>
       <Text onPress={onPressEvent}>{organizations}</Text>
       <View style={styles.border} />
       <View style={styles.square} />
@@ -87,6 +135,7 @@ EventDetailScreen.propTypes = {
   }).isRequired,
   route: PropTypes.shape({
     params: PropTypes.shape({
+      id: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
       organizations: PropTypes.string.isRequired,
       day: PropTypes.string.isRequired,

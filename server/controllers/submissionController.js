@@ -1,13 +1,11 @@
-require('../models/submissionModel');
-const mongoose = require('mongoose');
-
-const Submission = mongoose.model('Submission');
-
 const AWS = require('aws-sdk');
+const Submission = require('../models/submissionModel');
 
+// Connect to the AWS S3 Storage
 const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.ACCESS_KEY_ID,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY,
+  region: process.env.S3_REGION,
 });
 
 const getFileName = (name, title) => {
@@ -26,11 +24,18 @@ const createSubmission = async (req, res) => {
   const { objects, name, title } = req.body;
   const keyString = getFileName(name, title);
 
+  // Keys
+  const s3keys = [];
+  objects.slice(0, objects.length - 1).forEach((object, index) => {
+    s3keys.push(`Submissions/${keyString}_${index}.${(object.type.split('/')[1] === 'quicktime') ? 'mov' : object.type.split('/')[1]}`);
+  });
+  const thumbnail = `Thumbnails/${keyString}.${objects[objects.length - 1].type.split('/')[1]}`;
+
   // Files
   const s3Promises = await objects.slice(0, objects.length - 1)
     .map(async (object, index) => s3.putObject({
       Bucket: process.env.S3_BUCKET,
-      Key: `${keyString}_${index}.${(object.type.split('/')[1] === 'quicktime') ? 'mov' : object.type.split('/')[1]}`,
+      Key: s3keys[index],
       ContentType: object.type,
       Body: Buffer.from(object.uri, 'base64'),
     }).promise());
@@ -40,7 +45,7 @@ const createSubmission = async (req, res) => {
   try {
     await s3.upload({
       Bucket: process.env.S3_BUCKET,
-      Key: `${keyString}_thumbnail.${objects[objects.length - 1].type.split('/')[1]}`,
+      Key: thumbnail,
       ContentType: objects[objects.length - 1].type,
       Body: Buffer.from(objects[objects.length - 1].uri, 'base64'),
     }, (err) => {
@@ -53,19 +58,14 @@ const createSubmission = async (req, res) => {
   }
 
   // Mongo
-  const s3Keys = [];
-  for (let i = 0; i < objects.length - 1; i += 1) {
-    s3Keys.push(`${keyString}_${i}`);
-  }
-
   const submission = new Submission({
     name: req.body.name,
     email: req.body.email,
     socials: req.body.socials,
     title: req.body.title,
     description: req.body.description,
-    s3Keys,
-    thumbnail: `${keyString}_thumbnail`,
+    s3keys,
+    thumbnail,
   });
 
   try {
@@ -86,19 +86,59 @@ const deleteSubmission = async (req, res) => {
   }
 };
 
-const getSubmissions = async (req, res) => {
+const getAllSubmissions = async (req, res) => {
   try {
-    const data = await Submission.find();
-    res.send(data);
+    // S3 Key retrieval from MongoDB
+    // Empty `filter` means "match all documents"
+    const filter = {};
+    const allSubmissions = await Submission.find(filter);
+
+    // TODO: remove default thumbnail in the future
+    const thumbnailKeys = allSubmissions.map((submission) => (submission.thumbnail ? submission.thumbnail : '0007Squirtle.png'));
+    // Reformat data for response
+    const responseList = thumbnailKeys.map((key, idx) => ({
+      SubmissionData: allSubmissions[idx],
+      ImageURL: `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${key}`,
+    }));
+    res.send(responseList);
   } catch (err) {
     console.error(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
   }
 };
 
 const getSubmission = async (req, res) => {
-  res.send(`Hello ${req.params.id}`);
+  try {
+    // Art submission retrieval from MongoDB
+    const submission = await Submission.findById(req.query.id);
+
+    // Retrieve data about S3 objects related to current submission
+    const s3Promises = submission.s3keys.map(async (key) => s3.getObject({
+      Bucket: process.env.S3_BUCKET,
+      Key: key,
+    }).promise());
+    const s3DataList = Promise.all(s3Promises);
+
+    // Construct list of objects mapping ContentType to Object URL from S3
+    const mediaDataList = (await s3DataList).map((data, idx) => ({
+      ContentType: data.ContentType,
+      MediaURL: `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${submission.s3keys[idx]}`,
+    }));
+    res.send({
+      MediaData: mediaDataList,
+      Submission: submission,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
+  }
 };
 
 module.exports = {
-  createSubmission, deleteSubmission, getSubmissions, getSubmission,
+  createSubmission,
+  deleteSubmission,
+  getAllSubmissions,
+  getSubmission,
 };
