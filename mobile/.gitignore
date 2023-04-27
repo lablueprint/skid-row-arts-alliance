@@ -13,6 +13,7 @@ web-build/
 android/
 index.js
 metro.config.js
+ios/
 
 # macOS
 .DS_Store

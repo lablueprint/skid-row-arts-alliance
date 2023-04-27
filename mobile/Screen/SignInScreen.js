@@ -1,13 +1,14 @@
 /* eslint-disable no-console */
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  StyleSheet, Text, TextInput, View, Button,
-} from 'react-native';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
+import {
+  StyleSheet, Text, TextInput, View, Button, Alert,
+} from 'react-native';
 import { login } from '../redux/sliceAuth';
+import DotTextInput from '../Components/DotTextInput';
 
 const styles = StyleSheet.create({
   container: {
@@ -28,6 +29,24 @@ function SignInScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
   const dispatch = useDispatch();
+
+  // Check email is proper format
+  const validateEmail = (text) => {
+    const reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w\w+)+$/;
+    if (reg.test(text) === false) {
+      return false;
+    }
+    return true;
+  };
+
+  const checkValidEmail = () => {
+    if (!validateEmail(email)) {
+      Alert.alert('Please enter a valid email to proceed');
+    } else {
+      return true;
+    }
+    return false;
+  };
 
   // Store input and navigate to Home screen
   const handleSignIn = async () => {
@@ -57,17 +76,14 @@ function SignInScreen({ navigation }) {
           style={styles.input}
           onChangeText={onChangeEmail}
           value={email}
+          autoCapitalize={false}
         />
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text>
           Password
         </Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangePassword}
-          value={password}
-        />
+        <DotTextInput value={password} onChangeText={onChangePassword} />
       </View>
       <Button
         title="Sign In"
@@ -75,8 +91,9 @@ function SignInScreen({ navigation }) {
           handleSignIn();
         }}
       />
+      <Text>Don&#39;t have an account?</Text>
       <Button
-        title="New User?"
+        title="Create an account"
         onPress={() => {
           navigation.navigate('Sign Up');
         }}
@@ -90,12 +107,6 @@ function SignInScreen({ navigation }) {
     </View>
   );
 }
-
-SignInScreen.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func,
-  }).isRequired,
-};
 
 export default SignInScreen;
 
