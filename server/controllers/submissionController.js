@@ -8,7 +8,37 @@ const s3 = new AWS.S3({
   region: process.env.S3_REGION,
 });
 
-const getFileName = (name, title) => {
+const deleteThumbnail = async (key) => {
+  s3.deleteObject({
+    Bucket: process.env.S3_BUCKET,
+    Key: key,
+  }, function(e, data) {
+    if (e) {
+      console.log(e)
+    }
+    else {
+      console.log(data)
+    }
+  });
+}
+
+const deleteSubmissions = async (keys) => {
+  const s3Promises = await objects.slice(0, objects.length - thumbnailExists)
+    .map(async (_, index) => s3.deleteObject({
+      Bucket: process.env.S3_BUCKET,
+      Key: s3keys[index],
+    }).promise());
+
+  Promise.all(s3Promises).catch(() => {
+    res.send("Failsafe failed to delete submissions", err);
+    return;
+  });
+  res.send(err);
+}
+
+const createSubmission = async (req, res) => {
+  // S3
+  const { objects, name, title, thumbnailExists } = req.body;
   const d = new Date().toLocaleString();
   const date = d.slice(0, d.length - 3)
     .split('/')
@@ -16,13 +46,7 @@ const getFileName = (name, title) => {
     .split(' ')
     .join('_')
     .replace(',', '');
-  return `${date}_${name}_${title}`;
-};
-
-const createSubmission = async (req, res) => {
-  // S3
-  const { objects, name, title, thumbnailExists } = req.body;
-  const keyString = getFileName(name, title);
+  const keyString = `${date}_${name}_${title}`;
 
   // Keys
   const s3keys = [];
@@ -30,16 +54,6 @@ const createSubmission = async (req, res) => {
     s3keys.push(`Submissions/${keyString}_${index}.${(object.type.split('/')[1] === 'quicktime') ? 'mov' : object.type.split('/')[1]}`);
   });
   const thumbnail = thumbnailExists ? `Thumbnails/${keyString}.${objects[objects.length - thumbnailExists].type.split('/')[1]}` : 'Thumbnails/default.jpg';
-
-  // Files
-  const s3Promises = await objects.slice(0, objects.length - thumbnailExists)
-    .map(async (object, index) => s3.putObject({
-      Bucket: process.env.S3_BUCKET,
-      Key: s3keys[index],
-      ContentType: object.type,
-      Body: Buffer.from(object.uri, 'base64'),
-    }).promise());
-  Promise.all(s3Promises).catch((err) => console.error(err));
 
   // Thumbnail
   if(thumbnailExists) {
@@ -59,6 +73,21 @@ const createSubmission = async (req, res) => {
     }
   }
 
+  // Files
+  const s3Promises = await objects.slice(0, objects.length - thumbnailExists)
+    .map(async (object, index) => s3.putObject({
+      Bucket: process.env.S3_BUCKET,
+      Key: s3keys[index],
+      ContentType: object.type,
+      Body: Buffer.from(object.uri, 'base64'),
+    }).promise());
+  Promise.all(s3Promises).catch((err) => console.error(err));
+
+  const mediaTypes = [];
+  objects.slice(0, objects.length - thumbnailExists).forEach(o => {
+    mediaTypes.push(o.type.slice(0, o.type.indexOf('/')))
+  });
+
   // Mongo
   const submission = new Submission({
     name: req.body.name,
@@ -68,6 +97,11 @@ const createSubmission = async (req, res) => {
     description: req.body.description,
     s3keys,
     thumbnail,
+    tags: req.body.tags,
+    mediaTypes,
+    date: d.slice(0, d.indexOf(',')),
+    status: "Incomplete",
+    comments: "",
   });
 
   try {
