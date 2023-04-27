@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, Text, TextInput, View, Button,
+  StyleSheet, Text, TextInput, View, Button, ScrollView,
 } from 'react-native';
+import axios from 'axios';
+import { URL } from '@env';
 import { Picker } from '@react-native-picker/picker';
 import { useSelector } from 'react-redux';
 import { serviceUpdateUser } from '../redux/services';
@@ -20,6 +22,26 @@ function ProfileScreen() {
   const [email, onChangeEmail] = useState('');
   const [platform, setPlatform] = useState('');
   const [tag, onChangeTag] = useState('');
+  const [loadSavedArt, setLoadSavedArt] = useState(false);
+  const [savedArt, setSavedArt] = useState([]);
+
+  const getSavedArtwork = async () => {
+    try {
+      setLoadSavedArt(false);
+      const res = await axios.get(`${URL}/user/getArtwork/63e33e2f578ad1d80bd2a347`);
+      setSavedArt(res.data.msg[0].savedArtwork);
+      return res;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadSavedArt(true);
+    }
+  };
+
+  useEffect(() => {
+    getSavedArtwork();
+  }, []);
 
   const handleClear = () => {
     serviceUpdateUser({
@@ -43,7 +65,7 @@ function ProfileScreen() {
 
   // Display and edit profile info
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={{
         paddingTop: 30,
         paddingBottom: 50,
@@ -115,9 +137,20 @@ function ProfileScreen() {
           />
         </View>
       </View>
+      <View>
+        {
+        loadSavedArt ? (
+          savedArt.map((oneArt) => (
+            <Text>
+              {oneArt}
+            </Text>
+          ))
+        ) : <Text>There is no saved art</Text>
+      }
+      </View>
       <Button title="Save" onPress={handleUpdate} />
       <Button title="Clear" onPress={handleClear} />
-    </View>
+    </ScrollView>
   );
 }
 
