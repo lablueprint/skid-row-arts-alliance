@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function LoginScreen({ navigation }) {
+function SignInScreen({ navigation }) {
   const [email, onChangeEmail] = React.useState('');
   const [password, onChangePassword] = React.useState('');
 
@@ -85,8 +85,8 @@ function LoginScreen({ navigation }) {
   );
 }
 
-export default LoginScreen;
+export default SignInScreen;
 
-LoginScreen.propTypes = {
+SignInScreen.propTypes = {
   navigation: PropTypes.shape({ navigate: PropTypes.func }).isRequired,
 };

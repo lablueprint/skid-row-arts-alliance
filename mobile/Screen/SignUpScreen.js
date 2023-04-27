@@ -1,12 +1,13 @@
 /* eslint-disable no-console */
 import React, { useState } from 'react';
 import {
-  StyleSheet, Text, TextInput, View, Button, Alert, Keyboard, Image,
+  StyleSheet, Text, TextInput, View, Button, Alert, Keyboard, Image, TouchableOpacity,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as SecureStore from 'expo-secure-store';
 import PropTypes from 'prop-types';
 import * as ImagePicker from 'expo-image-picker';
+import { useFonts, Montserrat_400Regular, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 import { serviceLogin } from '../redux/services';
 import DotTextInput from '../Components/DotTextInput';
 
@@ -14,14 +15,59 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: '20%',
+  },
+  input: {
+    width: '100%',
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    paddingLeft: 10,
+    fontSize: 15,
+  },
+  inputContainer: {
+    flex: 8,
+    backgroundColor: '#fff',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    flexDirection: 'column',
+    width: '60%',
+    margin: '12%',
+    fontFamily: 'montserrat',
+  },
+  button: {
+    backgroundColor: '#4C4C9B',
+    borderRadius: 4,
+    width: '100%',
+    height: '12%',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontFamily: 'Montserrat',
+  },
+  headerText: {
+    fontFamily: 'Montserrat',
+    fontSize: 20,
+  },
+  inputLabel: {
+    fontFamily: 'Montserrat',
+    fontSize: 15,
+  },
+  logInContainer: {
+    flex: 2,
+    backgroundColor: '#fff',
+    width: '60%',
+    flexDirection: 'row',
+  },
+  link: {
+    textDecorationLine: 'underline',
   },
 });
 
@@ -138,8 +184,9 @@ function SignUpScreen({ navigation }) {
   if (page === 1) {
     return (
       <View style={styles.container}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.headerText}>Create an account</Text>
+          <Text style={styles.inputLabel}>
             First Name
           </Text>
           <TextInput
@@ -147,9 +194,7 @@ function SignUpScreen({ navigation }) {
             onChangeText={onChangeFirstName}
             value={firstName}
           />
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text>
+          <Text style={styles.inputLabel}>
             Last Name
           </Text>
           <TextInput
@@ -157,23 +202,22 @@ function SignUpScreen({ navigation }) {
             onChangeText={onChangeLastName}
             value={lastName}
           />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              if (checkNameInputs()) {
+                Keyboard.dismiss();
+                setPage(2);
+              }
+            }}
+          >
+            <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
         </View>
-        <Button
-          title="Next"
-          onPress={() => {
-            if (checkNameInputs()) {
-              Keyboard.dismiss();
-              setPage(2);
-            }
-          }}
-        />
-        <Text>Already have an account?</Text>
-        <Button
-          title="Log in"
-          onPress={() => {
-            navigation.navigate('Log In');
-          }}
-        />
+        <View style={styles.logInContainer}>
+          <Text>Already have an account?</Text>
+          <Text> Log in</Text>
+        </View>
       </View>
     );
   }
