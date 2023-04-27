@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Image, Switch, Button,
+  Dimensions, StyleSheet, View, Text, ScrollView, Image, Switch, TouchableOpacity,
 } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
@@ -8,22 +8,45 @@ import VideoPlayer from 'expo-video-player';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
+import { useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 import AudioPlayer from '../Components/AudioPlayer';
+
+const screenWidth = Dimensions.get('window').width;
+const MAX_LINES = 3; // max number of lines to show in artwork description by default
 
 const styles = StyleSheet.create({
   container: {
     flex: 3,
     backgroundColor: '#fff',
   },
-  square: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#D9D9D9',
-    margin: 40,
-  },
-  heading: {
+  aboveImage: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginBottom: 10,
+  },
+  belowImage: {
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginBottom: 40,
+  },
+  tags: {
+    paddingTop: 20,
+    flexDirection: 'row',
+  },
+  item: {
+    backgroundColor: 'white',
+    borderRadius: 5,
+    elevation: 3,
+    padding: 10,
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    borderRadius: 5,
   },
 });
 
@@ -37,6 +60,12 @@ function ArtworkDetailScreen({
   const [allMediaData, setAllMediaData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
   const [isArtSaved, setIsArtSaved] = useState(false);
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
 
   const handleShare = async (mediaUrl) => {
     try {
@@ -106,6 +135,11 @@ function ArtworkDetailScreen({
     }
   };
 
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const toggleShowFullDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
   useEffect(() => {
     getSavedArt().then((status) => setIsArtSaved(status));
     getSubmission();
@@ -113,23 +147,15 @@ function ArtworkDetailScreen({
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.heading}>
-        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
-          Title:
-          {submission.title}
+      <View style={styles.aboveImage}>
+        <Image
+          source={require('../assets/artDetails/defaultAvatar.png')}
+          style={{ width: 18, height: 18 }}
+        />
+        <Text style={{ fontFamily: 'Montserrat', fontSize: 16, paddingLeft: 8 }}>
+          {submission.name}
         </Text>
-        <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
       </View>
-      <Text>
-        Name:
-        {submission.name}
-        {'\n'}
-        Description:
-        {submission.description}
-        {'\n'}
-        Email:
-        {submission.email}
-      </Text>
       {
         loadImages ? (
           <>
@@ -140,12 +166,20 @@ function ArtworkDetailScreen({
                   return (
                     <>
                       <Image
-                        style={{ width: 200, height: 200 }}
+                        style={{ width: screenWidth, height: screenWidth }}
                         source={{ uri: mediaData.MediaURL }}
                       />
-                      <Button title="Share" onPress={() => handleShare(mediaData.MediaURL)}>
-                        <Text>Share</Text>
-                      </Button>
+                      <View style={{ padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <View>
+                          <Text style={{ fontFamily: 'MontserratMedium', fontSize: 24 }}>{submission.title}</Text>
+                          <Text style={{ fontFamily: 'Montserrat', color: '#5B6772', paddingTop: 4 }}>Month DD, YYYY</Text>
+                        </View>
+                        <View style={{ flex: 1 }} />
+                        <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
+                        <TouchableOpacity onPress={() => handleShare(mediaData.MediaURL)}>
+                          <Image source={require('../assets/artDetails/share.png')} style={{ width: 23, height: 23 }} />
+                        </TouchableOpacity>
+                      </View>
                     </>
                   );
                 }
@@ -160,9 +194,17 @@ function ArtworkDetailScreen({
                           },
                         }}
                       />
-                      <Button title="Share" onPress={() => handleShare(mediaData.MediaURL)}>
-                        <Text>Share</Text>
-                      </Button>
+                      <View style={{ padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <View>
+                          <Text style={{ fontFamily: 'MontserratMedium', fontSize: 24 }}>{submission.title}</Text>
+                          <Text style={{ fontFamily: 'Montserrat', color: '#5B6772', paddingTop: 4 }}>Month DD, YYYY</Text>
+                        </View>
+                        <View style={{ flex: 1 }} />
+                        <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
+                        <TouchableOpacity onPress={() => handleShare(mediaData.MediaURL)}>
+                          <Image source={require('../assets/artDetails/share.png')} style={{ width: 23, height: 23 }} />
+                        </TouchableOpacity>
+                      </View>
                     </>
                   );
                 }
@@ -172,9 +214,17 @@ function ArtworkDetailScreen({
                       <AudioPlayer
                         source={mediaData.MediaURL}
                       />
-                      <Button title="Share" onPress={() => handleShare(mediaData.MediaURL)}>
-                        <Text>Share</Text>
-                      </Button>
+                      <View style={{ padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <View>
+                          <Text style={{ fontFamily: 'MontserratMedium', fontSize: 24 }}>{submission.title}</Text>
+                          <Text style={{ fontFamily: 'Montserrat', color: '#5B6772', paddingTop: 4 }}>Month DD, YYYY</Text>
+                        </View>
+                        <View style={{ flex: 1 }} />
+                        <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
+                        <TouchableOpacity onPress={() => handleShare(mediaData.MediaURL)}>
+                          <Image source={require('../assets/artDetails/share.png')} style={{ width: 23, height: 23 }} />
+                        </TouchableOpacity>
+                      </View>
                     </>
                   );
                 }
@@ -186,6 +236,54 @@ function ArtworkDetailScreen({
           </>
         ) : <Text>Loading</Text>
       }
+      <View style={styles.belowImage}>
+        <Text style={{ fontFamily: 'Montserrat', paddingTop: 6 }} numberOfLines={showFullDescription ? undefined : MAX_LINES} ellipsizeMode="tail">{submission.description}</Text>
+        {submission.description?.length > MAX_LINES && (
+          <TouchableOpacity onPress={toggleShowFullDescription}>
+            <Text style={{ fontFamily: 'MontserratSemiBold', paddingTop: 10 }}>
+              {showFullDescription ? 'Read Less' : 'Read More'}
+            </Text>
+          </TouchableOpacity>
+        )}
+        <View style={styles.tags}>
+          <View style={{
+            borderColor: '#4C4C9B', borderRadius: 20, borderWidth: 0.6, alignSelf: 'flex-start', paddingHorizontal: 20, paddingVertical: 7, marginRight: 15,
+          }}
+          >
+            <Text style={{
+              fontFamily: 'MontserratMedium', fontSize: 14, textAlign: 'center', textAlignVertical: 'center', color: '#4C4C9B',
+            }}
+            >
+              illustration
+            </Text>
+          </View>
+          <View style={{
+            borderColor: '#4C4C9B', borderRadius: 20, borderWidth: 0.6, alignSelf: 'flex-start', paddingHorizontal: 20, paddingVertical: 7,
+          }}
+          >
+            <Text style={{
+              fontFamily: 'MontserratMedium', fontSize: 14, textAlign: 'center', textAlignVertical: 'center', color: '#4C4C9B',
+            }}
+            >
+              digital art
+            </Text>
+          </View>
+        </View>
+        <View style={{
+          borderBottomColor: '#D4D4D4', borderBottomWidth: 1, marginTop: 30, marginBottom: 20
+        }}
+        />
+        <Text style={{ fontFamily: 'MontserratMedium', fontSize: 18, marginBottom: 20 }}>
+          Other work from
+          {' '}
+          {submission.name}
+        </Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={require('../assets/artDetails/temp1.png')} style={{ width: screenWidth * 0.45, height: screenWidth * 0.35, borderRadius: 10, marginRight: 6 }} />
+          <Image source={require('../assets/artDetails/temp2.png')} style={{ width: screenWidth * 0.45, height: screenWidth * 0.35, borderRadius: 10, marginRight: 6 }} />
+          <Image source={require('../assets/artDetails/temp3.png')} style={{ width: screenWidth * 0.45, height: screenWidth * 0.35, borderRadius: 10 }} />
+        </View>
+      </View>
     </ScrollView>
   );
 }

@@ -24,25 +24,25 @@ function MapMarker({ allCards, interpolations, onMarkerPress }) {
     if (!marker.startDate) { // Resources don't have startDates
       switch (marker.resourceType) {
         case 'food':
-          markerImage = require('../assets/foodIcon.png');
+          markerImage = require('../assets/map/foodIcon.png');
           break;
         case 'shelter':
-          markerImage = require('../assets/shelterIcon.png');
+          markerImage = require('../assets/map/shelterIcon.png');
           break;
         case 'mission':
-          markerImage = require('../assets/missionIcon.png');
+          markerImage = require('../assets/map/missionIcon.png');
           break;
         case 'shower':
-          markerImage = require('../assets/showerLaundryIcon.png');
+          markerImage = require('../assets/map/showerLaundryIcon.png');
           break;
         case 'social':
-          markerImage = require('../assets/socialServiceIcon.png');
+          markerImage = require('../assets/map/socialServiceIcon.png');
           break;
         case 'legal':
-          markerImage = require('../assets/legalServiceIcon.png');
+          markerImage = require('../assets/map/legalServiceIcon.png');
           break;
         default:
-          markerImage = require('../assets/workshopIcon.png');
+          markerImage = require('../assets/map/workshopIcon.png');
       }
     }
 
@@ -52,7 +52,7 @@ function MapMarker({ allCards, interpolations, onMarkerPress }) {
           <View style={{ overflow: 'visible' }}>
             {marker.startDate ? (
               <Image
-                source={require('../assets/workshopIcon.png')}
+                source={require('../assets/map/workshopIcon.png')}
                 style={[styles.marker]}
               />
             ) : (
