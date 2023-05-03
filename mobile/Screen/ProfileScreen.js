@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, Text, TextInput, View, Button, ScrollView,
+  StyleSheet, Text, TextInput, View, Button, ScrollView, TouchableOpacity,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
 import { Picker } from '@react-native-picker/picker';
 import { Card } from 'react-native-paper';
 import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import { serviceUpdateUser } from '../redux/services';
 
 const styles = StyleSheet.create({
@@ -14,6 +15,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 25,
+  },
+  savedContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   heading: {
     fontFamily: 'Montserrat',
@@ -26,9 +31,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1E2021',
   },
+  seeAllSavedButton: {
+    backgroundColor: 'transparent',
+    // left justify
+  },
+  seeAllText: {
+    fontSize: 14,
+    color: '#424288',
+  },
 });
 
-function ProfileScreen() {
+function ProfileScreen({ navigation }) {
   const { user: currentUser } = useSelector((state) => state.auth);
   const [name, onChangeName] = useState('');
   const [email, onChangeEmail] = useState('');
@@ -90,6 +103,10 @@ function ProfileScreen() {
 
   const handleUpdate = () => {
     serviceUpdateUser(updatedUser);
+  };
+
+  const onPressBackButton = () => {
+    navigation.navigate('Saved Events Screen');
   };
 
   // Display and edit profile info
@@ -167,9 +184,14 @@ function ProfileScreen() {
         </View>
       </View>
       <View>
-        <Text style={styles.heading}>
-          Events
-        </Text>
+        <View style={styles.savedContainer}>
+          <Text style={styles.heading}>
+            Events
+          </Text>
+          <TouchableOpacity onPress={onPressBackButton} style={styles.seeAllSavedButton}>
+            <Text style={styles.seeAllText}>See All</Text>
+          </TouchableOpacity>
+        </View>
         {
         loadSavedEvent ? (
           savedEvent.map((oneEvent) => (
@@ -207,5 +229,11 @@ function ProfileScreen() {
     </ScrollView>
   );
 }
+
+ProfileScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
 
 export default ProfileScreen;
