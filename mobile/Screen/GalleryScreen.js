@@ -46,7 +46,6 @@ function GalleryScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.scrollView}>
-      <Text>Gallery Screen</Text>
       {
         loadImages ? (
           <>

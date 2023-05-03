@@ -22,18 +22,37 @@ const styles = StyleSheet.create({
   aboveImage: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
     marginBottom: 10,
+    marginTop: 10,
   },
   belowImage: {
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
     marginBottom: 40,
   },
   tags: {
     paddingTop: 20,
     flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  tag: {
+    borderColor: '#4C4C9B',
+    borderRadius: 20,
+    borderWidth: 0.6,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 20,
+    paddingVertical: 7,
+    marginRight: 15,
+    marginBottom: 10,
+  },
+  tagText: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 14,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: '#4C4C9B',
   },
   item: {
     backgroundColor: 'white',
@@ -47,6 +66,36 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200,
     borderRadius: 5,
+  },
+  mediaContainer: {
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  mediaTitle: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 24,
+  },
+  mediaDate: {
+    fontFamily: 'Montserrat',
+    color: '#5B6772',
+    paddingTop: 4,
+  },
+  saveIcon: {
+    width: 24,
+    height: 24,
+  },
+  shareIcon: {
+    width: 23,
+    height: 23,
+    marginLeft: 10,
+  },
+  line: {
+    borderBottomColor: '#D4D4D4',
+    borderBottomWidth: 1,
+    marginTop: 20,
+    marginBottom: 20,
   },
 });
 
@@ -135,6 +184,14 @@ function ArtworkDetailScreen({
     }
   };
 
+  const saveIcon = isArtSaved ? require('../assets/artDetails/saved.png') : require('../assets/artDetails/unsaved.png');
+
+  const formattedDate = new Date(submission.date).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+
   const [showFullDescription, setShowFullDescription] = useState(false);
   const toggleShowFullDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -169,15 +226,17 @@ function ArtworkDetailScreen({
                         style={{ width: screenWidth, height: screenWidth }}
                         source={{ uri: mediaData.MediaURL }}
                       />
-                      <View style={{ padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <View style={styles.mediaContainer}>
                         <View>
-                          <Text style={{ fontFamily: 'MontserratMedium', fontSize: 24 }}>{submission.title}</Text>
-                          <Text style={{ fontFamily: 'Montserrat', color: '#5B6772', paddingTop: 4 }}>Month DD, YYYY</Text>
+                          <Text style={styles.mediaTitle}>{submission.title}</Text>
+                          <Text style={styles.mediaDate}>{formattedDate}</Text>
                         </View>
                         <View style={{ flex: 1 }} />
-                        <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
+                        <TouchableOpacity onPress={onPressToggleSavedArt}>
+                          <Image source={saveIcon} style={styles.saveIcon} />
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={() => handleShare(mediaData.MediaURL)}>
-                          <Image source={require('../assets/artDetails/share.png')} style={{ width: 23, height: 23 }} />
+                          <Image source={require('../assets/artDetails/share.png')} style={styles.shareIcon} />
                         </TouchableOpacity>
                       </View>
                     </>
@@ -194,15 +253,17 @@ function ArtworkDetailScreen({
                           },
                         }}
                       />
-                      <View style={{ padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <View style={styles.mediaContainer}>
                         <View>
-                          <Text style={{ fontFamily: 'MontserratMedium', fontSize: 24 }}>{submission.title}</Text>
-                          <Text style={{ fontFamily: 'Montserrat', color: '#5B6772', paddingTop: 4 }}>Month DD, YYYY</Text>
+                          <Text style={styles.mediaTitle}>{submission.title}</Text>
+                          <Text style={styles.mediaDate}>{formattedDate}</Text>
                         </View>
                         <View style={{ flex: 1 }} />
-                        <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
+                        <TouchableOpacity onPress={onPressToggleSavedArt}>
+                          <Image source={saveIcon} style={styles.saveIcon} />
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={() => handleShare(mediaData.MediaURL)}>
-                          <Image source={require('../assets/artDetails/share.png')} style={{ width: 23, height: 23 }} />
+                          <Image source={require('../assets/artDetails/share.png')} style={styles.shareIcon} />
                         </TouchableOpacity>
                       </View>
                     </>
@@ -214,15 +275,17 @@ function ArtworkDetailScreen({
                       <AudioPlayer
                         source={mediaData.MediaURL}
                       />
-                      <View style={{ padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <View style={styles.mediaContainer}>
                         <View>
-                          <Text style={{ fontFamily: 'MontserratMedium', fontSize: 24 }}>{submission.title}</Text>
-                          <Text style={{ fontFamily: 'Montserrat', color: '#5B6772', paddingTop: 4 }}>Month DD, YYYY</Text>
+                          <Text style={styles.mediaTitle}>{submission.title}</Text>
+                          <Text style={styles.mediaDate}>{formattedDate}</Text>
                         </View>
                         <View style={{ flex: 1 }} />
-                        <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
+                        <TouchableOpacity onPress={onPressToggleSavedArt}>
+                          <Image source={saveIcon} style={styles.saveIcon} />
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={() => handleShare(mediaData.MediaURL)}>
-                          <Image source={require('../assets/artDetails/share.png')} style={{ width: 23, height: 23 }} />
+                          <Image source={require('../assets/artDetails/share.png')} style={styles.shareIcon} />
                         </TouchableOpacity>
                       </View>
                     </>
@@ -246,33 +309,16 @@ function ArtworkDetailScreen({
           </TouchableOpacity>
         )}
         <View style={styles.tags}>
-          <View style={{
-            borderColor: '#4C4C9B', borderRadius: 20, borderWidth: 0.6, alignSelf: 'flex-start', paddingHorizontal: 20, paddingVertical: 7, marginRight: 15,
-          }}
-          >
-            <Text style={{
-              fontFamily: 'MontserratMedium', fontSize: 14, textAlign: 'center', textAlignVertical: 'center', color: '#4C4C9B',
-            }}
+          {submission.tags?.map((tag) => (
+            <View
+              key={tag}
+              style={styles.tag}
             >
-              illustration
-            </Text>
-          </View>
-          <View style={{
-            borderColor: '#4C4C9B', borderRadius: 20, borderWidth: 0.6, alignSelf: 'flex-start', paddingHorizontal: 20, paddingVertical: 7,
-          }}
-          >
-            <Text style={{
-              fontFamily: 'MontserratMedium', fontSize: 14, textAlign: 'center', textAlignVertical: 'center', color: '#4C4C9B',
-            }}
-            >
-              digital art
-            </Text>
-          </View>
+              <Text style={styles.tagText}>{tag}</Text>
+            </View>
+          ))}
         </View>
-        <View style={{
-          borderBottomColor: '#D4D4D4', borderBottomWidth: 1, marginTop: 30, marginBottom: 20
-        }}
-        />
+        <View style={styles.line} />
         <Text style={{ fontFamily: 'MontserratMedium', fontSize: 18, marginBottom: 20 }}>
           Other work from
           {' '}
