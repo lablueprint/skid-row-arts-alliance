@@ -7,7 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 // eslint-disable-next-line camelcase
-import { useFonts, Montserrat_400Regular, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
+import { useFonts, Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 import store from './redux/store';
 
 import MapScreen from './Screen/MapScreen';
@@ -23,14 +23,20 @@ import OrganizationDetailScreen from './Screen/OrganizationDetailScreen';
 
 const styles = StyleSheet.create({
   unselected: {
-    fontFamily: 'Montserrat',
-    fontSize: 11,
+    fontFamily: 'MontserratSemiBold',
+    fontSize: 14,
     color: '#5B6772',
+    marginTop: 2,
   },
   selected: {
     fontFamily: 'MontserratBold',
-    fontSize: 11,
+    fontSize: 14,
     color: '#4C4C9B',
+    marginTop: 2,
+  },
+  icon: {
+    width: 26,
+    height: 26,
   },
 });
 
@@ -46,7 +52,7 @@ function MapIcon({ focused }) {
             ? require('./assets/navbar/mapSelected.png')
             : require('./assets/navbar/map.png')
         }
-        style={{ width: 30, height: 30 }}
+        style={styles.icon}
       />
       <Text style={focused ? styles.selected : styles.unselected}>Map</Text>
     </>
@@ -62,7 +68,7 @@ function EventsIcon({ focused }) {
             ? require('./assets/navbar/eventsSelected.png')
             : require('./assets/navbar/events.png')
         }
-        style={{ width: 30, height: 30 }}
+        style={styles.icon}
       />
       <Text style={focused ? styles.selected : styles.unselected}>Events</Text>
     </>
@@ -78,7 +84,7 @@ function GalleryIcon({ focused }) {
             ? require('./assets/navbar/gallerySelected.png')
             : require('./assets/navbar/gallery.png')
         }
-        style={{ width: 30, height: 30 }}
+        style={styles.icon}
       />
       <Text style={focused ? styles.selected : styles.unselected}>Gallery</Text>
     </>
@@ -94,7 +100,7 @@ function ZineIcon({ focused }) {
             ? require('./assets/navbar/zineSelected.png')
             : require('./assets/navbar/zine.png')
         }
-        style={{ width: 30, height: 30 }}
+        style={styles.icon}
       />
       <Text style={focused ? styles.selected : styles.unselected}>Zine</Text>
     </>
@@ -110,7 +116,7 @@ function ProfileIcon({ focused }) {
             ? require('./assets/navbar/profileSelected.png')
             : require('./assets/navbar/profile.png')
         }
-        style={{ width: 30, height: 30 }}
+        style={styles.icon}
       />
       <Text style={focused ? styles.selected : styles.unselected}>Profile</Text>
     </>
@@ -120,6 +126,7 @@ function ProfileIcon({ focused }) {
 function HomeStackScreen() {
   const [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
+    MontserratSemiBold: Montserrat_600SemiBold,
     MontserratBold: Montserrat_700Bold,
   });
 
@@ -129,9 +136,12 @@ function HomeStackScreen() {
 
   return (
     (
-      <Tab.Navigator screenOptions={{
-        tabBarShowLabel: false,
-      }}
+      <Tab.Navigator
+        screenOptions={{
+          tabBarShowLabel: false,
+          tabBarStyle: { height: '9%', paddingTop: 25, paddingBottom: 25 },
+          // tabBarTabStyle: { paddingBottom: 10 },
+        }}
       >
         <Tab.Screen
           name="Map"
