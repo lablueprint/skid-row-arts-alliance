@@ -5,6 +5,7 @@ import {
 import axios from 'axios';
 import { URL } from '@env';
 import { Picker } from '@react-native-picker/picker';
+import { Card } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { serviceUpdateUser } from '../redux/services';
 
@@ -13,6 +14,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 25,
+  },
+  heading: {
+    fontFamily: 'Montserrat',
+    fontSize: 20,
+    color: '#1E2021',
+    fontWeight: '700',
+  },
+  savedTitle: {
+    fontFamily: 'Montserrat',
+    fontSize: 16,
+    color: '#1E2021',
   },
 });
 
@@ -24,6 +36,8 @@ function ProfileScreen() {
   const [tag, onChangeTag] = useState('');
   const [loadSavedArt, setLoadSavedArt] = useState(false);
   const [savedArt, setSavedArt] = useState([]);
+  const [loadSavedEvent, setLoadSavedEvent] = useState(false);
+  const [savedEvent, setSavedEvent] = useState([]);
 
   const getSavedArtwork = async () => {
     try {
@@ -39,8 +53,23 @@ function ProfileScreen() {
     }
   };
 
+  const getSavedEvent = async () => {
+    try {
+      setLoadSavedEvent(false);
+      const res = await axios.get(`${URL}/user/getEvents/63e33e2f578ad1d80bd2a347`);
+      setSavedEvent(res.data.msg[0].savedEvents);
+      return res;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadSavedEvent(true);
+    }
+  };
+
   useEffect(() => {
     getSavedArtwork();
+    getSavedEvent();
   }, []);
 
   const handleClear = () => {
@@ -138,12 +167,37 @@ function ProfileScreen() {
         </View>
       </View>
       <View>
+        <Text style={styles.heading}>
+          Events
+        </Text>
+        {
+        loadSavedEvent ? (
+          savedEvent.map((oneEvent) => (
+            <Card>
+              <Card.Content>
+                <Text style={styles.savedTitle}>
+                  {oneEvent}
+                </Text>
+              </Card.Content>
+            </Card>
+          ))
+        ) : <Text>There is no saved event</Text>
+      }
+      </View>
+      <View>
+        <Text style={styles.heading}>
+          Art
+        </Text>
         {
         loadSavedArt ? (
           savedArt.map((oneArt) => (
-            <Text>
-              {oneArt}
-            </Text>
+            <Card>
+              <Card.Content>
+                <Text style={styles.savedTitle}>
+                  {oneArt}
+                </Text>
+              </Card.Content>
+            </Card>
           ))
         ) : <Text>There is no saved art</Text>
       }
