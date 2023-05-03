@@ -29,10 +29,14 @@ function DotTextInput({ value, onChangeText }) {
   return (
     <TextInput
       style={{
+        width: '100%',
         height: 40,
-        margin: 12,
+        backgroundColor: '#F2F2F2',
         borderWidth: 1,
-        padding: 10,
+        borderColor: 'gray',
+        borderRadius: 5,
+        paddingLeft: 10,
+        fontSize: 15,
       }}
       secureTextEntry={secure}
       value={secureText}

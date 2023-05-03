@@ -35,10 +35,6 @@ const resourceSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  image: {
-    required: true,
-    type: String,
-  },
   location: {
     required: true,
     type: locationSchema,
@@ -52,6 +48,10 @@ const resourceSchema = new mongoose.Schema({
     type: String,
   },
   resourceType: {
+    required: true,
+    type: String,
+  },
+  thumbnail: {
     required: true,
     type: String,
   },
