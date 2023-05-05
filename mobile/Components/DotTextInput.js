@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { TextInput } from 'react-native';
 import PropTypes from 'prop-types';
 
-function DotTextInput({ value, onChangeText }) {
+function DotTextInput({ value, onChangeText, customStyle }) {
   const [secure, setSecure] = useState(true);
 
   const secureText = useMemo(() => {
@@ -28,16 +28,7 @@ function DotTextInput({ value, onChangeText }) {
 
   return (
     <TextInput
-      style={{
-        width: '100%',
-        height: 40,
-        backgroundColor: '#F2F2F2',
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 5,
-        paddingLeft: 10,
-        fontSize: 15,
-      }}
+      style={customStyle}
       secureTextEntry={secure}
       value={secureText}
       onChangeText={handleTextChange}

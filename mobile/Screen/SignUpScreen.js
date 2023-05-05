@@ -21,14 +21,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   input: {
-    width: '100%',
-    height: 40,
+    flex: 1,
     backgroundColor: '#F2F2F2',
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 5,
     paddingLeft: 10,
     fontSize: 15,
+    marginVertical: 5,
   },
   inputContainer: {
     flex: 8,
@@ -38,7 +38,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: 'column',
     width: '60%',
-    margin: '20%',
+    marginHorizontal: '15%',
+    marginTop: '15%',
   },
   button: {
     backgroundColor: '#4C4C9B',
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 25,
   },
   inputLabel: {
     fontSize: 15,
@@ -65,6 +66,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
     width: '60%',
     flexDirection: 'row',
+    borderWidth: 2,
   },
   link: {
     textDecorationLine: 'underline',
@@ -90,8 +92,22 @@ const styles = StyleSheet.create({
     marginLeft: '15%',
     borderWidth: 2,
   },
-  socialContaner: {
+  socialContainer: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 2,
+    width: '100%',
+  },
+  textContainer: {
+    flexDirection: 'column',
+    width: '100%',
+    height: '20%',
+    borderWidth: 2,
+    marginVertical: '5%',
+  },
+  blob: {
+    width: '100%',
   },
 });
 
@@ -215,22 +231,26 @@ function SignUpScreen({ navigation }) {
       <View style={styles.container}>
         <View style={styles.inputContainer}>
           <Text style={styles.headerText}>Create an account</Text>
-          <Text style={styles.inputLabel}>
-            First Name
-          </Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeFirstName}
-            value={firstName}
-          />
-          <Text style={styles.inputLabel}>
-            Last Name
-          </Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeLastName}
-            value={lastName}
-          />
+          <View style={styles.textContainer}>
+            <Text style={styles.inputLabel}>
+              First Name
+            </Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeFirstName}
+              value={firstName}
+            />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.inputLabel}>
+              Last Name
+            </Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeLastName}
+              value={lastName}
+            />
+          </View>
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
@@ -274,30 +294,40 @@ function SignUpScreen({ navigation }) {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.headerText}>Create an account</Text>
-          <Text>
-            Email
-          </Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeEmail}
-            value={email}
-            autoCapitalize={false}
-          />
-          <Text>
-            Password
-          </Text>
-          <DotTextInput style={styles.input} value={password} onChangeText={onChangePassword} />
+          <View style={styles.textContainer}>
+            <Text>
+              Email
+            </Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeEmail}
+              value={email}
+              autoCapitalize={false}
+            />
+          </View>
+          <View style={styles.textContainer}>
+            <Text>
+              Password
+            </Text>
+            <DotTextInput
+              value={password}
+              onChangeText={onChangePassword}
+              customStyle={styles.input}
+            />
+          </View>
           <Text>6 or more characters</Text>
-          <Text>
-            Confirm Password
-          </Text>
-          <TextInput
-            secureTextEntry
-            style={styles.input}
-            onChangeText={onChangeConfirmPassword}
-            value={confirmPassword}
-            autoCapitalize={false}
-          />
+          <View style={styles.textContainer}>
+            <Text>
+              Confirm Password
+            </Text>
+            <TextInput
+              secureTextEntry
+              style={styles.input}
+              onChangeText={onChangeConfirmPassword}
+              value={confirmPassword}
+              autoCapitalize={false}
+            />
+          </View>
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
@@ -378,13 +408,15 @@ function SignUpScreen({ navigation }) {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.headerText}>What do you want people to know about you?</Text>
-          <Text>Share anything you would like!</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={onChangeBio}
-            value={bio}
-            maxLength={150}
-          />
+          <View style={styles.textContainer}>
+            <Text>Share anything you would like!</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={onChangeBio}
+              value={bio}
+              maxLength={150}
+            />
+          </View>
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
@@ -427,30 +459,36 @@ function SignUpScreen({ navigation }) {
         <Text>
           Where else can people find you?
         </Text>
-        <Image
-          source={require('../assets/instagram.png')}
-        />
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeInstagramProfile}
-          value={instagramProfile}
-        />
-        <Image
-          source={require('../assets/facebook.png')}
-        />
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeFacebookProfile}
-          value={facebookProfile}
-        />
-        <Image
-          source={require('../assets/twitter.png')}
-        />
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeTwitterProfile}
-          value={twitterProfile}
-        />
+        <View style={styles.socialContainer}>
+          <Image
+            source={require('../assets/instagram.png')}
+          />
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeInstagramProfile}
+            value={instagramProfile}
+          />
+        </View>
+        <View style={styles.socialContainer}>
+          <Image
+            source={require('../assets/facebook.png')}
+          />
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeFacebookProfile}
+            value={facebookProfile}
+          />
+        </View>
+        <View style={styles.socialContainer}>
+          <Image
+            source={require('../assets/twitter.png')}
+          />
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeTwitterProfile}
+            value={twitterProfile}
+          />
+        </View>
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
@@ -462,7 +500,7 @@ function SignUpScreen({ navigation }) {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            setPage(5);
+            setPage(1);
           }}
         >
           <Text style={styles.buttonText}>Skip for now</Text>

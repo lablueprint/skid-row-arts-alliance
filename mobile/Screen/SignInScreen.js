@@ -98,12 +98,6 @@ function SignInScreen({ navigation }) {
           navigation.navigate('Sign Up');
         }}
       />
-      <Button
-        title="[DEV] Go to Map"
-        onPress={() => {
-          navigation.navigate('Home');
-        }}
-      />
     </View>
   );
 }
