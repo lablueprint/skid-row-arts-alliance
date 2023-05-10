@@ -32,10 +32,8 @@ const styles = StyleSheet.create({
     borderColor: '#424288',
     borderRadius: 5,
     alignSelf: 'center',
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   filterImage: {
     width: 16,
@@ -81,7 +79,7 @@ function GalleryScreen({ navigation }) {
       <TouchableOpacity onPress={() => navigation.navigate('Artwork Filter')}>
         <View style={styles.filterButton}>
           <Image
-            source={require('../assets/filter.png')}
+            source={require('../assets/filter/filter.png')}
             style={styles.filterImage}
           />
           <Text style={styles.filterText}>Filter</Text>

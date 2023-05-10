@@ -20,6 +20,7 @@ import EventDetailScreen from './Screen/EventDetailScreen';
 import EventScreen from './Screen/EventScreen';
 import ResourceDetailScreen from './Screen/ResourceDetailScreen';
 import OrganizationDetailScreen from './Screen/OrganizationDetailScreen';
+import ArtworkFilterScreen from './Screen/ArtworkFilterScreen';
 
 const styles = StyleSheet.create({
   unselected: {
@@ -185,6 +186,7 @@ export default function App() {
           <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
           <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
           <Stack.Screen name="Organization Details" component={OrganizationDetailScreen} />
+          <Stack.Screen name="Artwork Filter" component={ArtworkFilterScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
