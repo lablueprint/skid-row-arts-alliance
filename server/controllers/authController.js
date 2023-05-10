@@ -48,6 +48,23 @@ const userSignOut = async (req, res) => {
   }
 };
 
+const userPasswordReset = async (req, res) => {
+  try {
+    // Generate a salted passwordr
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hashSync(req.body.password, salt);
+    // Save password in database
+    const user = await User.findOneAndUpdate({ email: req.body.email }, { password: hashedPassword });
+    if (!user) {
+      return res.json({ error: 'That email does not exist.' });
+    }
+    // Send success response
+    return res.send('User successfully created!');
+  } catch (err) {
+    return res.status(404).json({ error: 'Unable to update password' });
+  }
+};
+
 
 // admin
 const adminSignUp = async (req, res) => {
@@ -90,6 +107,7 @@ module.exports = {
   userSignUp,
   userSignIn,
   userSignOut,
+  userPasswordReset,
   adminSignUp,
   adminSignIn,
 };
