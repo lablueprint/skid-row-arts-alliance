@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet, TextInput, Text, View, ScrollView, Button, Image,
+  Modal, TouchableWithoutFeedback, PanResponder, Animated, Dimensions, TouchableOpacity,
 } from 'react-native';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
@@ -32,6 +33,50 @@ const styles = StyleSheet.create({
   submission: {
     margin: 10,
   },
+  selectedBtn: {
+    backgroundColor: '#4c4c9b',
+  },
+  unselectedBtn: {
+    backgroundColor: 'ffffff',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+  },
+  modalContentContainer: {
+    backgroundColor: 'white',
+    width: '100%',
+    padding: 16,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  selectedTagBtn: {
+    backgroundColor: '#4c4c9b',
+    padding: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#4c4c9b',
+    alignSelf: 'center',
+  },
+  unselectedTagBtn: {
+    backgroundColor: '#ffffff',
+    padding: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'black',
+    alignSelf: 'center',
+  },
 });
 
 function SubmissionScreen() {
@@ -43,6 +88,7 @@ function SubmissionScreen() {
   const [accountTag, setAccountTag] = useState('');
   const [artworkTitle, setArtworkTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [page, setPage] = useState('upload');
 
   const nameRef = useRef();
   const emailRef = useRef();
@@ -53,15 +99,47 @@ function SubmissionScreen() {
 
   const [files, setFiles] = useState([]);
   const [thumbnails, setThumbnails] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [confirmedTags, setConfirmedTags] = useState([]);
 
-  function getType(uri, fileType) {
-    const splitted = uri.split('.');
-    const uriType = splitted[splitted.length - 1];
-    if (uriType === 'mov') {
-      return `${fileType}/quicktime`;
-    }
-    return `${fileType}/${uriType}`;
-  }
+  const tagOptions = {
+    audio: ['music', 'poetry', 'storytelling'],
+    image: ['photography', 'illustration', 'digital art', 'graphic design', 'traditional art'],
+    video: ['short film', 'performance', 'music video'],
+  };
+
+  const [popup, setPopup] = useState(false);
+  const closePopup = () => {
+    setPopup(false);
+  };
+  const openPopup = () => {
+    setPopup(true);
+  };
+  const windowHeight = Dimensions.get('window').height;
+  const popupHeight = 300; // Height of the popup content
+  const panY = useRef(new Animated.Value(windowHeight)).current;
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onPanResponderMove: (_, { dy }) => {
+      // Prevent dragging beyond top and bottom limits
+      if (dy >= 0 && dy <= windowHeight - popupHeight) {
+        panY.setValue(dy);
+      }
+    },
+    onPanResponderRelease: (_, { dy }) => {
+      if (dy >= 160) {
+        // Close modal if dragged down by at least 100 units
+        closePopup();
+      } else {
+        // Reset modal position if not dragged down enough
+        Animated.spring(panY, {
+          toValue: 0,
+          useNativeDriver: true,
+        }).start();
+      }
+    },
+  });
+  panY.setValue(0);
 
   const clearInput = () => {
     setName('');
@@ -72,6 +150,15 @@ function SubmissionScreen() {
     setDescription('');
     setFiles([]);
     setThumbnails([]);
+  };
+
+  const getType = (uri, fileType) => {
+    const splitted = uri.split('.');
+    const uriType = splitted[splitted.length - 1];
+    if (uriType === 'mov') {
+      return `${fileType}/quicktime`;
+    }
+    return `${fileType}/${uriType}`;
   };
 
   const readFileToBlob = async (file, reader) => {
@@ -85,12 +172,13 @@ function SubmissionScreen() {
   };
 
   const submit = async () => {
+    let thumbnailExists = true;
     const filesToSubmit = [];
     files.forEach((f) => filesToSubmit.push(f));
     if (thumbnails.length > 0) {
       filesToSubmit.push({ uri: thumbnails[0], type: 'image/jpg' });
     } else {
-      filesToSubmit.push({ uri: 'default', type: 'image/jpg' });
+      thumbnailExists = false;
     }
 
     const fileArray = filesToSubmit.map((file) => {
@@ -120,6 +208,8 @@ function SubmissionScreen() {
         title: artworkTitle,
         description,
         objects,
+        thumbnailExists,
+        tags: confirmedTags,
       });
       setSubmissions((prev) => ([...prev, res.data]));
       clearInput();
@@ -129,10 +219,11 @@ function SubmissionScreen() {
   };
 
   const addFile = async (fileURI, fileType) => {
-    setFiles((prev) => ([...prev, { uri: fileURI, type: fileType }]));
     if (fileType.includes('image')) {
+      setFiles((prev) => ([...prev, { uri: fileURI, type: Array.from(new Set(fileType.split('/'))).join('/') }]));
       setThumbnails((prev) => ([...prev, fileURI]));
     } else if (fileType.includes('video')) {
+      setFiles((prev) => ([...prev, { uri: fileURI, type: Array.from(new Set(fileType.split('/'))).join('/') }]));
       try {
         const res = await VideoThumbnails.getThumbnailAsync(fileURI);
         setThumbnails((prev) => ([...prev, res.uri]));
@@ -140,7 +231,8 @@ function SubmissionScreen() {
         console.error(err);
       }
     } else { // Implement default thumbnail in future if we have additional file types (e.g. audio)
-
+      console.log('Default');
+      setFiles((prev) => ([...prev, { uri: fileURI, type: Array.from(new Set(fileType.split('/').filter((type) => type !== 'mp4'))).join('/') }]));
     }
   };
 
@@ -198,22 +290,66 @@ function SubmissionScreen() {
     getSubmissions();
   }, []);
 
-  return (
-    <ScrollView>
-      <View style={styles.container}>
-        <View>
-          <Button title="Clear Selections" onPress={clearInput} />
-          <Button title="Camera Roll" onPress={pickImage} />
-          <Button title="Use Camera" onPress={openCamera} />
-          <Button title="File Selector" onPress={openFileSelector} />
+  if (page === 'upload') {
+    return (
+      <ScrollView>
+        <View style={styles.container}>
+          <View>
+            <Button title="<" onPress={() => { console.log('Back'); }} />
+            <Button title="Upload" onPress={openPopup} />
+            <Button title="Clear Selections" onPress={clearInput} />
+            <Button title="Next" onPress={() => { setPage('fields'); }} />
 
-          {thumbnails.map((uri) => (
-            <Image
-              source={{ uri }}
-              key={uri}
-              style={{ width: 200, height: 200 }}
-            />
-          ))}
+            {thumbnails.map((uri) => (
+              <Image
+                source={{ uri }}
+                key={uri}
+                style={{ width: 200, height: 200 }}
+              />
+            ))}
+          </View>
+          <Modal
+            animationType="slide"
+            transparent
+            visible={popup}
+            onRequestClose={closePopup}
+          >
+            <TouchableWithoutFeedback onPress={closePopup}>
+              <View style={styles.modalContainer}>
+                <Animated.View
+                  style={[
+                    styles.modalContentContainer,
+                    {
+                      transform: [{ translateY: panY }],
+                    },
+                  ]}
+                  {...panResponder.panHandlers}
+                >
+                  <Text style={styles.modalTitle}>Art Submission</Text>
+                  <Text style={styles.modalText}>
+                    Attach content to your
+                    submission by tapping an option below!
+                  </Text>
+                  <Text style={styles.modalText}>
+                    * Acceptable content types
+                    include mp3, jpg, etc blah blah
+                  </Text>
+                  <Button title="Camera Roll" onPress={pickImage} />
+                  <Button title="Use Camera" onPress={openCamera} />
+                  <Button title="File Selector" onPress={openFileSelector} />
+                </Animated.View>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        </View>
+      </ScrollView>
+    );
+  } if (page === 'fields') {
+    return (
+      <ScrollView>
+        <View style={styles.container}>
+          <Button title="<" onPress={() => { setPage('upload'); }} />
+
           <TextInput
             styles={styles.input}
             placeholder="Name"
@@ -268,50 +404,67 @@ function SubmissionScreen() {
             ref={descriptionRef}
             onSubmitEditing={() => { nameRef.current.focus(); }}
           />
+          <Button title="+ Add Tags" onPress={() => { setPage('tags'); }} />
+
           <Button
             title="Submit"
             onPress={submit}
           />
         </View>
-      </View>
-      <View style={styles.submissionsContainer}>
-        {submissions.map((submission) => (
-          <View style={styles.submission} key={submission._id}>
-            <Text>
-              Name:
-              {' '}
-              {submission.name}
-            </Text>
-            <Text>
-              Email:
-              {' '}
-              {submission.email}
-            </Text>
-            <Text>
-              Social Media Platform:
-              {' '}
-              {submission.socials.platform}
-            </Text>
-            <Text>
-              Social Media Account Tag:
-              {' '}
-              {submission.socials.tag}
-            </Text>
-            <Text>
-              Artwork Title:
-              {' '}
-              {submission.title}
-            </Text>
-            <Text>
-              Artwork Description:
-              {' '}
-              {submission.description}
-            </Text>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
-  );
+      </ScrollView>
+    );
+  } if (page === 'tags') {
+    return (
+      <ScrollView>
+        <View style={styles.container}>
+          <Button
+            title="<"
+            style={styles.selectedTagBtn}
+            onPress={() => {
+              setTags(confirmedTags);
+              setPage('fields');
+            }}
+          />
+          {Object.keys(tagOptions).map((category) => (
+            <View key={category}>
+              <Text>{category}</Text>
+              {tagOptions[category].map((option) => (
+                <TouchableOpacity
+                  key={option}
+                  activeOpacity={1}
+                  style={tags.includes(option) ? styles.selectedTagBtn : styles.unselectedTagBtn}
+                  onPress={() => {
+                    if (tags.includes(option)) {
+                      setTags(tags.filter((tag) => tag !== option));
+                    } else {
+                      setTags((prev) => ([...prev, option]));
+                    }
+                  }}
+                >
+                  <Text style={{ color: tags.includes(option) ? 'white' : 'black' }}>{option}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ))}
+
+          <Button
+            title="Clear All"
+            onPress={() => {
+              setTags([]);
+            }}
+          />
+          <Button
+            title="Apply"
+            onPress={() => {
+              setConfirmedTags(tags);
+              setPage('fields');
+            }}
+          />
+        </View>
+      </ScrollView>
+    );
+  }
+  return '';
 }
 
 export default SubmissionScreen;
