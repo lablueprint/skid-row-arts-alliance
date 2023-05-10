@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {
   StyleSheet, Text, TextInput, View, Button, Alert, Keyboard, Image, TouchableOpacity,
 } from 'react-native';
-import HeaderBackButton from '@react-navigation/stack';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
@@ -131,9 +130,6 @@ function SignUpScreen({ navigation }) {
   const [twitterProfile, onChangeTwitterProfile] = useState('');
   const [page, setPage] = useState(1);
 
-  const [socialPlatform, setSocialPlatform] = useState('');
-  const [socialTag, onChangeSocialTag] = useState('');
-
   // Check email is proper format
   const validateEmail = (text) => {
     const reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w\w+)+$/;
@@ -222,7 +218,7 @@ function SignUpScreen({ navigation }) {
         savedArtwork: [],
         userArtwork: [],
       };
-      const res = await axios.post(`${URL}/auth/sign-up`, userData);
+      const res = await axios.post(`${URL}/auth/user-sign-up`, userData);
       if (res.data.error) {
         console.error(res.data.error);
       } else {
@@ -435,6 +431,7 @@ function SignUpScreen({ navigation }) {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
+              onChangeBio('');
               setPage(5);
             }}
           >
@@ -499,7 +496,7 @@ function SignUpScreen({ navigation }) {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            setPage(5);
+            handleSignUp();
           }}
         >
           <Text style={styles.buttonText}>Finish</Text>
@@ -507,10 +504,13 @@ function SignUpScreen({ navigation }) {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            setPage(1);
+            onChangeFacebookProfile('');
+            onChangeInstagramProfile('');
+            onChangeTwitterProfile('');
+            handleSignUp();
           }}
         >
-          <Text style={styles.buttonText}>Skip for now</Text>
+          <Text style={styles.buttonText}>Skip and finish</Text>
         </TouchableOpacity>
       </View>
     </View>
