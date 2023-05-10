@@ -60,7 +60,7 @@ const submissionSchema = new mongoose.Schema({
   comments: {
     required: false,
     type: String,
-  }
+  },
 });
 
 module.exports = mongoose.model('Submission', submissionSchema);

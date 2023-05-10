@@ -8,37 +8,37 @@ const s3 = new AWS.S3({
   region: process.env.S3_REGION,
 });
 
-const deleteThumbnail = async (key) => {
-  s3.deleteObject({
-    Bucket: process.env.S3_BUCKET,
-    Key: key,
-  }, function(e, data) {
-    if (e) {
-      console.log(e)
-    }
-    else {
-      console.log(data)
-    }
-  });
-}
+// const deleteThumbnail = async (key) => {
+//   s3.deleteObject({
+//     Bucket: process.env.S3_BUCKET,
+//     Key: key,
+//   }, (e, data) => {
+//     if (e) {
+//       console.log(e);
+//     } else {
+//       console.log(data);
+//     }
+//   });
+// };
 
-const deleteSubmissions = async (keys) => {
-  const s3Promises = await objects.slice(0, objects.length - thumbnailExists)
-    .map(async (_, index) => s3.deleteObject({
-      Bucket: process.env.S3_BUCKET,
-      Key: s3keys[index],
-    }).promise());
+// const deleteSubmissions = async (keys) => {
+//   const s3Promises = await objects.slice(0, objects.length - thumbnailExists)
+//     .map(async (_, index) => s3.deleteObject({
+//       Bucket: process.env.S3_BUCKET,
+//       Key: s3keys[index],
+//     }).promise());
 
-  Promise.all(s3Promises).catch(() => {
-    res.send("Failsafe failed to delete submissions", err);
-    return;
-  });
-  res.send(err);
-}
+//   Promise.all(s3Promises).catch(() => {
+//     res.send('Failsafe failed to delete submissions', err);
+//   });
+//   res.send(err);
+// };
 
 const createSubmission = async (req, res) => {
   // S3
-  const { objects, name, title, thumbnailExists } = req.body;
+  const {
+    objects, name, title, thumbnailExists,
+  } = req.body;
   const d = new Date().toLocaleString();
   const date = d.slice(0, d.length - 3)
     .split('/')
@@ -56,7 +56,7 @@ const createSubmission = async (req, res) => {
   const thumbnail = thumbnailExists ? `Thumbnails/${keyString}.${objects[objects.length - thumbnailExists].type.split('/')[1]}` : 'Thumbnails/default.jpg';
 
   // Thumbnail
-  if(thumbnailExists) {
+  if (thumbnailExists) {
     try {
       await s3.upload({
         Bucket: process.env.S3_BUCKET,
@@ -84,8 +84,8 @@ const createSubmission = async (req, res) => {
   Promise.all(s3Promises).catch((err) => console.error(err));
 
   const mediaTypes = [];
-  objects.slice(0, objects.length - thumbnailExists).forEach(o => {
-    mediaTypes.push(o.type.slice(0, o.type.indexOf('/')))
+  objects.slice(0, objects.length - thumbnailExists).forEach((o) => {
+    mediaTypes.push(o.type.slice(0, o.type.indexOf('/')));
   });
 
   // Mongo
@@ -100,8 +100,8 @@ const createSubmission = async (req, res) => {
     tags: req.body.tags,
     mediaTypes,
     date: d.slice(0, d.indexOf(',')),
-    status: "Incomplete",
-    comments: "",
+    status: 'Incomplete',
+    comments: '',
   });
 
   try {
