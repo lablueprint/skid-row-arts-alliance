@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { URL } from '@env';
 import axios from 'axios';
 import {
   StyleSheet, Text, TextInput, View, Button, Image, ScrollView,
@@ -7,7 +8,6 @@ import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { useSelector } from 'react-redux';
 import { serviceUpdateUser } from '../redux/services';
-import { URL } from '@env';
 
 const styles = StyleSheet.create({
   container: {
@@ -72,21 +72,26 @@ function ProfileScreen() {
   };
 
   const updatedUser = {
-    userName: name,
-    userEmail: email,
-    userSocialPlatform: platform,
-    userSocialTag: tag,
-    userProfilePicture: profilePicture,
+    email: 'updated-email@yahoo.com',
+    password: 'updated-password',
+    firstName: 'updated-firstname',
+    lastName: 'updated-lastname',
+    socialMedia: {
+      platform: 'updated-instagram',
+      accountTag: 'updated-accounttag',
+    },
+    profilePicture: 'updated-profilepicture',
+    savedEvents: ['updated-event1', 'updated-event2'],
+    savedArtwork: ['updated-artwork1', 'updated-artwork2'],
+    userArtwork: ['updated-userartwork1', 'updated-userartwork2'],
   };
 
   const reader = new FileReader();
   reader.addEventListener('loadend', async () => {
     const blob = reader.result.replace(/^.*base64,/, '');
-    console.log(URL);
-    console.log(0, blob.length);
+    console.log(updatedUser);
     console.log(currentUser);
-    console.log(currentUser.userEmail);
-    const res = await axios.patch(`${URL}/user/addProfilePicture/63e5cef456a64046d45ae8cf`, {
+    const res = await axios.patch(`${URL}/user/addProfilePicture/63e33e2f578ad1d80bd2a347`, {
       // need to change hard coded ID
       blob,
     });
@@ -112,10 +117,13 @@ function ProfileScreen() {
     try {
       // console.log('updatedUser:', updatedUser);
       serviceUpdateUser(updatedUser);
-      submitProfilePicture();
+      // submitProfilePicture();
       console.log('hi');
-      const test = await axios.patch(`${URL}/user/update/${currentUser._id}`, { user: currentUser });
-      console.log(test);
+      console.log(3, updatedUser);
+      const test = await axios.patch(`${URL}/user/update/63e5cef456a64046d45ae8cf`, {
+        updatedUser,
+      });
+      console.log(test.data.email);  //prints out info from Mongo
       // console.log('hi');
     } catch (err) {
       console.error(err);

@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema({
     required: false,
     type: socialSchema,
   },
+  bio: {
+    required: true,
+    type: String,
+  },
   profilePicture: {
     required: true,
     type: String,

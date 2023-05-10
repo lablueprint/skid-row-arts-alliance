@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
 });
 
 function ArtworkDetailScreen({
-  route,
+  route, navigation,
 }) {
   const {
     id,
@@ -106,6 +106,10 @@ function ArtworkDetailScreen({
     }
   };
 
+  // const navOutwardProfile = () => {
+  //   navigation=
+  // }
+
   useEffect(() => {
     getSavedArt().then((status) => setIsArtSaved(status));
     getSubmission();
@@ -114,6 +118,9 @@ function ArtworkDetailScreen({
   return (
     <ScrollView style={styles.container}>
       <View style={styles.heading}>
+        <Button title="Profile" onPress={() => navigation.navigate('Outward Profile')}>
+          <Text>Profile</Text>
+        </Button>
         <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
           Title:
           {submission.title}
@@ -200,6 +207,9 @@ ArtworkDetailScreen.propTypes = {
       description: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired,
+    }),
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func,
     }),
   }).isRequired,
 };

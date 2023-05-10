@@ -20,12 +20,15 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    console.log(req.body);
-    const data = await User.findByIdAndUpdate(req.params.id, req.body);
+    console.log(111, req.body);  //prints out updatedUser info
+    console.log(req.params.id);
+    const data = await User.findByIdAndUpdate(req.params.id, req.body.updatedUser, { new: true });
+    console.log('updated user:', data);
     res.json(data);
   } catch (err) {
     console.error(err);
   }
+  console.log(req.body);
 };
 
 // send event as ["eventID"]
@@ -74,6 +77,7 @@ const getEmail = async (req, res) => {
 const getSpecificUser = async (req, res) => {
   try {
     const data = await User.findById(req.params.id, '-password');
+    console.log(data);
     res.json({
       msg: data,
     });
@@ -138,25 +142,11 @@ const removeUserArtwork = async (req, res) => {
 };
 
 const addUserProfilePicture = async (req, res) => {
-  console.log('controller');
-  // res.send('Hello');
-  console.log('hello');
   const image = req.body.blob;
-  console.log('poops');
   const buf = Buffer.from(image, 'base64');
-  // const d = new Date().toLocaleString();
-  // const date = d.slice(0, d.length - 3)
-  //   .split('/')
-  //   .join('_')
-  //   .split(' ')
-  //   .join('_')
-  //   .replace(',', '');
   const keyString = `ProfilePictures/${req.params.id}`;
-  console.log('poopies');
   console.log(Object.keys(req.params.id));
-  console.log('kzwan');
   console.log(Object.keys(req.body));
-  console.log(buf);
   try {
     await s3.upload({
       Bucket: 'test-sraa',
