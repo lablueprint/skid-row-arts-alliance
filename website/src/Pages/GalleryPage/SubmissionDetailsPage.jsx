@@ -1,16 +1,29 @@
 import {
-  Box, Typography, Menu, MenuItem,
+  Box, Typography, Select, MenuItem,
 } from '@mui/material';
-import { React } from 'react';
+import { React, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 function SubmissionDetailsPage() {
   const location = useLocation();
   const {
-    status, title, uploader, description, types, tags, date, comments,
+    url, status, title, uploader, description, types, tags, date, comments,
   } = location.state;
+
+  const [select, setSelect] = useState('Select');
+
+  const handleSelect = (event) => {
+    setSelect(event.target.value);
+    // TODO: update the backend by creating a route to update status
+    // TODO: pop up message for the approval or switching of status
+  };
+
   return (
     <Box>
+      <Box>
+        {/* TODO: Handle different file type submissions to display */}
+        <img src={url} alt="submission media" />
+      </Box>
       <Box>
         <Typography>
           Status:
@@ -65,10 +78,10 @@ function SubmissionDetailsPage() {
         </Typography>
       </Box>
       <Box>
-        <Menu>
-          <MenuItem>Approve</MenuItem>
-          <MenuItem>Reject</MenuItem>
-        </Menu>
+        <Select label="Select" value={select} onChange={handleSelect}>
+          <MenuItem value="Approve">Approve</MenuItem>
+          <MenuItem value="Reject">Reject</MenuItem>
+        </Select>
       </Box>
       <Box>
         <Typography>Comments:</Typography>

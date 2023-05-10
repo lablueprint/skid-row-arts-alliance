@@ -13,7 +13,7 @@ function GalleryPage() {
     { field: 'Submission Title', width: 200 },
     { field: 'Uploader', width: 150 },
     { field: 'Status' },
-    { field: 'Category' },
+    { field: 'Media Type' },
     { field: 'Date' }];
 
   const getSubmissionData = async () => {
@@ -21,15 +21,12 @@ function GalleryPage() {
     const data = response.data.map((submission, index) => (
       {
         id: index,
-        'Submission Title': submission.SubmissionData.title,
-        Uploader: submission.SubmissionData.name,
-        Status: submission.SubmissionData.status,
-        Category: 'Image',
+        submissionId: submission.id,
+        'Submission Title': submission.title,
+        Uploader: submission.name,
+        Status: submission.status,
+        'Media Type': submission.type,
         Date: submission.SubmissionData.date,
-        description: submission.SubmissionData.description,
-        types: ['Image'],
-        tags: submission.SubmissionData.tags,
-        comments: submission.SubmissionData.comments,
       }));
     setSubmissionData(data);
   };
@@ -40,17 +37,9 @@ function GalleryPage() {
 
   const viewArtwork = (params) => {
     const index = params.id;
-    console.log(submissionData[index]);
     navigate('/submission', {
       state: {
-        status: submissionData[index].Status,
-        title: submissionData[index]['Submission Title'],
-        uploader: submissionData[index].Uploader,
-        description: submissionData[index].description,
-        types: submissionData[index].types,
-        tags: submissionData[index].tags,
-        date: submissionData[index].Date,
-        comments: submissionData[index].comments,
+        id: submissionData[index].submissionId,
       },
     });
   };

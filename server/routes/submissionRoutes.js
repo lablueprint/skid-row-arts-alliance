@@ -3,9 +3,12 @@ const express = require('express');
 const submissionRouter = express.Router();
 const submissionController = require('../controllers/submissionController');
 
+// user facing functions
 submissionRouter.post('/post', submissionController.createSubmission);
 submissionRouter.delete('/delete/:id', submissionController.deleteSubmission);
-submissionRouter.get('/get', submissionController.getAllSubmissions);
-submissionRouter.get('/getsubmission', submissionController.getSubmission);
+submissionRouter.get('/getthumbnails', submissionController.getGalleryThumbnails);
+submissionRouter.get('/getartwork', submissionController.getArtworkDetails);
+
+// admin facing functions
 
 module.exports = submissionRouter;

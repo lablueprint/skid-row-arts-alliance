@@ -29,7 +29,7 @@ function GalleryScreen({ navigation }) {
   const getAllSubmissions = async () => {
     try {
       setLoadImages(false);
-      const res = await axios.get(`${URL}/submissions/get`);
+      const res = await axios.get(`${URL}/submissions/getthumbnails`);
       setAllImageData(res.data);
       return res.data;
     } catch (err) {
@@ -54,7 +54,7 @@ function GalleryScreen({ navigation }) {
               allImageData.map((imageData) => (
                 <ArtworkCard
                   ImageURL={imageData.ImageURL}
-                  id={imageData.SubmissionData._id}
+                  id={imageData.SubmissionId}
                   navigation={navigation}
                 />
               ))

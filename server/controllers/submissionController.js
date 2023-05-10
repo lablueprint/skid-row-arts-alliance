@@ -86,18 +86,17 @@ const deleteSubmission = async (req, res) => {
   }
 };
 
-const getAllSubmissions = async (req, res) => {
+const getGalleryThumbnails = async (req, res) => {
   try {
     // S3 Key retrieval from MongoDB
     // Empty `filter` means "match all documents"
     const filter = {};
     const allSubmissions = await Submission.find(filter);
 
-    // TODO: remove default thumbnail in the future
     const thumbnailKeys = allSubmissions.map((submission) => (submission.thumbnail ? submission.thumbnail : '0007Squirtle.png'));
     // Reformat data for response
     const responseList = thumbnailKeys.map((key, idx) => ({
-      SubmissionData: allSubmissions[idx],
+      SubmissionId: allSubmissions[idx]._id,
       ImageURL: `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${key}`,
     }));
     res.send(responseList);
@@ -108,7 +107,7 @@ const getAllSubmissions = async (req, res) => {
   }
 };
 
-const getSubmission = async (req, res) => {
+const getArtworkDetails = async (req, res) => {
   try {
     // Art submission retrieval from MongoDB
     const submission = await Submission.findById(req.query.id);
@@ -136,9 +135,34 @@ const getSubmission = async (req, res) => {
   }
 };
 
+const getSubmissions = async (req, res) => {
+  try {
+    // S3 Key retrieval from MongoDB
+    // Empty `filter` means "match all documents"
+    const filter = {};
+    const allSubmissions = await Submission.find(filter);
+
+    // Reformat data for response
+    const responseList = allSubmissions.map((submission) => ({
+      id: submission._id,
+      title: submission.title,
+      name: submission.name,
+      status: submission.status,
+      type: ['Image'],
+      date: submission.date,
+    }));
+    res.send(responseList);
+  } catch (err) {
+    console.error(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
+  }
+};
+
 module.exports = {
   createSubmission,
   deleteSubmission,
-  getAllSubmissions,
-  getSubmission,
+  getGalleryThumbnails,
+  getArtworkDetails,
+  getSubmissions,
 };
