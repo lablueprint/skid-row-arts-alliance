@@ -18,34 +18,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: '5%',
     paddingBottom: '20%',
-    borderWidth: 2,
   },
   input: {
-    flex: 1,
+    height: 40,
+    width: '100%',
     backgroundColor: '#F2F2F2',
     borderWidth: 1,
     borderColor: 'gray',
-    borderRadius: 5,
+    borderRadius: 8,
+    paddingLeft: 10,
+    fontSize: 15,
+    marginVertical: 5,
+  },
+  socialInput: {
+    flex: 1,
+    height: 40,
+    backgroundColor: '#F2F2F2',
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 8,
     paddingLeft: 10,
     fontSize: 15,
     marginVertical: 5,
   },
   inputContainer: {
     flex: 8,
-    borderWidth: 2,
     backgroundColor: '#F8F8F8',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     flexDirection: 'column',
-    width: '60%',
+    width: '65%',
     marginHorizontal: '15%',
     marginTop: '15%',
   },
   button: {
     backgroundColor: '#4C4C9B',
-    borderRadius: 4,
+    borderRadius: 3,
     width: '100%',
-    height: '15%',
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: '5%',
@@ -56,17 +66,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   headerText: {
-    fontSize: 25,
+    fontSize: 29,
   },
   inputLabel: {
-    fontSize: 15,
+    fontSize: 16,
   },
   logInContainer: {
     flex: 2,
     backgroundColor: '#F8F8F8',
     width: '60%',
     flexDirection: 'row',
-    borderWidth: 2,
   },
   link: {
     textDecorationLine: 'underline',
@@ -80,7 +89,6 @@ const styles = StyleSheet.create({
     width: '60%',
     textAlign: 'center',
     alignItems: 'center',
-    borderWidth: 2,
   },
   backButton: {
     width: 20,
@@ -90,20 +98,19 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     width: '100%',
     marginLeft: '15%',
-    borderWidth: 2,
   },
   socialContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 2,
     width: '100%',
   },
   textContainer: {
     flexDirection: 'column',
     width: '100%',
     height: '20%',
-    borderWidth: 2,
+    justifyContent: 'space-between',
+    borderColor: 'red',
     marginVertical: '5%',
   },
   blob: {
@@ -295,7 +302,7 @@ function SignUpScreen({ navigation }) {
         <View style={styles.inputContainer}>
           <Text style={styles.headerText}>Create an account</Text>
           <View style={styles.textContainer}>
-            <Text>
+            <Text style={styles.inputLabel}>
               Email
             </Text>
             <TextInput
@@ -306,7 +313,7 @@ function SignUpScreen({ navigation }) {
             />
           </View>
           <View style={styles.textContainer}>
-            <Text>
+            <Text style={styles.inputLabel}>
               Password
             </Text>
             <DotTextInput
@@ -317,7 +324,7 @@ function SignUpScreen({ navigation }) {
           </View>
           <Text>6 or more characters</Text>
           <View style={styles.textContainer}>
-            <Text>
+            <Text style={styles.inputLabel}>
               Confirm Password
             </Text>
             <TextInput
@@ -464,7 +471,7 @@ function SignUpScreen({ navigation }) {
             source={require('../assets/instagram.png')}
           />
           <TextInput
-            style={styles.input}
+            style={styles.socialInput}
             onChangeText={onChangeInstagramProfile}
             value={instagramProfile}
           />
@@ -474,7 +481,7 @@ function SignUpScreen({ navigation }) {
             source={require('../assets/facebook.png')}
           />
           <TextInput
-            style={styles.input}
+            style={styles.socialInput}
             onChangeText={onChangeFacebookProfile}
             value={facebookProfile}
           />
@@ -484,7 +491,7 @@ function SignUpScreen({ navigation }) {
             source={require('../assets/twitter.png')}
           />
           <TextInput
-            style={styles.input}
+            style={styles.socialInput}
             onChangeText={onChangeTwitterProfile}
             value={twitterProfile}
           />

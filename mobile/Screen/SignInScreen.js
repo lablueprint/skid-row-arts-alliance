@@ -5,23 +5,54 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
 import {
-  StyleSheet, Text, TextInput, View, Button, Alert,
+  StyleSheet, Text, TextInput, View, Button, Alert, TouchableOpacity, Dimensions,
 } from 'react-native';
 import { login } from '../redux/sliceAuth';
 import DotTextInput from '../Components/DotTextInput';
 
+const { height } = Dimensions.get('window').height;
+const { width } = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
-  container: {
+  mainContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F8F8F8',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+  },
+  signInContainer: {
+    flexDirection: 'column',
+    width: '60%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
   },
   input: {
     height: 40,
-    margin: 12,
-    borderWidth: 1,
+    width: '100%',
     padding: 10,
+    borderWidth: 0.5,
+    borderRadius: 8,
+    borderColor: '#8A9195',
+    backgroundColor: '#F2F2F2',
+  },
+  inputContainer: {
+    flexDirection: 'column',
+    height: '18%',
+    width: '100%',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    margin: 20,
+  },
+  button: {
+    height: 40,
+    width: '100%',
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: '5%',
+    backgroundColor: '#4C4C9B',
   },
 });
 
@@ -55,7 +86,7 @@ function SignInScreen({ navigation }) {
         email,
         password,
       };
-      const res = await axios.post(`${URL}/auth/sign-in`, userData);
+      const res = await axios.post(`${URL}/auth/user-sign-in`, userData);
       if (res.data.error) {
         console.error(res.data.error);
       } else {
@@ -67,30 +98,39 @@ function SignInScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Text>
-          Email
-        </Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={onChangeEmail}
-          value={email}
-          autoCapitalize={false}
-        />
+    <View style={styles.mainContainer}>
+      <View style={styles.signInContainer}>
+        <Text>Welcome back!</Text>
+        <View style={styles.inputContainer}>
+          <Text>
+            Email
+          </Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeEmail}
+            value={email}
+            autoCapitalize={false}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Text>
+            Password
+          </Text>
+          <DotTextInput
+            value={password}
+            onChangeText={onChangePassword}
+            customStyle={styles.input}
+          />
+        </View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            handleSignIn();
+          }}
+        >
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
       </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        <Text>
-          Password
-        </Text>
-        <DotTextInput value={password} onChangeText={onChangePassword} />
-      </View>
-      <Button
-        title="Sign In"
-        onPress={() => {
-          handleSignIn();
-        }}
-      />
       <Text>Don&#39;t have an account?</Text>
       <Button
         title="Create an account"
