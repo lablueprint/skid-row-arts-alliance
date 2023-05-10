@@ -59,7 +59,7 @@ const userPasswordReset = async (req, res) => {
       return res.json({ error: 'That email does not exist.' });
     }
     // Send success response
-    return res.send('User successfully created!');
+    return res.send('Password successfully updated!');
   } catch (err) {
     return res.status(404).json({ error: 'Unable to update password' });
   }
