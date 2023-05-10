@@ -17,7 +17,7 @@ function GalleryPage() {
     { field: 'Date' }];
 
   const getSubmissionData = async () => {
-    const response = await axios.get('http://localhost:4000/submissions/get');
+    const response = await axios.get('http://localhost:4000/submissions/getsubmissions');
     const data = response.data.map((submission, index) => (
       {
         id: index,
@@ -26,7 +26,7 @@ function GalleryPage() {
         Uploader: submission.name,
         Status: submission.status,
         'Media Type': submission.type,
-        Date: submission.SubmissionData.date,
+        Date: submission.date,
       }));
     setSubmissionData(data);
   };

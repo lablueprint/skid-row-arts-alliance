@@ -10,5 +10,6 @@ submissionRouter.get('/getthumbnails', submissionController.getGalleryThumbnails
 submissionRouter.get('/getartwork', submissionController.getArtworkDetails);
 
 // admin facing functions
+submissionRouter.get('/getsubmissions', submissionController.getSubmissions);
 
 module.exports = submissionRouter;

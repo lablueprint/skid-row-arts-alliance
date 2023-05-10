@@ -48,7 +48,6 @@ const userSignOut = async (req, res) => {
   }
 };
 
-
 // admin
 const adminSignUp = async (req, res) => {
   const adminExists = await Admin.findOne({ username: req.body.username });
@@ -64,7 +63,7 @@ const adminSignUp = async (req, res) => {
     secureAdmin.password = hashedPassword;
     const admin = new Admin(secureAdmin);
     await admin.save(admin);
-    
+
     // only need to send status? next process should be redirecting to log in screen?
     return res.send('User successfully created!');
   } catch (err) {
@@ -84,7 +83,6 @@ const adminSignIn = async (req, res, next) => {
     });
   })(req, res, next);
 };
-
 
 module.exports = {
   userSignUp,

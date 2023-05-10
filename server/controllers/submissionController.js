@@ -184,7 +184,7 @@ const getSubmissions = async (req, res) => {
       title: submission.title,
       name: submission.name,
       status: submission.status,
-      type: ['Image'],
+      type: submission.mediaTypes,
       date: submission.date,
     }));
     res.send(responseList);

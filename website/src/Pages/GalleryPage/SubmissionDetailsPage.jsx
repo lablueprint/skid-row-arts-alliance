@@ -1,14 +1,46 @@
 import {
   Box, Typography, Select, MenuItem,
 } from '@mui/material';
-import { React, useState } from 'react';
+import axios from 'axios';
+import { React, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 function SubmissionDetailsPage() {
   const location = useLocation();
   const {
-    url, status, title, uploader, description, types, tags, date, comments,
+    id,
   } = location.state;
+
+  const [details, setDetails] = useState({
+    mediaData: [''],
+    status: '',
+    title: '',
+    uploader: '',
+    description: '',
+    mediaTypes: [''],
+    tags: [''],
+    date: '',
+    comments: '',
+  });
+
+  const getSubmissionDetails = async () => {
+    const artwork = await axios.get('http://localhost:4000/submissions/getartwork', { params: { id } });
+    setDetails({
+      mediaData: artwork.data.MediaData,
+      status: artwork.data.Submission.status,
+      title: artwork.data.Submission.title,
+      uploader: artwork.data.Submission.uploader,
+      description: artwork.data.Submission.description,
+      mediaTypes: artwork.data.Submission.mediaTypes,
+      tags: artwork.data.Submission.tags,
+      date: artwork.data.Submission.date,
+      comments: artwork.data.Submission.comments,
+    });
+  };
+
+  useEffect(() => {
+    getSubmissionDetails();
+  }, []);
 
   const [select, setSelect] = useState('Select');
 
@@ -21,42 +53,44 @@ function SubmissionDetailsPage() {
   return (
     <Box>
       <Box>
-        {/* TODO: Handle different file type submissions to display */}
-        <img src={url} alt="submission media" />
+        {details.mediaData.map((media) => (
+          // TODO: adjust the rendering for each type of media
+          <img src={media.MediaURL} alt={media.ContentType} />
+        ))}
       </Box>
       <Box>
         <Typography>
           Status:
           {' '}
-          {status}
+          {details.status}
         </Typography>
       </Box>
       <Box>
         <Typography>
           Art Title:
           {' '}
-          {title}
+          {details.title}
         </Typography>
       </Box>
       <Box>
         <Typography>
           Uploader:
           {' '}
-          {uploader}
+          {details.uploader}
         </Typography>
       </Box>
       <Box>
         <Typography>
           Description:
           {' '}
-          {description}
+          {details.description}
         </Typography>
       </Box>
       <Box>
         <Typography>
           Media Type:
           {' '}
-          {types.map((type) => (
+          {details.mediaTypes.map((type) => (
             <Typography>{type}</Typography>
           ))}
         </Typography>
@@ -65,7 +99,7 @@ function SubmissionDetailsPage() {
         <Typography>
           Tags:
           {' '}
-          {tags.map((tag) => (
+          {details.tags.map((tag) => (
             <Typography>{tag}</Typography>
           ))}
         </Typography>
@@ -74,7 +108,7 @@ function SubmissionDetailsPage() {
         <Typography>
           Date Submitted:
           {' '}
-          {date}
+          {details.date}
         </Typography>
       </Box>
       <Box>
@@ -85,7 +119,8 @@ function SubmissionDetailsPage() {
       </Box>
       <Box>
         <Typography>Comments:</Typography>
-        <Typography>{comments || ''}</Typography>
+        <Typography>{details.comments}</Typography>
+        {/* TODO: change this to render as a text box */}
       </Box>
     </Box>
   );
