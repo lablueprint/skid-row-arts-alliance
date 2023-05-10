@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -54,12 +54,15 @@ const styles = StyleSheet.create({
 function MapScreen({ navigation }) {
   const [allEvents, setAllEvents] = useState([]);
   const [allResources, setAllResources] = useState([]);
+  const [tempAllEvents, setTempAllEvents] = useState([]);
+  const [tempAllResources, setTempAllResources] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
 
   const getAllEvents = async () => {
     try {
       const result = await axios.get(`${URL}/event/get`);
       setAllEvents(result.data);
+      setTempAllEvents(result.data);
       return result.data;
     } catch (err) {
       console.error(err);
@@ -71,6 +74,7 @@ function MapScreen({ navigation }) {
     try {
       const result = await axios.get(`${URL}/resource/get`);
       setAllResources(result.data);
+      setTempAllResources(result.data);
       return result.data;
     } catch (err) {
       console.error(err);
@@ -82,6 +86,79 @@ function MapScreen({ navigation }) {
     getAllEvents();
     getAllResources();
   }, []);
+
+  const [categories, setCategories] = useState({
+    visualArt: false,
+    film: false,
+    music: false,
+    food: false,
+    shelter: false,
+    mission: false,
+    health: false,
+    legalServices: false,
+    socialServices: false,
+    shower: false,
+  });
+
+  const filter = () => {
+    let resourcesArray = [];
+    let eventsArray = [];
+
+    // all events are workshops
+    if (categories.visualArt) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'Visual Art'));
+    }
+
+    if (categories.music) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'Music'));
+    }
+
+    if (categories.film) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'Film'));
+    }
+
+    if (categories.food) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Food'));
+    }
+
+    if (categories.shelter) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Shelter'));
+    }
+
+    if (categories.health) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Health'));
+    }
+    if (categories.legalServices) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Legal Services'));
+    }
+    if (categories.socialServices) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Social Services'));
+    }
+    if (categories.shower) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Shower'));
+    }
+
+    if (categories.food || categories.shelter || categories.mission) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Mission'));
+    }
+    // if all are false
+    const allCategoriesAreFalse = Object.values(categories).every((value) => value === false);
+
+    if (allCategoriesAreFalse) {
+      resourcesArray = tempAllResources;
+      eventsArray = tempAllEvents;
+    }
+
+    setAllResources(resourcesArray);
+    setAllEvents(eventsArray);
+  };
+
+  const onPressEvent = () => {
+    navigation.navigate('Filter', {
+      categories,
+      setCategories,
+    });
+  };
 
   const state = {
     region: {
@@ -150,9 +227,7 @@ function MapScreen({ navigation }) {
     });
   };
 
-  const onPressEvent = () => {
-    navigation.navigate('Filter', { setAllEvents, setAllResources });
-  };
+  useEffect(() => { filter(); }, [categories]);
 
   return (
     <View style={styles.container}>
@@ -171,7 +246,6 @@ function MapScreen({ navigation }) {
           interpolations={interpolations}
           onMarkerPress={onMarkerPress}
         />
-
       </MapView>
       <Animated.ScrollView
         ref={scrollViewRef}
@@ -196,13 +270,13 @@ function MapScreen({ navigation }) {
       >
         {allEvents.map((event) => (
           <MapCard
-            key={event._id}
-            id={event._id}
+            key={event.EventData._id}
+            id={event.EventData._id}
             image={{ uri: event.ImageURL }}
-            title={event.title}
-            description={event.description}
-            startDate={new Date(event.startDate)}
-            endDate={new Date(event.endDate)}
+            title={event.EventData.title}
+            description={event.EventData.description}
+            startDate={new Date(event.EventData.startDate)}
+            endDate={new Date(event.EventData.endDate)}
             isEvent
           />
         ))}
@@ -223,16 +297,10 @@ function MapScreen({ navigation }) {
   );
 }
 
-export default MapScreen;
-
 MapScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
 };
-/*
-<Button title="Food">Food</Button>
-<Button title="Shelter">Shelter</Button>
-<Button title="Mission">Mission</Button>
-<Button title="Shower/Laundry">Shower/Laundry</Button>
-*/
+
+export default MapScreen;

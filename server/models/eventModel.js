@@ -66,9 +66,9 @@ const eventSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  tags: {
+  tag: {
     required: true,
-    type: [String],
+    type: String,
   },
   thumbnail: {
     required: true,
