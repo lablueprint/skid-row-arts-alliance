@@ -5,13 +5,10 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
 import {
-  StyleSheet, Text, TextInput, View, Button, Alert, TouchableOpacity, Dimensions,
+  StyleSheet, Text, TextInput, View, Button, Alert, TouchableOpacity,
 } from 'react-native';
 import { login } from '../redux/sliceAuth';
 import DotTextInput from '../Components/DotTextInput';
-
-const { height } = Dimensions.get('window').height;
-const { width } = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -125,7 +122,9 @@ function SignInScreen({ navigation }) {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            handleSignIn();
+            if (checkValidEmail()) {
+              handleSignIn();
+            }
           }}
         >
           <Text style={styles.buttonText}>Next</Text>
