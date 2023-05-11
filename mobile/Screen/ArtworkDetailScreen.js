@@ -58,7 +58,7 @@ function ArtworkDetailScreen({
       console.log(authHeader);
       console.log(id);
       const res = await axios.get(`${URL}/submissions/getsubmission/${id}`, {
-        header: authHeader,
+        headers: authHeader,
       });
       setSubmission(res.data.Submission);
       setAllMediaData(res.data.MediaData);
