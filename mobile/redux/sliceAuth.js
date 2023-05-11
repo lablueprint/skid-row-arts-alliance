@@ -21,6 +21,9 @@ const authSlice = createSlice({
       state.isLoggedIn = true;
       state.id = action.payload.id;
       state.token = action.payload.token;
+      state.authHeader = {
+        Authorization: `Bearer ${action.payload.token}`,
+      };
       SecureStore.setItemAsync('user', JSON.stringify(action.payload));
     },
     logout: (state) => {
@@ -28,6 +31,7 @@ const authSlice = createSlice({
       state.refresh = 0;
       state.id = null;
       state.token = null;
+      state.authHeader = null;
       SecureStore.deleteItemAsync('user');
     },
     refresh: (state) => {

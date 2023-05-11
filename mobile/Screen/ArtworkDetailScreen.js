@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   StyleSheet, View, Text, ScrollView, Image, Switch, Button,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import VideoPlayer from 'expo-video-player';
@@ -37,6 +38,7 @@ function ArtworkDetailScreen({
   const [allMediaData, setAllMediaData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
   const [isArtSaved, setIsArtSaved] = useState(false);
+  const { authHeader } = useSelector((state) => state.auth);
 
   const handleShare = async (mediaUrl) => {
     try {
@@ -53,11 +55,16 @@ function ArtworkDetailScreen({
   const getSubmission = async () => {
     try {
       setLoadImages(false);
-      const res = await axios.get(`${URL}/submissions/getsubmission`, { params: { id } });
+      console.log(authHeader);
+      console.log(id);
+      const res = await axios.get(`${URL}/submissions/getsubmission/${id}`, {
+        header: authHeader,
+      });
       setSubmission(res.data.Submission);
       setAllMediaData(res.data.MediaData);
       return res.data;
     } catch (err) {
+      console.log('getSubmission');
       console.error(err);
       return err;
     } finally {
@@ -67,12 +74,15 @@ function ArtworkDetailScreen({
 
   const getSavedArt = async () => {
     try {
-      const res = await axios.get(`${URL}/user/getArtwork/63e33e2f578ad1d80bd2a347`);
+      const res = await axios.get(`${URL}/user/getArtwork/63e33e2f578ad1d80bd2a347`, {
+        headers: authHeader,
+      });
       if ((res.data.msg[0].savedArtwork.find((elm) => elm === id.toString())) === undefined) {
         return false;
       }
       return true;
     } catch (err) {
+      console.log('getSavedArt');
       console.error(err);
       return false;
     }
@@ -80,20 +90,28 @@ function ArtworkDetailScreen({
 
   const addSavedArt = async (artId) => {
     try {
-      const res = await axios.patch(`${URL}/user/addArtwork/63e33e2f578ad1d80bd2a347`, [artId]);
+      const res = await axios.patch(`${URL}/user/addArtwork/63e33e2f578ad1d80bd2a347`, [artId], {
+        headers: authHeader,
+      });
       setIsArtSaved(true);
       return res;
     } catch (err) {
+      console.log('addSavedArt');
+      console.error(err);
       return err;
     }
   };
 
   const removeSavedArt = async (artId) => {
     try {
-      const res = await axios.patch(`${URL}/user/removeArtwork/63e33e2f578ad1d80bd2a347`, [artId]);
+      const res = await axios.patch(`${URL}/user/removeArtwork/63e33e2f578ad1d80bd2a347`, [artId], {
+        headers: authHeader,
+      });
       setIsArtSaved(false);
       return res;
     } catch (err) {
+      console.log('removeSavedArt');
+      console.error(err);
       return err;
     }
   };
@@ -193,12 +211,6 @@ function ArtworkDetailScreen({
 ArtworkDetailScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      Encoding: PropTypes.string.isRequired,
-      key: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired,
     }),
   }).isRequired,

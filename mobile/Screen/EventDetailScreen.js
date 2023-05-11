@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   StyleSheet, View, Text, ScrollView, Image, Switch,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import { URL } from '@env';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -43,10 +44,13 @@ function EventDetailScreen({
   } = route.params;
 
   const [isEventSaved, setIsEventSaved] = useState(false);
+  const { authHeader } = useSelector((state) => state.auth);
 
   const getSomeEvents = async () => {
     try {
-      const res = await axios.get(`${URL}/user/getEvents/63e33e2f578ad1d80bd2a347`);
+      const res = await axios.get(`${URL}/user/getEvents/63e33e2f578ad1d80bd2a347`, {
+        headers: authHeader,
+      });
       if ((res.data.msg[0].savedEvents.find((elem) => elem === id.toString())) === undefined) {
         return false;
       }
@@ -63,7 +67,9 @@ function EventDetailScreen({
 
   const addSavedEvent = async (eventId) => {
     try {
-      const res = await axios.patch(`${URL}/user/addEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
+      const res = await axios.patch(`${URL}/user/addEvent/63e33e2f578ad1d80bd2a347`, [eventId], {
+        headers: authHeader,
+      });
       setIsEventSaved(true);
       return res;
     } catch (err) {
@@ -73,7 +79,9 @@ function EventDetailScreen({
 
   const removeSavedEvent = async (eventId) => {
     try {
-      const res = await axios.patch(`${URL}/user/removeEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
+      const res = await axios.patch(`${URL}/user/removeEvent/63e33e2f578ad1d80bd2a347`, [eventId], {
+        headers: authHeader,
+      });
       setIsEventSaved(false);
       return res;
     } catch (err) {
