@@ -91,13 +91,17 @@ function MapScreen({ navigation }) {
     visualArt: false,
     film: false,
     music: false,
+    artRelatedCommunityEvent: false,
+    performanceTheater: false,
+    spokenWord: false,
+    miscellaneous: false,
     food: false,
     shelter: false,
-    mission: false,
     health: false,
     legalServices: false,
-    socialServices: false,
     shower: false,
+    mission: false,
+    socialServices: false,
   });
 
   const filter = () => {
@@ -109,12 +113,28 @@ function MapScreen({ navigation }) {
       eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'Visual Art'));
     }
 
+    if (categories.film) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'Film'));
+    }
+
     if (categories.music) {
       eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'Music'));
     }
 
-    if (categories.film) {
-      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'Film'));
+    if (categories.artRelatedCommunityEvent) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'art-related community event'));
+    }
+
+    if (categories.performanceTheater) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'performance/theater'));
+    }
+
+    if (categories.spokenWord) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'spoken word'));
+    }
+
+    if (categories.miscellaneous) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'miscellaneous'));
     }
 
     if (categories.food) {
@@ -131,11 +151,13 @@ function MapScreen({ navigation }) {
     if (categories.legalServices) {
       resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Legal Services'));
     }
-    if (categories.socialServices) {
-      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Social Services'));
-    }
+
     if (categories.shower) {
       resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Shower'));
+    }
+
+    if (categories.socialServices) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Social Services'));
     }
 
     if (categories.food || categories.shelter || categories.mission) {

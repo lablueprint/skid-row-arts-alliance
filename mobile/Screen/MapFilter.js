@@ -3,12 +3,8 @@ import {
   View, TouchableOpacity, ScrollView, Text, StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
-// import axios from 'axios';
-// import { URL } from '@env';
 
-/* TO DO: pull data from back-end, the reason it is not rendering right now is prolly because
-in MapScreen when you render MapCard it has MapCard and does resource.ResourceData
-TO DO: when you press apply, it closes the new tab. when i repull from the database */
+// TO DO: when you press apply, it navigates back to map screen
 
 const styles = StyleSheet.create({
   container: {
@@ -35,55 +31,72 @@ const styles = StyleSheet.create({
   },
 });
 
-function MapFilter({ route }) {
+function MapFilter({ route, navigation }) {
   const {
     categories, setCategories,
   } = route.params;
 
   const eventCategories = [
     {
-      title: 'Visual Art',
+      title: 'visual art',
       key: 'visualArt',
     },
     {
-      title: 'Film',
+      title: 'film',
       key: 'film',
     },
     {
-      title: 'Music',
+      title: 'music',
       key: 'music',
     },
     {
-      title: 'Miscellaneous',
+      title: 'art-related community event',
+      key: 'artRelatedCommunityEvent',
+    },
+    {
+      title: 'performance/theater',
+      key: 'performance/theater',
+    },
+    {
+      title: 'spoken word',
+      key: 'spokenWord',
+    },
+    {
+      title: 'miscellaneous',
       key: 'miscellaneous',
     },
   ];
 
   const resourceCategories = [
     {
-      title: 'Food',
+      title: 'food',
       key: 'food',
     },
     {
-      title: 'Shelter',
+      title: 'shelter',
       key: 'shelter',
     },
     {
-      title: 'Mission',
-      key: 'mission',
+      title: 'health',
+      key: 'health',
     },
     {
-      title: 'Legal Services',
+      title: 'legal services',
       key: 'legalServices',
     },
     {
-      title: 'Social Services',
-      key: 'socialServices',
-    },
-    {
-      title: 'Shower',
+      title: 'shower',
       key: 'shower',
     },
+    {
+      title: 'mission',
+      key: 'mission',
+    },
+    {
+      title: 'social services',
+      key: 'socialServices',
+    },
+
   ];
 
   // MAKE THIS USE_EFFECT
@@ -115,11 +128,13 @@ function MapFilter({ route }) {
   // // call filter only when apply is implemented
   const onPressApply = () => {
     setCategories(tempCategories);
+    navigation.goBack();
   };
 
   return (
     <ScrollView>
-      <Text style={styles.title}>Workshops</Text>
+      <Text style={styles.title}>Select Multiple Filtering Options.</Text>
+      <Text style={styles.title}>Events</Text>
       <View style={styles.container}>
         {eventCategories.map((category) => (
           <TouchableOpacity style={styles.button} onPress={() => onPressCategories(category.key)}>
@@ -155,6 +170,9 @@ MapFilter.propTypes = {
       categories: PropTypes.shape.isRequired,
       setCategories: PropTypes.func.isRequired,
     }).isRequired,
+  }).isRequired,
+  navigation: PropTypes.shape({
+    goBack: PropTypes.func.isRequired,
   }).isRequired,
 };
 
