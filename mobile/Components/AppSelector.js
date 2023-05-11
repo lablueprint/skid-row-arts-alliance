@@ -9,6 +9,7 @@ import SubmissionScreen from '../Screen/SubmissionScreen';
 import ProfileScreen from '../Screen/ProfileScreen';
 import SignUpScreen from '../Screen/SignUpScreen';
 import SignInScreen from '../Screen/SignInScreen';
+import ForgotPasswordScreen from '../Screen/ForgotPasswordScreen';
 import ArtworkDetailScreen from '../Screen/ArtworkDetailScreen';
 import EventDetailScreen from '../Screen/EventDetailScreen';
 import EventScreen from '../Screen/EventScreen';
@@ -50,6 +51,7 @@ function AppSelector() {
         <Stack.Navigator>
           <Stack.Screen name="Sign In" component={SignInScreen} />
           <Stack.Screen name="Sign Up" component={SignUpScreen} />
+          <Stack.Screen name="Forgot Password" component={ForgotPasswordScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     )
