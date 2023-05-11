@@ -1,14 +1,13 @@
 /* eslint-disable no-console */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
 import {
-  StyleSheet, Text, TextInput, View, Button, Alert, TouchableOpacity,
+  StyleSheet, Text, TextInput, View, Button, Alert, TouchableOpacity, Keyboard,
 } from 'react-native';
 import { login } from '../redux/sliceAuth';
-import DotTextInput from '../Components/DotTextInput';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -57,6 +56,20 @@ function SignInScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
   const dispatch = useDispatch();
+  const [hiddenPassword, onChangeHiddenPassword] = useState('');
+
+  const handleChangePassword = (newText) => {
+    let newTextWithDots = '';
+    newText.split('').forEach((char, index, array) => {
+      if (index === array.length - 1) {
+        newTextWithDots += char;
+      } else {
+        newTextWithDots += '•';
+      }
+    });
+    onChangePassword(newText);
+    onChangeHiddenPassword(newTextWithDots);
+  };
 
   // Check email is proper format
   const validateEmail = (text) => {
@@ -113,10 +126,11 @@ function SignInScreen({ navigation }) {
           <Text>
             Password
           </Text>
-          <DotTextInput
-            value={password}
-            onChangeText={onChangePassword}
-            customStyle={styles.input}
+          <TextInput
+            style={styles.input}
+            value={hiddenPassword}
+            onChangeText={handleChangePassword}
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
         </View>
         <TouchableOpacity

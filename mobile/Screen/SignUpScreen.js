@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
 import * as ImagePicker from 'expo-image-picker';
-import DotTextInput from '../Components/DotTextInput';
 
 const styles = StyleSheet.create({
   container: {
@@ -129,6 +128,21 @@ function SignUpScreen({ navigation }) {
   const [facebookProfile, onChangeFacebookProfile] = useState('');
   const [twitterProfile, onChangeTwitterProfile] = useState('');
   const [page, setPage] = useState(1);
+
+  const [hiddenPassword, onChangeHiddenPassword] = useState('');
+
+  const handleChangePassword = (newText) => {
+    let newTextWithDots = '';
+    newText.split('').forEach((char, index, array) => {
+      if (index === array.length - 1) {
+        newTextWithDots += char;
+      } else {
+        newTextWithDots += '•';
+      }
+    });
+    onChangePassword(newText);
+    onChangeHiddenPassword(newTextWithDots);
+  };
 
   // Check email is proper format
   const validateEmail = (text) => {
@@ -309,13 +323,14 @@ function SignUpScreen({ navigation }) {
             />
           </View>
           <View style={styles.textContainer}>
-            <Text style={styles.inputLabel}>
+            <Text>
               Password
             </Text>
-            <DotTextInput
-              value={password}
-              onChangeText={onChangePassword}
-              customStyle={styles.input}
+            <TextInput
+              style={styles.input}
+              value={hiddenPassword}
+              onChangeText={handleChangePassword}
+              onSubmitEditing={() => Keyboard.dismiss()}
             />
           </View>
           <Text>6 or more characters</Text>
