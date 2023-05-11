@@ -9,7 +9,11 @@ import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
   savedEventCard: {
-    borderRadius: 8,
+    paddingBottom: 10,
+    borderRadius: 15,
+    borderColor: '#D26090',
+    borderLeftWidth: 15,
+    borderWidth: 2,
   },
   savedTitle: {
     fontFamily: 'Montserrat',
@@ -82,7 +86,7 @@ function SavedEventsScreen() {
         loadSavedEvent ? (
           savedEvent.map((oneEvent) => (
             <Card>
-              <Card.Content>
+              <Card.Content style={styles.savedEventCard}>
                 <Text style={styles.savedCategoryTitle}>
                   {findEvent(oneEvent)}
                 </Text>
