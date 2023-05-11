@@ -32,13 +32,13 @@ function ArtworkDetailScreen({
   route,
 }) {
   const {
-    id,
+    artworkId,
   } = route.params;
   const [submission, setSubmission] = useState({});
   const [allMediaData, setAllMediaData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
   const [isArtSaved, setIsArtSaved] = useState(false);
-  const { authHeader } = useSelector((state) => state.auth);
+  const { id, authHeader } = useSelector((state) => state.auth);
 
   const handleShare = async (mediaUrl) => {
     try {
@@ -55,7 +55,7 @@ function ArtworkDetailScreen({
   const getSubmission = async () => {
     try {
       setLoadImages(false);
-      const res = await axios.get(`${URL}/submissions/getsubmission/${id}`, {
+      const res = await axios.get(`${URL}/submissions/getsubmission/${artworkId}`, {
         headers: authHeader,
       });
       setSubmission(res.data.Submission);
@@ -71,10 +71,10 @@ function ArtworkDetailScreen({
 
   const getSavedArt = async () => {
     try {
-      const res = await axios.get(`${URL}/user/getArtwork/63e33e2f578ad1d80bd2a347`, {
+      const res = await axios.get(`${URL}/user/getArtwork/${id}`, {
         headers: authHeader,
       });
-      if ((res.data.msg[0].savedArtwork.find((elm) => elm === id.toString())) === undefined) {
+      if ((res.data.msg[0].savedArtwork.find((e) => e === artworkId.toString())) === undefined) {
         return false;
       }
       return true;
@@ -86,7 +86,8 @@ function ArtworkDetailScreen({
 
   const addSavedArt = async (artId) => {
     try {
-      const res = await axios.patch(`${URL}/user/addArtwork/63e33e2f578ad1d80bd2a347`, [artId], {
+      console.log({ id });
+      const res = await axios.patch(`${URL}/user/addArtwork/${id}`, [artId], {
         headers: authHeader,
       });
       setIsArtSaved(true);
@@ -99,7 +100,7 @@ function ArtworkDetailScreen({
 
   const removeSavedArt = async (artId) => {
     try {
-      const res = await axios.patch(`${URL}/user/removeArtwork/63e33e2f578ad1d80bd2a347`, [artId], {
+      const res = await axios.patch(`${URL}/user/removeArtwork/${id}`, [artId], {
         headers: authHeader,
       });
       setIsArtSaved(false);
@@ -112,9 +113,9 @@ function ArtworkDetailScreen({
 
   const onPressToggleSavedArt = () => {
     if (isArtSaved) {
-      removeSavedArt(id);
+      removeSavedArt(artworkId);
     } else {
-      addSavedArt(id);
+      addSavedArt(artworkId);
     }
   };
 
@@ -205,7 +206,7 @@ function ArtworkDetailScreen({
 ArtworkDetailScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      artworkId: PropTypes.string.isRequired,
     }),
   }).isRequired,
 };
