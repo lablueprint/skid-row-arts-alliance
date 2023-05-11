@@ -55,8 +55,6 @@ function ArtworkDetailScreen({
   const getSubmission = async () => {
     try {
       setLoadImages(false);
-      console.log(authHeader);
-      console.log(id);
       const res = await axios.get(`${URL}/submissions/getsubmission/${id}`, {
         headers: authHeader,
       });
@@ -64,7 +62,6 @@ function ArtworkDetailScreen({
       setAllMediaData(res.data.MediaData);
       return res.data;
     } catch (err) {
-      console.log('getSubmission');
       console.error(err);
       return err;
     } finally {
@@ -82,7 +79,6 @@ function ArtworkDetailScreen({
       }
       return true;
     } catch (err) {
-      console.log('getSavedArt');
       console.error(err);
       return false;
     }
@@ -96,7 +92,6 @@ function ArtworkDetailScreen({
       setIsArtSaved(true);
       return res;
     } catch (err) {
-      console.log('addSavedArt');
       console.error(err);
       return err;
     }
@@ -110,7 +105,6 @@ function ArtworkDetailScreen({
       setIsArtSaved(false);
       return res;
     } catch (err) {
-      console.log('removeSavedArt');
       console.error(err);
       return err;
     }

@@ -86,7 +86,6 @@ function SignInScreen({ navigation }) {
         email,
         password,
       };
-      console.log('yo');
       const res = await axios.post(`${URL}/auth/user-sign-in`, userData);
       if (res.data.error) {
         console.error(res.data.error);
