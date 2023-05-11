@@ -5,6 +5,7 @@ import {
 import {
   useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
+import PropTypes from 'prop-types';
 
 const { width, height } = Dimensions.get('window');
 
@@ -100,7 +101,7 @@ const TAGS = [
   { id: '11', section: 'Video', label: 'short film' },
 ].map((tag) => ({ ...tag, selected: false }));
 
-function ArtworkFilterScreen() {
+function ArtworkFilterScreen({ navigation }) {
   const [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
     MontserratMedium: Montserrat_500Medium,
@@ -121,6 +122,15 @@ function ArtworkFilterScreen() {
       setSelectedCategories([...selectedCategories, category]);
       setSelectedTags([...selectedTags, ...TAGS.filter((tag) => tag.section === category)]);
     }
+  };
+
+  const clearAll = () => {
+    setSelectedCategories([]);
+    setSelectedTags([]);
+  };
+
+  const applyFilters = () => {
+    navigation.navigate('Gallery', { selectedTags });
   };
 
   return (
@@ -233,16 +243,27 @@ function ArtworkFilterScreen() {
           </TouchableOpacity>
         ))}
       </View>
+      {/* <View>
+        {selectedTags.map((tag, index) => (
+          <Text key={index}>{tag.label}</Text>
+        ))}
+      </View> */}
       <View style={styles.bottomButtons}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={clearAll}>
           <Text style={styles.clearButton}>Clear All</Text>
         </TouchableOpacity>
         <TouchableOpacity>
-          <Text style={styles.applyButton}>Apply</Text>
+          <Text onPress={applyFilters} style={styles.applyButton}>Apply</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
+
+ArtworkFilterScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
 
 export default ArtworkFilterScreen;

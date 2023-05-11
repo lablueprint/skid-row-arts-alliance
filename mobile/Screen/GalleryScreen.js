@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 25,
     borderWidth: 1.5,
     borderColor: '#424288',
     borderRadius: 5,
@@ -45,11 +44,31 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginLeft: 10,
   },
+  tagContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  tagBox: {
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    marginHorizontal: 4,
+    marginVertical: 2,
+    borderRadius: 15,
+    backgroundColor: '#D0D0E8',
+  },
+  tagText: {
+    fontFamily: 'MontserratBold',
+    fontSize: 14,
+    color: '#424288',
+  },
 });
 
-function GalleryScreen({ navigation }) {
+function GalleryScreen({ navigation, route }) {
   const [allImageData, setAllImageData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
+  const selectedTags = route.params?.selectedTags || [];
   const [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
     MontserratSemiBold: Montserrat_600SemiBold,
@@ -85,8 +104,21 @@ function GalleryScreen({ navigation }) {
           <Text style={styles.filterText}>Filter</Text>
         </View>
       </TouchableOpacity>
+      <ScrollView
+        horizontal
+        contentContainerStyle={styles.tagContainer}
+        showsHorizontalScrollIndicator={false}
+      >
+        {selectedTags.length > 0 && (
+          selectedTags.map(tag => (
+            <View key={tag.label} style={styles.tagBox}>
+              <Text style={styles.tagText}>{tag.label}</Text>
+            </View>
+          ))
+        )}
+      </ScrollView>
       {
-        loadImages ? (
+        loadImages && (
           <>
             {
               allImageData.map((imageData) => (
@@ -98,7 +130,7 @@ function GalleryScreen({ navigation }) {
               ))
             }
           </>
-        ) : <Text>Nothing</Text>
+        )
       }
     </ScrollView>
   );
@@ -107,6 +139,13 @@ function GalleryScreen({ navigation }) {
 GalleryScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
+  }).isRequired,
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      selectedTags: PropTypes.arrayOf(PropTypes.shape({
+        label: PropTypes.string.isRequired,
+      })),
+    }),
   }).isRequired,
 };
 

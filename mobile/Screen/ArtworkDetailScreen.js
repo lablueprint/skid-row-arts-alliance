@@ -129,6 +129,9 @@ function ArtworkDetailScreen({
         {'\n'}
         Email:
         {submission.email}
+        {'\n'}
+        Tags:
+        {submission.tags}
       </Text>
       {
         loadImages ? (
@@ -200,6 +203,7 @@ ArtworkDetailScreen.propTypes = {
       description: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired,
+      tags: PropTypes.arrayOf(PropTypes.string),
     }),
   }).isRequired,
 };

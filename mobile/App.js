@@ -186,6 +186,7 @@ export default function App() {
           <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
           <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
           <Stack.Screen name="Organization Details" component={OrganizationDetailScreen} />
+          <Stack.Screen name="Gallery" component={GalleryScreen} />
           <Stack.Screen name="Artwork Filter" component={ArtworkFilterScreen} />
         </Stack.Navigator>
       </NavigationContainer>
