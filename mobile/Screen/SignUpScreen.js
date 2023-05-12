@@ -8,6 +8,8 @@ import axios from 'axios';
 import { URL } from '@env';
 import * as ImagePicker from 'expo-image-picker';
 
+const BackButton = require('../assets/backArrow.png');
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -95,7 +97,8 @@ const styles = StyleSheet.create({
   backButtonPosiion: {
     alignItems: 'flex-start',
     width: '100%',
-    marginLeft: '15%',
+    marginLeft: '10%',
+    marginTop: '10%',
   },
   socialContainer: {
     flex: 1,
@@ -132,6 +135,14 @@ function SignUpScreen({ navigation }) {
   const [hiddenPassword, onChangeHiddenPassword] = useState('');
 
   const handleChangePassword = (newText) => {
+    const lastLetter = newText.slice(-1);
+    if (newText.length > password.length) {
+      onChangePassword(password + lastLetter);
+    } else if (newText === '') {
+      onChangePassword('');
+    }
+    console.log(password);
+    // onChangePassword(password + newText.slice(-1));
     let newTextWithDots = '';
     newText.split('').forEach((char, index, array) => {
       if (index === array.length - 1) {
@@ -140,7 +151,6 @@ function SignUpScreen({ navigation }) {
         newTextWithDots += '•';
       }
     });
-    onChangePassword(newText);
     onChangeHiddenPassword(newTextWithDots);
   };
 
@@ -174,7 +184,7 @@ function SignUpScreen({ navigation }) {
     } else if (password.length < 6) {
       Alert.alert('Password must be longer than 5 characters');
     } else if (password !== confirmPassword) {
-      Alert.alert('Password Confirmation does not match Password');
+      Alert.alert('Password confirmation does not match password');
     } else {
       return true;
     }
@@ -304,7 +314,7 @@ function SignUpScreen({ navigation }) {
             }}
           >
             <Image
-              source={require('../assets/favicon.png')}
+              source={BackButton}
               style={styles.backButton}
             />
           </TouchableOpacity>
@@ -330,6 +340,7 @@ function SignUpScreen({ navigation }) {
               style={styles.input}
               value={hiddenPassword}
               onChangeText={handleChangePassword}
+              autoCapitalize={false}
               onSubmitEditing={() => Keyboard.dismiss()}
             />
           </View>
@@ -349,6 +360,8 @@ function SignUpScreen({ navigation }) {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
+              console.log(password);
+              console.log(confirmPassword);
               if (checkAccountInputs()) {
                 Keyboard.dismiss();
                 setPage(3);
@@ -372,7 +385,7 @@ function SignUpScreen({ navigation }) {
             }}
           >
             <Image
-              source={require('../assets/favicon.png')}
+              source={BackButton}
               style={styles.backButton}
             />
           </TouchableOpacity>
@@ -419,7 +432,7 @@ function SignUpScreen({ navigation }) {
             }}
           >
             <Image
-              source={require('../assets/favicon.png')}
+              source={BackButton}
               style={styles.backButton}
             />
           </TouchableOpacity>
@@ -466,7 +479,7 @@ function SignUpScreen({ navigation }) {
           }}
         >
           <Image
-            source={require('../assets/favicon.png')}
+            source={BackButton}
             style={styles.backButton}
           />
         </TouchableOpacity>

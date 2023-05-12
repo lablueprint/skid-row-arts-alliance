@@ -59,6 +59,14 @@ function SignInScreen({ navigation }) {
   const [hiddenPassword, onChangeHiddenPassword] = useState('');
 
   const handleChangePassword = (newText) => {
+    const lastLetter = newText.slice(-1);
+    if (newText.length > password.length) {
+      onChangePassword(password + lastLetter);
+    } else if (newText === '') {
+      onChangePassword('');
+    }
+    console.log(password);
+    // onChangePassword(password + newText.slice(-1));
     let newTextWithDots = '';
     newText.split('').forEach((char, index, array) => {
       if (index === array.length - 1) {
@@ -67,7 +75,6 @@ function SignInScreen({ navigation }) {
         newTextWithDots += '•';
       }
     });
-    onChangePassword(newText);
     onChangeHiddenPassword(newTextWithDots);
   };
 
@@ -129,6 +136,7 @@ function SignInScreen({ navigation }) {
           <TextInput
             style={styles.input}
             value={hiddenPassword}
+            autoCapitalize={false}
             onChangeText={handleChangePassword}
             onSubmitEditing={() => Keyboard.dismiss()}
           />
