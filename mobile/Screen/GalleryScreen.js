@@ -96,11 +96,12 @@ function GalleryScreen({ navigation, route }) {
         loadImages && (
           <>
             {
-              allImageData
-                .filter((imageData) => imageData.SubmissionData.tags
-                  .some((tag) => tagLabels.includes(tag)))
+              (selectedTags.length === 0
+                ? allImageData
+                : allImageData
+                  .filter((imageData) => imageData.SubmissionData.tags
+                    .some((tag) => tagLabels.includes(tag))))
                 .map((filteredData) => (
-                  // <Text></Text>
                   <ArtworkCard
                     ImageURL={filteredData.ImageURL}
                     id={filteredData.SubmissionData._id}
