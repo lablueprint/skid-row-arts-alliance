@@ -96,7 +96,7 @@ const TAGS = [
   { id: '6', section: 'Audio', label: 'music' },
   { id: '7', section: 'Audio', label: 'poetry' },
   { id: '8', section: 'Audio', label: 'storytelling' },
-  { id: '9', section: 'Video', label: 'music' },
+  { id: '9', section: 'Video', label: 'music video' },
   { id: '10', section: 'Video', label: 'performance' },
   { id: '11', section: 'Video', label: 'short film' },
 ].map((tag) => ({ ...tag, selected: false }));
@@ -243,11 +243,6 @@ function ArtworkFilterScreen({ navigation }) {
           </TouchableOpacity>
         ))}
       </View>
-      {/* <View>
-        {selectedTags.map((tag, index) => (
-          <Text key={index}>{tag.label}</Text>
-        ))}
-      </View> */}
       <View style={styles.bottomButtons}>
         <TouchableOpacity onPress={clearAll}>
           <Text style={styles.clearButton}>Clear All</Text>

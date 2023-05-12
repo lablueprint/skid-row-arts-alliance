@@ -1,6 +1,12 @@
 /* eslint-disable global-require */
 import React from 'react';
-import { Text, Image, StyleSheet } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -32,6 +38,27 @@ const styles = StyleSheet.create({
     fontFamily: 'MontserratBold',
     fontSize: 11,
     color: '#4C4C9B',
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#424288',
+    borderRadius: 5,
+    alignSelf: 'center',
+    paddingHorizontal: 17,
+    paddingVertical: 7,
+    marginRight: 15,
+  },
+  filterImage: {
+    width: 16,
+    height: 16,
+  },
+  filterText: {
+    fontFamily: 'MontserratSemiBold',
+    color: '#424288',
+    marginLeft: 10,
   },
 });
 
@@ -118,7 +145,7 @@ function ProfileIcon({ focused }) {
   );
 }
 
-function HomeStackScreen() {
+function HomeStackScreen({ navigation }) {
   const [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
     MontserratBold: Montserrat_700Bold,
@@ -153,6 +180,17 @@ function HomeStackScreen() {
           component={GalleryScreen}
           options={{
             tabBarIcon: GalleryIcon,
+            headerRight: () => (
+              <TouchableOpacity onPress={() => navigation.navigate('Artwork Filter')}>
+                <View style={styles.filterButton}>
+                  <Image
+                    source={require('./assets/filter/filter.png')}
+                    style={styles.filterImage}
+                  />
+                  <Text style={styles.filterText}>Filter</Text>
+                </View>
+              </TouchableOpacity>
+            ),
           }}
         />
         {/* TODO: change component to Zine to match hifi */}
@@ -186,7 +224,6 @@ export default function App() {
           <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
           <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
           <Stack.Screen name="Organization Details" component={OrganizationDetailScreen} />
-          <Stack.Screen name="Gallery" component={GalleryScreen} />
           <Stack.Screen name="Artwork Filter" component={ArtworkFilterScreen} />
         </Stack.Navigator>
       </NavigationContainer>
@@ -212,4 +249,10 @@ ZineIcon.propTypes = {
 
 ProfileIcon.propTypes = {
   focused: PropTypes.bool.isRequired,
+};
+
+HomeStackScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
 };
