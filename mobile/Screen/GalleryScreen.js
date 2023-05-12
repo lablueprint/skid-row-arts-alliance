@@ -4,8 +4,8 @@ import {
   Text,
   View,
   ScrollView,
-  TouchableOpacity,
-  Image,
+  SafeAreaView,
+  FlatList,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
@@ -16,20 +16,11 @@ import {
 import ArtworkCard from '../Components/ArtworkCard';
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scrollView: {
-    padding: 20,
-  },
   tagContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    marginTop: 15,
+    marginVertical: 10,
     marginLeft: 4,
   },
   tagBox: {
@@ -76,8 +67,14 @@ function GalleryScreen({ navigation, route }) {
     getAllSubmissions();
   }, []);
 
+  let filteredData = allImageData;
+  if (loadImages && selectedTags.length > 0) {
+    filteredData = filteredData.filter((imageData) => imageData.SubmissionData.tags
+      .some((tag) => tagLabels.includes(tag)));
+  }
+
   return (
-    <ScrollView>
+    <SafeAreaView>
       <ScrollView
         horizontal
         contentContainerStyle={styles.tagContainer}
@@ -91,29 +88,19 @@ function GalleryScreen({ navigation, route }) {
           ))
         )}
       </ScrollView>
-      <ScrollView style={styles.scrollView}>
-        {
-        loadImages && (
-          <>
-            {
-              (selectedTags.length === 0
-                ? allImageData
-                : allImageData
-                  .filter((imageData) => imageData.SubmissionData.tags
-                    .some((tag) => tagLabels.includes(tag))))
-                .map((filteredData) => (
-                  <ArtworkCard
-                    ImageURL={filteredData.ImageURL}
-                    id={filteredData.SubmissionData._id}
-                    navigation={navigation}
-                  />
-                ))
-            }
-          </>
-        )
-      }
-      </ScrollView>
-    </ScrollView>
+      <FlatList
+        data={filteredData}
+        keyExtractor={(item) => item.SubmissionData._id}
+        numColumns={2}
+        renderItem={({ item }) => (
+          <ArtworkCard
+            ImageURL={item.ImageURL}
+            id={item.SubmissionData._id}
+            navigation={navigation}
+          />
+        )}
+      />
+    </SafeAreaView>
   );
 }
 
