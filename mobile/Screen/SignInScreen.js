@@ -5,13 +5,9 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
 import {
-  StyleSheet, Text, TextInput, View, Button, Alert, TouchableOpacity, Dimensions,
+  StyleSheet, Text, TextInput, View, Button, Alert, TouchableOpacity, Keyboard,
 } from 'react-native';
 import { login } from '../redux/sliceAuth';
-import DotTextInput from '../Components/DotTextInput';
-
-const { height } = Dimensions.get('window').height;
-const { width } = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -63,6 +59,28 @@ function SignInScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
   const dispatch = useDispatch();
+
+  const [hiddenPassword, onChangeHiddenPassword] = useState('');
+
+  const handleChangePassword = (newText) => {
+    const lastLetter = newText.slice(-1);
+    if (newText.length > password.length) {
+      onChangePassword(password + lastLetter);
+    } else if (newText === '') {
+      onChangePassword('');
+    }
+    console.log(password);
+    // onChangePassword(password + newText.slice(-1));
+    let newTextWithDots = '';
+    newText.split('').forEach((char, index, array) => {
+      if (index === array.length - 1) {
+        newTextWithDots += char;
+      } else {
+        newTextWithDots += '•';
+      }
+    });
+    onChangeHiddenPassword(newTextWithDots);
+  };
 
   // Check email is proper format
   const validateEmail = (text) => {
@@ -119,10 +137,12 @@ function SignInScreen({ navigation }) {
           <Text>
             Password
           </Text>
-          <DotTextInput
-            value={password}
-            onChangeText={onChangePassword}
-            customStyle={styles.input}
+          <TextInput
+            style={styles.input}
+            value={hiddenPassword}
+            onChangeText={handleChangePassword}
+            autoCapitalize={false}
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
         </View>
         <TouchableOpacity
@@ -135,10 +155,12 @@ function SignInScreen({ navigation }) {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            handleSignIn();
+            if (checkValidEmail()) {
+              handleSignIn();
+            }
           }}
         >
-          <Text style={styles.buttonText}>Next</Text>
+          <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
       </View>
       <Text>Don&#39;t have an account?</Text>
