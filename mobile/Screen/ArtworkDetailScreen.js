@@ -84,10 +84,10 @@ function ArtworkDetailScreen({
     }
   };
 
-  const addSavedArt = async (artId) => {
+  const addSavedArt = async () => {
     try {
-      console.log({ id });
-      const res = await axios.patch(`${URL}/user/addArtwork/${id}`, [artId], {
+      console.log({ id, render: true });
+      const res = await axios.patch(`${URL}/user/addArtwork/${id}`, [artworkId], {
         headers: authHeader,
       });
       setIsArtSaved(true);
@@ -98,9 +98,9 @@ function ArtworkDetailScreen({
     }
   };
 
-  const removeSavedArt = async (artId) => {
+  const removeSavedArt = async () => {
     try {
-      const res = await axios.patch(`${URL}/user/removeArtwork/${id}`, [artId], {
+      const res = await axios.patch(`${URL}/user/removeArtwork/${id}`, [artworkId], {
         headers: authHeader,
       });
       setIsArtSaved(false);
@@ -113,9 +113,9 @@ function ArtworkDetailScreen({
 
   const onPressToggleSavedArt = () => {
     if (isArtSaved) {
-      removeSavedArt(artworkId);
+      removeSavedArt();
     } else {
-      addSavedArt(artworkId);
+      addSavedArt();
     }
   };
 
