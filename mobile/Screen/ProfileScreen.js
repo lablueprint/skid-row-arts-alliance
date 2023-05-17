@@ -46,7 +46,9 @@ const styles = StyleSheet.create({
   },
 });
 
-function ProfileScreen() {
+function ProfileScreen({
+  navigation,
+}) {
   const { user: currentUser } = useSelector((state) => state.auth);
   const [name, onChangeName] = useState('');
   const [email, onChangeEmail] = useState('');
@@ -74,8 +76,9 @@ function ProfileScreen() {
   const updatedUser = {
     email: 'updated-email@yahoo.com',
     password: 'updated-password',
-    firstName: 'updated-firstname',
+    firstName: 'Caroline',
     lastName: 'updated-lastname',
+    bio: 'hater of mobile dev',
     socialMedia: {
       platform: 'updated-instagram',
       accountTag: 'updated-accounttag',
@@ -198,6 +201,7 @@ function ProfileScreen() {
             {currentUser.userSocialTag}
           </Text>
         </View>
+        <Button title="Profile" onPress={() => navigation.navigate('Edit Profile')} />
         <View style={{ paddingBottom: 40 }}>
           <Text style={{ fontWeight: '800', fontSize: 25, paddingBottom: 10 }}>
             Edit Profile Fields

@@ -21,6 +21,7 @@ import EventScreen from './Screen/EventScreen';
 import ResourceDetailScreen from './Screen/ResourceDetailScreen';
 import OrganizationDetailScreen from './Screen/OrganizationDetailScreen';
 import OutwardProfileScreen from './Screen/OutwardProfileScreen';
+import EditProfileScreen from './Screen/EditProfileScreen';
 
 const styles = StyleSheet.create({
   unselected: {
@@ -187,6 +188,7 @@ export default function App() {
           <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
           <Stack.Screen name="Organization Details" component={OrganizationDetailScreen} />
           <Stack.Screen name="Outward Profile" component={OutwardProfileScreen} />
+          <Stack.Screen name="Edit Profile" component={EditProfileScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
