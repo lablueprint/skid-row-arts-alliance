@@ -50,6 +50,9 @@ const styles = StyleSheet.create({
     marginVertical: '5%',
     backgroundColor: '#4C4C9B',
   },
+  link: {
+    textDecorationLine: 'underline',
+  },
 });
 
 function SignInScreen({ navigation }) {
@@ -141,6 +144,13 @@ function SignInScreen({ navigation }) {
             onSubmitEditing={() => Keyboard.dismiss()}
           />
         </View>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Forgot Password');
+          }}
+        >
+          <Text style={styles.link}>Forgot password?</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
