@@ -8,8 +8,6 @@ import {
 } from 'react-native';
 import { login } from '../redux/sliceAuth';
 
-function ForgotPasswordScreen({ navigation }) {
-
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
@@ -57,6 +55,7 @@ const styles = StyleSheet.create({
 });
 
 function ForgotPasswordScreen({ navigation }) {
+  const [email, onChangeEmail] = useState('');
   const [page, setPage] = useState(1);
 
   const validateEmail = (text) => {
@@ -67,16 +66,47 @@ function ForgotPasswordScreen({ navigation }) {
     return true;
   };
 
+  const checkValidEmail = () => {
+    if (!validateEmail(email)) {
+      Alert.alert('Please enter a valid email to proceed');
+    } else {
+      return true;
+    }
+    return false;
+  };
+
   return (
-    <View>
-      <Text>Forgot password</Text>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('Sign In');
-        }}
-      >
-        <Text> Log in</Text>
-      </TouchableOpacity>
+    <View style={styles.mainContainer}>
+      <View style={styles.signInContainer}>
+        <Text>Forgot Password?</Text>
+        <Text>Please enter your email address to receive a verification code.</Text>
+        <View style={styles.inputContainer}>
+          <Text>
+            Email
+          </Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeEmail}
+            value={email}
+            autoCapitalize={false}
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              setPage(2);
+            }}
+          >
+            <Text style={styles.buttonText}>Send code</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Forgot Password');
+            }}
+          >
+            <Text style={styles.link}>Already have a code?</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
 
   );

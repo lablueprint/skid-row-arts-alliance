@@ -59,39 +59,28 @@ function SignInScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
   const dispatch = useDispatch();
-  const [hiddenPassword, onChangeHiddenPassword] = useState('');
 
-  const handleChangePassword = (newText) => {
-    const lastLetter = newText.slice(-1);
-    if (newText.length > password.length) {
-      onChangePassword(password + lastLetter);
-    } else if (newText === '') {
-      onChangePassword('');
-    }
-    console.log(password);
-    // onChangePassword(password + newText.slice(-1));
-    let newTextWithDots = '';
-    newText.split('').forEach((char, index, array) => {
-      if (index === array.length - 1) {
-        newTextWithDots += char;
-      } else {
-        newTextWithDots += '•';
-      }
-    });
-    onChangeHiddenPassword(newTextWithDots);
+  const [hiddenPassword, onChangeHiddenPassword] = useState('');
+  const [bool, setBool] = useState(false);
+
+  const handleBlur = () => {
+    setBool(true);
   };
 
-  const [hiddenPassword, onChangeHiddenPassword] = useState('');
+  const handleFocus = () => {
+    setBool(false);
+  };
 
   const handleChangePassword = (newText) => {
     const lastLetter = newText.slice(-1);
     if (newText.length > password.length) {
       onChangePassword(password + lastLetter);
+    } else if (newText.length < password.length) {
+      onChangePassword(password.slice(0, newText.length));
     } else if (newText === '') {
       onChangePassword('');
+      setBool(false);
     }
-    console.log(password);
-    // onChangePassword(password + newText.slice(-1));
     let newTextWithDots = '';
     newText.split('').forEach((char, index, array) => {
       if (index === array.length - 1) {
@@ -159,26 +148,18 @@ function SignInScreen({ navigation }) {
             Password
           </Text>
           <TextInput
+            secureTextEntry={bool}
             style={styles.input}
             value={hiddenPassword}
-            autoCapitalize={false}
             onChangeText={handleChangePassword}
-            onSubmitEditing={() => Keyboard.dismiss()}
+            autoCapitalize={false}
+            onBlur={handleBlur}
+            onFocus={handleFocus}
           />
         </View>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('Forgot Password');
-          }}
-        >
-          <Text style={styles.link}>Forgot password?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            if (checkValidEmail()) {
-              handleSignIn();
-            }
           }}
         >
           <Text style={styles.link}>Forgot password?</Text>
