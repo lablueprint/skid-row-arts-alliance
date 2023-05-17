@@ -32,7 +32,7 @@ function HomeStackScreen() {
   );
 }
 
-function AppSelector() {
+function AppNavigator() {
   const { id, token } = useSelector((state) => state.auth);
 
   return (
@@ -58,4 +58,4 @@ function AppSelector() {
   );
 }
 
-export default AppSelector;
+export default AppNavigator;
