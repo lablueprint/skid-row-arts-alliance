@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -59,6 +59,27 @@ function SignInScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
   const dispatch = useDispatch();
+  const [hiddenPassword, onChangeHiddenPassword] = useState('');
+
+  const handleChangePassword = (newText) => {
+    const lastLetter = newText.slice(-1);
+    if (newText.length > password.length) {
+      onChangePassword(password + lastLetter);
+    } else if (newText === '') {
+      onChangePassword('');
+    }
+    console.log(password);
+    // onChangePassword(password + newText.slice(-1));
+    let newTextWithDots = '';
+    newText.split('').forEach((char, index, array) => {
+      if (index === array.length - 1) {
+        newTextWithDots += char;
+      } else {
+        newTextWithDots += '•';
+      }
+    });
+    onChangeHiddenPassword(newTextWithDots);
+  };
 
   const [hiddenPassword, onChangeHiddenPassword] = useState('');
 
@@ -140,14 +161,24 @@ function SignInScreen({ navigation }) {
           <TextInput
             style={styles.input}
             value={hiddenPassword}
-            onChangeText={handleChangePassword}
             autoCapitalize={false}
+            onChangeText={handleChangePassword}
             onSubmitEditing={() => Keyboard.dismiss()}
           />
         </View>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('Forgot Password');
+          }}
+        >
+          <Text style={styles.link}>Forgot password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            if (checkValidEmail()) {
+              handleSignIn();
+            }
           }}
         >
           <Text style={styles.link}>Forgot password?</Text>

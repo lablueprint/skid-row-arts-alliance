@@ -32,7 +32,7 @@ function HomeStackScreen() {
   );
 }
 
-function AppSelector() {
+function AppNavigator() {
   const { id, token } = useSelector((state) => state.auth);
 
   return (
@@ -49,13 +49,13 @@ function AppSelector() {
     ) : (
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Sign In" component={SignInScreen} />
-          <Stack.Screen name="Sign Up" component={SignUpScreen} />
-          <Stack.Screen name="Forgot Password" component={ForgotPasswordScreen} />
+          <Stack.Screen name="Sign In" component={SignInScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Sign Up" component={SignUpScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Forgot Password" component={ForgotPasswordScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     )
   );
 }
 
-export default AppSelector;
+export default AppNavigator;
