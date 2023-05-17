@@ -2,12 +2,12 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import store from './redux/store';
-import AppSelector from './Components/AppSelector';
+import AppNavigator from './Components/AppNavigator';
 
 export default function App() {
   return (
     <Provider store={store}>
-      <AppSelector />
+      <AppNavigator />
     </Provider>
   );
 }

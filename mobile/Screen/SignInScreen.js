@@ -1,17 +1,13 @@
 /* eslint-disable no-console */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
 import {
-  StyleSheet, Text, TextInput, View, Button, Alert, TouchableOpacity, Dimensions,
+  StyleSheet, Text, TextInput, View, Button, Alert, TouchableOpacity, Keyboard,
 } from 'react-native';
 import { login } from '../redux/sliceAuth';
-import DotTextInput from '../Components/DotTextInput';
-
-const { height } = Dimensions.get('window').height;
-const { width } = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -54,12 +50,36 @@ const styles = StyleSheet.create({
     marginVertical: '5%',
     backgroundColor: '#4C4C9B',
   },
+  link: {
+    textDecorationLine: 'underline',
+  },
 });
 
 function SignInScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
   const dispatch = useDispatch();
+  const [hiddenPassword, onChangeHiddenPassword] = useState('');
+
+  const handleChangePassword = (newText) => {
+    const lastLetter = newText.slice(-1);
+    if (newText.length > password.length) {
+      onChangePassword(password + lastLetter);
+    } else if (newText === '') {
+      onChangePassword('');
+    }
+    console.log(password);
+    // onChangePassword(password + newText.slice(-1));
+    let newTextWithDots = '';
+    newText.split('').forEach((char, index, array) => {
+      if (index === array.length - 1) {
+        newTextWithDots += char;
+      } else {
+        newTextWithDots += '•';
+      }
+    });
+    onChangeHiddenPassword(newTextWithDots);
+  };
 
   // Check email is proper format
   const validateEmail = (text) => {
@@ -116,16 +136,27 @@ function SignInScreen({ navigation }) {
           <Text>
             Password
           </Text>
-          <DotTextInput
-            value={password}
-            onChangeText={onChangePassword}
-            customStyle={styles.input}
+          <TextInput
+            style={styles.input}
+            value={hiddenPassword}
+            autoCapitalize={false}
+            onChangeText={handleChangePassword}
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
         </View>
         <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Forgot Password');
+          }}
+        >
+          <Text style={styles.link}>Forgot password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            handleSignIn();
+            if (checkValidEmail()) {
+              handleSignIn();
+            }
           }}
         >
           <Text style={styles.buttonText}>Next</Text>

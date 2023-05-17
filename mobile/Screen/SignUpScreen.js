@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
 import * as ImagePicker from 'expo-image-picker';
-import DotTextInput from '../Components/DotTextInput';
+
+const BackButton = require('../assets/backArrow.png');
 
 const styles = StyleSheet.create({
   container: {
@@ -96,7 +97,8 @@ const styles = StyleSheet.create({
   backButtonPosiion: {
     alignItems: 'flex-start',
     width: '100%',
-    marginLeft: '15%',
+    marginLeft: '10%',
+    marginTop: '10%',
   },
   socialContainer: {
     flex: 1,
@@ -130,6 +132,38 @@ function SignUpScreen({ navigation }) {
   const [twitterProfile, onChangeTwitterProfile] = useState('');
   const [page, setPage] = useState(1);
 
+  const [hiddenPassword, onChangeHiddenPassword] = useState('');
+  const [bool, setBool] = useState(false);
+
+  const handleBlur = () => {
+    setBool(true);
+  };
+
+  const handleFocus = () => {
+    setBool(false);
+  };
+
+  const handleChangePassword = (newText) => {
+    const lastLetter = newText.slice(-1);
+    if (newText.length > password.length) {
+      onChangePassword(password + lastLetter);
+    } else if (newText.length < password.length) {
+      onChangePassword(password.slice(0, newText.length));
+    } else if (newText === '') {
+      onChangePassword('');
+      setBool(false);
+    }
+    let newTextWithDots = '';
+    newText.split('').forEach((char, index, array) => {
+      if (index === array.length - 1) {
+        newTextWithDots += char;
+      } else {
+        newTextWithDots += '•';
+      }
+    });
+    onChangeHiddenPassword(newTextWithDots);
+  };
+
   // Check email is proper format
   const validateEmail = (text) => {
     const reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w\w+)+$/;
@@ -160,7 +194,7 @@ function SignUpScreen({ navigation }) {
     } else if (password.length < 6) {
       Alert.alert('Password must be longer than 5 characters');
     } else if (password !== confirmPassword) {
-      Alert.alert('Password Confirmation does not match Password');
+      Alert.alert('Password confirmation does not match password');
     } else {
       return true;
     }
@@ -290,7 +324,7 @@ function SignUpScreen({ navigation }) {
             }}
           >
             <Image
-              source={require('../assets/favicon.png')}
+              source={BackButton}
               style={styles.backButton}
             />
           </TouchableOpacity>
@@ -309,13 +343,17 @@ function SignUpScreen({ navigation }) {
             />
           </View>
           <View style={styles.textContainer}>
-            <Text style={styles.inputLabel}>
+            <Text>
               Password
             </Text>
-            <DotTextInput
-              value={password}
-              onChangeText={onChangePassword}
-              customStyle={styles.input}
+            <TextInput
+              secureTextEntry={bool}
+              style={styles.input}
+              value={hiddenPassword}
+              onChangeText={handleChangePassword}
+              autoCapitalize={false}
+              onBlur={handleBlur}
+              onFocus={handleFocus}
             />
           </View>
           <Text>6 or more characters</Text>
@@ -357,7 +395,7 @@ function SignUpScreen({ navigation }) {
             }}
           >
             <Image
-              source={require('../assets/favicon.png')}
+              source={BackButton}
               style={styles.backButton}
             />
           </TouchableOpacity>
@@ -404,7 +442,7 @@ function SignUpScreen({ navigation }) {
             }}
           >
             <Image
-              source={require('../assets/favicon.png')}
+              source={BackButton}
               style={styles.backButton}
             />
           </TouchableOpacity>
@@ -451,7 +489,7 @@ function SignUpScreen({ navigation }) {
           }}
         >
           <Image
-            source={require('../assets/favicon.png')}
+            source={BackButton}
             style={styles.backButton}
           />
         </TouchableOpacity>
