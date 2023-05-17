@@ -25,9 +25,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 7,
   },
-  title: {
-    color: '#6666A9',
+  text: {
     fontSize: 16,
+    color: 'grey',
+  },
+  header: {
+    color: 'grey',
+    fontSize: 16,
+    marginTop: 25,
+    marginBottom: 10,
+    fontWeight: 'bold',
   },
 });
 
@@ -40,18 +47,22 @@ function MapFilter({ route, navigation }) {
     {
       title: 'visual art',
       key: 'visualArt',
+      length: 10,
     },
     {
       title: 'film',
       key: 'film',
+      length: 4,
     },
     {
       title: 'music',
       key: 'music',
+      length: 5,
     },
     {
       title: 'art-related community event',
       key: 'artRelatedCommunityEvent',
+      length: '27',
     },
     {
       title: 'performance/theater',
@@ -71,18 +82,22 @@ function MapFilter({ route, navigation }) {
     {
       title: 'food',
       key: 'food',
+      length: '4',
     },
     {
       title: 'shelter',
       key: 'shelter',
+      length: 7,
     },
     {
       title: 'health',
       key: 'health',
+      length: 6,
     },
     {
       title: 'legal services',
       key: 'legalServices',
+      length: 14,
     },
     {
       title: 'shower',
@@ -98,6 +113,42 @@ function MapFilter({ route, navigation }) {
     },
 
   ];
+
+  const getButtonColor = (category) => {
+    if (category) {
+      return '#DFDFEF';
+    }
+    return '#F8F8F8';
+  };
+
+  const getBorderColor = (category) => {
+    if (category) {
+      return '#4C4C9B';
+    } return '#D0D0E8';
+  };
+
+  const getButtonStyle = (category) => ({
+    width: '40%',
+    height: 45,
+    backgroundColor: getButtonColor(category),
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: getBorderColor(category),
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 7,
+  });
+
+  const getTextColor = (category) => {
+    if (category) {
+      return '#424288';
+    } return '#6666A9';
+  };
+
+  const getTextStyle = (category) => ({
+    color: getTextColor(category),
+    fontSize: 16,
+  });
 
   // MAKE THIS USE_EFFECT
   const [tempCategories, setTempCategories] = useState({ ...categories });
@@ -133,20 +184,26 @@ function MapFilter({ route, navigation }) {
 
   return (
     <ScrollView>
-      <Text style={styles.title}>Select Multiple Filtering Options.</Text>
-      <Text style={styles.title}>Events</Text>
+      <Text style={styles.text}>Select Multiple Filtering Options.</Text>
+      <Text style={styles.header}>Events</Text>
       <View style={styles.container}>
         {eventCategories.map((category) => (
-          <TouchableOpacity style={styles.button} onPress={() => onPressCategories(category.key)}>
-            <Text style={styles.title}>{category.title}</Text>
+          <TouchableOpacity
+            style={getButtonStyle(tempCategories[category.key])}
+            onPress={() => onPressCategories(category.key)}
+          >
+            <Text style={getTextStyle(tempCategories[category.key])}>{category.title}</Text>
           </TouchableOpacity>
         ))}
       </View>
-      <Text style={styles.title}>Resources</Text>
+      <Text style={styles.header}>Resources</Text>
       <View style={styles.container}>
         {resourceCategories.map((category) => (
-          <TouchableOpacity style={styles.button} onPress={() => onPressCategories(category.key)}>
-            <Text style={styles.title}>{category.title}</Text>
+          <TouchableOpacity
+            style={getButtonStyle(tempCategories[category.key])}
+            onPress={() => onPressCategories(category.key)}
+          >
+            <Text style={getTextStyle(tempCategories[category.key])}>{category.title}</Text>
           </TouchableOpacity>
         ))}
         <TouchableOpacity style={[styles.button, { borderRadius: 4 }, { borderColor: '#424288' }]} title="clear" onPress={() => onPressClear()}>
