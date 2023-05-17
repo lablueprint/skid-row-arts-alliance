@@ -133,16 +133,26 @@ function SignUpScreen({ navigation }) {
   const [page, setPage] = useState(1);
 
   const [hiddenPassword, onChangeHiddenPassword] = useState('');
+  const [bool, setBool] = useState(false);
+
+  const handleBlur = () => {
+    setBool(true);
+  };
+
+  const handleFocus = () => {
+    setBool(false);
+  };
 
   const handleChangePassword = (newText) => {
     const lastLetter = newText.slice(-1);
     if (newText.length > password.length) {
       onChangePassword(password + lastLetter);
+    } else if (newText.length < password.length) {
+      onChangePassword(password.slice(0, newText.length));
     } else if (newText === '') {
       onChangePassword('');
+      setBool(false);
     }
-    console.log(password);
-    // onChangePassword(password + newText.slice(-1));
     let newTextWithDots = '';
     newText.split('').forEach((char, index, array) => {
       if (index === array.length - 1) {
@@ -337,11 +347,13 @@ function SignUpScreen({ navigation }) {
               Password
             </Text>
             <TextInput
+              secureTextEntry={bool}
               style={styles.input}
               value={hiddenPassword}
               onChangeText={handleChangePassword}
               autoCapitalize={false}
-              onSubmitEditing={() => Keyboard.dismiss()}
+              onBlur={handleBlur}
+              onFocus={handleFocus}
             />
           </View>
           <Text>6 or more characters</Text>
@@ -360,8 +372,6 @@ function SignUpScreen({ navigation }) {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              console.log(password);
-              console.log(confirmPassword);
               if (checkAccountInputs()) {
                 Keyboard.dismiss();
                 setPage(3);
