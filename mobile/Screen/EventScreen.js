@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import CalendarPicker from 'react-native-calendar-picker';
+import { useFonts, Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 import EventCard from '../Components/EventCard';
 import ResourceCard from '../Components/ResourceCard';
 
@@ -112,6 +113,11 @@ const resources = [
 function EventScreen({ navigation }) {
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
 
   const handleButtonPress = () => {
     setShowCalendar(!showCalendar);
@@ -141,6 +147,17 @@ function EventScreen({ navigation }) {
           onDateChange={handleDateSelect}
           selectedStartDate={selectedDate}
           selectedEndDate={selectedDate}
+          selectedDayColor="#7373BA"
+          selectedDayTextColor="white"
+          textStyle={{
+            fontFamily: 'MontserratSemiBold',
+          }}
+          todayBackgroundColor="#D0D0E8"
+          todayTextStyle={{ color: '#424288', fontFamily: 'MontserratBold' }}
+          previousTitle="<"
+          previousTitleStyle={{ fontSize: 20 }}
+          nextTitle=">"
+          nextTitleStyle={{ fontSize: 20 }}
         />
       )}
       {selectedDate !== null && (
