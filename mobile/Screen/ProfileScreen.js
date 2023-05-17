@@ -65,11 +65,19 @@ function ProfileScreen({
 
   const handleClear = () => {
     serviceUpdateUser({
-      userName: '',
-      userEmail: '',
-      userSocialPlatform: '',
-      userSocialTag: '',
-      userProfilePicture: '',
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      bio: '',
+      socialMedia: {
+        platform: '',
+        accountTag: '',
+      },
+      profilePicture: '',
+      savedEvents: [''],
+      savedArtwork: [''],
+      userArtwork: [''],
     });
   };
 
