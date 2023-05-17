@@ -19,6 +19,7 @@ const authSlice = createSlice({
   reducers: {
     login: (state, action) => {
       state.isLoggedIn = true;
+      state.refresh = 0;
       state.id = action.payload.id;
       state.token = action.payload.token;
       SecureStore.setItemAsync('user', JSON.stringify(action.payload));
