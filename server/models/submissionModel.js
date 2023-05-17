@@ -40,6 +40,26 @@ const submissionSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  tags: {
+    required: true,
+    type: [String],
+  },
+  mediaTypes: {
+    required: true,
+    type: [String],
+  },
+  date: {
+    required: true,
+    type: String,
+  },
+  status: {
+    required: true,
+    type: String,
+  },
+  comments: {
+    required: false,
+    type: String,
+  }
 });
 
 module.exports = mongoose.model('Submission', submissionSchema);
