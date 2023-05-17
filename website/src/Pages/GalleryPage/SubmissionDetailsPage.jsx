@@ -1,5 +1,5 @@
 import {
-  Box, Typography, Select, MenuItem,
+  Box, Typography, Select, MenuItem, TextField, Button, FormControl, InputLabel,
 } from '@mui/material';
 import axios from 'axios';
 import { React, useEffect, useState } from 'react';
@@ -22,6 +22,9 @@ function SubmissionDetailsPage() {
     date: '',
     comments: '',
   });
+  const [edit, setEdit] = useState(false);
+  const [select, setSelect] = useState('');
+  const [comments, setComments] = useState('');
 
   const getSubmissionDetails = async () => {
     const artwork = await axios.get('http://localhost:4000/submissions/getartwork', { params: { id } });
@@ -29,26 +32,23 @@ function SubmissionDetailsPage() {
       mediaData: artwork.data.MediaData,
       status: artwork.data.Submission.status,
       title: artwork.data.Submission.title,
-      uploader: artwork.data.Submission.uploader,
+      uploader: artwork.data.Submission.name,
+      email: artwork.data.Submission.email,
       description: artwork.data.Submission.description,
       mediaTypes: artwork.data.Submission.mediaTypes,
       tags: artwork.data.Submission.tags,
       date: artwork.data.Submission.date,
       comments: artwork.data.Submission.comments,
     });
+    setComments(artwork.data.Submission.comments);
   };
 
   useEffect(() => {
     getSubmissionDetails();
   }, []);
 
-  const [select, setSelect] = useState('Select');
-
-  const handleSelect = (event) => {
-    setSelect(event.target.value);
-    // TODO: update the backend by creating a route to update status
-    // TODO: pop up message for the approval or switching of status
-  };
+  // TODO: update the backend by creating a route to update status
+  // TODO: pop up message for the approval or switching of status
 
   return (
     <Box>
@@ -77,6 +77,13 @@ function SubmissionDetailsPage() {
           Uploader:
           {' '}
           {details.uploader}
+        </Typography>
+      </Box>
+      <Box>
+        <Typography>
+          Email:
+          {' '}
+          {details.email}
         </Typography>
       </Box>
       <Box>
@@ -112,15 +119,48 @@ function SubmissionDetailsPage() {
         </Typography>
       </Box>
       <Box>
-        <Select label="Select" value={select} onChange={handleSelect}>
-          <MenuItem value="Approve">Approve</MenuItem>
-          <MenuItem value="Reject">Reject</MenuItem>
-        </Select>
+        <FormControl fullWidth>
+          <InputLabel id="default-select">Select</InputLabel>
+          <Select
+            labelId="default-select"
+            value={select}
+            onChange={(e) => {
+              if (edit) {
+                setSelect(e.target.value);
+              }
+            }}
+          >
+            <MenuItem value="Approve">Approve</MenuItem>
+            <MenuItem value="Reject">Reject</MenuItem>
+          </Select>
+        </FormControl>
       </Box>
       <Box>
         <Typography>Comments:</Typography>
-        <Typography>{details.comments}</Typography>
-        {/* TODO: change this to render as a text box */}
+        <TextField
+          value={comments}
+          InputProps={{
+            readOnly: !edit,
+          }}
+          onChange={(e) => setComments(e.target.value)}
+        />
+      </Box>
+      <Box>
+        {!edit ? (
+          <Button onClick={() => setEdit(true)}>Change</Button>
+        ) : (
+          <Box>
+            <Button onClick={() => {
+              setSelect('');
+              setComments(details.comments);
+              setEdit(false);
+            }}
+            >
+              Cancel
+            </Button>
+            <Button>Save</Button>
+          </Box>
+        )}
       </Box>
     </Box>
   );
