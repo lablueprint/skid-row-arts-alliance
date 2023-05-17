@@ -39,27 +39,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#4C4C9B',
   },
-  filterButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: '#424288',
-    borderRadius: 5,
-    alignSelf: 'center',
-    paddingHorizontal: 17,
-    paddingVertical: 7,
-    marginRight: 20,
-  },
-  filterImage: {
-    width: 16,
-    height: 16,
-  },
-  filterText: {
-    fontFamily: 'MontserratSemiBold',
-    color: '#424288',
-    marginLeft: 10,
-  },
 });
 
 const Tab = createBottomTabNavigator();
@@ -145,20 +124,6 @@ function ProfileIcon({ focused }) {
   );
 }
 
-function FilterButton({ navigation }) {
-  return (
-    <TouchableOpacity onPress={() => navigation.navigate('Artwork Filter')}>
-      <View style={styles.filterButton}>
-        <Image
-          source={require('./assets/filter/filter.png')}
-          style={styles.filterImage}
-        />
-        <Text style={styles.filterText}>Filter</Text>
-      </View>
-    </TouchableOpacity>
-  );
-}
-
 function HomeStackScreen({ navigation }) {
   const [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
@@ -195,7 +160,7 @@ function HomeStackScreen({ navigation }) {
           component={GalleryScreen}
           options={{
             tabBarIcon: GalleryIcon,
-            headerRight: () => <FilterButton navigation={navigation} />,
+            headerShown: false,
           }}
         />
         {/* TODO: change component to Zine to match hifi */}
@@ -254,12 +219,6 @@ ZineIcon.propTypes = {
 
 ProfileIcon.propTypes = {
   focused: PropTypes.bool.isRequired,
-};
-
-FilterButton.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func,
-  }).isRequired,
 };
 
 HomeStackScreen.propTypes = {

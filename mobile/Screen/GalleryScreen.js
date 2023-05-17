@@ -6,6 +6,8 @@ import {
   ScrollView,
   SafeAreaView,
   FlatList,
+  TouchableOpacity,
+  Image,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
@@ -16,6 +18,42 @@ import {
 import ArtworkCard from '../Components/ArtworkCard';
 
 const styles = StyleSheet.create({
+  header: {
+    backgroundColor: 'white',
+    // padding: 13,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 20,
+    paddingBottom: 20,
+  },
+  headerText: {
+    justifyContent: 'center',
+    // marginTop: 50,
+    marginLeft: 20,
+    fontFamily: 'MontserratSemiBold',
+    fontSize: 28,
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#424288',
+    borderRadius: 5,
+    alignSelf: 'center',
+    paddingHorizontal: 17,
+    paddingVertical: 7,
+    marginRight: 20,
+  },
+  filterImage: {
+    width: 16,
+    height: 16,
+  },
+  filterText: {
+    fontFamily: 'MontserratSemiBold',
+    color: '#424288',
+    marginLeft: 10,
+  },
   tagContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -75,6 +113,18 @@ function GalleryScreen({ navigation, route }) {
 
   return (
     <SafeAreaView>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Gallery</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Artwork Filter')}>
+          <View style={styles.filterButton}>
+            <Image
+              source={require('../assets/filter/filter.png')}
+              style={styles.filterImage}
+            />
+            <Text style={styles.filterText}>Filter</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
       <ScrollView
         horizontal
         contentContainerStyle={styles.tagContainer}
