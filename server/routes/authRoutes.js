@@ -8,6 +8,7 @@ const authController = require('../controllers/authController');
 authRouter.post('/user-sign-up', authController.userSignUp);
 authRouter.post('/user-sign-in', authController.userSignIn);
 authRouter.post('/user-sign-out', authController.userSignOut);
+authRouter.patch('/user-password-reset', authController.userPasswordReset);
 
 // admin sign in/sign up
 authRouter.post('/admin-sign-up', authController.adminSignUp);
