@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
-import MapView from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import PropTypes from 'prop-types';
 import MapCard from '../Components/MapCard';
 import MapMarker from '../Components/MapMarker';
@@ -146,6 +146,7 @@ function MapScreen() {
         ref={mapRef}
         initialRegion={state.region}
         style={styles.container}
+        provider={PROVIDER_GOOGLE}
       >
         <MapMarker
           allCards={allCards}

@@ -25,10 +25,20 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
+      "config": {
+        "googleMaps": {
+          "apiKey": "***"
+        }
+      },
       "package": "com.anonymous.sraa"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4ddd143a-4030-44dd-a914-8ca4441180a7"
+      }
     }
   }
 }
