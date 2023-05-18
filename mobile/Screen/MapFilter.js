@@ -14,28 +14,33 @@ const styles = StyleSheet.create({
     alignItems: 'flex-direction',
     paddingHorizontal: 20,
   },
-  button: {
-    width: '40%',
-    height: 45,
-    backgroundColor: 'white',
-    borderWidth: 2,
-    borderRadius: 10,
-    borderColor: '#C0C0DC',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 7,
-  },
   text: {
     fontSize: 16,
+    marginTop: 10,
+    marginLeft: 10,
     color: 'grey',
   },
   header: {
-    color: 'grey',
+    color: 'dimgrey',
     fontSize: 16,
     marginTop: 25,
     marginBottom: 10,
     fontWeight: 'bold',
+    marginLeft: 10,
   },
+  applyButton: {
+    marginTop: 20,
+    marginBottom: 50,
+    width: '95%',
+    borderRadius: 4,
+    height: 45,
+    backgroundColor: '#424288',
+    borderWidth: 2,
+    borderColor: '#424288',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 7,
+  }
 });
 
 function MapFilter({ route, navigation }) {
@@ -62,19 +67,22 @@ function MapFilter({ route, navigation }) {
     {
       title: 'art-related community event',
       key: 'artRelatedCommunityEvent',
-      length: '27',
+      length: 27,
     },
     {
       title: 'performance/theater',
       key: 'performance/theater',
+      length: 19,
     },
     {
       title: 'spoken word',
       key: 'spokenWord',
+      length: 11,
     },
     {
       title: 'miscellaneous',
       key: 'miscellaneous',
+      length: 14,
     },
   ];
 
@@ -82,7 +90,7 @@ function MapFilter({ route, navigation }) {
     {
       title: 'food',
       key: 'food',
-      length: '4',
+      length: 4,
     },
     {
       title: 'shelter',
@@ -102,14 +110,17 @@ function MapFilter({ route, navigation }) {
     {
       title: 'shower',
       key: 'shower',
+      length: 6,
     },
     {
       title: 'mission',
       key: 'mission',
+      length: 7,
     },
     {
       title: 'social services',
       key: 'socialServices',
+      length: 15,
     },
 
   ];
@@ -127,9 +138,9 @@ function MapFilter({ route, navigation }) {
     } return '#D0D0E8';
   };
 
-  const getButtonStyle = (category) => ({
-    width: '40%',
-    height: 45,
+  const getButtonStyle = (object, category) => ({
+    width: ((object.length) + 5) * 9,
+    height: 50,
     backgroundColor: getButtonColor(category),
     borderWidth: 2,
     borderRadius: 10,
@@ -189,7 +200,7 @@ function MapFilter({ route, navigation }) {
       <View style={styles.container}>
         {eventCategories.map((category) => (
           <TouchableOpacity
-            style={getButtonStyle(tempCategories[category.key])}
+            style={getButtonStyle(category, tempCategories[category.key])}
             onPress={() => onPressCategories(category.key)}
           >
             <Text style={getTextStyle(tempCategories[category.key])}>{category.title}</Text>
@@ -200,26 +211,30 @@ function MapFilter({ route, navigation }) {
       <View style={styles.container}>
         {resourceCategories.map((category) => (
           <TouchableOpacity
-            style={getButtonStyle(tempCategories[category.key])}
+            style={getButtonStyle(category, tempCategories[category.key])}
             onPress={() => onPressCategories(category.key)}
           >
             <Text style={getTextStyle(tempCategories[category.key])}>{category.title}</Text>
           </TouchableOpacity>
         ))}
-        <TouchableOpacity style={[styles.button, { borderRadius: 4 }, { borderColor: '#424288' }]} title="clear" onPress={() => onPressClear()}>
-          <Text style={[styles.title, { color: '#424288' }, { fontWeight: '600' }]}>
-            Clear All
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, { borderRadius: 4 }, { backgroundColor: '#424288' }, { borderColor: '#424288' }]} title="apply" onPress={() => onPressApply()}>
-          <Text style={[styles.title, { color: 'white' }, { fontWeight: '600' }]}>
-            Apply
+        <TouchableOpacity style={styles.applyButton} title="apply" onPress={() => onPressApply()}>
+          <Text style={[styles.title, { color: 'white' }, { fontWeight: '600' }, ]}>
+            Apply Filter
           </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
+
+/*
+<TouchableOpacity
+style={[styles.button, { borderRadius: 4 }, { borderColor: '#424288' }]} title="clear" 
+onPress={() => onPressClear()}>
+          <Text style={[styles.title, { color: '#424288' }, { fontWeight: '600' }]}>
+            Clear All
+          </Text>
+        </TouchableOpacity> */
 
 MapFilter.propTypes = {
   route: PropTypes.shape({
