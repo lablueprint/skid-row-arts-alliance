@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 7,
-  }
+  },
 });
 
 function MapFilter({ route, navigation }) {
@@ -172,7 +172,7 @@ function MapFilter({ route, navigation }) {
   };
 
   // TO DO: clear temp categories and categories
-  const onPressClear = () => {
+  /* const onPressClear = () => {
     const objectCopy = { ...tempCategories };
     for (let i = 0; i < eventCategories.length; i += 1) {
       const property = eventCategories[i].key;
@@ -185,7 +185,7 @@ function MapFilter({ route, navigation }) {
     }
     setTempCategories(objectCopy);
     setCategories(objectCopy);
-  };
+  }; */
 
   // // call filter only when apply is implemented
   const onPressApply = () => {
@@ -218,7 +218,7 @@ function MapFilter({ route, navigation }) {
           </TouchableOpacity>
         ))}
         <TouchableOpacity style={styles.applyButton} title="apply" onPress={() => onPressApply()}>
-          <Text style={[styles.title, { color: 'white' }, { fontWeight: '600' }, ]}>
+          <Text style={[styles.title, { color: 'white' }, { fontWeight: '600' }]}>
             Apply Filter
           </Text>
         </TouchableOpacity>
@@ -229,7 +229,7 @@ function MapFilter({ route, navigation }) {
 
 /*
 <TouchableOpacity
-style={[styles.button, { borderRadius: 4 }, { borderColor: '#424288' }]} title="clear" 
+style={[styles.button, { borderRadius: 4 }, { borderColor: '#424288' }]} title="clear"
 onPress={() => onPressClear()}>
           <Text style={[styles.title, { color: '#424288' }, { fontWeight: '600' }]}>
             Clear All
