@@ -1,5 +1,5 @@
 import {
-  Box, Typography, Select, MenuItem, TextField, Button, FormControl, InputLabel,
+  Box, Typography, Select, MenuItem, TextField, Button, FormControl,
 } from '@mui/material';
 import axios from 'axios';
 import { React, useEffect, useState } from 'react';
@@ -23,7 +23,9 @@ function SubmissionDetailsPage() {
     comments: '',
   });
   const [edit, setEdit] = useState(false);
-  const [select, setSelect] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [status, setStatus] = useState('');
   const [comments, setComments] = useState('');
 
   const getSubmissionDetails = async () => {
@@ -40,6 +42,7 @@ function SubmissionDetailsPage() {
       date: artwork.data.Submission.date,
       comments: artwork.data.Submission.comments,
     });
+    setStatus(artwork.data.Submission.status);
     setComments(artwork.data.Submission.comments);
   };
 
@@ -47,120 +50,171 @@ function SubmissionDetailsPage() {
     getSubmissionDetails();
   }, []);
 
-  // TODO: update the backend by creating a route to update status
-  // TODO: pop up message for the approval or switching of status
+  // TODO: tag additions for a post
+
+  const handleCancel = () => {
+    setTitle(details.title);
+    setDescription(details.description);
+    setStatus(details.status);
+    setComments(details.comments);
+    setEdit(false);
+  };
+
+  const handleSave = async () => {
+    // TODO: pop up message for the approval or switching of status
+    // TODO: update the backend by creating a route to update status
+    setEdit(false);
+  };
 
   return (
     <Box>
       <Box>
-        {details.mediaData.map((media) => (
-          // TODO: adjust the rendering for each type of media
-          <img src={media.MediaURL} alt={media.ContentType} />
-        ))}
-      </Box>
-      <Box>
-        <Typography>
-          Status:
-          {' '}
-          {details.status}
-        </Typography>
-      </Box>
-      <Box>
-        <Typography>
-          Art Title:
-          {' '}
-          {details.title}
-        </Typography>
-      </Box>
-      <Box>
-        <Typography>
-          Uploader:
-          {' '}
-          {details.uploader}
-        </Typography>
-      </Box>
-      <Box>
-        <Typography>
-          Email:
-          {' '}
-          {details.email}
-        </Typography>
-      </Box>
-      <Box>
-        <Typography>
-          Description:
-          {' '}
-          {details.description}
-        </Typography>
-      </Box>
-      <Box>
-        <Typography>
-          Media Type:
-          {' '}
-          {details.mediaTypes.map((type) => (
-            <Typography>{type}</Typography>
-          ))}
-        </Typography>
-      </Box>
-      <Box>
-        <Typography>
-          Tags:
-          {' '}
-          {details.tags.map((tag) => (
-            <Typography>{tag}</Typography>
-          ))}
-        </Typography>
-      </Box>
-      <Box>
-        <Typography>
-          Date Submitted:
-          {' '}
-          {details.date}
-        </Typography>
-      </Box>
-      <Box>
-        <FormControl fullWidth>
-          <InputLabel id="default-select">Select</InputLabel>
-          <Select
-            labelId="default-select"
-            value={select}
-            onChange={(e) => {
-              if (edit) {
-                setSelect(e.target.value);
-              }
-            }}
-          >
-            <MenuItem value="Approve">Approve</MenuItem>
-            <MenuItem value="Reject">Reject</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-      <Box>
-        <Typography>Comments:</Typography>
-        <TextField
-          value={comments}
-          InputProps={{
-            readOnly: !edit,
-          }}
-          onChange={(e) => setComments(e.target.value)}
-        />
-      </Box>
-      <Box>
-        {!edit ? (
-          <Button onClick={() => setEdit(true)}>Change</Button>
-        ) : (
+        <Box>
+          <Typography>
+            Submission Details
+          </Typography>
           <Box>
-            <Button onClick={() => {
-              setSelect('');
-              setComments(details.comments);
-              setEdit(false);
-            }}
-            >
-              Cancel
-            </Button>
-            <Button>Save</Button>
+            { (edit) ? (
+              <>
+              </>
+            ) : (
+              <Button onClick={() => setEdit(true)}>Edit</Button>
+            )}
           </Box>
-        )}
+        </Box>
+        <Box>
+          <Typography>
+            Date Submitted:
+          </Typography>
+          <Typography>
+            {details.date}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>
+            Art Title:
+          </Typography>
+          {(edit) ? (
+            <TextField
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          ) : (
+            <Typography>
+              {details.title}
+            </Typography>
+          )}
+        </Box>
+        <Box>
+          <Typography>
+            Uploader:
+          </Typography>
+          <Typography>
+            {details.uploader}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>
+            Email:
+          </Typography>
+          <Typography>
+            {details.email}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>
+            Description:
+          </Typography>
+          {(edit) ? (
+            <TextField
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          ) : (
+            <Typography>
+              {details.description}
+            </Typography>
+          )}
+        </Box>
+        <Box>
+          <Typography>
+            Media Type:
+          </Typography>
+          <Typography>
+            {details.mediaTypes.map((type) => (
+              <Typography>{type}</Typography>
+            ))}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>
+            Tags:
+          </Typography>
+          <Typography>
+            {details.tags.map((tag) => (
+              <Typography>{tag}</Typography>
+            ))}
+          </Typography>
+        </Box>
+        <Box>
+          {details.mediaData.map((media) => (
+          // TODO: adjust the rendering for each type of media
+            <img src={media.MediaURL} alt={media.ContentType} />
+          ))}
+        </Box>
+      </Box>
+      <Box>
+        <Typography>
+          Status
+        </Typography>
+        <Box>
+          <FormControl fullWidth>
+            <Select
+              value={status}
+              defaultValue={status}
+              onChange={(e) => {
+                if (edit) {
+                  setStatus(e.target.value);
+                }
+              }}
+            >
+              <MenuItem value="Incomplete">Incomplete</MenuItem>
+              <MenuItem value="Approve">Approve</MenuItem>
+              <MenuItem value="Reject">Reject</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+        <Box>
+          <Typography>Comments</Typography>
+          <TextField
+            value={comments}
+            InputProps={{
+              readOnly: !edit,
+            }}
+            onChange={(e) => setComments(e.target.value)}
+          />
+        </Box>
+        <Box>
+          {!edit ? (
+            <>
+            </>
+          ) : (
+            <Box>
+              <Button onClick={() => {
+                handleCancel();
+              }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={() => {
+                handleSave();
+              }}
+              >
+                Save
+              </Button>
+            </Box>
+          )}
+        </Box>
       </Box>
     </Box>
   );
