@@ -27,7 +27,6 @@ function HomeStackScreen() {
       <Tab.Screen name="Submission" component={SubmissionScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Events" component={EventScreen} />
-      <Tab.Screen name="Map Filter" component={MapFilter} />
     </Tab.Navigator>
   );
 }
