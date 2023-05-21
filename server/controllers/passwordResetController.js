@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
 
 const transporter = nodemailer.createTransport({
@@ -46,12 +47,12 @@ const deleteResetCode = async (req, res) => {
     if (user) {
       await User.findByIdAndUpdate(user._id, { passwordResetCode: null });
       res.json({
-        email: userRes.email,
+        id: user._id,
         error: null,
       })
     } else {
       res.json({
-        email: req.body.email,
+        id: null,
         error: 'Incorrect email or reset code',
       });
     }
@@ -64,7 +65,22 @@ const deleteResetCode = async (req, res) => {
   }
 };
 
+const resetPassword = async (req, res) => {
+  try {
+    // Generate a salted passwordr
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hashSync(req.body.password, salt);
+    // Create a new user object with secure password
+    await User.findByIdAndUpdate(req.body.id, {password: hashedPassword});
+    // Send success response
+    return res.json({ error: null });
+  } catch (err) {
+    return res.status(404).json({ error: 'Unable to reset password' });
+  }
+};
+
 module.exports = {
   createResetCode,
   deleteResetCode,
+  resetPassword,
 };
