@@ -16,6 +16,7 @@ const resourceRouter = require('./routes/resourceRoutes');
 const testRouter = require('./routes/testRoutes');
 const submissionRouter = require('./routes/submissionRoutes');
 const userRouter = require('./routes/userRoutes');
+const zineRouter = require('./routes/zineRoutes');
 
 // Start the Node Express server
 const app = express();
@@ -38,6 +39,7 @@ app.use('/resource', resourceRouter);
 app.use('/test', testRouter);
 app.use('/submissions', submissionRouter);
 app.use('/user', userRouter);
+app.use('/zine', zineRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
