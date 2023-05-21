@@ -43,7 +43,7 @@ function MapScreen() {
   const getAllEvents = async () => {
     try {
       const result = await axios.get(`${URL}/event/get`);
-      setAllEvents(result.data);
+      setAllEvents(result.data || []);
       return result.data;
     } catch (err) {
       console.error(err);
@@ -54,7 +54,7 @@ function MapScreen() {
   const getAllResources = async () => {
     try {
       const result = await axios.get(`${URL}/resource/get`);
-      setAllResources(result.data);
+      setAllResources(result.data || []);
       return result.data;
     } catch (err) {
       console.error(err);
@@ -92,7 +92,7 @@ function MapScreen() {
       mapRef.regionTimeout = setTimeout(() => {
         if ((mapRef.index !== index) || (mapRef.index === 0 && index === 0)) {
           mapRef.index = index;
-          const coordinate = allCards[index].location.coordinates;
+          const coordinate = allCards[index].location.coordinates || [];
           mapRef.current.animateToRegion(
             {
               ...coordinate,
