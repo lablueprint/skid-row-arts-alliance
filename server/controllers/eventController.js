@@ -12,6 +12,28 @@ const createEvent = async (req, res) => {
   }
 };
 
+const getAllEvents = async (req, res) => {
+  try {
+    // S3 Key retrieval from MongoDB
+    // Empty `filter` means "match all documents"
+    const filter = {};
+    const allEvents = await Event.find(filter);
+
+    // TODO: remove default thumbnail in the future
+    const thumbnailKeys = allEvents.map((event) => (event.thumbnail ? event.thumbnail : '0001Bulbasaur.png'));
+    // Reformat data for response
+    const responseList = thumbnailKeys.map((key, idx) => ({
+      EventData: allEvents[idx],
+      ImageURL: `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/MapCards/${key}`,
+    }));
+    res.send(responseList);
+  } catch (err) {
+    console.error(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
+  }
+};
+
 const updateEvent = async (req, res) => {
   Event.findByIdAndUpdate(req.params.id, req.body, (err, data) => {
     if (err) {
@@ -20,15 +42,6 @@ const updateEvent = async (req, res) => {
       res.json(data);
     }
   });
-};
-
-const getAllEvents = async (req, res) => {
-  try {
-    const data = await Event.find();
-    res.send(data);
-  } catch (err) {
-    console.error(err);
-  }
 };
 
 const deleteEvent = async (req, res) => {
