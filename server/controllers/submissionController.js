@@ -147,7 +147,7 @@ const getAllSubmissions = async (req, res) => {
 const getSubmission = async (req, res) => {
   try {
     // Art submission retrieval from MongoDB
-    const submission = await Submission.findById(req.query.id);
+    const submission = await Submission.findById(req.params.id);
 
     // Retrieve data about S3 objects related to current submission
     const s3Promises = submission.s3keys.map(async (key) => s3.getObject({

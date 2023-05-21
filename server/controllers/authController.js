@@ -40,16 +40,6 @@ const userSignIn = async (req, res, next) => {
   })(req, res, next);
 };
 
-const userSignOut = async (req, res) => {
-  try {
-    // reminder that the frontend needs to delete the jwt stored in securestore
-    return res.send('Logging out');
-  } catch (err) {
-    return res.status(404).json({ error: 'Unable to logout properly' });
-  }
-};
-
-
 // admin
 const adminSignUp = async (req, res) => {
   const adminExists = await Admin.findOne({ username: req.body.username });
@@ -90,7 +80,6 @@ const adminSignIn = async (req, res, next) => {
 module.exports = {
   userSignUp,
   userSignIn,
-  userSignOut,
   adminSignUp,
   adminSignIn,
 };
