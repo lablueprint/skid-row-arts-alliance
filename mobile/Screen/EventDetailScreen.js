@@ -46,7 +46,7 @@ function EventDetailScreen({
   const [isEventSaved, setIsEventSaved] = useState(false);
   const { id, authHeader } = useSelector((state) => state.auth);
 
-  const getSomeEvents = async () => {
+  const getSavedEvents = async () => {
     try {
       const res = await axios.get(`${URL}/user/getEvents/${id}`, {
         headers: authHeader,
@@ -62,7 +62,7 @@ function EventDetailScreen({
   };
 
   useEffect(() => {
-    getSomeEvents().then((status) => setIsEventSaved(status));
+    getSavedEvents().then((status) => setIsEventSaved(status));
   }, []);
 
   const addSavedEvent = async () => {
