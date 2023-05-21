@@ -1,14 +1,16 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 import * as SecureStore from 'expo-secure-store';
+// eslint-disable-next-line camelcase
+import jwt_decode from 'jwt-decode';
 
 const user = SecureStore.getItemAsync('user');
 
 const initialState = user ? {
-  isLoggedIn: true, refresh: 0, user,
+  isLoggedIn: true, refresh: 0, id: user.id, token: user.token,
 }
   : {
-    isLoggedIn: false, refresh: 0, user: null,
+    isLoggedIn: false, refresh: 0, id: null, token: null,
   };
 
 const authSlice = createSlice({
@@ -17,18 +19,20 @@ const authSlice = createSlice({
   reducers: {
     login: (state, action) => {
       state.isLoggedIn = true;
-      state.user = action.payload;
+      state.refresh = 0;
+      state.id = action.payload.id;
+      state.token = action.payload.token;
+      SecureStore.setItemAsync('user', JSON.stringify(action.payload));
     },
     logout: (state) => {
       state.isLoggedIn = false;
-      state.user = null;
       state.refresh = 0;
+      state.id = null;
+      state.token = null;
+      SecureStore.deleteItemAsync('user');
     },
     refresh: (state) => {
       state.refresh += 1;
-    },
-    updateUser: (state, action) => {
-      state.user = action.payload;
     },
   },
 });
@@ -41,3 +45,9 @@ export const {
 } = authSlice.actions;
 const { reducer } = authSlice;
 export default reducer;
+
+export const isTokenExpired = (token) => {
+  const decodedToken = jwt_decode(token);
+  const currentTime = Date.now() / 1000;
+  return decodedToken.exp < currentTime;
+};

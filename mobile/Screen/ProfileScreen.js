@@ -6,9 +6,10 @@ import axios from 'axios';
 import { URL } from '@env';
 import { Picker } from '@react-native-picker/picker';
 import { Card } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { serviceUpdateUser } from '../redux/services';
+import { logout } from '../redux/sliceAuth';
 
 const cardGap = 15;
 
@@ -184,25 +185,31 @@ function ProfileScreen({ navigation }) {
     getAllEvents();
     getThumbnails();
   }, []);
+  const dispatch = useDispatch();
 
   const handleClear = () => {
-    serviceUpdateUser({
-      userName: '',
-      userEmail: '',
-      userSocialPlatform: '',
-      userSocialTag: '',
-    });
+    // serviceUpdateUser({
+    //   userName: '',
+    //   userEmail: '',
+    //   userSocialPlatform: '',
+    //   userSocialTag: '',
+    // });
   };
 
-  const updatedUser = {
-    userName: name,
-    userEmail: email,
-    userSocialPlatform: platform,
-    userSocialTag: tag,
-  };
+  // const updatedUser = {
+  //   userName: name,
+  //   userEmail: email,
+  //   userSocialPlatform: platform,
+  //   userSocialTag: tag,
+  // };
 
   const handleUpdate = () => {
-    serviceUpdateUser(updatedUser);
+    // serviceUpdateUser(updatedUser);
+  };
+
+  // Store input and navigate to Home screen
+  const handleSignOut = async () => {
+    dispatch(logout());
   };
 
   const onPressBackButton = () => {
@@ -217,21 +224,27 @@ function ProfileScreen({ navigation }) {
         paddingBottom: 50,
       }}
       >
+        <Button
+          title="Sign Out"
+          onPress={() => {
+            handleSignOut();
+          }}
+        />
         <Text>
           <Text style={{ fontWeight: 'bold' }}>Name: </Text>
-          {currentUser.userName}
+          currentUser.userName
         </Text>
         <Text>
           <Text style={{ fontWeight: 'bold' }}>Email: </Text>
-          {currentUser.userEmail}
+          currentUser.userEmail
         </Text>
         <Text>
           <Text style={{ fontWeight: 'bold' }}>Social Platform: </Text>
-          {currentUser.userSocialPlatform}
+          currentUser.userSocialPlatform
         </Text>
         <Text>
           <Text style={{ fontWeight: 'bold' }}>Social Tag: </Text>
-          {currentUser.userSocialTag}
+          currentUser.userSocialTag
         </Text>
       </View>
       <View style={{ paddingBottom: 40 }}>
