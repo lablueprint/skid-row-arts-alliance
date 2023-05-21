@@ -8,18 +8,19 @@ const passport = require('../utils/passportConfig');
 const userSignUp = async (req, res) => {
   const userExists = await User.findOne({ email: req.body.email });
   if (userExists) {
-    return res.send('That user email already exists');
+    return res.json({ error: 'That email already exists.' });
   }
   try {
     // Generate a salted passwordr
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hashSync(req.body.password, salt);
-    // Create a new user object
+    // Create a new user object with secure password
     const secureUser = { ...req.body };
     secureUser.password = hashedPassword;
+    // Save user in database
     const user = new User(secureUser);
     await user.save(user);
-    // only need to send status? next process should be redirecting to log in screen?
+    // Send success response
     return res.send('User successfully created!');
   } catch (err) {
     return res.status(404).json({ error: 'Unable to create a user properly' });
@@ -29,8 +30,8 @@ const userSignUp = async (req, res) => {
 const userSignIn = async (req, res, next) => {
   passport.authenticate('user-sign-in', (err, user, info) => {
     if (err) { return next(err); }
-    if (!user) { return res.json(info.message); }
-    return req.login(user, { session: false }, (e) => {
+    if (!user) { return res.json({error: info.message}); }
+    return req.logIn(user, { session: false }, (e) => {
       if (err) return next(e);
       // replace secret
       const token = jwt.sign({ id: user.id }, 'secret');
