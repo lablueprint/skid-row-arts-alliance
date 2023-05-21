@@ -4,14 +4,11 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
-// TO DO: when you press apply, it navigates back to map screen
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    alignItems: 'flex-direction',
     paddingHorizontal: 20,
   },
   text: {
@@ -122,7 +119,6 @@ function MapFilter({ route, navigation }) {
       key: 'socialServices',
       length: 15,
     },
-
   ];
 
   const getButtonColor = (category) => {
@@ -164,30 +160,12 @@ function MapFilter({ route, navigation }) {
   // MAKE THIS USE_EFFECT
   const [tempCategories, setTempCategories] = useState({ ...categories });
 
-  // update the true/false categories
   const onPressCategories = (property) => {
     const objectCopy = { ...tempCategories };
     objectCopy[property] = !objectCopy[property];
     setTempCategories(objectCopy);
   };
 
-  // TO DO: clear temp categories and categories
-  /* const onPressClear = () => {
-    const objectCopy = { ...tempCategories };
-    for (let i = 0; i < eventCategories.length; i += 1) {
-      const property = eventCategories[i].key;
-      objectCopy[property] = false;
-    }
-
-    for (let i = 0; i < resourceCategories.length; i += 1) {
-      const property = resourceCategories[i].key;
-      objectCopy[property] = false;
-    }
-    setTempCategories(objectCopy);
-    setCategories(objectCopy);
-  }; */
-
-  // // call filter only when apply is implemented
   const onPressApply = () => {
     setCategories(tempCategories);
     navigation.goBack();
@@ -227,19 +205,10 @@ function MapFilter({ route, navigation }) {
   );
 }
 
-/*
-<TouchableOpacity
-style={[styles.button, { borderRadius: 4 }, { borderColor: '#424288' }]} title="clear"
-onPress={() => onPressClear()}>
-          <Text style={[styles.title, { color: '#424288' }, { fontWeight: '600' }]}>
-            Clear All
-          </Text>
-        </TouchableOpacity> */
-
 MapFilter.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      categories: PropTypes.shape.isRequired,
+      categories: PropTypes.func.isRequired,
       setCategories: PropTypes.func.isRequired,
     }).isRequired,
   }).isRequired,
