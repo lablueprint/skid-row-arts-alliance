@@ -84,8 +84,6 @@ function EventCard({
     MontserratBold: Montserrat_700Bold,
   });
 
-  console.log(image);
-
   const onPressEvent = () => {
     navigation.navigate('Event Details', {
       key,
