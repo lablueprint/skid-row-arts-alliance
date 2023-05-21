@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
 import {
-  StyleSheet, Text, TextInput, View, Image, Alert, TouchableOpacity,
+  StyleSheet, Text, TextInput, View, Image, Alert, TouchableOpacity, Pressable,
 } from 'react-native';
 import { login } from '../redux/sliceAuth';
 
@@ -16,8 +16,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'green',
   },
   signInContainer: {
     flexDirection: 'column',
@@ -25,8 +23,6 @@ const styles = StyleSheet.create({
     height: '80%',
     alignItems: 'center',
     textAlign: 'center',
-    borderWidth: 1,
-    borderColor: 'blue',
   },
   input: {
     height: 40,
@@ -42,8 +38,6 @@ const styles = StyleSheet.create({
     height: '18%',
     width: '100%',
     justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: 'red',
     margin: 20,
   },
   codeContainer: {
@@ -69,6 +63,12 @@ const styles = StyleSheet.create({
     marginLeft: '10%',
     marginTop: '10%',
   },
+  hiddenCodeInput: {
+    position: 'absolute',
+    height: 0,
+    width: 0,
+    opacity: 0,
+  },
   headerText: {
     fontSize: 25,
   },
@@ -84,14 +84,47 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     textDecorationLine: 'underline',
   },
+  digitInput: {
+    borderColor: '#1D763C',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderRadius: 8,
+    height: 70,
+    width: 50,
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  digitInputEmpty: {
+    borderColor: '#e5e5e5',
+    backgroundColor: '#e5e5e5',
+    borderWidth: 1,
+    borderRadius: 8,
+    height: 70,
+    width: 50,
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  digitTextInput: {
+    fontSize: 30,
+    textAlign: 'center',
+    color: '#34221D',
+    marginTop: 9,
+  },
+  digitsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
 });
 
 function ForgotPasswordScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
   const [confirmPassword, onChangeConfirmPassword] = useState('');
-  const [resetCode, onChangeResetCode] = useState('');
+  const [code, onChangeCode] = useState('');
   const [bool, setBool] = useState(false);
+  const codeDigitsArray = new Array(4).fill(0);
+  const ref = useRef(null);
 
   const handleBlur = () => {
     setBool(true);
@@ -111,6 +144,22 @@ function ForgotPasswordScreen({ navigation }) {
     return true;
   };
 
+  // function that allows users to repress the digits containers to focus
+  const handleDigitsPress = () => {
+    ref?.current?.focus();
+  };
+
+  // function that breaks down the input to digits
+  const digitInput = (index) => {
+    const digit = code[index] || ' ';
+
+    return (
+      <View key={index} style={(digit === ' ') ? styles.digitInputEmpty : styles.digitInput}>
+        <Text style={styles.digitTextInput}>{digit}</Text>
+      </View>
+    );
+  };
+
   const checkValidEmail = () => {
     if (!validateEmail(email)) {
       Alert.alert('Please enter a valid email to proceed');
@@ -118,6 +167,16 @@ function ForgotPasswordScreen({ navigation }) {
       return true;
     }
     return false;
+  };
+
+  const handleSendCode = async () => {
+    try {
+      const res = await axios.get(`${URL}/passwordReset/create`);
+      return res;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
   };
 
   if (page === 2) {
@@ -144,13 +203,20 @@ function ForgotPasswordScreen({ navigation }) {
             value={email}
             autoCapitalize={false}
           />
-          <Text>Please enter the 4-digit code sent to yourname@gmail.com.</Text>
+          <Text>Please enter the 4-digit code sent to your email address below.</Text>
           <View style={styles.inputContainer}>
+            <Pressable style={styles.digitsContainer} onPress={handleDigitsPress}>
+              {codeDigitsArray.map((element, index) => digitInput(index))}
+            </Pressable>
             <TextInput
-              style={styles.input}
-              onChangeText={onChangeResetCode}
-              value={resetCode}
-              autoCapitalize={false}
+              ref={ref}
+              value={code}
+              onChangeText={onChangeCode}
+              keyboardType="number-pad"
+              returnKeyType="done"
+              textContentType="oneTimeCode"
+              maxLength={4}
+              style={styles.hiddenCodeInput}
             />
             <TouchableOpacity
               onPress={() => {
@@ -261,7 +327,9 @@ function ForgotPasswordScreen({ navigation }) {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              setPage(2);
+              if (checkValidEmail() && handleSendCode()) {
+                setPage(2);
+              }
             }}
           >
             <Text style={styles.buttonText}>Send code</Text>
