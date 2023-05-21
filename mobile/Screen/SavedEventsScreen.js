@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   savedTitle: {
-    fontFamily: 'MontserratBold',
     fontSize: 16,
     color: '#1E2021',
   },

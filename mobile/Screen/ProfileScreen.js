@@ -8,7 +8,6 @@ import { Picker } from '@react-native-picker/picker';
 import { Card } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { serviceUpdateUser } from '../redux/services';
 import { logout } from '../redux/sliceAuth';
 
 const cardGap = 15;
@@ -56,7 +55,6 @@ const styles = StyleSheet.create({
     color: '#1E2021',
   },
   savedTitle: {
-    fontFamily: 'MontserratBold',
     fontSize: 16,
     color: '#1E2021',
   },
@@ -115,7 +113,6 @@ function ProfileScreen({ navigation }) {
     if (loadAllThumnails) {
       allThumbnails.forEach((thumbnail) => {
         if (thumbnail.SubmissionId === artID) {
-          console.log(thumbnail.ImageURL);
           artInfo.thumbNail = (thumbnail.ImageURL);
         }
       });
