@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
 import {
-  StyleSheet, Text, TextInput, View, Button, Alert, TouchableOpacity, Keyboard,
+  StyleSheet, Text, TextInput, View, Alert, TouchableOpacity,
 } from 'react-native';
 import { login } from '../redux/sliceAuth';
 
@@ -15,19 +15,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8F8',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
   },
   signInContainer: {
     flexDirection: 'column',
     width: '60%',
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
+  },
+  signUpContainer: {
+    backgroundColor: '#F8F8F8',
+    width: '80%',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   input: {
     height: 40,
     width: '100%',
     padding: 10,
+    marginTop: 10,
     borderWidth: 0.5,
     borderRadius: 8,
     borderColor: '#8A9195',
@@ -38,20 +43,30 @@ const styles = StyleSheet.create({
     height: '18%',
     width: '100%',
     justifyContent: 'space-between',
-    borderWidth: 1,
     margin: 20,
   },
   button: {
     height: 40,
     width: '100%',
-    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: '5%',
     backgroundColor: '#4C4C9B',
   },
   link: {
+    textAlign: 'right',
     textDecorationLine: 'underline',
+  },
+  headerText: {
+    fontSize: 25,
+  },
+  inputLabel: {
+    fontSize: 15,
+  },
+  buttonText: {
+    color: '#F8F8F8',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
@@ -59,8 +74,6 @@ function SignInScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
   const dispatch = useDispatch();
-
-  const [hiddenPassword, onChangeHiddenPassword] = useState('');
   const [bool, setBool] = useState(false);
 
   const handleBlur = () => {
@@ -69,27 +82,6 @@ function SignInScreen({ navigation }) {
 
   const handleFocus = () => {
     setBool(false);
-  };
-
-  const handleChangePassword = (newText) => {
-    const lastLetter = newText.slice(-1);
-    if (newText.length > password.length) {
-      onChangePassword(password + lastLetter);
-    } else if (newText.length < password.length) {
-      onChangePassword(password.slice(0, newText.length));
-    } else if (newText === '') {
-      onChangePassword('');
-      setBool(false);
-    }
-    let newTextWithDots = '';
-    newText.split('').forEach((char, index, array) => {
-      if (index === array.length - 1) {
-        newTextWithDots += char;
-      } else {
-        newTextWithDots += '•';
-      }
-    });
-    onChangeHiddenPassword(newTextWithDots);
   };
 
   // Check email is proper format
@@ -131,9 +123,9 @@ function SignInScreen({ navigation }) {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.signInContainer}>
-        <Text>Welcome back!</Text>
+        <Text style={styles.headerText}>Welcome back!</Text>
         <View style={styles.inputContainer}>
-          <Text>
+          <Text style={styles.inputLabel}>
             Email
           </Text>
           <TextInput
@@ -141,29 +133,30 @@ function SignInScreen({ navigation }) {
             onChangeText={onChangeEmail}
             value={email}
             autoCapitalize={false}
+            placeholder="you@email.com"
           />
         </View>
         <View style={styles.inputContainer}>
-          <Text>
+          <Text style={styles.inputLabel}>
             Password
           </Text>
           <TextInput
             secureTextEntry={bool}
             style={styles.input}
-            value={hiddenPassword}
-            onChangeText={handleChangePassword}
+            value={password}
+            onChangeText={onChangePassword}
             autoCapitalize={false}
             onBlur={handleBlur}
             onFocus={handleFocus}
           />
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Forgot Password');
+            }}
+          >
+            <Text style={styles.link}>Forgot password?</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Forgot Password');
-          }}
-        >
-          <Text style={styles.link}>Forgot password?</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
@@ -175,13 +168,16 @@ function SignInScreen({ navigation }) {
           <Text style={styles.buttonText}>Log In</Text>
         </TouchableOpacity>
       </View>
-      <Text>Don&#39;t have an account?</Text>
-      <Button
-        title="Create an account"
-        onPress={() => {
-          navigation.navigate('Sign Up');
-        }}
-      />
+      <View style={styles.signUpContainer}>
+        <Text>Dont have an account?</Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Sign Up');
+          }}
+        >
+          <Text style={styles.link}> Create account</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

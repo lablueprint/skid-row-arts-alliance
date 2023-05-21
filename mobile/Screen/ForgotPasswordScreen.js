@@ -21,9 +21,10 @@ const styles = StyleSheet.create({
   },
   signInContainer: {
     flexDirection: 'column',
-    width: '60%',
+    width: '70%',
+    height: '80%',
     alignItems: 'center',
-    justifyContent: 'center',
+    textAlign: 'center',
     borderWidth: 1,
     borderColor: 'blue',
   },
@@ -68,7 +69,19 @@ const styles = StyleSheet.create({
     marginLeft: '10%',
     marginTop: '10%',
   },
+  headerText: {
+    fontSize: 25,
+  },
+  inputLabel: {
+    fontSize: 15,
+  },
+  buttonText: {
+    color: '#F8F8F8',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   link: {
+    textAlign: 'right',
     textDecorationLine: 'underline',
   },
 });
@@ -76,8 +89,8 @@ const styles = StyleSheet.create({
 function ForgotPasswordScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
-  const [hiddenPassword, onChangeHiddenPassword] = useState('');
   const [confirmPassword, onChangeConfirmPassword] = useState('');
+  const [resetCode, onChangeResetCode] = useState('');
   const [bool, setBool] = useState(false);
 
   const handleBlur = () => {
@@ -88,26 +101,6 @@ function ForgotPasswordScreen({ navigation }) {
     setBool(false);
   };
 
-  const handleChangePassword = (newText) => {
-    const lastLetter = newText.slice(-1);
-    if (newText.length > password.length) {
-      onChangePassword(password + lastLetter);
-    } else if (newText.length < password.length) {
-      onChangePassword(password.slice(0, newText.length));
-    } else if (newText === '') {
-      onChangePassword('');
-      setBool(false);
-    }
-    let newTextWithDots = '';
-    newText.split('').forEach((char, index, array) => {
-      if (index === array.length - 1) {
-        newTextWithDots += char;
-      } else {
-        newTextWithDots += '•';
-      }
-    });
-    onChangeHiddenPassword(newTextWithDots);
-  };
   const [page, setPage] = useState(1);
 
   const validateEmail = (text) => {
@@ -143,13 +136,20 @@ function ForgotPasswordScreen({ navigation }) {
           </TouchableOpacity>
         </View>
         <View style={styles.signInContainer}>
-          <Text>Verify Your Email</Text>
+          <Text style={styles.headerText}>Verify Your Email</Text>
+          <Text>Please enter your email address below.</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeEmail}
+            value={email}
+            autoCapitalize={false}
+          />
           <Text>Please enter the 4-digit code sent to yourname@gmail.com.</Text>
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
-              onChangeText={onChangeEmail}
-              value={email}
+              onChangeText={onChangeResetCode}
+              value={resetCode}
               autoCapitalize={false}
             />
             <TouchableOpacity
@@ -176,6 +176,18 @@ function ForgotPasswordScreen({ navigation }) {
   if (page === 3) {
     return (
       <View style={styles.mainContainer}>
+        <View style={styles.backButtonPosiion}>
+          <TouchableOpacity
+            onPress={() => {
+              setPage(2);
+            }}
+          >
+            <Image
+              source={BackButton}
+              style={styles.backButton}
+            />
+          </TouchableOpacity>
+        </View>
         <View style={styles.signInContainer}>
           <Text>Create New Password</Text>
           <Text>Your new password needs to be different from your old one!</Text>
@@ -186,8 +198,8 @@ function ForgotPasswordScreen({ navigation }) {
             <TextInput
               secureTextEntry={bool}
               style={styles.input}
-              value={hiddenPassword}
-              onChangeText={handleChangePassword}
+              value={password}
+              onChangeText={onChangePassword}
               autoCapitalize={false}
               onBlur={handleBlur}
               onFocus={handleFocus}
@@ -234,7 +246,7 @@ function ForgotPasswordScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <View style={styles.signInContainer}>
-        <Text>Forgot Password?</Text>
+        <Text style={styles.headerText}>Forgot Password?</Text>
         <Text>Please enter your email address to receive a verification code.</Text>
         <View style={styles.inputContainer}>
           <Text>
