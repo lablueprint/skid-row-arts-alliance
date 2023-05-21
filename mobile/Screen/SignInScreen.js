@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 10,
     marginTop: 10,
+    paddingBottom: 10,
     borderWidth: 0.5,
     borderRadius: 8,
     borderColor: '#8A9195',
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: 'column',
-    height: '18%',
+    height: '15%',
     width: '100%',
     justifyContent: 'space-between',
     margin: 20,
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: '5%',
+    marginTop: 50,
     backgroundColor: '#4C4C9B',
   },
   link: {
@@ -59,6 +60,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 25,
+    paddingBottom: 20,
   },
   inputLabel: {
     fontSize: 15,

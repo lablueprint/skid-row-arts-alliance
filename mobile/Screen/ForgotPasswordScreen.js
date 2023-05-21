@@ -71,9 +71,11 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 25,
+    paddingBottom: 10,
   },
   inputLabel: {
     fontSize: 15,
+    marginBottom: 10,
   },
   buttonText: {
     color: '#F8F8F8',
@@ -121,6 +123,7 @@ function ForgotPasswordScreen({ navigation }) {
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
   const [confirmPassword, onChangeConfirmPassword] = useState('');
+  const [id, onChangeID] = useState('');
   const [code, onChangeCode] = useState('');
   const [bool, setBool] = useState(false);
   const codeDigitsArray = new Array(4).fill(0);
@@ -169,10 +172,49 @@ function ForgotPasswordScreen({ navigation }) {
     return false;
   };
 
+  // Check account inputs are filled appropriately before moving to next screen
+  const checkAccountInputs = () => {
+    if (password === '') {
+      Alert.alert('Please enter a password to proceed');
+    } else if (password.length < 6) {
+      Alert.alert('Password must be longer than 5 characters');
+    } else if (password !== confirmPassword) {
+      Alert.alert('Password confirmation does not match password');
+    } else {
+      return true;
+    }
+    return false;
+  };
+
   const handleSendCode = async () => {
     try {
-      const res = await axios.get(`${URL}/passwordReset/create`);
-      return res;
+      const res = await axios.patch(`${URL}/passwordReset/create`, { email });
+      console.log(res);
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  const handleDeleteCode = async () => {
+    try {
+      const res = await axios.patch(`${URL}/passwordReset/delete`, { email, passwordResetCode: code });
+      onChangeID(res.data.id);
+      console.log(id);
+      if (id === null) {
+        Alert.alert('Incorrect email or code');
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  const handleResetPassword = async () => {
+    try {
+      const res = await axios.patch(`${URL}/passwordReset/reset`, { id, password });
     } catch (err) {
       console.error(err);
       return err;
@@ -228,7 +270,9 @@ function ForgotPasswordScreen({ navigation }) {
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
-                setPage(3);
+                if (handleDeleteCode() === true) {
+                  setPage(3);
+                }
               }}
             >
               <Text style={styles.buttonText}>Verify</Text>
@@ -287,7 +331,10 @@ function ForgotPasswordScreen({ navigation }) {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              navigation.navigate('Sign In');
+              if (checkAccountInputs()) {
+                handleResetPassword();
+                navigation.navigate('Sign In');
+              }
             }}
           >
             <Text style={styles.buttonText}>Save</Text>
@@ -313,7 +360,9 @@ function ForgotPasswordScreen({ navigation }) {
       </View>
       <View style={styles.signInContainer}>
         <Text style={styles.headerText}>Forgot Password?</Text>
-        <Text>Please enter your email address to receive a verification code.</Text>
+        <Text style={styles.inputLabel}>
+          Please enter your email address to receive a verification code.
+        </Text>
         <View style={styles.inputContainer}>
           <Text>
             Email
