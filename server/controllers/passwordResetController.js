@@ -13,24 +13,30 @@ const transporter = nodemailer.createTransport({
 });
 
 const createResetCode = async (req, res) => {
-  // generate a random integer between 0 and 9999
-  const randomInt = Math.floor(Math.random() * 10000);
-  // pad the integer with leading zeros to make it a 4-digit string
-  const passwordResetCode = String(randomInt).padStart(4, '0');
-
   try {
+    // generate a random integer between 0 and 9999
+    const randomInt = Math.floor(Math.random() * 10000);
+    // pad the integer with leading zeros to make it a 4-digit string
+    const passwordResetCode = String(randomInt).padStart(4, '0');
     // Add reset code to user record
     const user = await User.findOneAndUpdate({ email: req.body.email }, { passwordResetCode });
-    res.json({
-      email: user.email,
-      error: null,
-    });
-    // Send email with reset code
-    transporter.sendMail({
-      to: req.body.email,
-      subject: 'Skid Row Arts Alliance - Account Password Reset',
-      text: `Your account password reset code is ${passwordResetCode}`,
-    });
+    if (!user) {
+      res.json({
+        email: req.body.email,
+        error: 'A user with that email does not exist.',
+      })
+    } else {
+      res.json({
+        email: user.email,
+        error: null,
+      });
+      // Send email with reset code
+      transporter.sendMail({
+        to: user.email,
+        subject: 'Skid Row Arts Alliance - Account Password Reset',
+        text: `Your account password reset code is ${passwordResetCode}`,
+      });
+    }
   } catch (err) {
     console.error(err);
     res.status(err.statusCode ? err.statusCode : 400).json({
