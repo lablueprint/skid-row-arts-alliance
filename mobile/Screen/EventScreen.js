@@ -115,10 +115,16 @@ function EventScreen({ navigation }) {
           id={event.EventData._id}
           image={{ uri: event.ImageURL }}
           title={event.EventData.title}
-          description={event.EventData.description}
+          eventDescription={event.EventData.eventDescription}
           startDate={new Date(event.EventData.startDate)}
           endDate={new Date(event.EventData.endDate)}
           tag={event.EventData.tag}
+          phoneNumber={event.EventData.phoneNumber}
+          organization={event.EventData.organization}
+          recurringMonthly={event.EventData.recurringMonthly}
+          recurringWeekly={event.EventData.recurringWeekly}
+          website={event.EventData.website}
+          organizationDescription={event.EventData.organizationDescription}
           navigation={navigation}
         />
       ))}

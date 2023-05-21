@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {
-  StyleSheet, Image, Text, View,
+  StyleSheet, Image, Text, View, TouchableOpacity,
 } from 'react-native';
 import PropTypes from 'prop-types';
 // import moment from 'moment';
@@ -71,6 +71,12 @@ function EventCard({
   endDate,
   tag,
   navigation,
+  phoneNumber,
+  organization,
+  recurringMonthly,
+  recurringWeekly,
+  website,
+  organizationDescription,
 }) {
   const [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
@@ -82,11 +88,18 @@ function EventCard({
     navigation.navigate('Event Details', {
       key,
       id,
+      image,
       title,
       description,
       startDate,
       endDate,
       tag,
+      phoneNumber,
+      organization,
+      recurringMonthly,
+      recurringWeekly,
+      website,
+      organizationDescription,
     });
   };
 
@@ -105,29 +118,31 @@ function EventCard({
 
   return (
     <View style={styles.card}>
-      <View>
-        <Image
-          source={image}
-          style={styles.cardImage}
-        />
-        <View style={styles.tag}>
+      <TouchableOpacity onPress={onPressEvent}>
+        <View>
           <Image
-            source={require('../assets/brush.png')}
-            style={styles.tagImage}
+            source={image}
+            style={styles.cardImage}
           />
-          <Text style={styles.tagText}>{tag}</Text>
+          <View style={styles.tag}>
+            <Image
+              source={require('../assets/brush.png')}
+              style={styles.tagImage}
+            />
+            <Text style={styles.tagText}>{tag}</Text>
+          </View>
         </View>
-      </View>
-      <View>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.time}>
-          {startTime}
-          {' '}
-          -
-          {' '}
-          {endTime}
-        </Text>
-      </View>
+        <View>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.time}>
+            {startTime}
+            {' '}
+            -
+            {' '}
+            {endTime}
+          </Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -135,12 +150,18 @@ function EventCard({
 EventCard.propTypes = {
   key: PropTypes.string,
   id: PropTypes.string.isRequired,
-  image: PropTypes.shape().isRequired,
+  image: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   description: PropTypes.string,
   startDate: PropTypes.instanceOf(Date).isRequired,
   endDate: PropTypes.instanceOf(Date).isRequired,
   tag: PropTypes.string.isRequired,
+  phoneNumber: PropTypes.string,
+  organization: PropTypes.string,
+  recurringMonthly: PropTypes.bool,
+  recurringWeekly: PropTypes.bool,
+  website: PropTypes.string,
+  organizationDescription: PropTypes.string,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,

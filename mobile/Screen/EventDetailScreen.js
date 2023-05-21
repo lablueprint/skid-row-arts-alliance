@@ -1,37 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Image, Switch,
+  StyleSheet, View, Text, ScrollView, Image, Switch, TouchableOpacity,
 } from 'react-native';
 import { URL } from '@env';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 3,
-    backgroundColor: '#fff',
-  },
-  h1: {
-    fontSize: 30,
-    fontWeight: 'bold',
-  },
-  h2: {
-    fontSize: 20,
-    fontWeight: '30',
-  },
-  square: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#D9D9D9',
-    margin: 40,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   image: {
-    width: 200,
-    height: 200,
+    width: '100%',
+    height: '15%',
+    resizeMode: 'cover',
+    position: 'absolute',
+    top: 0,
   },
-  heading: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#F8F8F8',
+    marginTop: 80,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+  },
+  overlayContent: {
+    flex: 1,
+    marginTop: 100,
+    marginHorizontal: 10,
+  },
+  title: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 24,
+  },
+  organizationContainer: {
+    backgroundColor: '#F2F2F6',
+    borderRadius: 50,
+    marginTop: 10,
+    marginBottom: 35,
+  },
+  organizationText: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 16,
+    color: '#424288',
+    marginHorizontal: 10,
+    marginVertical: 3,
   },
 });
 
@@ -39,10 +57,30 @@ function EventDetailScreen({
   navigation, route,
 }) {
   const {
-    id, title, organizations, day, location, time, summary, url, number, email, website,
+    key,
+    id,
+    image,
+    title,
+    description,
+    startDate,
+    endDate,
+    tag,
+    phoneNumber,
+    organization,
+    recurringMonthly,
+    recurringWeekly,
+    website,
+    organizationDescription,
   } = route.params;
 
   const [isEventSaved, setIsEventSaved] = useState(false);
+
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
 
   const getSomeEvents = async () => {
     try {
@@ -99,33 +137,79 @@ function EventDetailScreen({
     }
   };
 
+  function formatTime(dateObject) {
+    const hours = dateObject.getHours();
+    const minutes = dateObject.getMinutes();
+    let formattedHours = hours % 12;
+    formattedHours = formattedHours === 0 ? 12 : formattedHours;
+    const period = hours >= 12 ? 'pm' : 'am';
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+    return `${formattedHours}:${formattedMinutes} ${period}`;
+  }
+
+  const startTime = formatTime(new Date(startDate));
+  const endTime = formatTime(new Date(endDate));
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.heading}>
-        <Text style={styles.h1}>{title}</Text>
-        <Switch value={isEventSaved} onValueChange={onPressToggleSavedEvent} title="Event Save Button" />
-      </View>
-      <Text onPress={onPressEvent}>{organizations}</Text>
-      <View style={styles.border} />
-      <View style={styles.square} />
-      <Text>{day}</Text>
-      <View style={styles.square} />
-      <Text>{time}</Text>
-      <View style={styles.square} />
-      <Text>{location}</Text>
-      <View style={styles.border} />
-      <Text style={styles.h2}>Event Description</Text>
-      <Text>
-        {' '}
-        {summary}
-        {' '}
-      </Text>
-      <Text style={styles.h2}>Pictures</Text>
+    <View style={styles.container}>
       <Image
+        source={{ uri: image.uri }}
         style={styles.image}
-        source={{ uri: url }}
       />
-    </ScrollView>
+      <View style={styles.overlay} />
+      <View style={styles.overlayContent}>
+        <Text style={styles.title}>{title}</Text>
+        <TouchableOpacity style={styles.organizationContainer}>
+          <Text style={styles.organizationText}>{organization}</Text>
+        </TouchableOpacity>
+        <View style={styles.info}>
+          <View style={styles.weekday}>
+            <Text>todo</Text>
+            {recurringMonthly && <Text>Monthly</Text>}
+            {recurringWeekly && <Text>Weekly</Text>}
+          </View>
+        </View>
+        <Text>
+          Description:
+          {description}
+        </Text>
+        {/* <Text>
+          Time:
+          {startTime}
+          -
+          {endTime}
+        </Text> */}
+        <Text>
+          Tag:
+          {tag}
+        </Text>
+        <Text>
+          Phone Number:
+          {phoneNumber}
+        </Text>
+        <Text>
+          Organization:
+          {organization}
+        </Text>
+        {/* {recurringMonthly}
+        ??
+        <Text>
+          Monthly
+        </Text>
+        :
+        <Text>
+          Weekly
+        </Text> */}
+        <Text>
+          Website:
+          {website}
+        </Text>
+        <Text>
+          Organization Description:
+          {organizationDescription}
+        </Text>
+      </View>
+    </View>
   );
 }
 
@@ -135,17 +219,20 @@ EventDetailScreen.propTypes = {
   }).isRequired,
   route: PropTypes.shape({
     params: PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      title: PropTypes.string.isRequired,
-      organizations: PropTypes.string.isRequired,
-      day: PropTypes.string.isRequired,
-      location: PropTypes.string.isRequired,
-      time: PropTypes.string.isRequired,
-      summary: PropTypes.string.isRequired,
-      url: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      website: PropTypes.string.isRequired,
+      key: PropTypes.string,
+      id: PropTypes.string.isRequired,
+      image: PropTypes.shape(),
+      title: PropTypes.string,
+      description: PropTypes.string,
+      startDate: PropTypes.instanceOf(Date),
+      endDate: PropTypes.instanceOf(Date),
+      tag: PropTypes.string,
+      phoneNumber: PropTypes.string,
+      organization: PropTypes.string,
+      recurringMonthly: PropTypes.bool,
+      recurringWeekly: PropTypes.bool,
+      website: PropTypes.string,
+      organizationDescription: PropTypes.string,
     }),
   }).isRequired,
 };
