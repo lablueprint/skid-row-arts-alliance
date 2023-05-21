@@ -95,8 +95,8 @@ function AudioPlayer({ source }) {
         minimumValue={0}
         maximumValue={1}
         minimumTrackTintColor="orange"
-        maximumTrackTintColor="blue"
-        thumbTintColor="green"
+        maximumTrackTintColor="purple"
+        thumbTintColor="black"
       />
       <Text style={styles.timestamp}>{formatTime(position * duration)}</Text>
       <Text style={styles.timestamp}>{formatTime(duration)}</Text>

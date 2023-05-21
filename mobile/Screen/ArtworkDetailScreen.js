@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, Text, ScrollView, Image, Button,
+  StyleSheet, View, Text, ScrollView, Image, Switch, Button,
 } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
@@ -21,6 +21,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#D9D9D9',
     margin: 40,
   },
+  heading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 });
 
 function ArtworkDetailScreen({
@@ -32,6 +36,7 @@ function ArtworkDetailScreen({
   const [submission, setSubmission] = useState({});
   const [allMediaData, setAllMediaData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
+  const [isArtSaved, setIsArtSaved] = useState(false);
 
   const handleShare = async (mediaUrl) => {
     try {
@@ -60,16 +65,61 @@ function ArtworkDetailScreen({
     }
   };
 
+  const getSavedArt = async () => {
+    try {
+      const res = await axios.get(`${URL}/user/getArtwork/63e33e2f578ad1d80bd2a347`);
+      if ((res.data.msg[0].savedArtwork.find((elm) => elm === id.toString())) === undefined) {
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
+
+  const addSavedArt = async (artId) => {
+    try {
+      const res = await axios.patch(`${URL}/user/addArtwork/63e33e2f578ad1d80bd2a347`, [artId]);
+      setIsArtSaved(true);
+      return res;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const removeSavedArt = async (artId) => {
+    try {
+      const res = await axios.patch(`${URL}/user/removeArtwork/63e33e2f578ad1d80bd2a347`, [artId]);
+      setIsArtSaved(false);
+      return res;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const onPressToggleSavedArt = () => {
+    if (isArtSaved) {
+      removeSavedArt(id);
+    } else {
+      addSavedArt(id);
+    }
+  };
+
   useEffect(() => {
+    getSavedArt().then((status) => setIsArtSaved(status));
     getSubmission();
   }, []);
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
-        Title:
-        {submission.title}
-      </Text>
+      <View style={styles.heading}>
+        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
+          Title:
+          {submission.title}
+        </Text>
+        <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
+      </View>
       <Text>
         Name:
         {submission.name}
@@ -143,6 +193,12 @@ function ArtworkDetailScreen({
 ArtworkDetailScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      Encoding: PropTypes.string.isRequired,
+      key: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired,
     }),
   }).isRequired,
