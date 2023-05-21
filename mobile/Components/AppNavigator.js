@@ -15,6 +15,7 @@ import EventDetailScreen from '../Screen/EventDetailScreen';
 import EventScreen from '../Screen/EventScreen';
 import ResourceDetailScreen from '../Screen/ResourceDetailScreen';
 import OrganizationDetailScreen from '../Screen/OrganizationDetailScreen';
+import MapFilter from '../Screen/MapFilter';
 import { isTokenExpired } from '../redux/sliceAuth';
 
 const Tab = createBottomTabNavigator();
