@@ -71,7 +71,6 @@ function SubmissionDetailsPage() {
 
   const handleEditSave = async () => {
     // TODO: pop up message for the approval or switching of status
-    // TODO: update the backend by creating a route to update status
     const response = await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
       title,
       description,
@@ -102,7 +101,6 @@ function SubmissionDetailsPage() {
 
   const handleChangeSave = async () => {
     // TODO: pop up message for the approval or switching of status
-    // TODO: update the backend by creating a route to update status
     let formatStatus = 'Approved';
     if (action === 'Reject') {
       formatStatus = 'Rejected';
