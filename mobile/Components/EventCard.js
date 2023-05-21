@@ -5,7 +5,7 @@ import {
 import PropTypes from 'prop-types';
 
 function EventCard({
-  id,
+  eventId,
   title,
   date,
   day,
@@ -23,7 +23,7 @@ function EventCard({
 }) {
   const onPressEvent = () => {
     navigation.navigate('Event Details', {
-      id,
+      eventId,
       title,
       organizations,
       number,
@@ -87,7 +87,7 @@ function EventCard({
 }
 
 EventCard.propTypes = {
-  id: PropTypes.number.isRequired,
+  eventId: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   day: PropTypes.string.isRequired,

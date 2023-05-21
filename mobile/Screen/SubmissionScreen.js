@@ -3,6 +3,7 @@ import {
   StyleSheet, TextInput, Text, View, ScrollView, Button, Image,
   Modal, TouchableWithoutFeedback, PanResponder, Animated, Dimensions, TouchableOpacity,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
@@ -81,6 +82,7 @@ const styles = StyleSheet.create({
 
 function SubmissionScreen() {
   const [submissions, setSubmissions] = useState([]);
+  const { authHeader } = useSelector((state) => state.auth);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -198,7 +200,7 @@ function SubmissionScreen() {
     }
 
     try {
-      const res = await axios.post(`${URL}/submissions/post`, {
+      const reqObj = {
         name,
         email,
         socials: {
@@ -210,6 +212,9 @@ function SubmissionScreen() {
         objects,
         thumbnailExists,
         tags: confirmedTags,
+      };
+      const res = await axios.post(`${URL}/submissions/post`, reqObj, {
+        headers: authHeader,
       });
       setSubmissions((prev) => ([...prev, res.data]));
       clearInput();
@@ -282,7 +287,9 @@ function SubmissionScreen() {
   };
 
   const getSubmissions = async () => {
-    const result = await axios.get(`${URL}/submissions/get`);
+    const result = await axios.get(`${URL}/submissions/get`, {
+      headers: authHeader,
+    });
     setSubmissions(result.data);
   };
 

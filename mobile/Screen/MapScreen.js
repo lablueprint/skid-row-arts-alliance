@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { URL } from '@env';
 import MapView from 'react-native-maps';
@@ -57,12 +58,15 @@ function MapScreen({ navigation }) {
   const [tempAllEvents, setTempAllEvents] = useState([]);
   const [tempAllResources, setTempAllResources] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
+  const { authHeader } = useSelector((state) => state.auth);
 
   const getAllEvents = async () => {
     try {
-      const result = await axios.get(`${URL}/event/get`);
-      setAllEvents(result.data);
-      setTempAllEvents(result.data);
+      const result = await axios.get(`${URL}/event/get`, {
+        headers: authHeader,
+      });
+      setAllEvents(result.data || []);
+      setTempAllEvents(result.data || []);
       return result.data;
     } catch (err) {
       console.error(err);
@@ -72,9 +76,11 @@ function MapScreen({ navigation }) {
 
   const getAllResources = async () => {
     try {
-      const result = await axios.get(`${URL}/resource/get`);
-      setAllResources(result.data);
-      setTempAllResources(result.data);
+      const result = await axios.get(`${URL}/resource/get`, {
+        headers: authHeader,
+      });
+      setAllResources(result.data || []);
+      setTempAllResources(result.data || []);
       return result.data;
     } catch (err) {
       console.error(err);
@@ -207,7 +213,7 @@ function MapScreen({ navigation }) {
       mapRef.regionTimeout = setTimeout(() => {
         if ((mapRef.index !== index) || (mapRef.index === 0 && index === 0)) {
           mapRef.index = index;
-          const coordinate = allCards[index].location.coordinates;
+          const coordinate = allCards[index].location.coordinates || [];
           mapRef.current.animateToRegion(
             {
               ...coordinate,

@@ -68,7 +68,6 @@ function SignInScreen({ navigation }) {
     } else if (newText === '') {
       onChangePassword('');
     }
-    console.log(password);
     // onChangePassword(password + newText.slice(-1));
     let newTextWithDots = '';
     newText.split('').forEach((char, index, array) => {
