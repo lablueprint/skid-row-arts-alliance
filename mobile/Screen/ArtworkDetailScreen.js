@@ -86,7 +86,6 @@ function ArtworkDetailScreen({
 
   const addSavedArt = async () => {
     try {
-      console.log({ id, render: true });
       const res = await axios.patch(`${URL}/user/addArtwork/${id}`, [artworkId], {
         headers: authHeader,
       });
