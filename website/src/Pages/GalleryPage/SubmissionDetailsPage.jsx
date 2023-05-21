@@ -23,10 +23,12 @@ function SubmissionDetailsPage() {
     comments: '',
   });
   const [edit, setEdit] = useState(false);
+  const [change, setChange] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [status, setStatus] = useState('');
+  const [action, setAction] = useState('');
   const [comments, setComments] = useState('');
+  const [update, setUpdate] = useState(0);
 
   const getSubmissionDetails = async () => {
     const artwork = await axios.get('http://localhost:4000/submissions/getartwork', { params: { id } });
@@ -42,28 +44,78 @@ function SubmissionDetailsPage() {
       date: artwork.data.Submission.date,
       comments: artwork.data.Submission.comments,
     });
-    setStatus(artwork.data.Submission.status);
+    setTitle(artwork.data.Submission.title);
+    setDescription(artwork.data.Submission.description);
+    if (artwork.data.Submission.status === 'Incomplete') {
+      setChange(true);
+      setAction(artwork.data.Submission.status);
+    } else if (artwork.data.Submission.status === 'Approved') {
+      setAction('Approve');
+    } else {
+      setAction('Reject');
+    }
     setComments(artwork.data.Submission.comments);
   };
 
   useEffect(() => {
     getSubmissionDetails();
-  }, []);
+  }, [update]);
 
   // TODO: tag additions for a post
 
-  const handleCancel = () => {
+  const handleEditCancel = () => {
     setTitle(details.title);
     setDescription(details.description);
-    setStatus(details.status);
-    setComments(details.comments);
     setEdit(false);
   };
 
-  const handleSave = async () => {
+  const handleEditSave = async () => {
     // TODO: pop up message for the approval or switching of status
     // TODO: update the backend by creating a route to update status
+    const response = await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
+      title,
+      description,
+    });
+    console.log(response);
+    setUpdate((val) => val + 1);
     setEdit(false);
+  };
+
+  const handleSubmit = async () => {
+    let formatStatus = 'Approved';
+    if (action === 'Reject') {
+      formatStatus = 'Rejected';
+    }
+    const response = await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
+      status: formatStatus,
+      comments,
+    });
+    console.log(response);
+    setChange(false);
+  };
+
+  const handleChangeCancel = () => {
+    setAction('');
+    setComments(details.comments);
+    setChange(false);
+  };
+
+  const handleChangeSave = async () => {
+    // TODO: pop up message for the approval or switching of status
+    // TODO: update the backend by creating a route to update status
+    let formatStatus = 'Approved';
+    if (action === 'Reject') {
+      formatStatus = 'Rejected';
+    }
+    const response = await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
+      title,
+      description,
+      status: formatStatus,
+      comments,
+    });
+    console.log(response);
+    setUpdate((val) => val + 1);
+    setChange(false);
   };
 
   return (
@@ -84,6 +136,14 @@ function SubmissionDetailsPage() {
         </Box>
         <Box>
           <Typography>
+            Status:
+          </Typography>
+          <Typography>
+            {details.status}
+          </Typography>
+        </Box>
+        <Box>
+          <Typography>
             Date Submitted:
           </Typography>
           <Typography>
@@ -101,7 +161,7 @@ function SubmissionDetailsPage() {
             />
           ) : (
             <Typography>
-              {details.title}
+              {title}
             </Typography>
           )}
         </Box>
@@ -132,7 +192,7 @@ function SubmissionDetailsPage() {
             />
           ) : (
             <Typography>
-              {details.description}
+              {description}
             </Typography>
           )}
         </Box>
@@ -162,23 +222,42 @@ function SubmissionDetailsPage() {
             <img src={media.MediaURL} alt={media.ContentType} />
           ))}
         </Box>
+        <Box>
+          {!edit ? (
+            <>
+            </>
+          ) : (
+            <Box>
+              <Button onClick={() => {
+                handleEditCancel();
+              }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={() => {
+                handleEditSave();
+              }}
+              >
+                Save
+              </Button>
+            </Box>
+          )}
+        </Box>
       </Box>
       <Box>
         <Typography>
-          Status
+          Action
         </Typography>
         <Box>
           <FormControl fullWidth>
             <Select
-              value={status}
-              defaultValue={status}
+              value={action}
+              defaultValue={action}
               onChange={(e) => {
-                if (edit) {
-                  setStatus(e.target.value);
-                }
+                setAction(e.target.value);
               }}
+              disabled={!change}
             >
-              <MenuItem value="Incomplete">Incomplete</MenuItem>
               <MenuItem value="Approve">Approve</MenuItem>
               <MenuItem value="Reject">Reject</MenuItem>
             </Select>
@@ -189,29 +268,46 @@ function SubmissionDetailsPage() {
           <TextField
             value={comments}
             InputProps={{
-              readOnly: !edit,
+              readOnly: !change,
             }}
             onChange={(e) => setComments(e.target.value)}
           />
         </Box>
         <Box>
-          {!edit ? (
-            <>
-            </>
-          ) : (
+          {!change ? (
             <Box>
               <Button onClick={() => {
-                handleCancel();
+                setChange(true);
               }}
               >
-                Cancel
+                Change
               </Button>
-              <Button onClick={() => {
-                handleSave();
-              }}
-              >
-                Save
-              </Button>
+            </Box>
+          ) : (
+            <Box>
+              {details.status === 'Incomplete' ? (
+                <Button onClick={() => {
+                  handleSubmit();
+                }}
+                >
+                  Submit
+                </Button>
+              ) : (
+                <Box>
+                  <Button onClick={() => {
+                    handleChangeCancel();
+                  }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={() => {
+                    handleChangeSave();
+                  }}
+                  >
+                    Save
+                  </Button>
+                </Box>
+              )}
             </Box>
           )}
         </Box>

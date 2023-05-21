@@ -195,10 +195,20 @@ const getSubmissions = async (req, res) => {
   }
 };
 
+const updateSubmission = async (req, res) => {
+  try {
+    const data = await Submission.findByIdAndUpdate(req.params.id, req.body);
+    res.send(data);
+  } catch (err) {
+    res.send(err);
+  }
+};
+
 module.exports = {
   createSubmission,
   deleteSubmission,
   getGalleryThumbnails,
   getArtworkDetails,
   getSubmissions,
+  updateSubmission,
 };
