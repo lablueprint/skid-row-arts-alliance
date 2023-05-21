@@ -3,7 +3,6 @@ import {
   StyleSheet, Image, Text, View, TouchableOpacity,
 } from 'react-native';
 import PropTypes from 'prop-types';
-// import moment from 'moment';
 import {
   useFonts, Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
@@ -65,6 +64,7 @@ function EventCard({
   key,
   id,
   image,
+  location,
   title,
   description,
   startDate,
@@ -84,11 +84,14 @@ function EventCard({
     MontserratBold: Montserrat_700Bold,
   });
 
+  console.log(image);
+
   const onPressEvent = () => {
     navigation.navigate('Event Details', {
       key,
       id,
       image,
+      location,
       title,
       description,
       startDate,
@@ -151,6 +154,15 @@ EventCard.propTypes = {
   key: PropTypes.string,
   id: PropTypes.string.isRequired,
   image: PropTypes.string.isRequired,
+  location: PropTypes.shape({
+    name: PropTypes.string,
+    address: PropTypes.string,
+    specialinstructions: PropTypes.string,
+    coordinates: PropTypes.shape({
+      latitude: PropTypes.number,
+      longitude: PropTypes.number,
+    }),
+  }),
   title: PropTypes.string.isRequired,
   description: PropTypes.string,
   startDate: PropTypes.instanceOf(Date).isRequired,

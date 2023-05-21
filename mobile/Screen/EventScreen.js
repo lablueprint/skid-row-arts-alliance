@@ -113,8 +113,9 @@ function EventScreen({ navigation }) {
         <EventCard
           key={event.EventData._id}
           id={event.EventData._id}
-          image={{ uri: event.ImageURL }}
+          image={event.ImageURL}
           title={event.EventData.title}
+          location={event.EventData.location}
           eventDescription={event.EventData.eventDescription}
           startDate={new Date(event.EventData.startDate)}
           endDate={new Date(event.EventData.endDate)}

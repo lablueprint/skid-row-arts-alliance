@@ -39,17 +39,66 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   organizationContainer: {
+    flexDirection: 'row',
     backgroundColor: '#F2F2F6',
     borderRadius: 50,
     marginTop: 10,
     marginBottom: 35,
+    alignItems: 'center',
   },
   organizationText: {
     fontFamily: 'MontserratMedium',
     fontSize: 16,
     color: '#424288',
     marginHorizontal: 10,
-    marginVertical: 3,
+    marginVertical: 4,
+  },
+  organizationInfoIcon: {
+    width: 20,
+    height: 20,
+  },
+  info: {
+    backgroundColor: '#EFEFF5',
+    borderWidth: 0.5,
+    borderColor: '#D0D0E8',
+    borderRadius: 5,
+    padding: 20,
+  },
+  infoIcon: {
+    width: 30,
+    height: 30,
+    marginRight: 15,
+  },
+  infoText: {
+    fontFamily: 'MontserratSemiBold',
+    fontSize: 16,
+    color: '#4C4C9B',
+  },
+  infoImage: {
+    width: 20,
+    height: 20,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    width: '90%',
+  },
+  lastRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  frequency: {
+    backgroundColor: '#D0D0E8',
+    borderRadius: 60,
+    paddingVertical: 5,
+    paddingHorizontal: 9,
+    marginLeft: 15,
+  },
+  frequencyText: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 12,
+    color: '#4C4C9B',
   },
 });
 
@@ -60,6 +109,7 @@ function EventDetailScreen({
     key,
     id,
     image,
+    location,
     title,
     description,
     startDate,
@@ -150,6 +200,9 @@ function EventDetailScreen({
   const startTime = formatTime(new Date(startDate));
   const endTime = formatTime(new Date(endDate));
 
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayOfWeek = daysOfWeek[startDate.getDay()];
+
   return (
     <View style={styles.container}>
       <Image
@@ -161,53 +214,44 @@ function EventDetailScreen({
         <Text style={styles.title}>{title}</Text>
         <TouchableOpacity style={styles.organizationContainer}>
           <Text style={styles.organizationText}>{organization}</Text>
+          <Image source={require('../assets/detailScreen/info.png')} style={styles.infoImage} />
         </TouchableOpacity>
         <View style={styles.info}>
-          <View style={styles.weekday}>
-            <Text>todo</Text>
-            {recurringMonthly && <Text>Monthly</Text>}
-            {recurringWeekly && <Text>Weekly</Text>}
+          <View style={styles.infoRow}>
+            <Image source={require('../assets/detailScreen/calendarIcon.png')} style={styles.infoIcon} />
+            <Text style={styles.infoText}>{dayOfWeek}</Text>
+            <View style={styles.frequency}>
+              {recurringMonthly && <Text style={styles.frequencyText}>Monthly</Text>}
+              {recurringWeekly && <Text style={styles.frequencyText}>Weekly</Text>}
+            </View>
+          </View>
+          <View style={styles.infoRow}>
+            <Image source={require('../assets/detailScreen/clockIcon.png')} style={styles.infoIcon} />
+            <Text style={styles.infoText}>
+              {startTime}
+              -
+              {endTime}
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Image source={require('../assets/detailScreen/markerIcon.png')} style={styles.infoIcon} />
+            <Text style={styles.infoText}>
+              {location.address}
+            </Text>
+          </View>
+          <View style={styles.infoRow}>
+            <Image source={require('../assets/detailScreen/phoneIcon.png')} style={styles.infoIcon} />
+            <Text style={styles.infoText}>
+              {phoneNumber}
+            </Text>
+          </View>
+          <View style={styles.lastRow}>
+            <Image source={require('../assets/detailScreen/websiteIcon.png')} style={styles.infoIcon} />
+            <Text style={styles.infoText}>
+              {website}
+            </Text>
           </View>
         </View>
-        <Text>
-          Description:
-          {description}
-        </Text>
-        {/* <Text>
-          Time:
-          {startTime}
-          -
-          {endTime}
-        </Text> */}
-        <Text>
-          Tag:
-          {tag}
-        </Text>
-        <Text>
-          Phone Number:
-          {phoneNumber}
-        </Text>
-        <Text>
-          Organization:
-          {organization}
-        </Text>
-        {/* {recurringMonthly}
-        ??
-        <Text>
-          Monthly
-        </Text>
-        :
-        <Text>
-          Weekly
-        </Text> */}
-        <Text>
-          Website:
-          {website}
-        </Text>
-        <Text>
-          Organization Description:
-          {organizationDescription}
-        </Text>
       </View>
     </View>
   );
@@ -223,6 +267,15 @@ EventDetailScreen.propTypes = {
       id: PropTypes.string.isRequired,
       image: PropTypes.shape(),
       title: PropTypes.string,
+      location: PropTypes.shape({
+        name: PropTypes.string,
+        address: PropTypes.string,
+        specialinstructions: PropTypes.string,
+        coordinates: PropTypes.shape({
+          latitude: PropTypes.number,
+          longitude: PropTypes.number,
+        }),
+      }),
       description: PropTypes.string,
       startDate: PropTypes.instanceOf(Date),
       endDate: PropTypes.instanceOf(Date),
