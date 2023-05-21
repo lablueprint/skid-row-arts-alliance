@@ -5,6 +5,7 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { URL } from '@env';
 import MapView from 'react-native-maps';
@@ -39,10 +40,13 @@ function MapScreen() {
   const [allEvents, setAllEvents] = useState([]);
   const [allResources, setAllResources] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
+  const { authHeader } = useSelector((state) => state.auth);
 
   const getAllEvents = async () => {
     try {
-      const result = await axios.get(`${URL}/event/get`);
+      const result = await axios.get(`${URL}/event/get`, {
+        headers: authHeader,
+      });
       setAllEvents(result.data || []);
       return result.data;
     } catch (err) {
@@ -54,6 +58,10 @@ function MapScreen() {
   const getAllResources = async () => {
     try {
       const result = await axios.get(`${URL}/resource/get`);
+      setAllResources(result.data || []);
+      const result = await axios.get(`${URL}/resource/get`, {
+        headers: authHeader,
+      });
       setAllResources(result.data || []);
       return result.data;
     } catch (err) {
