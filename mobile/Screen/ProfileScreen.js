@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, Text, TextInput, View, Button, ScrollView, TouchableOpacity,
+  StyleSheet, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
@@ -10,6 +10,10 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { serviceUpdateUser } from '../redux/services';
 
+const cardGap = 15;
+
+const cardWidth = 170;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -17,19 +21,49 @@ const styles = StyleSheet.create({
     padding: 25,
   },
   savedContainer: {
+    paddingBottom: 30,
+  },
+  savedHeadingAndSeeAll: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    paddingBottom: 20,
+  },
+  savedEventCardContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  savedEventCard: {
+    marginTop: cardGap,
+    width: cardWidth,
+    borderRadius: 15,
+    borderColor: '#D26090',
+    borderLeftWidth: 15,
+    borderWidth: 1,
+    marginLeft: 10,
+  },
+  savedArtCard: {
+    paddingBottom: 10,
+    borderRadius: 15,
+    borderColor: '#CD7F3D',
+    borderLeftWidth: 15,
+    borderWidth: 2,
   },
   heading: {
     fontFamily: 'Montserrat',
     fontSize: 20,
     color: '#1E2021',
-    fontWeight: '700',
   },
   savedTitle: {
-    fontFamily: 'Montserrat',
+    fontFamily: 'MontserratBold',
     fontSize: 16,
     color: '#1E2021',
+  },
+  savedCategoryTitle: {
+    fontFamily: 'Montserrat',
+    fontSize: 14,
+    color: '#1E2021',
+    paddingBottom: 5,
   },
   seeAllSavedButton: {
     backgroundColor: 'transparent',
@@ -49,14 +83,50 @@ function ProfileScreen({ navigation }) {
   const [tag, onChangeTag] = useState('');
   const [loadSavedArt, setLoadSavedArt] = useState(false);
   const [savedArt, setSavedArt] = useState([]);
+  const [loadAllEvent, setLoadAllEvent] = useState(false);
   const [loadSavedEvent, setLoadSavedEvent] = useState(false);
   const [savedEvent, setSavedEvent] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);
+
+  const [loadAllThumnails, setLoadAllThumbnails] = useState(false);
+  const [allThumbnails, setAllThumbnails] = useState([]);
+
+  const findEvent = (eventID) => {
+    const eventInfo = {
+      tag: 'No Tag',
+      eventName: 'No Name',
+    };
+    if (loadAllEvent) {
+      allEvents.forEach((eventDetail) => {
+        if (eventDetail.EventData._id === eventID) {
+          eventInfo.tag = (eventDetail.EventData.tag);
+          eventInfo.eventName = (eventDetail.EventData.title);
+        }
+      });
+    }
+    return eventInfo;
+  };
+
+  const findThumbnail = (artID) => {
+    const artInfo = {
+      thumbNail: 'No Tag',
+    };
+    if (loadAllThumnails) {
+      allThumbnails.forEach((thumbnail) => {
+        if (thumbnail.SubmissionId === artID) {
+          console.log(thumbnail.ImageURL);
+          artInfo.thumbNail = (thumbnail.ImageURL);
+        }
+      });
+    }
+    return artInfo.thumbNail;
+  };
 
   const getSavedArtwork = async () => {
     try {
       setLoadSavedArt(false);
       const res = await axios.get(`${URL}/user/getArtwork/63e33e2f578ad1d80bd2a347`);
-      setSavedArt(res.data.msg[0].savedArtwork);
+      setSavedArt(res.data.msg[0].savedArtwork.slice(0, 2));
       return res;
     } catch (err) {
       console.error(err);
@@ -70,7 +140,7 @@ function ProfileScreen({ navigation }) {
     try {
       setLoadSavedEvent(false);
       const res = await axios.get(`${URL}/user/getEvents/63e33e2f578ad1d80bd2a347`);
-      setSavedEvent(res.data.msg[0].savedEvents);
+      setSavedEvent(res.data.msg[0].savedEvents.slice(0, 2));
       return res;
     } catch (err) {
       console.error(err);
@@ -80,9 +150,39 @@ function ProfileScreen({ navigation }) {
     }
   };
 
+  const getAllEvents = async () => {
+    try {
+      setLoadAllEvent(false);
+      const result = await axios.get(`${URL}/event/get`);
+      setAllEvents(result.data);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadAllEvent(true);
+    }
+  };
+
+  const getThumbnails = async () => {
+    try {
+      setLoadAllThumbnails(false);
+      const result = await axios.get(`${URL}/submissions/getthumbnails`);
+      setAllThumbnails(result.data);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadAllThumbnails(true);
+    }
+  };
+
   useEffect(() => {
     getSavedArtwork();
     getSavedEvent();
+    getAllEvents();
+    getThumbnails();
   }, []);
 
   const handleClear = () => {
@@ -183,28 +283,33 @@ function ProfileScreen({ navigation }) {
           />
         </View>
       </View>
-      <View>
-        <View style={styles.savedContainer}>
+      <View style={styles.savedContainer}>
+        <View style={styles.savedHeadingAndSeeAll}>
           <Text style={styles.heading}>
             Events
           </Text>
           <TouchableOpacity onPress={onPressBackButton} style={styles.seeAllSavedButton}>
-            <Text style={styles.seeAllText}>See All</Text>
+            <Text style={styles.seeAllText}>See More</Text>
           </TouchableOpacity>
         </View>
-        {
+        <View style={styles.savedEventCardContainer}>
+          {
         loadSavedEvent ? (
           savedEvent.map((oneEvent) => (
-            <Card>
+            <Card style={styles.savedEventCard}>
               <Card.Content>
+                <Text style={styles.savedCategoryTitle}>
+                  {findEvent(oneEvent).tag}
+                </Text>
                 <Text style={styles.savedTitle}>
-                  {oneEvent}
+                  {findEvent(oneEvent).eventName}
                 </Text>
               </Card.Content>
             </Card>
           ))
-        ) : <Text>There is no saved event</Text>
-      }
+        ) : <Text>There is no saved events</Text>
+        }
+        </View>
       </View>
       <View>
         <Text style={styles.heading}>
@@ -214,10 +319,11 @@ function ProfileScreen({ navigation }) {
         loadSavedArt ? (
           savedArt.map((oneArt) => (
             <Card>
-              <Card.Content>
-                <Text style={styles.savedTitle}>
-                  {oneArt}
-                </Text>
+              <Card.Content style={styles.savedArtCard}>
+                <Image // works with card.cover as well
+                  style={{ height: 250, width: 250 }}
+                  source={{ uri: findThumbnail(oneArt) }}
+                />
               </Card.Content>
             </Card>
           ))

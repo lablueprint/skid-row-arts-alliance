@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, Text, View, ScrollView,
+  StyleSheet, Text, View, ScrollView, Dimensions,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
 import { Card } from 'react-native-paper';
 import PropTypes from 'prop-types';
 
+const cardGap = 17;
+
+const cardWidth = (Dimensions.get('window').width - cardGap * 3) / 2;
+
 const styles = StyleSheet.create({
   savedEventCard: {
-    paddingBottom: 10,
+    marginTop: cardGap,
+    width: cardWidth,
     borderRadius: 15,
     borderColor: '#D26090',
     borderLeftWidth: 15,
-    borderWidth: 2,
+    borderWidth: 1,
+    marginLeft: 10,
   },
   savedTitle: {
-    fontFamily: 'Montserrat',
+    fontFamily: 'MontserratBold',
     fontSize: 16,
     color: '#1E2021',
   },
@@ -24,6 +30,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat',
     fontSize: 14,
     color: '#1E2021',
+    paddingBottom: 5,
+  },
+  savedEventCardContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
 });
 
@@ -33,16 +45,20 @@ function SavedEventsScreen() {
   const [loadSavedEvent, setLoadSavedEvent] = useState(false);
   const [savedEvent, setSavedEvent] = useState([]);
 
-  const findEvent = (eventName) => {
-    let tag = 'No Tag';
+  const findEvent = (eventID) => {
+    const eventInfo = {
+      tag: 'No Tag',
+      eventName: 'No Name',
+    };
     if (loadAllEvent) {
       allEvents.forEach((eventDetail) => {
-        if (eventDetail.EventData.title === eventName) {
-          tag = (eventDetail.EventData.tag);
+        if (eventDetail.EventData._id === eventID) {
+          eventInfo.tag = (eventDetail.EventData.tag);
+          eventInfo.eventName = (eventDetail.EventData.title);
         }
       });
     }
-    return tag;
+    return eventInfo;
   };
 
   const getSavedEvent = async () => {
@@ -81,17 +97,17 @@ function SavedEventsScreen() {
   // Display and edit profile info
   return (
     <ScrollView>
-      <View>
+      <View style={styles.savedEventCardContainer}>
         {
         loadSavedEvent ? (
           savedEvent.map((oneEvent) => (
-            <Card>
-              <Card.Content style={styles.savedEventCard}>
+            <Card style={styles.savedEventCard}>
+              <Card.Content>
                 <Text style={styles.savedCategoryTitle}>
-                  {findEvent(oneEvent)}
+                  {findEvent(oneEvent).tag}
                 </Text>
                 <Text style={styles.savedTitle}>
-                  {oneEvent}
+                  {findEvent(oneEvent).eventName}
                 </Text>
               </Card.Content>
             </Card>
