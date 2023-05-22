@@ -53,6 +53,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     type: [String],
   },
+  savedResources: {
+    required: true,
+    type: [String],
+  },
   userArtwork: {
     required: true,
     type: [String],

@@ -26,7 +26,6 @@ const styles = StyleSheet.create({
     color: '#1E2021',
   },
   savedCategoryTitle: {
-    fontFamily: 'Montserrat',
     fontSize: 14,
     color: '#1E2021',
     paddingBottom: 5,

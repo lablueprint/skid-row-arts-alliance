@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     paddingBottom: 20,
   },
-  savedEventCardContainer: {
+  savedCardContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
@@ -42,15 +42,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginLeft: 10,
   },
-  savedArtCard: {
-    paddingBottom: 10,
+  savedResourceCard: {
+    marginTop: cardGap,
+    width: cardWidth,
     borderRadius: 15,
     borderColor: '#CD7F3D',
     borderLeftWidth: 15,
-    borderWidth: 2,
+    borderWidth: 1,
+    marginLeft: 10,
+  },
+  savedArtCard: {
+    paddingBottom: 10,
+    borderRadius: 15,
+    borderWidth: 1,
   },
   heading: {
-    fontFamily: 'Montserrat',
     fontSize: 20,
     color: '#1E2021',
   },
@@ -59,14 +65,13 @@ const styles = StyleSheet.create({
     color: '#1E2021',
   },
   savedCategoryTitle: {
-    fontFamily: 'Montserrat',
     fontSize: 14,
     color: '#1E2021',
     paddingBottom: 5,
   },
   seeAllSavedButton: {
     backgroundColor: 'transparent',
-    // left justify
+    paddingRight: 100,
   },
   seeAllText: {
     fontSize: 14,
@@ -76,19 +81,19 @@ const styles = StyleSheet.create({
 
 function ProfileScreen({ navigation }) {
   const { user: currentUser } = useSelector((state) => state.auth);
-  const [name, onChangeName] = useState('');
-  const [email, onChangeEmail] = useState('');
-  const [platform, setPlatform] = useState('');
-  const [tag, onChangeTag] = useState('');
   const [loadSavedArt, setLoadSavedArt] = useState(false);
   const [savedArt, setSavedArt] = useState([]);
   const [loadAllEvent, setLoadAllEvent] = useState(false);
   const [loadSavedEvent, setLoadSavedEvent] = useState(false);
   const [savedEvent, setSavedEvent] = useState([]);
   const [allEvents, setAllEvents] = useState([]);
-
   const [loadAllThumnails, setLoadAllThumbnails] = useState(false);
   const [allThumbnails, setAllThumbnails] = useState([]);
+
+  const [loadAllResources, setLoadAllResources] = useState(false);
+  const [loadSavedResource, setLoadSavedResource] = useState(false);
+  const [savedResource, setSavedResource] = useState([]);
+  const [allResources, setAllResources] = useState([]);
 
   const findEvent = (eventID) => {
     const eventInfo = {
@@ -100,6 +105,22 @@ function ProfileScreen({ navigation }) {
         if (eventDetail.EventData._id === eventID) {
           eventInfo.tag = (eventDetail.EventData.tag);
           eventInfo.eventName = (eventDetail.EventData.title);
+        }
+      });
+    }
+    return eventInfo;
+  };
+
+  const findResource = (eventID) => {
+    const eventInfo = {
+      tag: 'No Tag',
+      resourceName: 'No Name',
+    };
+    if (loadAllResources) {
+      allResources.forEach((resourceDetail) => {
+        if (resourceDetail.ResourceData._id === eventID) {
+          eventInfo.tag = (resourceDetail.ResourceData.tag);
+          eventInfo.eventName = (resourceDetail.ResourceData.title);
         }
       });
     }
@@ -148,6 +169,20 @@ function ProfileScreen({ navigation }) {
     }
   };
 
+  const getSavedResource = async () => {
+    try {
+      setLoadSavedResource(false);
+      const res = await axios.get(`${URL}/user/getResources/63e33e2f578ad1d80bd2a347`);
+      setSavedResource(res.data.msg[0].savedResources.slice(0, 2));
+      return res;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadSavedResource(true);
+    }
+  };
+
   const getAllEvents = async () => {
     try {
       setLoadAllEvent(false);
@@ -159,6 +194,20 @@ function ProfileScreen({ navigation }) {
       return err;
     } finally {
       setLoadAllEvent(true);
+    }
+  };
+
+  const getAllResources = async () => {
+    try {
+      setLoadAllResources(false);
+      const result = await axios.get(`${URL}/resource/get`);
+      setAllResources(result.data);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadAllResources(true);
     }
   };
 
@@ -179,7 +228,9 @@ function ProfileScreen({ navigation }) {
   useEffect(() => {
     getSavedArtwork();
     getSavedEvent();
+    getSavedResource();
     getAllEvents();
+    getAllResources();
     getThumbnails();
   }, []);
   const dispatch = useDispatch();
@@ -209,8 +260,16 @@ function ProfileScreen({ navigation }) {
     dispatch(logout());
   };
 
-  const onPressBackButton = () => {
+  const onPressEventCard = () => {
     navigation.navigate('Saved Events Screen');
+  };
+
+  const onPressResourceCard = () => {
+    navigation.navigate('Saved Resources Screen');
+  };
+
+  const onPressArtworkCard = () => {
+    navigation.navigate('Saved Artwork Screen');
   };
 
   // Display and edit profile info
@@ -244,65 +303,16 @@ function ProfileScreen({ navigation }) {
           currentUser.userSocialTag
         </Text>
       </View>
-      <View style={{ paddingBottom: 40 }}>
-        <Text style={{ fontWeight: '800', fontSize: 25, paddingBottom: 10 }}>
-          Edit Profile Fields
-        </Text>
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={{ paddingRight: 10 }}>
-            Name:
-          </Text>
-          <TextInput
-            placeholder="Name"
-            onChangeText={onChangeName}
-            value={name}
-          />
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={{ paddingRight: 10 }}>
-            Email:
-          </Text>
-          <TextInput
-            placeholder="Email"
-            onChangeText={onChangeEmail}
-            value={email}
-          />
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-          <Text>
-            Social Platform:
-          </Text>
-          <Picker
-            selectedValue={platform}
-            style={{ height: 200, width: 150 }}
-            onValueChange={(itemValue) => setPlatform(itemValue)}
-          >
-            <Picker.Item label="Instagram" value="instagram" />
-            <Picker.Item label="Twitter" value="twitter" />
-            <Picker.Item label="Facebook" value="facebook" />
-          </Picker>
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={{ paddingRight: 10 }}>
-            Social Tag:
-          </Text>
-          <TextInput
-            placeholder="Account Tag"
-            onChangeText={onChangeTag}
-            value={tag}
-          />
-        </View>
-      </View>
       <View style={styles.savedContainer}>
         <View style={styles.savedHeadingAndSeeAll}>
           <Text style={styles.heading}>
             Events
           </Text>
-          <TouchableOpacity onPress={onPressBackButton} style={styles.seeAllSavedButton}>
+          <TouchableOpacity onPress={onPressEventCard} style={styles.seeAllSavedButton}>
             <Text style={styles.seeAllText}>See More</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.savedEventCardContainer}>
+        <View style={styles.savedCardContainer}>
           {
         loadSavedEvent ? (
           savedEvent.map((oneEvent) => (
@@ -323,8 +333,37 @@ function ProfileScreen({ navigation }) {
       </View>
       <View>
         <Text style={styles.heading}>
+          Resources
+        </Text>
+        <TouchableOpacity onPress={onPressResourceCard} style={styles.seeAllSavedButton}>
+          <Text style={styles.seeAllText}>See More</Text>
+        </TouchableOpacity>
+        <View style={styles.savedCardContainer}>
+          {
+        loadSavedResource ? (
+          savedResource.map((oneResource) => (
+            <Card style={styles.savedResourceCard}>
+              <Card.Content>
+                <Text style={styles.savedCategoryTitle}>
+                  {findResource(oneResource).tag}
+                </Text>
+                <Text style={styles.savedTitle}>
+                  {findResource(oneResource).eventName}
+                </Text>
+              </Card.Content>
+            </Card>
+          ))
+        ) : <Text>There is no saved art</Text>
+      }
+        </View>
+      </View>
+      <View>
+        <Text style={styles.heading}>
           Art
         </Text>
+        <TouchableOpacity onPress={onPressArtworkCard} style={styles.seeAllSavedButton}>
+          <Text style={styles.seeAllText}>See More</Text>
+        </TouchableOpacity>
         {
         loadSavedArt ? (
           savedArt.map((oneArt) => (
