@@ -5,7 +5,6 @@ import {
   StyleSheet, Text, View, Button, Image, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { Card } from 'react-native-paper';
-import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 
 const cardGap = 15;
@@ -17,6 +16,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 25,
+    paddingTop: 5,
   },
   savedContainer: {
     paddingBottom: 30,
@@ -75,10 +75,45 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#424288',
   },
+  imageContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    overflow: 'hidden',
+    marginRight: 20,
+  },
+  avatar: {
+    width: '100%',
+    height: '100%',
+  },
+  avatarHandleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  handleContainer: {
+    flex: 1,
+  },
+  handleText: {
+    marginBottom: 10,
+  },
+  nameAndEditButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 10,
+    paddingTop: 0,
+  },
+  nameContainer: {
+    flexDirection: 'row',
+  },
+  name: {
+    marginRight: 5,
+    fontSize: 20,
+  },
 });
 
 function ProfileScreen({ navigation }) {
-  const { user: currentUser } = useSelector((state) => state.auth);
   const [loadSavedArt, setLoadSavedArt] = useState(false);
   const [savedArt, setSavedArt] = useState([]);
   const [loadAllEvent, setLoadAllEvent] = useState(false);
@@ -92,6 +127,35 @@ function ProfileScreen({ navigation }) {
   const [loadSavedResource, setLoadSavedResource] = useState(false);
   const [savedResource, setSavedResource] = useState([]);
   const [allResources, setAllResources] = useState([]);
+
+  const [currFirstName, setFirstName] = useState('');
+  const [currLastName, setLastName] = useState('');
+
+  const [currBio, setBio] = useState('');
+
+  const [currFacebook, setFacebook] = useState('');
+  const [currInstagram, setInstagram] = useState('');
+  const [currTwitter, setTwitter] = useState('');
+
+  const [showBio, setShowBio] = useState(true);
+
+  const getUserData = async () => {
+    try {
+      const res = await axios.get(`${URL}/user/getUser/63e33e2f578ad1d80bd2a347`);
+      console.log(res.data.msg);
+      setFirstName(res.data.msg.firstName);
+      setLastName(res.data.msg.lastName);
+      setBio(res.data.msg.bio);
+      setFacebook(res.data.msg.socialMedia.facebook);
+      setInstagram(res.data.msg.socialMedia.instagram);
+      setTwitter(res.data.msg.socialMedia.twitter);
+      setBio(res.data.msg.bio);
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
+    }
+  };
 
   const findEvent = (eventID) => {
     const eventInfo = {
@@ -224,6 +288,7 @@ function ProfileScreen({ navigation }) {
   };
 
   useEffect(() => {
+    getUserData();
     getSavedArtwork();
     getSavedEvent();
     getSavedResource();
@@ -231,68 +296,6 @@ function ProfileScreen({ navigation }) {
     getAllResources();
     getThumbnails();
   }, []);
-  const dispatch = useDispatch();
-
-  const handleClear = () => {
-    serviceUpdateUser({
-      email: '',
-      password: '',
-      firstName: '',
-      lastName: '',
-      bio: '',
-      socialMedia: {
-        platform: '',
-        accountTag: '',
-      },
-      profilePicture: '',
-      savedEvents: [''],
-      savedArtwork: [''],
-      userArtwork: [''],
-    });
-  };
-
-  const updatedUser = {
-    email: 'updated-email@yahoo.com',
-    password: 'updated-password',
-    firstName: 'Caroline',
-    lastName: 'updated-lastname',
-    bio: 'hater of mobile dev',
-    socialMedia: {
-      platform: 'updated-instagram',
-      accountTag: 'updated-accounttag',
-    },
-    profilePicture: 'updated-profilepicture',
-    savedEvents: ['updated-event1', 'updated-event2'],
-    savedArtwork: ['updated-artwork1', 'updated-artwork2'],
-    userArtwork: ['updated-userartwork1', 'updated-userartwork2'],
-  };
-
-  const reader = new FileReader();
-  reader.addEventListener('loadend', async () => {
-    const blob = reader.result.replace(/^.*base64,/, '');
-    console.log(updatedUser);
-    console.log(currentUser);
-    const res = await axios.patch(`${URL}/user/addProfilePicture/63e33e2f578ad1d80bd2a347`, {
-      // need to change hard coded ID
-      blob,
-    });
-    // console.log(1, res);
-    // console.log(currentUser);
-    console.log('pee');
-    clearInput();
-    console.log('poop');
-  });
-
-  const submitProfilePicture = async () => {
-    try {
-      fetch(image)
-        .then((res) => res.blob())
-        .then((blob) => reader.readAsDataURL(blob))
-        .catch((e) => console.error(e));
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   const onPressEventCard = () => {
     navigation.navigate('Saved Events Screen');
@@ -309,111 +312,113 @@ function ProfileScreen({ navigation }) {
   // Display and edit profile info
   return (
     <ScrollView style={styles.container}>
-      <Button title="Edit" onPress={() => navigation.navigate('Edit Profile')} />
-      <View style={{
-        paddingTop: 30,
-        paddingBottom: 50,
-      }}
-      >
-        <Button
-          title="Sign Out"
-          onPress={() => {
-            handleSignOut();
-          }}
-        />
-        <Button title="Edit" onPress={() => navigation.navigate('Edit Profile')} />
-        <Text>
-          <Text style={{ fontWeight: 'bold' }}>Name: </Text>
-          currentUser.userName
-        </Text>
-        <Text>
-          <Text style={{ fontWeight: 'bold' }}>Email: </Text>
-          currentUser.userEmail
-        </Text>
-        <Text>
-          <Text style={{ fontWeight: 'bold' }}>Social Platform: </Text>
-          currentUser.userSocialPlatform
-        </Text>
-        <Text>
-          <Text style={{ fontWeight: 'bold' }}>Social Tag: </Text>
-          currentUser.userSocialTag
-        </Text>
-      </View>
-      <View style={styles.savedContainer}>
-        <View style={styles.savedHeadingAndSeeAll}>
-          <Text style={styles.heading}>
-            Events
+      <View style={styles.nameAndEditButtonContainer}>
+        <View style={styles.nameContainer}>
+          <Text style={styles.name}>
+            {currFirstName}
           </Text>
-          <TouchableOpacity onPress={onPressEventCard} style={styles.seeAllSavedButton}>
+          <Text style={styles.name}>
+            {currLastName}
+          </Text>
+        </View>
+        <Button title="Edit" onPress={() => navigation.navigate('Edit Profile')} />
+      </View>
+      <View style={styles.avatarHandleContainer}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri: 'https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' }}
+            resizeMode="cover"
+            style={styles.avatar}
+          />
+        </View>
+        <View styles={styles.handleContainer}>
+          <Text styles={styles.handleText}>
+            {currFacebook}
+          </Text>
+          <Text styles={styles.handleText}>
+            {currTwitter}
+          </Text>
+          <Text styles={styles.handleText}>
+            {currInstagram}
+          </Text>
+        </View>
+      </View>
+      <View>
+        <View>
+          <Text>
+            {currBio}
+          </Text>
+        </View>
+        <View style={styles.savedContainer}>
+          <View style={styles.savedHeadingAndSeeAll}>
+            <Text style={styles.heading}>
+              Events
+            </Text>
+            <TouchableOpacity onPress={onPressEventCard} style={styles.seeAllSavedButton}>
+              <Text style={styles.seeAllText}>See More</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.savedCardContainer}>
+            {loadSavedEvent ? (
+              savedEvent.map((oneEvent) => (
+                <Card style={styles.savedEventCard}>
+                  <Card.Content>
+                    <Text style={styles.savedCategoryTitle}>
+                      {findEvent(oneEvent).tag}
+                    </Text>
+                    <Text style={styles.savedTitle}>
+                      {findEvent(oneEvent).eventName}
+                    </Text>
+                  </Card.Content>
+                </Card>
+              ))
+            ) : <Text>There is no saved events</Text>}
+          </View>
+        </View>
+        <View>
+          <Text style={styles.heading}>
+            Resources
+          </Text>
+          <TouchableOpacity onPress={onPressResourceCard} style={styles.seeAllSavedButton}>
             <Text style={styles.seeAllText}>See More</Text>
           </TouchableOpacity>
+          <View style={styles.savedCardContainer}>
+            {loadSavedResource ? (
+              savedResource.map((oneResource) => (
+                <Card style={styles.savedResourceCard}>
+                  <Card.Content>
+                    <Text style={styles.savedCategoryTitle}>
+                      {findResource(oneResource).tag}
+                    </Text>
+                    <Text style={styles.savedTitle}>
+                      {findResource(oneResource).eventName}
+                    </Text>
+                  </Card.Content>
+                </Card>
+              ))
+            ) : <Text>There is no saved art</Text>}
+          </View>
         </View>
-        <View style={styles.savedCardContainer}>
-          {
-        loadSavedEvent ? (
-          savedEvent.map((oneEvent) => (
-            <Card style={styles.savedEventCard}>
-              <Card.Content>
-                <Text style={styles.savedCategoryTitle}>
-                  {findEvent(oneEvent).tag}
-                </Text>
-                <Text style={styles.savedTitle}>
-                  {findEvent(oneEvent).eventName}
-                </Text>
-              </Card.Content>
-            </Card>
-          ))
-        ) : <Text>There is no saved events</Text>
-        }
+        <View>
+          <Text style={styles.heading}>
+            Art
+          </Text>
+          <TouchableOpacity onPress={onPressArtworkCard} style={styles.seeAllSavedButton}>
+            <Text style={styles.seeAllText}>See More</Text>
+          </TouchableOpacity>
+          {loadSavedArt ? (
+            savedArt.map((oneArt) => (
+              <Card>
+                <Card.Content style={styles.savedArtCard}>
+                  <Image // works with card.cover as well
+                    style={{ height: 250, width: 250 }}
+                    source={{ uri: findThumbnail(oneArt) }}
+                  />
+                </Card.Content>
+              </Card>
+            ))
+          ) : <Text>There is no saved art</Text>}
         </View>
-      </View>
-      <View>
-        <Text style={styles.heading}>
-          Resources
-        </Text>
-        <TouchableOpacity onPress={onPressResourceCard} style={styles.seeAllSavedButton}>
-          <Text style={styles.seeAllText}>See More</Text>
-        </TouchableOpacity>
-        <View style={styles.savedCardContainer}>
-          {
-        loadSavedResource ? (
-          savedResource.map((oneResource) => (
-            <Card style={styles.savedResourceCard}>
-              <Card.Content>
-                <Text style={styles.savedCategoryTitle}>
-                  {findResource(oneResource).tag}
-                </Text>
-                <Text style={styles.savedTitle}>
-                  {findResource(oneResource).eventName}
-                </Text>
-              </Card.Content>
-            </Card>
-          ))
-        ) : <Text>There is no saved art</Text>
-      }
-        </View>
-      </View>
-      <View>
-        <Text style={styles.heading}>
-          Art
-        </Text>
-        <TouchableOpacity onPress={onPressArtworkCard} style={styles.seeAllSavedButton}>
-          <Text style={styles.seeAllText}>See More</Text>
-        </TouchableOpacity>
-        {
-        loadSavedArt ? (
-          savedArt.map((oneArt) => (
-            <Card>
-              <Card.Content style={styles.savedArtCard}>
-                <Image // works with card.cover as well
-                  style={{ height: 250, width: 250 }}
-                  source={{ uri: findThumbnail(oneArt) }}
-                />
-              </Card.Content>
-            </Card>
-          ))
-        ) : <Text>There is no saved art</Text>
-      }
       </View>
     </ScrollView>
   );
