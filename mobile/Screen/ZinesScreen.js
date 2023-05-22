@@ -34,18 +34,23 @@ const styles = StyleSheet.create({
     paddingBottom: 20, // add some padding to the bottom to prevent the last item from being cut off
   },
   textSection: {
-    backgroundColor: 'lightgray',
     padding: 10,
-    marginBottom: 10,
+    paddingTop: 30,
   },
   header: {
-    backgroundColor: 'lightblue',
     padding: 10,
     marginBottom: 10,
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 35,
     fontWeight: 'bold',
+  },
+  secondaryText: {
+    fontSize: 25,
+  },
+  publicationContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 });
 
@@ -80,25 +85,28 @@ function ZinesScreen({ navigation }) {
               year={zine.year}
               url={zine.url}
               contents={zine.contents}
+              first
             />
           </View>
         ))}
         <View style={styles.textSection}>
-          <Text>Past Publications</Text>
+          <Text style={styles.secondaryText}>Publications</Text>
         </View>
-        {allZines.slice(1).map((zine) => (
-          <View>
-            <ZineCard
-              navigation={navigation}
-              title="The Skid Row Arts Zine"
-              season={zine.season}
-              year={zine.year}
-              url={zine.url}
-              contents={zine.contents}
-            />
-          </View>
-        ))}
-
+        <View style={styles.publicationContainer}>
+          {allZines.map((zine) => (
+            <View>
+              <ZineCard
+                navigation={navigation}
+                title="The Skid Row Arts Zine"
+                season={zine.season}
+                year={zine.year}
+                url={zine.url}
+                contents={zine.contents}
+                first={false}
+              />
+            </View>
+          ))}
+        </View>
       </View>
     </ScrollView>
   );

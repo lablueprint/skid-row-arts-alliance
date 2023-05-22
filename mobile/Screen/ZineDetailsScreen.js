@@ -1,7 +1,7 @@
 import { React, useState, useRef } from 'react';
 import {
   StyleSheet, Text, View, Dimensions,
-  Animated, ScrollView,
+  Animated, ScrollView, Image, TouchableOpacity,
 } from 'react-native';
 import Pdf from 'react-native-pdf';
 import { Slider } from '@miblanchard/react-native-slider';
@@ -10,6 +10,8 @@ import { Button } from 'react-native-paper';
 import PropTypes from 'prop-types';
 
 const { height } = Dimensions.get('window');
+const BackButton = require('../assets/backArrowWhite.png');
+const ThreeLines = require('../assets/tableOfContents.png');
 
 const styles = StyleSheet.create({
   container: {
@@ -18,46 +20,71 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'center',
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    paddingTop: 30,
+    paddingBottom: 15,
+    backgroundColor: '#4C4C9B',
+  },
+  headerText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  icons: {
+    height: '5%',
+  },
   pdf: {
     flex: 1,
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
+    backgroundColor: '#53595C',
   },
   panel: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#E7E9EC',
     position: 'relative',
   },
   panelHeader: {
     height: 60,
-    backgroundColor: '#b197fc',
+    backgroundColor: '#E7E9EC',
     justifyContent: 'center',
-    padding: 10,
+    alignItems: 'center',
   },
   textHeader: {
     fontSize: 16,
-    color: '#FFF',
     alignItems: 'center',
+    fontWeight: 'bold',
   },
   icon: {
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'absolute',
-    top: -24,
-    right: 18,
-    width: 48,
-    height: 48,
-    zIndex: 1,
+    bottom: 2,
   },
-  iconBg: {
-    backgroundColor: '#2b8a3e',
-    position: 'absolute',
-    top: -24,
-    right: 18,
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    zIndex: 1,
+  slider: {
+    alignItems: 'stretch',
+    justifyContent: 'flex-start',
+    margin: 15,
+    paddingBottom: 10,
+  },
+  counterContainer: {
+    marginTop: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pageCounter: {
+    fontSize: 16,
+  },
+  contents: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 15,
+  },
+  contentsText: {
+    fontSize: 13,
   },
 });
 
@@ -74,35 +101,32 @@ function ZineDetailsScreen({ navigation, route }) {
     setCurrentValue(value);
     ref.setPage(value);
   };
-  const draggedValue = useRef(new Animated.Value(180)).current;
+  const draggedValue = useRef(new Animated.Value(0)).current;
   const draggableRange = { top: 670, bottom: 0 };
-  const { top } = draggableRange;
-
-  const backgoundOpacity = draggedValue.interpolate({
-    inputRange: [height - 48, height],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
-
-  const iconTranslateY = draggedValue.interpolate({
-    inputRange: [height - 56, height, top],
-    outputRange: [0, 56, 180 - 32],
-    extrapolate: 'clamp',
-  });
 
   const panel = useRef(null);
 
   return (
     <View style={styles.container}>
-      <Text>{title}</Text>
-      <Text>{date}</Text>
-      <Text onPress={() => panel.current.show(360)}>Table of Contents</Text>
-      <Button
-        title="Back to Zines"
-        onPress={() => {
-          navigation.navigate('Zines');
-        }}
-      />
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Zines');
+          }}
+        >
+          <Image
+            source={BackButton}
+            style={styles.backButton}
+          />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>{date}</Text>
+        <TouchableOpacity onPress={() => panel.current.show(300)}>
+          <Image
+            source={ThreeLines}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+      </View>
       <Pdf
         source={source}
         ref={(pdf) => { ref = pdf; }}
@@ -115,30 +139,32 @@ function ZineDetailsScreen({ navigation, route }) {
         }}
         style={styles.pdf}
       />
-      <Slider
-        value={currentValue}
-        minimumValue={1}
-        maximumValue={pages}
-        step={1}
-        minimumTrackTintColor="orange"
-        onSlidingComplete={(newSliderValue) => handleOnSliderChange(newSliderValue)}
-      />
+      <View style={styles.slider}>
+        <Slider
+          value={currentValue}
+          minimumValue={1}
+          maximumValue={pages}
+          step={1}
+          minimumTrackTintColor="orange"
+          onSlidingComplete={(newSliderValue) => handleOnSliderChange(newSliderValue)}
+        />
+        <View style={styles.counterContainer}>
+          <Text style={styles.pageCounter}>
+            {currentValue}
+            /
+            {pages}
+          </Text>
+        </View>
+      </View>
       <SlidingUpPanel
         ref={panel}
         draggableRange={draggableRange}
         animatedValue={draggedValue}
-        snappingPoints={[360]}
+        snappingPoints={[300]}
         height={height}
         friction={0.5}
       >
         <View style={styles.panel}>
-          <Animated.View
-            style={[styles.iconBg, {
-              opacity: backgoundOpacity,
-              transform: [{ translateY: iconTranslateY }],
-            },
-            ]}
-          />
           <View style={styles.panelHeader}>
             <Animated.View>
               <Text style={styles.textHeader}>Contents</Text>
@@ -146,9 +172,13 @@ function ZineDetailsScreen({ navigation, route }) {
           </View>
           <ScrollView>
             {contents.map((content) => (
-              <Button onPress={() => { handleOnSliderChange(content.sectionPage); }}>
-                {content.sectionTitle}
-              </Button>
+              <TouchableOpacity
+                style={styles.contents}
+                onPress={() => { handleOnSliderChange(content.sectionPage); }}
+              >
+                <Text style={styles.contentsText}>{content.sectionTitle}</Text>
+                <Text style={styles.contentsText}>{content.sectionPage}</Text>
+              </TouchableOpacity>
             ))}
           </ScrollView>
           <View />
