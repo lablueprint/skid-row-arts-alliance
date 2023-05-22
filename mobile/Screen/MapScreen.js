@@ -6,7 +6,11 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
+  Image,
 } from 'react-native';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { URL } from '@env';
@@ -23,13 +27,54 @@ const CARD_WIDTH = CARD_HEIGHT + 70;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    backgroundColor: 'white',
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    height: '30%',
+    paddingTop: 35,
+  },
+  headerText: {
     justifyContent: 'center',
-    elevation: 1,
+    marginLeft: 20,
+    fontFamily: 'MontserratSemiBold',
+    fontSize: 28,
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#424288',
+    borderRadius: 5,
+    alignSelf: 'center',
+    paddingHorizontal: 17,
+    paddingVertical: 7,
+    marginRight: 20,
+  },
+  filterImage: {
+    width: 16,
+    height: 16,
+  },
+  filterText: {
+    fontFamily: 'MontserratSemiBold',
+    color: '#424288',
+    marginLeft: 10,
+  },
+  mapContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  map: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
   scrollView: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 0,
     left: 0,
     right: 0,
     paddingVertical: 10,
@@ -59,6 +104,12 @@ function MapScreen({ navigation }) {
   const [tempAllResources, setTempAllResources] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
   const { authHeader } = useSelector((state) => state.auth);
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
 
   const getAllEvents = async () => {
     try {
@@ -259,22 +310,31 @@ function MapScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={() => onPressEvent()}>
-        <Text>
-          Filter
-        </Text>
-      </TouchableOpacity>
-      <MapView
-        ref={mapRef}
-        initialRegion={state.region}
-        style={styles.container}
-      >
-        <MapMarker
-          allCards={allCards}
-          interpolations={interpolations}
-          onMarkerPress={onMarkerPress}
-        />
-      </MapView>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Map</Text>
+        <TouchableOpacity onPress={() => onPressEvent()}>
+          <View style={styles.filterButton}>
+            <Image
+              source={require('../assets/map/filter.png')}
+              style={styles.filterImage}
+            />
+            <Text style={styles.filterText}>Filter</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.mapContainer}>
+        <MapView
+          ref={mapRef}
+          initialRegion={state.region}
+          style={styles.map}
+        >
+          <MapMarker
+            allCards={allCards}
+            interpolations={interpolations}
+            onMarkerPress={onMarkerPress}
+          />
+        </MapView>
+      </View>
       <Animated.ScrollView
         ref={scrollViewRef}
         horizontal
