@@ -6,7 +6,7 @@ const zineController = require('../controllers/zineController');
 zineRouter.post('/post', zineController.createZine);
 
 zineRouter.get('/get', zineController.getAllZines);
-zineRouter.get('/getZine/:id', zineController.getSpecificZine);
+zineRouter.get('/getzine/:id', zineController.getSpecificZine);
 
 zineRouter.patch('/update/:id', zineController.updateZine);
 

@@ -12,9 +12,9 @@ function GalleryPage() {
   const columns = [
     { field: 'Submission Title', width: 200 },
     { field: 'Uploader', width: 150 },
-    { field: 'Status' },
-    { field: 'Media Type' },
-    { field: 'Date' }];
+    { field: 'Status', width: 150 },
+    { field: 'Media Type', width: 200 },
+    { field: 'Date', width: 150 }];
 
   const getSubmissionData = async () => {
     const response = await axios.get('http://localhost:4000/submissions/getsubmissions');

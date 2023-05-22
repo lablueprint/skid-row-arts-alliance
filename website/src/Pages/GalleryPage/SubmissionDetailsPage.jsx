@@ -61,8 +61,6 @@ function SubmissionDetailsPage() {
     getSubmissionDetails();
   }, [update]);
 
-  // TODO: tag additions for a post
-
   const handleEditCancel = () => {
     setTitle(details.title);
     setDescription(details.description);
@@ -71,11 +69,10 @@ function SubmissionDetailsPage() {
 
   const handleEditSave = async () => {
     // TODO: pop up message for the approval or switching of status
-    const response = await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
+    await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
       title,
       description,
     });
-    console.log(response);
     setUpdate((val) => val + 1);
     setEdit(false);
   };
@@ -85,11 +82,10 @@ function SubmissionDetailsPage() {
     if (action === 'Reject') {
       formatStatus = 'Rejected';
     }
-    const response = await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
+    await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
       status: formatStatus,
       comments,
     });
-    console.log(response);
     setChange(false);
   };
 
@@ -105,19 +101,18 @@ function SubmissionDetailsPage() {
     if (action === 'Reject') {
       formatStatus = 'Rejected';
     }
-    const response = await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
+    await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
       title,
       description,
       status: formatStatus,
       comments,
     });
-    console.log(response);
     setUpdate((val) => val + 1);
     setChange(false);
   };
 
   return (
-    <Box>
+    <Box sx={{ display: 'flex' }}>
       <Box>
         <Box>
           <Typography>

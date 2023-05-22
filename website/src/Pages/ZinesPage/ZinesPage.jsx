@@ -9,8 +9,8 @@ function ZinesPage() {
   const [zines, setZines] = useState([]);
 
   const getZines = async () => {
-    const response = await axios.get('http://localhost:4000/zine/get');
-    setZines(response.data);
+    const allZines = await axios.get('http://localhost:4000/zine/get');
+    setZines(allZines.data);
   };
 
   useEffect(() => {

@@ -16,6 +16,10 @@ const zineSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  title: {
+    required: true,
+    type: String,
+  },
   season: {
     required: true,
     type: String,
