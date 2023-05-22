@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { URL } from '@env';
 import {
-  useFonts, Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold, Montserrat_500Medium 
+  useFonts, Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold, Montserrat_500Medium,
 } from '@expo-google-fonts/montserrat';
 import axios from 'axios';
 import {
@@ -417,7 +417,7 @@ function EditProfileScreen({
     getUserData();
   }, []);
 
-  return(
+  return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Pressable style={styles.cancelButtonHeader} onPress={handleCancelHeader}>
@@ -431,8 +431,9 @@ function EditProfileScreen({
       <ScrollView>
         <View style={styles.row}>
           <Pressable onPress={handleAvatarChange}>
-            <ImageBackground source={{ uri: 'https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' }}
-              resizeMode='cover'
+            <ImageBackground
+              source={{ uri: 'https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' }}
+              resizeMode="cover"
               style={styles.avatar}
             />
             <View style={styles.overlay} />
@@ -446,33 +447,36 @@ function EditProfileScreen({
         <View style={styles.nameRowContainer}>
           <View style={styles.nameContainer}>
             <TextInput
-                multiline={false}
-                value={currFirstName}
-                onChangeText={handleFirstNameChange}
-                placeholder="Enter first name..."
-                style={styles.nameTextInput}
-              />
+              multiline={false}
+              value={currFirstName}
+              onChangeText={handleFirstNameChange}
+              placeholder="Enter first name..."
+              style={styles.nameTextInput}
+            />
           </View>
           <View style={styles.nameContainer}>
             <TextInput
-                multiline={false}
-                value={currLastName}
-                onChangeText={handleLastNameChange}
-                placeholder="Enter last name..."
-                style={styles.nameTextInput}
-              />
+              multiline={false}
+              value={currLastName}
+              onChangeText={handleLastNameChange}
+              placeholder="Enter last name..."
+              style={styles.nameTextInput}
+            />
           </View>
         </View>
         <Text style={styles.bioText}>Bio</Text>
         <View style={styles.bioContainer}>
           <TextInput
-            multiline={true}
+            multiline
             value={currBio}
             onChangeText={handleBioChange}
             placeholder="Enter bio..."
             style={styles.bioTextInput}
           />
-          <Text style={styles.wordCount}>{wordCount}/150 words</Text>
+          <Text style={styles.wordCount}>
+            {wordCount}
+            /150 words
+          </Text>
         </View>
         <Text style={styles.sociaMediaHandlesText}>Social Media Handles</Text>
         <View style={styles.socialMediaContainer}>
@@ -526,7 +530,7 @@ function EditProfileScreen({
         <Pressable style={styles.deleteAccountButton} onPress={handleDelete}>
           <Text style={styles.cancelText}>Delete Account</Text>
         </Pressable>
-        <Modal visible={showModal} animationType="slide" transparent={true}>
+        <Modal visible={showModal} animationType="slide" transparent>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
@@ -543,7 +547,7 @@ function EditProfileScreen({
         </Modal>
       </ScrollView>
     </View>
-	)
+  );
 }
 
 export default EditProfileScreen;
