@@ -17,6 +17,7 @@ import ResourceDetailScreen from '../Screen/ResourceDetailScreen';
 import OrganizationDetailScreen from '../Screen/OrganizationDetailScreen';
 import MapFilter from '../Screen/MapFilter';
 import { isTokenExpired } from '../redux/sliceAuth';
+import MapFilter from '../Screen/MapFilter';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
