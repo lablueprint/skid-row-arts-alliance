@@ -1,22 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet, TextInput, Text, View, ScrollView, Button, Image,
-  Modal, TouchableWithoutFeedback, PanResponder, Animated, Dimensions, TouchableOpacity,
+  Modal, TouchableWithoutFeedback, PanResponder, Animated, Dimensions, TouchableOpacity, Alert,
+  Video,
 } from 'react-native';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
+import VideoPlayer from 'expo-video-player';
+
+import Icon from 'react-native-vector-icons/Feather';
+
+import PropTypes from 'prop-types';
 
 import { URL } from '@env';
+import AudioPlayer from '../Components/AudioPlayer';
+
+const audioIcon = require('../assets/audioIcon.png');
+const cameraIcon = require('../assets/camera.png');
+const cameraRollIcon = require('../assets/cameraRoll.png');
+const fileSelectorIcon = require('../assets/fileSelector.png');
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 10,
+    minHeight: '100%',
   },
   scrollView: {
     marginHorizontal: 20,
@@ -43,14 +54,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0)',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   modalContentContainer: {
     backgroundColor: 'white',
     width: '100%',
-    padding: 16,
+    heigth: '100%',
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   modalTitle: {
     fontSize: 24,
@@ -61,40 +74,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 16,
   },
-  selectedTagBtn: {
-    backgroundColor: '#4c4c9b',
-    padding: 10,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#4c4c9b',
-    alignSelf: 'center',
-  },
-  unselectedTagBtn: {
-    backgroundColor: '#ffffff',
-    padding: 10,
-    borderRadius: 20,
+  tagBtn: {
+    padding: '2.75%',
+    paddingHorizontal: '7.5%',
+    borderRadius: 50,
     borderWidth: 1,
     borderColor: 'black',
     alignSelf: 'center',
+    marginTop: '2.5%',
+    marginRight: '2.5%',
   },
 });
 
-function SubmissionScreen() {
-  const [submissions, setSubmissions] = useState([]);
-
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [platform, setPlatform] = useState('');
-  const [accountTag, setAccountTag] = useState('');
+function SubmissionScreen({ navigation }) {
   const [artworkTitle, setArtworkTitle] = useState('');
   const [description, setDescription] = useState('');
   const [page, setPage] = useState('upload');
 
-  const nameRef = useRef();
-  const emailRef = useRef();
-  const platformRef = useRef();
-  const accountRef = useRef();
-  const artworkRef = useRef();
+  const titleRef = useRef();
   const descriptionRef = useRef();
 
   const [files, setFiles] = useState([]);
@@ -102,10 +99,31 @@ function SubmissionScreen() {
   const [tags, setTags] = useState([]);
   const [confirmedTags, setConfirmedTags] = useState([]);
 
+  const [preview, setPreview] = useState('none');
+  const [previewFile, setPreviewFile] = useState(null);
+  const [aspectRatio, setAspectRatio] = useState(1);
+
+  const closePreview = () => {
+    setPreview('none');
+    setPreviewFile(null);
+    setAspectRatio(1);
+  };
+
   const tagOptions = {
-    audio: ['music', 'poetry', 'storytelling'],
-    image: ['photography', 'illustration', 'digital art', 'graphic design', 'traditional art'],
-    video: ['short film', 'performance', 'music video'],
+    Image: ['traditional art', 'illustration', 'photography', 'graphic design', 'digital art'],
+    Audio: ['music', 'poetry', 'speech'],
+    Video: ['short film', 'performance', 'music video'],
+  };
+
+  const alertLimit = () => {
+    Alert.alert(
+      'Maximum upload size',
+      'You may only upload up to 5 files per submission!',
+      [
+        { text: 'OK' },
+      ],
+      { cancelable: false },
+    );
   };
 
   const [popup, setPopup] = useState(false);
@@ -113,6 +131,10 @@ function SubmissionScreen() {
     setPopup(false);
   };
   const openPopup = () => {
+    if (files.length >= 5) {
+      alertLimit();
+      return;
+    }
     setPopup(true);
   };
   const windowHeight = Dimensions.get('window').height;
@@ -127,11 +149,9 @@ function SubmissionScreen() {
       }
     },
     onPanResponderRelease: (_, { dy }) => {
-      if (dy >= 160) {
-        // Close modal if dragged down by at least 100 units
+      if (dy >= 200) {
         closePopup();
       } else {
-        // Reset modal position if not dragged down enough
         Animated.spring(panY, {
           toValue: 0,
           useNativeDriver: true,
@@ -150,6 +170,11 @@ function SubmissionScreen() {
     setDescription('');
     setFiles([]);
     setThumbnails([]);
+  };
+
+  const openPreview = (file, type) => {
+    setPreviewFile(file);
+    setPreview(type);
   };
 
   const getType = (uri, fileType) => {
@@ -172,10 +197,12 @@ function SubmissionScreen() {
   };
 
   const submit = async () => {
+    if (files.length < 1) return; // Need at least one fight
+
     let thumbnailExists = true;
     const filesToSubmit = [];
     files.forEach((f) => filesToSubmit.push(f));
-    if (thumbnails.length > 0) {
+    if (thumbnails[0] !== 'default') {
       filesToSubmit.push({ uri: thumbnails[0], type: 'image/jpg' });
     } else {
       thumbnailExists = false;
@@ -199,11 +226,11 @@ function SubmissionScreen() {
 
     try {
       const res = await axios.post(`${URL}/submissions/post`, {
-        name,
-        email,
+        name: 'Ryan',
+        email: 'ryanswkim2003@gmail.com',
         socials: {
-          platform,
-          tag: accountTag,
+          platform: 'Instagram',
+          tag: '@rkim',
         },
         title: artworkTitle,
         description,
@@ -211,7 +238,7 @@ function SubmissionScreen() {
         thumbnailExists,
         tags: confirmedTags,
       });
-      setSubmissions((prev) => ([...prev, res.data]));
+      console.log(res);
       clearInput();
     } catch (err) {
       console.error(err);
@@ -219,6 +246,13 @@ function SubmissionScreen() {
   };
 
   const addFile = async (fileURI, fileType) => {
+    if (files.length >= 5) {
+      alertLimit();
+      return;
+    }
+    if (files.length >= 4) {
+      setPopup(false);
+    }
     if (fileType.includes('image')) {
       setFiles((prev) => ([...prev, { uri: fileURI, type: Array.from(new Set(fileType.split('/'))).join('/') }]));
       setThumbnails((prev) => ([...prev, fileURI]));
@@ -231,16 +265,36 @@ function SubmissionScreen() {
         console.error(err);
       }
     } else { // Implement default thumbnail in future if we have additional file types (e.g. audio)
-      console.log('Default');
       setFiles((prev) => ([...prev, { uri: fileURI, type: Array.from(new Set(fileType.split('/').filter((type) => type !== 'mp4'))).join('/') }]));
+      setThumbnails((prev) => ([...prev, 'default']));
     }
   };
 
+  const removeFile = (uri) => {
+    const idx = thumbnails.indexOf(uri);
+    setThumbnails(thumbnails.filter((_, i) => i !== idx));
+    setFiles(files.filter((_, i) => i !== idx));
+  };
+
+  const removeAudioFile = (uri) => {
+    for (let i = 0; i < files.length; i += 1) {
+      if (files[i].uri === uri) {
+        setFiles(files.filter((_, j) => i !== j));
+        setThumbnails(thumbnails.filter((_, j) => i !== j));
+        return;
+      }
+    }
+    console.error('File to be removed not found!');
+  };
+
   const pickImage = async () => {
+    if (files.length >= 5) {
+      alertLimit();
+      return;
+    }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
     });
 
@@ -251,6 +305,10 @@ function SubmissionScreen() {
   };
 
   const openCamera = async () => {
+    if (files.length >= 5) {
+      alertLimit();
+      return;
+    }
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
 
     if (permissionResult.granted === false) {
@@ -260,7 +318,6 @@ function SubmissionScreen() {
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
     });
 
@@ -271,6 +328,10 @@ function SubmissionScreen() {
   };
 
   const openFileSelector = async () => {
+    if (files.length >= 5) {
+      alertLimit();
+      return;
+    }
     const result = await DocumentPicker.getDocumentAsync({
       multiple: true,
       copyToCacheDirectory: true,
@@ -281,33 +342,389 @@ function SubmissionScreen() {
     }
   };
 
-  const getSubmissions = async () => {
-    const result = await axios.get(`${URL}/submissions/get`);
-    setSubmissions(result.data);
-  };
-
-  useEffect(() => {
-    getSubmissions();
-  }, []);
-
   if (page === 'upload') {
-    return (
-      <ScrollView>
-        <View style={styles.container}>
-          <View>
-            <Button title="<" onPress={() => { console.log('Back'); }} />
-            <Button title="Upload" onPress={openPopup} />
-            <Button title="Clear Selections" onPress={clearInput} />
-            <Button title="Next" onPress={() => { setPage('fields'); }} />
+    const images = [];
+    const imageLabels = [];
+    const videos = [];
+    const videoLabels = [];
+    const audios = [];
+    files.forEach((f, i) => {
+      if (f.type.includes('image')) {
+        images.push(thumbnails[i]);
+        imageLabels.push(f.uri);
+      } else if (f.type.includes('video')) {
+        videos.push(thumbnails[i]);
+        videoLabels.push(f.uri);
+      } else {
+        audios.push(f);
+      }
+    });
 
-            {thumbnails.map((uri) => (
+    let previewDisplay = '';
+    if (previewFile !== null) {
+      if (preview === 'image') {
+        Image.getSize(previewFile, (width, height) => {
+          setAspectRatio(width / height);
+        });
+        previewDisplay = (
+          <TouchableWithoutFeedback onPress={closePreview}>
+            <View style={{
+              zIndex: 3,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              height: '100%',
+            }}
+            >
               <Image
-                source={{ uri }}
-                key={uri}
-                style={{ width: 200, height: 200 }}
+                source={{ uri: previewFile }}
+                style={{
+                  width: '87.5%',
+                  aspectRatio,
+                  maxHeight: '90%',
+                  borderRadius: 30,
+                  backgroundColor: 'white',
+                }}
               />
-            ))}
+            </View>
+          </TouchableWithoutFeedback>
+        );
+      } else if (preview === 'video') {
+        previewDisplay = (
+          <TouchableWithoutFeedback onPress={closePreview}>
+            <View style={{
+              zIndex: 3,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+              height: '100%',
+            }}
+            >
+              <View style={{
+                width: '66.5%', maxHeight: '50%', backgroundColor: 'red', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+              >
+                <VideoPlayer
+                  videoProps={{
+                    shouldPlay: true,
+                    source: {
+                      uri: files[thumbnails.indexOf(previewFile)].uri,
+                    },
+                  }}
+                />
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        );
+      } else {
+        previewDisplay = (
+          <View style={{
+            backgroundColor: 'white',
+            zIndex: 3,
+            width: '87.5%',
+            aspectRatio: 2,
+            padding: '5%',
+            paddingTop: '7.5%',
+            borderRadius: 10,
+          }}
+          >
+            <AudioPlayer source={previewFile} />
           </View>
+        );
+      }
+    }
+
+    return (
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ width: '100%' }}>
+          <View style={{
+            paddingTop: '9%',
+            paddingBottom: '19%',
+            paddingHorizontal: '4%',
+            flex: 1,
+          }}
+          >
+            <View style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              width: '100%',
+            }}
+            >
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  backgroundColor: '#fff',
+                  zIndex: 100,
+                }}
+                onPress={() => { navigation.navigate('Gallery'); }}
+              >
+                <Icon name="chevron-left" size={30} color="black" />
+              </TouchableOpacity>
+              <Text style={{
+                flexGrow: 1,
+                flexShrink: 1,
+                textAlign: 'center',
+                fontSize: 21,
+              }}
+              >
+                Content Uploaded
+              </Text>
+            </View>
+
+            <Text style={{
+              marginTop: '4%',
+              fontSize: 16,
+              fontWeight: '300',
+              color: '#444',
+            }}
+            >
+              Review files
+              to upload for submission.
+            </Text>
+
+            <TouchableOpacity
+              onPress={openPopup}
+              style={{
+                marginTop: '5%',
+                padding: '1.5%',
+                width: '50%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderColor: '#4c4c9b',
+                borderWidth: 1,
+                borderRadius: 5,
+              }}
+            >
+              <Text style={{
+                color: '#4c4c9b',
+                fontSize: 18,
+                fontWeight: '600',
+                paddingVertical: '1.5%',
+              }}
+              >
+                +   Add Content
+              </Text>
+            </TouchableOpacity>
+
+            {images.length > 0 ? (
+              <View>
+                <Text style={{
+                  paddingBottom: '1.5%',
+                  marginTop: '5%',
+                  marginBottom: '1%',
+                  fontSize: 18,
+                  fontWeight: '500',
+                  borderBottomWidth: 1,
+                  borderColor: '#999',
+                }}
+                >
+                  Images
+                </Text>
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  {images.map((uri, i) => (
+                    <View style={{
+                      width: '48%',
+                      marginTop: '4%',
+                    }}
+                    >
+                      <ThumbnailDisplay
+                        key={uri}
+                        uri={uri}
+                        remove={removeFile}
+                        preview={() => { openPreview(uri, 'image'); }}
+                      />
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          marginTop: '5%',
+                          fontSize: 16,
+                          fontWeight: '300',
+                          maxWidth: '96%',
+                        }}
+                      >
+                        {imageLabels[i]}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            ) : ''}
+
+            {videos.length > 0 ? (
+              <View>
+                <Text style={{
+                  paddingBottom: '1.5%',
+                  marginTop: '5%',
+                  marginBottom: '1%',
+                  fontSize: 18,
+                  fontWeight: '500',
+                  borderBottomWidth: 1,
+                  borderColor: '#999',
+                }}
+                >
+                  Videos
+                </Text>
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  {videos.map((uri, i) => (
+                    <View style={{
+                      width: '48%',
+                      marginTop: '4%',
+                    }}
+                    >
+                      <ThumbnailDisplay
+                        key={uri}
+                        uri={uri}
+                        remove={removeFile}
+                        preview={() => { openPreview(uri, 'video'); }}
+                      />
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          marginTop: '5%',
+                          fontSize: 16,
+                          fontWeight: '300',
+                          maxWidth: '96%',
+                        }}
+                      >
+                        {videoLabels[i]}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            ) : ''}
+
+            {audios.length > 0 ? (
+              <View>
+                <Text style={{
+                  paddingBottom: '1.5%',
+                  marginTop: '5%',
+                  marginBottom: '1%',
+                  fontSize: 18,
+                  fontWeight: '500',
+                  borderBottomWidth: 1,
+                  borderColor: '#999',
+                }}
+                >
+                  Audio
+                </Text>
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    marginTop: '1%',
+                  }}
+                >
+                  {audios.map((file, i) => (
+                    /* eslint-disable react/no-array-index-key */
+                    <TouchableOpacity onPress={() => { openPreview(file.uri, 'audio'); }} activeOpacity={0.6}>
+                      <View
+                        key={`${file}${i}`}
+                        style={{
+                          width: '100%',
+                          backgroundColor: '#ccc',
+                          paddingHorizontal: '3%',
+                          paddingVertical: '2.5%',
+                          marginTop: '3%',
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          borderRadius: 10,
+                        }}
+                      >
+                        <Image
+                          source={audioIcon}
+                          style={{
+                            width: '9%',
+                            aspectRatio: 1,
+                          }}
+                        />
+                        <Text
+                          numberOfLines={1}
+                          style={{
+                            fontSize: 18,
+                            fontWeight:
+                            '500',
+                            marginLeft: '6%',
+                            maxWidth: '80%',
+                          }}
+                        >
+                          {file.uri}
+                        </Text>
+                        <TouchableWithoutFeedback onPress={() => { removeAudioFile(file.uri); }}>
+                          <View style={{
+                            position: 'absolute',
+                            right: '4%',
+                          }}
+                          >
+                            <Icon name="x" size={28} color="black" />
+                          </View>
+                        </TouchableWithoutFeedback>
+                      </View>
+                    </TouchableOpacity>
+
+                  ))}
+                </View>
+              </View>
+            ) : ''}
+
+          </View>
+
+          <Modal
+            transparent
+            visible={preview !== 'none' && previewFile !== null}
+            onRequestClose={closePreview}
+          >
+            <TouchableWithoutFeedback onPress={closePreview}>
+              <View style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                width: '100%',
+                height: '100%',
+                zIndex: 2,
+              }}
+              />
+            </TouchableWithoutFeedback>
+            <View style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              position: 'absolute',
+            }}
+            >
+              {previewDisplay}
+            </View>
+          </Modal>
+
+          <Modal
+            transparent
+            visible={popup}
+            onRequestClose={closePopup}
+          >
+            <TouchableWithoutFeedback onPress={() => { console.log(1); }} style={{ zIndex: 1000 }}>
+              <View style={styles.modalContainer} />
+            </TouchableWithoutFeedback>
+          </Modal>
           <Modal
             animationType="slide"
             transparent
@@ -315,156 +732,675 @@ function SubmissionScreen() {
             onRequestClose={closePopup}
           >
             <TouchableWithoutFeedback onPress={closePopup}>
-              <View style={styles.modalContainer}>
+              <View style={{
+                flex: 1,
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+              }}
+              >
                 <Animated.View
                   style={[
                     styles.modalContentContainer,
                     {
                       transform: [{ translateY: panY }],
+
                     },
                   ]}
                   {...panResponder.panHandlers}
                 >
-                  <Text style={styles.modalTitle}>Art Submission</Text>
-                  <Text style={styles.modalText}>
-                    Attach content to your
-                    submission by tapping an option below!
-                  </Text>
-                  <Text style={styles.modalText}>
-                    * Acceptable content types
-                    include mp3, jpg, etc blah blah
-                  </Text>
-                  <Button title="Camera Roll" onPress={pickImage} />
-                  <Button title="Use Camera" onPress={openCamera} />
-                  <Button title="File Selector" onPress={openFileSelector} />
+                  <TouchableOpacity
+                    style={{
+                      position: 'absolute',
+                      zIndex: 100,
+                      right: '4.5%',
+                      top: '7%',
+                    }}
+                    onPress={closePopup}
+                  >
+                    <Icon name="x" size={28} color="black" />
+                  </TouchableOpacity>
+                  <View style={{
+                    width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', top: '7%',
+                  }}
+                  >
+                    <Text style={{ fontSize: 24 }}>Art Submission</Text>
+                  </View>
+                  <View style={{
+                    width: '75%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '13.5%',
+                  }}
+                  >
+                    <Text style={{
+                      fontSize: 16.5, fontWeight: '300', width: '100%',
+                    }}
+                    >
+                      Attach content to your
+                      submission by tapping an option below!
+                    </Text>
+                  </View>
+
+                  <View style={{
+                    width: '75%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                  >
+                    <Text style={{
+                      fontSize: 16.5, fontWeight: '300', marginTop: '5%', width: '100%', fontStyle: 'italic', color: '#444',
+                    }}
+                    >
+                      *Acceptable content types include png, jpg, jpeg, mp3, m4a, mp4, mov
+                    </Text>
+                  </View>
+
+                  <View style={{
+                    marginTop: '10%',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    paddingHorizontal: '10%',
+                    paddingVertical: '5%',
+                    borderTopColor: '#4C4C9B',
+                    borderTopWidth: 0.5,
+                    width: '100%',
+                  }}
+                  >
+                    <View style={{
+                      width: '30%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                    >
+                      <TouchableOpacity
+                        onPress={openCamera}
+                        style={{
+                          backgroundColor: '#D0D0E8',
+                          padding: '8.5%',
+                          borderRadius: 1000,
+                          width: '55%',
+                          aspectRatio: 1,
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Image
+                          source={cameraIcon}
+                          style={{
+                            width: '80%',
+                            height: '80%',
+                            aspectRatio: 1,
+                          }}
+                        />
+                      </TouchableOpacity>
+                      <Text style={{
+                        color: '#424288',
+                        marginTop: '5%',
+                        fontSize: 17,
+                        fontWeight: '500',
+                        textAlign: 'center',
+                      }}
+                      >
+                        {'Take Photo'.replace(/ /g, '\n')}
+                      </Text>
+                    </View>
+
+                    <View style={{
+                      width: '30%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                    >
+                      <TouchableOpacity
+                        onPress={pickImage}
+                        style={{
+                          backgroundColor: '#D0D0E8',
+                          padding: '8.5%',
+                          borderRadius: 1000,
+                          width: '55%',
+                          aspectRatio: 1,
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Image
+                          source={cameraRollIcon}
+                          style={{
+                            width: '80%',
+                            height: '80%',
+                            aspectRatio: 1,
+                          }}
+                        />
+                      </TouchableOpacity>
+                      <Text style={{
+                        color: '#424288',
+                        marginTop: '5%',
+                        fontSize: 17,
+                        fontWeight: '500',
+                        textAlign: 'center',
+                      }}
+                      >
+                        {'Camera Roll'.replace(/ /g, '\n')}
+                      </Text>
+                    </View>
+
+                    <View style={{
+                      width: '30%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                    >
+                      <TouchableOpacity
+                        onPress={openFileSelector}
+                        style={{
+                          backgroundColor: '#D0D0E8',
+                          padding: '8.5%',
+                          borderRadius: 1000,
+                          width: '55%',
+                          aspectRatio: 1,
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Image
+                          source={fileSelectorIcon}
+                          style={{
+                            width: '80%',
+                            height: '80%',
+                            aspectRatio: 1,
+                          }}
+                        />
+                      </TouchableOpacity>
+                      <Text style={{
+                        color: '#424288',
+                        marginTop: '5%',
+                        fontSize: 17,
+                        fontWeight: '500',
+                        textAlign: 'center',
+                      }}
+                      >
+                        {'Attach File'.replace(/ /g, '\n')}
+                      </Text>
+                    </View>
+
+                    {/* <Button title="Camera Roll" onPress={pickImage} />
+                    <Button title="Use Camera" onPress={openCamera} />
+                    <Button title="File Selector" onPress={openFileSelector} /> */}
+                  </View>
                 </Animated.View>
               </View>
             </TouchableWithoutFeedback>
           </Modal>
+        </ScrollView>
+        <View style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '99%',
+          padding: '4%',
+          paddingRight: '3%',
+          paddingBottom: '5%',
+          backgroundColor: 'white',
+        }}
+        >
+          <TouchableOpacity
+            style={{
+              width: '100%',
+              backgroundColor: '#4c4c9b',
+              borderColor: '#4c4c9b',
+              borderWidth: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '2.5%',
+              borderRadius: 5,
+            }}
+            onPress={() => {
+              if (files.length === 0) {
+                Alert.alert(
+                  'Please upload a file',
+                  'You need to upload at least one file to continue!',
+                  [
+                    { text: 'OK' },
+                  ],
+                  { cancelable: false },
+                );
+                return;
+              }
+              setPage('fields');
+            }}
+          >
+            <Text style={{
+              color: 'white',
+              fontSize: 17,
+              fontWeight: '500',
+            }}
+            >
+              Next
+
+            </Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
     );
   } if (page === 'fields') {
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          <Button title="<" onPress={() => { setPage('upload'); }} />
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ width: '100%' }}>
+          <View style={{
+            paddingTop: '9%',
+            paddingBottom: '19%',
+            paddingHorizontal: '4%',
+            flex: 1,
+          }}
+          >
+            <View style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              width: '100%',
+            }}
+            >
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  backgroundColor: '#fff',
+                  zIndex: 100,
+                }}
+                onPress={() => { setPage('upload'); }}
+              >
+                <Icon name="chevron-left" size={30} color="black" />
+              </TouchableOpacity>
+              <Text style={{
+                flexGrow: 1, flexShrink: 1, textAlign: 'center', fontSize: 21,
+              }}
+              >
+                Submit your art!
+              </Text>
+            </View>
 
-          <TextInput
-            styles={styles.input}
-            placeholder="Name"
-            onChangeText={(newName) => setName(newName)}
-            defaultValue={name}
-            returnKeyType="next"
-            ref={nameRef}
-            onSubmitEditing={() => { emailRef.current.focus(); }}
-          />
-          <TextInput
-            styles={styles.input}
-            placeholder="Email"
-            onChangeText={(newEmail) => setEmail(newEmail)}
-            defaultValue={email}
-            returnKeyType="next"
-            ref={emailRef}
-            onSubmitEditing={() => { platformRef.current.focus(); }}
-          />
-          <TextInput
-            styles={styles.input}
-            placeholder="Social Media Platform"
-            onChangeText={(newPlatform) => setPlatform(newPlatform)}
-            defaultValue={platform}
-            returnKeyType="next"
-            ref={platformRef}
-            onSubmitEditing={() => { accountRef.current.focus(); }}
-          />
-          <TextInput
-            styles={styles.input}
-            placeholder="Social Media Account Tag"
-            onChangeText={(newEmail) => setAccountTag(newEmail)}
-            defaultValue={accountTag}
-            returnKeyType="next"
-            ref={accountRef}
-            onSubmitEditing={() => { artworkRef.current.focus(); }}
-          />
-          <TextInput
-            styles={styles.input}
-            placeholder="Artwork Title"
-            onChangeText={(newArtwork) => setArtworkTitle(newArtwork)}
-            defaultValue={artworkTitle}
-            returnKeyType="next"
-            ref={artworkRef}
-            onSubmitEditing={() => { descriptionRef.current.focus(); }}
-          />
-          <TextInput
-            styles={styles.input}
-            placeholder="Artwork Description"
-            onChangeText={(newDescription) => setDescription(newDescription)}
-            defaultValue={description}
-            returnKeyType="next"
-            ref={descriptionRef}
-            onSubmitEditing={() => { nameRef.current.focus(); }}
-          />
-          <Button title="+ Add Tags" onPress={() => { setPage('tags'); }} />
+            <View style={{
+              width: '100%',
+              marginTop: '7.5%',
+            }}
+            >
+              <Text style={{
+                fontSize: 18,
+                fontWeight: '500',
+              }}
+              >
+                Title
 
-          <Button
-            title="Submit"
-            onPress={submit}
-          />
+              </Text>
+              <TextInput
+                maxLength={40}
+                style={{
+                  backgroundColor: '#f2f2f2',
+                  borderRadius: 10,
+                  borderColor: '#ddd',
+                  borderWidth: 1,
+                  marginTop: '3%',
+                  padding: '2%',
+                  paddingHorizontal: '5%',
+                  fontSize: 16,
+                  color: '#888',
+                }}
+                value={artworkTitle}
+                onChangeText={(e) => { setArtworkTitle(e); }}
+              />
+            </View>
+
+            <View style={{
+              width: '100%',
+              marginTop: '7.5%',
+            }}
+            >
+              <Text style={{
+                fontSize: 18,
+                fontWeight: '500',
+              }}
+              >
+                Description
+              </Text>
+              <TextInput
+                style={{
+                  textAlignVertical: 'top',
+                  backgroundColor: '#f2f2f2',
+                  height: 175,
+                  marginTop: '3%',
+                  padding: '4%',
+                  paddingHorizontal: '5%',
+                  borderRadius: 10,
+                  borderColor: '#ddd',
+                  borderWidth: 1,
+                  fontSize: 16,
+                  color: '#888',
+                }}
+                multiline
+                maxLength={320}
+                value={description}
+                onChangeText={(e) => { setDescription(e); }}
+              />
+            </View>
+
+            <View style={{
+              width: '100%',
+              marginTop: '7.5%',
+            }}
+            >
+              <Text style={{
+                fontSize: 18,
+                fontWeight: '500',
+              }}
+              >
+                Tags
+              </Text>
+              <TouchableOpacity
+                onPress={() => { setPage('tags'); }}
+                style={{
+                  marginTop: '3%',
+                  padding: '1.5%',
+                  width: '50%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderColor: '#4c4c9b',
+                  borderWidth: 1,
+                  borderRadius: 5,
+                }}
+              >
+                <Text style={{
+                  color: '#4c4c9b',
+                  fontSize: 18,
+                  fontWeight: '600',
+                }}
+                >
+                  +   Add Tags
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+          </View>
+
+        </ScrollView>
+        <View style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '99%',
+          padding: '4%',
+          paddingRight: '3%',
+          paddingBottom: '5%',
+          backgroundColor: 'white',
+        }}
+        >
+          <TouchableOpacity
+            style={{
+              width: '100%',
+              backgroundColor: '#4c4c9b',
+              borderColor: '#4c4c9b',
+              borderWidth: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '2.5%',
+              borderRadius: 5,
+            }}
+            onPress={() => {
+              if (files.length === 0) return;
+              setPage('fields');
+            }}
+          >
+            <Text style={{
+              color: 'white',
+              fontSize: 17,
+              fontWeight: '500',
+            }}
+            >
+              Submit
+
+            </Text>
+          </TouchableOpacity>
         </View>
-      </ScrollView>
+      </View>
     );
   } if (page === 'tags') {
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          <Button
-            title="<"
-            style={styles.selectedTagBtn}
-            onPress={() => {
-              setTags(confirmedTags);
-              setPage('fields');
+      <View style={styles.container}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ width: '100%' }}>
+          <View style={{
+            paddingTop: '9%',
+            paddingBottom: '19%',
+            flex: 1,
+          }}
+          >
+            <View style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              width: '100%',
+              paddingHorizontal: '4%',
             }}
-          />
-          {Object.keys(tagOptions).map((category) => (
-            <View key={category}>
-              <Text>{category}</Text>
-              {tagOptions[category].map((option) => (
-                <TouchableOpacity
-                  key={option}
-                  activeOpacity={1}
-                  style={tags.includes(option) ? styles.selectedTagBtn : styles.unselectedTagBtn}
-                  onPress={() => {
-                    if (tags.includes(option)) {
-                      setTags(tags.filter((tag) => tag !== option));
-                    } else {
-                      setTags((prev) => ([...prev, option]));
-                    }
-                  }}
-                >
-                  <Text style={{ color: tags.includes(option) ? 'white' : 'black' }}>{option}</Text>
-                </TouchableOpacity>
-              ))}
+            >
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  backgroundColor: '#fff',
+                  zIndex: 100,
+                }}
+                onPress={() => {
+                  setTags(confirmedTags);
+                  setPage('fields');
+                }}
+              >
+                <Icon name="chevron-left" size={30} color="black" />
+              </TouchableOpacity>
+              <Text style={{
+                flexGrow: 1,
+                flexShrink: 1,
+                textAlign: 'center',
+                fontSize: 21,
+              }}
+              >
+                Add Tags
+              </Text>
             </View>
-          ))}
 
-          <Button
-            title="Clear All"
-            onPress={() => {
-              setTags([]);
+            {Object.keys(tagOptions).map((category) => (
+              <View
+                key={category}
+                style={{
+                  width: '100%',
+                  marginTop: '7.5%',
+                  paddingHorizontal: '4%',
+                }}
+              >
+                <Text style={{
+                  fontSize: 22,
+                  fontWeight: '400',
+                  marginBottom: '3%',
+                }}
+                >
+                  {category}
+
+                </Text>
+                <View style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'flex-start',
+                  width: '100%',
+                }}
+                >
+                  {tagOptions[category].map((option) => (
+                    <TouchableOpacity
+                      key={option}
+                      activeOpacity={1}
+                      style={[styles.tagBtn, tags.includes(option) ? { backgroundColor: '#4c4c9b', borderColor: '#4c4c9b' } : { backgroundColor: '#fff' }]}
+                      onPress={() => {
+                        if (tags.includes(option)) {
+                          setTags(tags.filter((tag) => tag !== option));
+                        } else {
+                          setTags((prev) => ([...prev, option]));
+                        }
+                      }}
+                    >
+                      <Text style={[{ fontSize: 17 }, tags.includes(option) ? { color: 'white' } : { color: 'black' }]}>{option}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            ))}
+
+            <View style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              padding: '4%',
+              paddingRight: '3%',
+              paddingBottom: '5%',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              backgroundColor: 'white',
             }}
-          />
-          <Button
-            title="Apply"
-            onPress={() => {
-              setConfirmedTags(tags);
-              setPage('fields');
-            }}
-          />
-        </View>
-      </ScrollView>
+            >
+              <TouchableOpacity
+                style={{
+                  width: '48%',
+                  backgroundColor: 'white',
+                  borderColor: '#4c4c9b',
+                  borderWidth: 1,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  padding: '2.5%',
+                  borderRadius: 5,
+                }}
+                onPress={() => {
+                  setTags([]);
+                }}
+              >
+                <Text style={{
+                  color: '#4c4c9b',
+                  fontSize: 17,
+                  fontWeight: '600',
+                }}
+                >
+                  Clear All
+
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  width: '48%',
+                  backgroundColor: '#4c4c9b',
+                  borderColor: '#4c4c9b',
+                  borderWidth: 1,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  padding: '2.5%',
+                  borderRadius: 5,
+                }}
+                onPress={() => {
+                  setConfirmedTags(tags);
+                  setPage('fields');
+                }}
+              >
+                <Text style={{
+                  color: 'white',
+                  fontSize: 17,
+                  fontWeight: '600',
+                }}
+                >
+                  Apply
+
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+        </ScrollView>
+      </View>
+
     );
   }
   return '';
 }
+
+function ThumbnailDisplay({ uri, remove, preview }) {
+  return (
+    <TouchableOpacity
+      onPress={() => { preview(uri); }}
+      activeOpacity={0.6}
+    >
+      <View
+        key={uri}
+        style={{
+          width: '100%',
+          aspectRatio: 1.4,
+          borderWidth: 1,
+          borderColor: '#53595C',
+          borderRadius: 10,
+        }}
+      >
+        <TouchableWithoutFeedback
+          onPress={() => { remove(uri); }}
+        >
+          <View style={{
+            position: 'absolute',
+            zIndex: 100,
+            left: '92%',
+            bottom: '88%',
+            backgroundColor: 'black',
+            aspectRatio: 1,
+            borderRadius: 100,
+            padding: '1%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          >
+            <Icon name="x" size={22} color="white" />
+          </View>
+        </TouchableWithoutFeedback>
+
+        <Image
+          source={{ uri }}
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: 8,
+          }}
+        />
+      </View>
+    </TouchableOpacity>
+  );
+}
+
+SubmissionScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
+
+ThumbnailDisplay.propTypes = {
+  uri: PropTypes.string.isRequired,
+  remove: PropTypes.func.isRequired,
+  preview: PropTypes.func.isRequired,
+};
 
 export default SubmissionScreen;

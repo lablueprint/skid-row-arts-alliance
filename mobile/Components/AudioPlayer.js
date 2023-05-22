@@ -8,13 +8,26 @@ import PropTypes from 'prop-types';
 import { useFocusEffect } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
   slider: {
-    width: '80%',
-    height: 40,
+    width: '100%',
+    height: '100%',
+  },
+  timestampContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   timestamp: {
     fontSize: 18,
-    marginVertical: 8,
   },
 });
 
@@ -87,19 +100,23 @@ function AudioPlayer({ source }) {
 
   return (
     <View style={styles.container}>
-      <Button title={isPlaying ? 'Pause' : 'Play'} onPress={handlePlayPause} />
-      <Slider
-        style={styles.slider}
-        value={position}
-        onValueChange={handleScrub}
-        minimumValue={0}
-        maximumValue={1}
-        minimumTrackTintColor="orange"
-        maximumTrackTintColor="blue"
-        thumbTintColor="green"
-      />
-      <Text style={styles.timestamp}>{formatTime(position * duration)}</Text>
-      <Text style={styles.timestamp}>{formatTime(duration)}</Text>
+      <Button title={isPlaying ? 'Pause' : 'Play'} color="#4c4c9b" onPress={handlePlayPause} />
+      <View>
+        <Slider
+          style={styles.slider}
+          value={position}
+          onValueChange={handleScrub}
+          minimumValue={0}
+          maximumValue={1}
+          minimumTrackTintColor="#4c4c9b"
+          maximumTrackTintColor="#4c4c9b"
+          thumbTintColor="#4c4c9b"
+        />
+        <View style={styles.timestampContainer}>
+          <Text style={styles.timestamp}>{formatTime(position * duration)}</Text>
+          <Text style={styles.timestamp}>{formatTime(duration)}</Text>
+        </View>
+      </View>
     </View>
   );
 }

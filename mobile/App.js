@@ -181,6 +181,7 @@ export default function App() {
         <Stack.Navigator>
           <Stack.Screen name="Sign Up" component={SignUpScreen} />
           <Stack.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false, gestureEnabled: false }} />
+          <Stack.Screen name="Submission Screen" component={SubmissionScreen} options={{ headerShown: false, gestureEnabled: false }} />
           <Stack.Screen name="Event Details" component={EventDetailScreen} />
           <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
           <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />

@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   ScrollView,
+  Button,
 } from 'react-native';
 import axios from 'axios';
 import { URL } from '@env';
@@ -46,7 +47,12 @@ function GalleryScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.scrollView}>
-      <Text>Gallery Screen</Text>
+      <Button
+        title="Upload Submissions"
+        onPress={() => {
+          navigation.navigate('Submission Screen');
+        }}
+      />
       {
         loadImages ? (
           <>
