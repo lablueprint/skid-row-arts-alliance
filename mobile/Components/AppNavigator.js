@@ -15,6 +15,8 @@ import EventDetailScreen from '../Screen/EventDetailScreen';
 import EventScreen from '../Screen/EventScreen';
 import ResourceDetailScreen from '../Screen/ResourceDetailScreen';
 import OrganizationDetailScreen from '../Screen/OrganizationDetailScreen';
+import ZinesScreen from '../Screen/ZinesScreen';
+import ZineDetailsScreen from '../Screen/ZineDetailsScreen';
 import { isTokenExpired } from '../redux/sliceAuth';
 
 const Tab = createBottomTabNavigator();
@@ -28,6 +30,7 @@ function HomeStackScreen() {
       <Tab.Screen name="Submission" component={SubmissionScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
       <Tab.Screen name="Events" component={EventScreen} />
+      <Tab.Screen name="Zines" component={ZinesScreen} />
     </Tab.Navigator>
   );
 }
@@ -44,6 +47,7 @@ function AppNavigator() {
           <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
           <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
           <Stack.Screen name="Organization Details" component={OrganizationDetailScreen} />
+          <Stack.Screen name="Zine Details" component={ZineDetailsScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     ) : (
