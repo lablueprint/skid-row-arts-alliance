@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { URL } from '@env';
+import React, { useState, useEffect, useRef } from 'react';
+import { S3_REGION, S3_BUCKET, URL } from '@env';
 import {
   useFonts, Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold, Montserrat_500Medium,
 } from '@expo-google-fonts/montserrat';
 import axios from 'axios';
 import {
   StyleSheet, Text, TextInput, View, Button, Image, ScrollView, Modal, Pressable, ImageBackground,
+  PanResponder, Animated, Dimensions, TouchableWithoutFeedback,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import * as ImagePicker from 'expo-image-picker';
 import { logout } from '../redux/sliceAuth';
 
 const styles = StyleSheet.create({
@@ -306,6 +308,28 @@ const styles = StyleSheet.create({
     lineHeight: 0,
     fontFamily: 'MontserratSemiBold',
   },
+  newModalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+  },
+  modalContentContainer: {
+    backgroundColor: 'white',
+    width: '100%',
+    padding: 16,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  newModalText: {
+    fontSize: 16,
+    marginBottom: 16,
+  },
 });
 
 function EditProfileScreen({
@@ -329,14 +353,132 @@ function EditProfileScreen({
   const [currFacebook, setFacebook] = useState('');
   const [currInstagram, setInstagram] = useState('');
   const [currTwitter, setTwitter] = useState('');
+  const [currProfilePicture, setProfilePicture] = useState('');
+  const [newProfilePicture, setNewProfilePicture] = useState(null);
 
   const [showModal, setShowModal] = useState(false);
   // const [showSaveModal, setShowSaveModal] = useState(false);
 
   const dispatch = useDispatch();
 
-  const handleAvatarChange = () => {
-    console.log('pressed!');
+  const [popup, setPopup] = useState(false);
+  const closePopup = () => {
+    console.log(newProfilePicture);
+    console.log();
+    setPopup(false);
+  };
+  const openPopup = () => {
+    setPopup(true);
+  };
+  const windowHeight = Dimensions.get('window').height;
+  const popupHeight = 300; // Height of the popup content
+  const panY = useRef(new Animated.Value(windowHeight)).current;
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onPanResponderMove: (_, { dy }) => {
+      // Prevent dragging beyond top and bottom limits
+      if (dy >= 0 && dy <= windowHeight - popupHeight) {
+        panY.setValue(dy);
+      }
+    },
+    onPanResponderRelease: (_, { dy }) => {
+      if (dy >= 160) {
+        // Close modal if dragged down by at least 100 units
+        closePopup();
+      } else {
+        // Reset modal position if not dragged down enough
+        Animated.spring(panY, {
+          toValue: 0,
+          useNativeDriver: true,
+        }).start();
+      }
+    },
+  });
+  panY.setValue(0);
+
+  const getType = (uri, fileType) => {
+    const splitted = uri.split('.');
+    const uriType = splitted[splitted.length - 1];
+    if (uriType === 'mov') {
+      return `${fileType}/quicktime`;
+    }
+    return `${fileType}/${uriType}`;
+  };
+
+  const readFileToBlob = async (file, reader) => {
+    try {
+      const res = await fetch(file);
+      const blob = await res.blob();
+      reader.readAsDataURL(blob);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const addFile = async (fileURI, fileType) => {
+    if (fileType.includes('image')) {
+      setNewProfilePicture({ uri: fileURI, type: Array.from(new Set(fileType.split('/'))).join('/') });
+    } else { // Implement default thumbnail in future if we have additional file types (e.g. audio)
+      console.log('Default');
+    }
+  };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const { uri, type } = result.assets[0];
+      addFile(uri, getType(uri, type));
+    }
+  };
+
+  const openCamera = async () => {
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const { uri, type } = result.assets[0];
+      addFile(uri, getType(uri, type));
+    }
+  };
+
+  const handleAvatarChange = async () => {
+    console.log('uploading!');
+    const fReader = new FileReader();
+    const fPromise = new Promise((resolve) => {
+      fReader.addEventListener('loadend', async () => {
+        resolve(fReader.result.replace(/^.*base64,/, ''));
+      });
+      readFileToBlob(newProfilePicture.uri, fReader);
+    });
+
+    const stream = await fPromise.catch((err) => console.error(err));
+    const object = { uri: stream, type: newProfilePicture.type };
+
+    try {
+      const res = await axios.patch(`${URL}/user/addProfilePicture/${currentUser.id}`, {
+        image: object,
+      });
+      return res.body.s3key;
+    } catch (err) {
+      console.error(err);
+    }
+    return null;
   };
 
   const handleFirstNameChange = (text) => {
@@ -357,12 +499,14 @@ function EditProfileScreen({
   const getUserData = async () => {
     try {
       const res = await axios.get(`${URL}/user/getUser/${currentUser.id}`);
+      console.log(res.data);
       setFirstName(res.data.msg.firstName);
       setLastName(res.data.msg.lastName);
       setBio(res.data.msg.bio);
       setFacebook(res.data.msg.socialMedia.facebook);
       setInstagram(res.data.msg.socialMedia.instagram);
       setTwitter(res.data.msg.socialMedia.twitter);
+      setProfilePicture(res.data.msg.profilePicture);
       return true;
     } catch (err) {
       console.error(err);
@@ -373,6 +517,7 @@ function EditProfileScreen({
   const handleUpdate = async () => {
     navigation.navigate('Profile');
     try {
+      const profilePictureKey = handleAvatarChange();
       const updatedUser = {
         firstName: currFirstName,
         lastName: currLastName,
@@ -382,10 +527,12 @@ function EditProfileScreen({
           instagram: currInstagram,
           twitter: currTwitter,
         },
+        profilePicture: profilePictureKey,
       };
       await axios.patch(`${URL}/user/update/${currentUser.id}`, {
         updatedUser,
       });
+      setProfilePicture(profilePictureKey);
     } catch (err) {
       console.error(err);
     }
@@ -430,9 +577,9 @@ function EditProfileScreen({
       </View>
       <ScrollView>
         <View style={styles.row}>
-          <Pressable onPress={handleAvatarChange}>
+          <Pressable onPress={openPopup}>
             <ImageBackground
-              source={{ uri: 'https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' }}
+              source={{ uri: newProfilePicture ? newProfilePicture.uri : `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${currProfilePicture}` }}
               resizeMode="cover"
               style={styles.avatar}
             />
@@ -544,6 +691,33 @@ function EditProfileScreen({
               </View>
             </View>
           </View>
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent
+          visible={popup}
+          onRequestClose={closePopup}
+        >
+          <TouchableWithoutFeedback onPress={closePopup}>
+            <View style={styles.newModalContainer}>
+              <Animated.View
+                style={[
+                  styles.modalContentContainer,
+                  {
+                    transform: [{ translateY: panY }],
+                  },
+                ]}
+                {...panResponder.panHandlers}
+              >
+                <Text style={styles.modalTitle}>Profile Picture</Text>
+                <Text style={styles.modalText}>
+                  Attach a profile picture by tapping an option below!
+                </Text>
+                <Button title="Camera Roll" onPress={pickImage} />
+                <Button title="Use Camera" onPress={openCamera} />
+              </Animated.View>
+            </View>
+          </TouchableWithoutFeedback>
         </Modal>
       </ScrollView>
     </View>

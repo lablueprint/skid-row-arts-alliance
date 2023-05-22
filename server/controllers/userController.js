@@ -141,7 +141,7 @@ const removeUserArtwork = async (req, res) => {
   }
 };
 
-const addUserProfilePicture = async (req, res) => {
+const oldAddUserProfilePicture = async (req, res) => {
   const image = req.body.blob;
   const buf = Buffer.from(image, 'base64');
   const keyString = `ProfilePictures/${req.params.id}`;
@@ -174,9 +174,52 @@ const addUserProfilePicture = async (req, res) => {
   console.log('done');
 };
 
+const addUserProfilePicture = async (req, res) => {
+  // S3
+  const { image } = req.body;
+  const userId = req.params.id;
+  const d = new Date().toLocaleString();
+  const date = d.slice(0, d.length - 3)
+    .split('/')
+    .join('_')
+    .split(' ')
+    .join('_')
+    .replace(',', '');
+  const keyString = `${date}_${userId}`;
+  console.log(keyString);
+
+  // Keys
+  const s3key = `Profile Pictures/${keyString}.${image.type.split('/')[1]}`;
+  console.log('********S3KEY: ', s3key)
+
+  // Thumbnail
+  try {
+    await s3.upload({
+      Bucket: process.env.S3_BUCKET,
+      Key: s3key,
+      ContentType: image.type,
+      Body: Buffer.from(image.uri, 'base64'),
+    }, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
+
+  try {
+    const response = await User.findByIdAndUpdate(userId, {profilePicture: s3key});
+    res.send({s3key});
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 const getUserProfilePicture = async (req, res) => {
   try {
-    const data = await User.find({ _id: req.params.id }, 'profilePicture -_id');
+    const data = await User.findById(req.params.id, 'profilePicture -_id');
+    console.log(data)
     res.json({
       msg: data,
     });
