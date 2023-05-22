@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import {
-  StyleSheet, Text, TextInput, View, Button, ScrollView, TouchableOpacity, Image,
-} from 'react-native';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import { URL } from '@env';
-import { Picker } from '@react-native-picker/picker';
+import axios from 'axios';
+import {
+  StyleSheet, Text, View, Button, Image, ScrollView, TouchableOpacity,
+} from 'react-native';
 import { Card } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { logout } from '../redux/sliceAuth';
 
 const cardGap = 15;
 
@@ -236,28 +234,64 @@ function ProfileScreen({ navigation }) {
   const dispatch = useDispatch();
 
   const handleClear = () => {
-    // serviceUpdateUser({
-    //   userName: '',
-    //   userEmail: '',
-    //   userSocialPlatform: '',
-    //   userSocialTag: '',
-    // });
+    serviceUpdateUser({
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: '',
+      bio: '',
+      socialMedia: {
+        platform: '',
+        accountTag: '',
+      },
+      profilePicture: '',
+      savedEvents: [''],
+      savedArtwork: [''],
+      userArtwork: [''],
+    });
   };
 
-  // const updatedUser = {
-  //   userName: name,
-  //   userEmail: email,
-  //   userSocialPlatform: platform,
-  //   userSocialTag: tag,
-  // };
-
-  const handleUpdate = () => {
-    // serviceUpdateUser(updatedUser);
+  const updatedUser = {
+    email: 'updated-email@yahoo.com',
+    password: 'updated-password',
+    firstName: 'Caroline',
+    lastName: 'updated-lastname',
+    bio: 'hater of mobile dev',
+    socialMedia: {
+      platform: 'updated-instagram',
+      accountTag: 'updated-accounttag',
+    },
+    profilePicture: 'updated-profilepicture',
+    savedEvents: ['updated-event1', 'updated-event2'],
+    savedArtwork: ['updated-artwork1', 'updated-artwork2'],
+    userArtwork: ['updated-userartwork1', 'updated-userartwork2'],
   };
 
-  // Store input and navigate to Home screen
-  const handleSignOut = async () => {
-    dispatch(logout());
+  const reader = new FileReader();
+  reader.addEventListener('loadend', async () => {
+    const blob = reader.result.replace(/^.*base64,/, '');
+    console.log(updatedUser);
+    console.log(currentUser);
+    const res = await axios.patch(`${URL}/user/addProfilePicture/63e33e2f578ad1d80bd2a347`, {
+      // need to change hard coded ID
+      blob,
+    });
+    // console.log(1, res);
+    // console.log(currentUser);
+    console.log('pee');
+    clearInput();
+    console.log('poop');
+  });
+
+  const submitProfilePicture = async () => {
+    try {
+      fetch(image)
+        .then((res) => res.blob())
+        .then((blob) => reader.readAsDataURL(blob))
+        .catch((e) => console.error(e));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const onPressEventCard = () => {
@@ -275,6 +309,7 @@ function ProfileScreen({ navigation }) {
   // Display and edit profile info
   return (
     <ScrollView style={styles.container}>
+      <Button title="Edit" onPress={() => navigation.navigate('Edit Profile')} />
       <View style={{
         paddingTop: 30,
         paddingBottom: 50,
@@ -286,6 +321,7 @@ function ProfileScreen({ navigation }) {
             handleSignOut();
           }}
         />
+        <Button title="Edit" onPress={() => navigation.navigate('Edit Profile')} />
         <Text>
           <Text style={{ fontWeight: 'bold' }}>Name: </Text>
           currentUser.userName
@@ -379,8 +415,6 @@ function ProfileScreen({ navigation }) {
         ) : <Text>There is no saved art</Text>
       }
       </View>
-      <Button title="Save" onPress={handleUpdate} />
-      <Button title="Clear" onPress={handleClear} />
     </ScrollView>
   );
 }

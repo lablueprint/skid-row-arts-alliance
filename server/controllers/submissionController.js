@@ -124,6 +124,7 @@ const deleteSubmission = async (req, res) => {
 
 const getGalleryThumbnails = async (req, res) => {
   try {
+    console.log('jhi');
     // S3 Key retrieval from MongoDB
     // Empty `filter` means "match all documents"
     const filter = {};
