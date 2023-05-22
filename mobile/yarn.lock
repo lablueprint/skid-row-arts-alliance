@@ -6414,6 +6414,11 @@
   "resolved" "https://registry.npmjs.org/p-try/-/p-try-2.2.0.tgz"
   "version" "2.2.0"
 
+"pako@^2.1.0":
+  "integrity" "sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug=="
+  "resolved" "https://registry.npmjs.org/pako/-/pako-2.1.0.tgz"
+  "version" "2.1.0"
+
 "parent-module@^1.0.0":
   "integrity" "sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g=="
   "resolved" "https://registry.npmjs.org/parent-module/-/parent-module-1.0.1.tgz"
@@ -6845,6 +6850,11 @@
     "keymirror" "^0.1.1"
     "prop-types" "^15.7.2"
     "shaka-player" "^2.5.9"
+
+"react-native-zip-archive@^6.0.9":
+  "integrity" "sha512-IYf3yHJ7sHzj9ucO3Amx/TtsZcTgHdfj+Dar8p1e32E+wBsn7mv0PDp2X/oCLGci0nG9i2DBstrnCW74/7NLYQ=="
+  "resolved" "https://registry.npmjs.org/react-native-zip-archive/-/react-native-zip-archive-6.0.9.tgz"
+  "version" "6.0.9"
 
 "react-native@0.70.5":
   "integrity" "sha512-5NZM80LC3L+TIgQX/09yiyy48S73wMgpIgN5cCv3XTMR394+KpDI3rBZGH4aIgWWuwijz31YYVF5504+9n2Zfw=="

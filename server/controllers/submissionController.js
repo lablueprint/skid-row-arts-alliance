@@ -55,6 +55,8 @@ const createSubmission = async (req, res) => {
   });
   const thumbnail = thumbnailExists ? `Thumbnails/${keyString}.${objects[objects.length - thumbnailExists].type.split('/')[1]}` : 'Thumbnails/default.jpg';
 
+  console.log(0);
+
   // Thumbnail
   if(thumbnailExists) {
     try {
@@ -73,6 +75,8 @@ const createSubmission = async (req, res) => {
     }
   }
 
+  console.log(1);
+
   // Files
   const s3Promises = await objects.slice(0, objects.length - thumbnailExists)
     .map(async (object, index) => s3.putObject({
@@ -87,6 +91,9 @@ const createSubmission = async (req, res) => {
   objects.slice(0, objects.length - thumbnailExists).forEach(o => {
     mediaTypes.push(o.type.slice(0, o.type.indexOf('/')))
   });
+
+  console.log(2);
+
 
   // Mongo
   const submission = new Submission({
@@ -110,6 +117,9 @@ const createSubmission = async (req, res) => {
   } catch (err) {
     console.error(err);
   }
+
+  console.log(3);
+
 };
 
 const deleteSubmission = async (req, res) => {

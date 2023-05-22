@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   StyleSheet, TextInput, Text, View, ScrollView, Button, Image,
   Modal, TouchableWithoutFeedback, PanResponder, Animated, Dimensions, TouchableOpacity, Alert,
@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import PropTypes from 'prop-types';
 
 import { URL } from '@env';
+
 import AudioPlayer from '../Components/AudioPlayer';
 
 const audioIcon = require('../assets/audioIcon.png');
@@ -91,7 +92,6 @@ function SubmissionScreen({ navigation }) {
   const [description, setDescription] = useState('');
   const [page, setPage] = useState('upload');
 
-  const titleRef = useRef();
   const descriptionRef = useRef();
 
   const [files, setFiles] = useState([]);
@@ -103,16 +103,21 @@ function SubmissionScreen({ navigation }) {
   const [previewFile, setPreviewFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(1);
 
+  const tagOptions = {
+    Image: ['traditional art', 'illustration', 'photography', 'graphic design', 'digital art'],
+    Audio: ['music', 'poetry', 'speech'],
+    Video: ['short film', 'performance', 'music video'],
+  };
+
   const closePreview = () => {
     setPreview('none');
     setPreviewFile(null);
     setAspectRatio(1);
   };
 
-  const tagOptions = {
-    Image: ['traditional art', 'illustration', 'photography', 'graphic design', 'digital art'],
-    Audio: ['music', 'poetry', 'speech'],
-    Video: ['short film', 'performance', 'music video'],
+  const openPreview = (file, type) => {
+    setPreviewFile(file);
+    setPreview(type);
   };
 
   const alertLimit = () => {
@@ -161,20 +166,15 @@ function SubmissionScreen({ navigation }) {
   });
   panY.setValue(0);
 
-  const clearInput = () => {
-    setName('');
-    setEmail('');
-    setPlatform('');
-    setAccountTag('');
+  const reset = () => {
     setArtworkTitle('');
     setDescription('');
+    setPage('upload');
     setFiles([]);
     setThumbnails([]);
-  };
-
-  const openPreview = (file, type) => {
-    setPreviewFile(file);
-    setPreview(type);
+    setTags([]);
+    setConfirmedTags([]);
+    closePreview();
   };
 
   const getType = (uri, fileType) => {
@@ -238,8 +238,8 @@ function SubmissionScreen({ navigation }) {
         thumbnailExists,
         tags: confirmedTags,
       });
-      console.log(res);
-      clearInput();
+      reset();
+      setPage('upload');
     } catch (err) {
       console.error(err);
     }
@@ -287,7 +287,7 @@ function SubmissionScreen({ navigation }) {
     console.error('File to be removed not found!');
   };
 
-  const pickImage = async () => {
+  const openCameraRoll = async () => {
     if (files.length >= 5) {
       alertLimit();
       return;
@@ -451,6 +451,7 @@ function SubmissionScreen({ navigation }) {
               flexDirection: 'row',
               alignItems: 'center',
               width: '100%',
+              marginTop: '1%',
             }}
             >
               <TouchableOpacity
@@ -458,6 +459,7 @@ function SubmissionScreen({ navigation }) {
                   position: 'absolute',
                   backgroundColor: '#fff',
                   zIndex: 100,
+                  left: '1%',
                 }}
                 onPress={() => { navigation.navigate('Gallery'); }}
               >
@@ -467,7 +469,7 @@ function SubmissionScreen({ navigation }) {
                 flexGrow: 1,
                 flexShrink: 1,
                 textAlign: 'center',
-                fontSize: 21,
+                fontSize: 22,
               }}
               >
                 Content Uploaded
@@ -715,13 +717,12 @@ function SubmissionScreen({ navigation }) {
               {previewDisplay}
             </View>
           </Modal>
-
           <Modal
             transparent
             visible={popup}
             onRequestClose={closePopup}
           >
-            <TouchableWithoutFeedback onPress={() => { console.log(1); }} style={{ zIndex: 1000 }}>
+            <TouchableWithoutFeedback style={{ zIndex: 1000 }}>
               <View style={styles.modalContainer} />
             </TouchableWithoutFeedback>
           </Modal>
@@ -855,7 +856,7 @@ function SubmissionScreen({ navigation }) {
                     }}
                     >
                       <TouchableOpacity
-                        onPress={pickImage}
+                        onPress={openCameraRoll}
                         style={{
                           backgroundColor: '#D0D0E8',
                           padding: '8.5%',
@@ -931,10 +932,6 @@ function SubmissionScreen({ navigation }) {
                         {'Attach File'.replace(/ /g, '\n')}
                       </Text>
                     </View>
-
-                    {/* <Button title="Camera Roll" onPress={pickImage} />
-                    <Button title="Use Camera" onPress={openCamera} />
-                    <Button title="File Selector" onPress={openFileSelector} /> */}
                   </View>
                 </Animated.View>
               </View>
@@ -1008,6 +1005,7 @@ function SubmissionScreen({ navigation }) {
               flexDirection: 'row',
               alignItems: 'center',
               width: '100%',
+              marginTop: '1%',
             }}
             >
               <TouchableOpacity
@@ -1015,13 +1013,14 @@ function SubmissionScreen({ navigation }) {
                   position: 'absolute',
                   backgroundColor: '#fff',
                   zIndex: 100,
+                  left: '1%',
                 }}
                 onPress={() => { setPage('upload'); }}
               >
                 <Icon name="chevron-left" size={30} color="black" />
               </TouchableOpacity>
               <Text style={{
-                flexGrow: 1, flexShrink: 1, textAlign: 'center', fontSize: 21,
+                flexGrow: 1, flexShrink: 1, textAlign: 'center', fontSize: 22,
               }}
               >
                 Submit your art!
@@ -1042,7 +1041,7 @@ function SubmissionScreen({ navigation }) {
 
               </Text>
               <TextInput
-                maxLength={40}
+                maxLength={100}
                 style={{
                   backgroundColor: '#f2f2f2',
                   borderRadius: 10,
@@ -1053,9 +1052,11 @@ function SubmissionScreen({ navigation }) {
                   paddingHorizontal: '5%',
                   fontSize: 16,
                   color: '#888',
+                  caretColor: 'red',
                 }}
                 value={artworkTitle}
                 onChangeText={(e) => { setArtworkTitle(e); }}
+                onSubmitEditing={() => { descriptionRef.current.focus(); }}
               />
             </View>
 
@@ -1072,13 +1073,15 @@ function SubmissionScreen({ navigation }) {
                 Description
               </Text>
               <TextInput
+                ref={descriptionRef}
                 style={{
                   textAlignVertical: 'top',
                   backgroundColor: '#f2f2f2',
                   height: 175,
                   marginTop: '3%',
-                  padding: '4%',
+                  paddingTop: '4%',
                   paddingHorizontal: '5%',
+                  paddingBottom: '7.5%',
                   borderRadius: 10,
                   borderColor: '#ddd',
                   borderWidth: 1,
@@ -1086,10 +1089,21 @@ function SubmissionScreen({ navigation }) {
                   color: '#888',
                 }}
                 multiline
-                maxLength={320}
+                maxLength={300}
                 value={description}
                 onChangeText={(e) => { setDescription(e); }}
               />
+              <Text style={{
+                fontSize: 14,
+                fontWeight: '400',
+                color: '#999',
+                position: 'absolute',
+                bottom: '3%',
+                right: '3%',
+              }}
+              >
+                {`${description.length}/300`}
+              </Text>
             </View>
 
             <View style={{
@@ -1104,12 +1118,63 @@ function SubmissionScreen({ navigation }) {
               >
                 Tags
               </Text>
+              <View style={{
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                width: '100%',
+                marginTop: '2%',
+              }}
+              >
+                {tags.map((tag) => (
+                  <View
+                    key={tag}
+                    activeOpacity={1}
+                    style={{
+                      paddingVertical: '2%',
+                      paddingRight: '2.25%',
+                      paddingLeft: '4%',
+                      borderRadius: 50,
+                      marginTop: '2.5%',
+                      marginRight: '2.5%',
+                      backgroundColor: '#4c4c9b',
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text style={{ fontSize: 18, color: 'white', textAlign: 'center' }}>{tag}</Text>
+                    <View
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#DBDBEB',
+                        padding: '2%',
+                        borderRadius: 100,
+                        marginLeft: '1%',
+                      }}
+                    >
+                      <TouchableWithoutFeedback onPress={() => {
+                        setTags(tags.filter((t) => t !== tag));
+                      }}
+                      >
+                        <Icon name="x" size={20} color="#4c4c9b" />
+                      </TouchableWithoutFeedback>
+                    </View>
+
+                  </View>
+                ))}
+              </View>
               <TouchableOpacity
                 onPress={() => { setPage('tags'); }}
                 style={{
-                  marginTop: '3%',
+                  marginTop: '3.5%',
                   padding: '1.5%',
-                  width: '50%',
+                  width: '40%',
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
@@ -1128,7 +1193,6 @@ function SubmissionScreen({ navigation }) {
                 </Text>
               </TouchableOpacity>
             </View>
-
           </View>
 
         </ScrollView>
@@ -1157,7 +1221,7 @@ function SubmissionScreen({ navigation }) {
             }}
             onPress={() => {
               if (files.length === 0) return;
-              setPage('fields');
+              submit();
             }}
           >
             <Text style={{
@@ -1180,6 +1244,7 @@ function SubmissionScreen({ navigation }) {
           <View style={{
             paddingTop: '9%',
             paddingBottom: '19%',
+            paddingHorizontal: '4%',
             flex: 1,
           }}
           >
@@ -1189,6 +1254,7 @@ function SubmissionScreen({ navigation }) {
               alignItems: 'center',
               width: '100%',
               paddingHorizontal: '4%',
+              marginTop: '1%',
             }}
             >
               <TouchableOpacity
@@ -1196,6 +1262,7 @@ function SubmissionScreen({ navigation }) {
                   position: 'absolute',
                   backgroundColor: '#fff',
                   zIndex: 100,
+                  left: '1%',
                 }}
                 onPress={() => {
                   setTags(confirmedTags);
@@ -1208,7 +1275,7 @@ function SubmissionScreen({ navigation }) {
                 flexGrow: 1,
                 flexShrink: 1,
                 textAlign: 'center',
-                fontSize: 21,
+                fontSize: 22,
               }}
               >
                 Add Tags
@@ -1221,7 +1288,7 @@ function SubmissionScreen({ navigation }) {
                 style={{
                   width: '100%',
                   marginTop: '7.5%',
-                  paddingHorizontal: '4%',
+                  paddingHorizontal: '1%',
                 }}
               >
                 <Text style={{
@@ -1261,76 +1328,74 @@ function SubmissionScreen({ navigation }) {
               </View>
             ))}
 
-            <View style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              width: '100%',
-              padding: '4%',
-              paddingRight: '3%',
-              paddingBottom: '5%',
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              backgroundColor: 'white',
-            }}
+          </View>
+          <View style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            width: '100%',
+            padding: '4.5%',
+            paddingBottom: '5%',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+          >
+            <TouchableOpacity
+              style={{
+                width: '48%',
+                backgroundColor: 'white',
+                borderColor: '#4c4c9b',
+                borderWidth: 1,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '2.5%',
+                borderRadius: 5,
+              }}
+              onPress={() => {
+                setTags([]);
+              }}
             >
-              <TouchableOpacity
-                style={{
-                  width: '48%',
-                  backgroundColor: 'white',
-                  borderColor: '#4c4c9b',
-                  borderWidth: 1,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '2.5%',
-                  borderRadius: 5,
-                }}
-                onPress={() => {
-                  setTags([]);
-                }}
+              <Text style={{
+                color: '#4c4c9b',
+                fontSize: 17,
+                fontWeight: '600',
+              }}
               >
-                <Text style={{
-                  color: '#4c4c9b',
-                  fontSize: 17,
-                  fontWeight: '600',
-                }}
-                >
-                  Clear All
+                Clear All
 
-                </Text>
-              </TouchableOpacity>
+              </Text>
+            </TouchableOpacity>
 
-              <TouchableOpacity
-                style={{
-                  width: '48%',
-                  backgroundColor: '#4c4c9b',
-                  borderColor: '#4c4c9b',
-                  borderWidth: 1,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '2.5%',
-                  borderRadius: 5,
-                }}
-                onPress={() => {
-                  setConfirmedTags(tags);
-                  setPage('fields');
-                }}
+            <TouchableOpacity
+              style={{
+                width: '48%',
+                backgroundColor: '#4c4c9b',
+                borderColor: '#4c4c9b',
+                borderWidth: 1,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '2.5%',
+                borderRadius: 5,
+              }}
+              onPress={() => {
+                setConfirmedTags(tags);
+                setPage('fields');
+              }}
+            >
+              <Text style={{
+                color: 'white',
+                fontSize: 17,
+                fontWeight: '600',
+              }}
               >
-                <Text style={{
-                  color: 'white',
-                  fontSize: 17,
-                  fontWeight: '600',
-                }}
-                >
-                  Apply
+                Apply
 
-                </Text>
-              </TouchableOpacity>
-            </View>
+              </Text>
+            </TouchableOpacity>
           </View>
 
         </ScrollView>
