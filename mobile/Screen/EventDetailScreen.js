@@ -16,6 +16,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  button: {
+    marginTop: 10,
+    width: 350,
+    height: 50,
+    borderColor: '#424288',
+    borderWidth: 2,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   image: {
     width: '100%',
     height: '15%',
@@ -38,6 +48,10 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'MontserratMedium',
     fontSize: 24,
+  },
+  header: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 20,
   },
   organizationContainer: {
     flexDirection: 'row',
@@ -69,6 +83,12 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginRight: 15,
+    resizeMode: 'contain',
+  },
+  infoIconTransparent: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
   },
   infoText: {
     fontFamily: 'MontserratSemiBold',
@@ -131,7 +151,9 @@ function EventDetailScreen({
     organization,
     recurringMonthly,
     recurringWeekly,
+    email,
     website,
+    eventDescription,
     organizationDescription,
   } = route.params;
 
@@ -183,9 +205,9 @@ function EventDetailScreen({
 
   const onPressEvent = () => {
     navigation.navigate('Organization Details', {
-      organizations,
+      organization,
       summary,
-      number,
+      phoneNumber,
       email,
       website,
     });
@@ -216,13 +238,15 @@ function EventDetailScreen({
   const dayOfWeek = daysOfWeek[startDate.getDay()];
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={{ uri: image }}
-        style={styles.image}
-      />
+    <ScrollView contentContainerStyle={styles.container}>
+      <View>
+        <Image
+          source={image.uri}
+          style={styles.image}
+        />
+      </View>
       <View style={styles.overlay} />
-      <View style={styles.overlayContent}>
+      <ScrollView style={styles.overlayContent} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>{title}</Text>
         <TouchableOpacity style={styles.organizationContainer}>
           <Text style={styles.organizationText}>{organization}</Text>
@@ -269,8 +293,45 @@ function EventDetailScreen({
           eventStartDate={startDate}
           eventEndDate={endDate}
         />
-      </View>
-    </View>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.infoText}>
+            Add To Calendar
+          </Text>
+        </TouchableOpacity>
+        <Text style={styles.header}>
+          Pictures
+        </Text>
+        <Text style={styles.header}>
+          Event Description
+        </Text>
+        <Text>
+          {eventDescription}
+        </Text>
+        <Text style={styles.header}>
+          More About the Organization
+        </Text>
+        <Text>
+          {organizationDescription}
+        </Text>
+        <View>
+          <Image source={require('../assets/detailScreen/callTransparent.png')} style={styles.infoIconTransparent} />
+          <Text>
+            {phoneNumber}
+          </Text>
+          <Image source={require('../assets/detailScreen/mailTransparent.png')} style={styles.infoIconTransparent} />
+          <Text>
+            {email}
+          </Text>
+          <Image source={require('../assets/detailScreen/globeTransparent.png')} style={styles.infoIconTransparent} />
+          <Text>
+            {website}
+          </Text>
+          <Text>
+            Learn More
+          </Text>
+        </View>
+      </ScrollView>
+    </ScrollView>
   );
 }
 

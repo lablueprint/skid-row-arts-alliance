@@ -10,7 +10,7 @@ import axios from 'axios';
 import { URL } from '@env';
 import PropTypes from 'prop-types';
 import CalendarPicker from 'react-native-calendar-picker';
-import { useFonts, Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
+import { useFonts, Montserrat_400Regular,  Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 import EventCard from '../Components/EventCard';
 
 const styles = StyleSheet.create({
@@ -34,6 +34,7 @@ function EventScreen({ navigation }) {
     Montserrat: Montserrat_400Regular,
     MontserratSemiBold: Montserrat_600SemiBold,
     MontserratBold: Montserrat_700Bold,
+    MontserratMedium: Montserrat_500Medium,
   });
 
   const getAllEvents = async () => {
@@ -113,7 +114,7 @@ function EventScreen({ navigation }) {
         <EventCard
           key={event.EventData._id}
           id={event.EventData._id}
-          image={event.ImageURL}
+          image={{ uri: event.ImageURL }}
           title={event.EventData.title}
           location={event.EventData.location}
           description={event.EventData.description}

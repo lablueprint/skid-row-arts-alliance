@@ -134,13 +134,6 @@ function HomeStackScreen() {
       }}
       >
         <Tab.Screen
-          name="Map"
-          component={MapScreen}
-          options={{
-            tabBarIcon: MapIcon,
-          }}
-        />
-        <Tab.Screen
           name="Events"
           component={EventScreen}
           options={{
