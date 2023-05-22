@@ -18,9 +18,9 @@ function ZinesPage() {
   }, [count]);
 
   return (
-    <Container>
+    <Container sx={{ backgroundColor: '#F8F8F8' }}>
       <Typography variant="h5">Published Zines</Typography>
-      <Box>
+      <Box sx={{ display: 'flex' }}>
         {zines.map((zine) => (
           <ZineCard
             key={zine._id}

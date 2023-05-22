@@ -49,8 +49,7 @@ function ZineDetailsPage() {
   }, [update]);
 
   const handleDelete = async () => {
-    const response = await axios.delete(`http://localhost:4000/zine/delete/${id}`);
-    console.log(response.status);
+    await axios.delete(`http://localhost:4000/zine/delete/${id}`);
     navigate('/zines');
   };
 
@@ -82,6 +81,7 @@ function ZineDetailsPage() {
   };
 
   const handleSave = async () => {
+    // TODO: handle edge case where someone adds a bunch of empty slots
     await axios.patch(`http://localhost:4000/zine/update/${id}`, {
       title,
       season,
@@ -93,143 +93,154 @@ function ZineDetailsPage() {
   };
 
   return (
-    <Box height="100%">
-      <Box>
-        <Box>
-          <Typography>
-            Zine Title
-          </Typography>
-          {edit ? (
-            <TextField
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          ) : (
-            <Typography>
-              {details.title}
-            </Typography>
-          )}
-        </Box>
-        <Box>
+    <Box sx={{ backgroundColor: '#C4C8CA' }}>
+      <Box sx={{ backgroundColor: '#FFFFFF', margin: '3%' }}>
+        <Box sx={{ display: 'flex' }}>
           <Box>
+            <Typography variant="h5">
+              Zine Title
+            </Typography>
+            {edit ? (
+              <TextField
+                sx={{ width: 400 }}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            ) : (
+              <Typography variant="h6">
+                {details.title}
+              </Typography>
+            )}
+          </Box>
+          <Box sx={{ marginLeft: 'auto' }}>
             {edit ? (
               <>
               </>
             ) : (
               <Box>
-                <Button onClick={() => setEdit(true)}>
+                <Button variant="contained" onClick={() => setEdit(true)}>
                   Edit
                 </Button>
-                <Button onClick={() => handleDelete()}>
+                <Button variant="contained" onClick={() => handleDelete()}>
                   Delete
                 </Button>
               </Box>
             )}
           </Box>
         </Box>
-      </Box>
-      <Box>
-        <Typography>
-          Edition
-        </Typography>
-        {edit ? (
-          <Box>
-            <TextField
-              value={season}
-              onChange={(e) => setSeason(e.target.value)}
-            />
-            <TextField
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
-            />
-          </Box>
-        ) : (
-          <Typography>
-            {details.season}
-            {' '}
-            {details.year}
-          </Typography>
-        )}
-      </Box>
-      <Box>
         <Box>
           <Typography>
-            Table of Contents
+            Edition
           </Typography>
+          {edit ? (
+            <Box>
+              <TextField
+                value={season}
+                onChange={(e) => setSeason(e.target.value)}
+              />
+              <TextField
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+              />
+            </Box>
+          ) : (
+            <Typography>
+              {details.season}
+              {' '}
+              {details.year}
+            </Typography>
+          )}
+        </Box>
+        <Box>
+          <Box>
+            <Typography variant="h6">
+              Table of Contents
+            </Typography>
+          </Box>
+          <Box>
+            {edit ? (
+              <Box>
+                {contents.map((section, index) => (
+                  <Box sx={{ display: 'flex' }}>
+                    <Box>
+                      <Typography>
+                        Chapter
+                      </Typography>
+                      <TextField
+                        sx={{ width: 600, height: 30 }}
+                        value={section.sectionTitle}
+                        onChange={(e) => handleEditSection(index, e.target.value, 'Chapter')}
+                      />
+                    </Box>
+                    <Box>
+                      <Typography>
+                        Page
+                      </Typography>
+                      <TextField
+                        value={section.sectionPage}
+                        onChange={(e) => handleEditSection(index, e.target.value, 'Page')}
+                      />
+                    </Box>
+                    <Box>
+                      <Button onClick={() => handleDeleteSection(index)}>Delete</Button>
+                    </Box>
+                  </Box>
+                ))}
+                <Button
+                  onClick={() => handleAddSection()}
+                >
+                  Add More Chapters +
+                </Button>
+              </Box>
+            ) : (
+              <Box>
+                {contents.map((section) => (
+                  <Box sx={{ display: 'flex' }}>
+                    <Box>
+                      <Typography sx={{ width: 600, height: 30 }}>
+                        {section.sectionTitle}
+                      </Typography>
+                    </Box>
+                    <Box>
+                      <Typography>
+                        {section.sectionPage}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </Box>
+        </Box>
+        <Box>
+          <object aria-label="zine pdf" data={details.url} type="application/pdf" height="800" width="65%" />
         </Box>
         <Box>
           {edit ? (
             <Box>
-              {contents.map((section, index) => (
-                <Box>
-                  <Box>
-                    <Typography>
-                      Chapter
-                    </Typography>
-                    <TextField
-                      value={section.sectionTitle}
-                      onChange={(e) => handleEditSection(index, e.target.value, 'Chapter')}
-                    />
-                  </Box>
-                  <Box>
-                    <Typography>
-                      Page
-                    </Typography>
-                    <TextField
-                      value={section.sectionPage}
-                      onChange={(e) => handleEditSection(index, e.target.value, 'Page')}
-                    />
-                  </Box>
-                  <Box>
-                    <Button onClick={() => handleDeleteSection(index)}>Delete</Button>
-                  </Box>
-                </Box>
-              ))}
               <Button
-                onClick={() => handleAddSection()}
+                variant="outlined"
+                sx={{ color: '#4C4C9B', borderColor: '#4C4C9B' }}
+                onClick={() => handleCancel()}
               >
-                Add More Chapters +
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                sx={{ backgroundColor: '#4C4C9B' }}
+                onClick={() => handleSave()}
+              >
+                Save
               </Button>
             </Box>
           ) : (
-            <Box>
-              {contents.map((section) => (
-                <Box>
-                  <Box>
-                    <Typography>
-                      {section.sectionTitle}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography>
-                      {section.sectionPage}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
+            <>
+            </>
           )}
         </Box>
       </Box>
-      <Box>
-        <object aria-label="zine pdf" data={details.url} type="application/pdf" height="800" width="65%" />
-      </Box>
-      <Box>
-        {edit ? (
-          <Box>
-            <Button onClick={() => handleCancel()}>
-              Cancel
-            </Button>
-            <Button onClick={() => handleSave()}>
-              Save
-            </Button>
-          </Box>
-        ) : (
-          <>
-          </>
-        )}
-      </Box>
     </Box>
+
   );
 }
 

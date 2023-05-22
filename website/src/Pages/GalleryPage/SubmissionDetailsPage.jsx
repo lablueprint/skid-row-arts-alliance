@@ -112,39 +112,34 @@ function SubmissionDetailsPage() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <Box>
-        <Box>
-          <Typography>
+    <Box sx={{ display: 'flex', backgroundColor: '#F8F8F8' }}>
+      <Box sx={{
+        width: '60%', marginLeft: '5%', marginTop: '5%', marginBottom: '5%', marginRight: '1%', padding: '2%', backgroundColor: '#FFFFFF',
+      }}
+      >
+        <Box sx={{ display: 'flex' }}>
+          <Typography variant="h6">
             Submission Details
           </Typography>
-          <Box>
+          <Box sx={{ marginLeft: 'auto' }}>
             { (edit) ? (
               <>
               </>
             ) : (
-              <Button onClick={() => setEdit(true)}>Edit</Button>
+              <Button sx={{ backgroundColor: '#4C4C9B' }} onClick={() => setEdit(true)} variant="contained">Edit</Button>
             )}
           </Box>
         </Box>
-        <Box>
-          <Typography>
-            Status:
-          </Typography>
-          <Typography>
-            {details.status}
-          </Typography>
-        </Box>
-        <Box>
-          <Typography>
+        <Box sx={{ display: 'flex' }}>
+          <Typography sx={{ width: 200, height: 30 }}>
             Date Submitted:
           </Typography>
           <Typography>
             {details.date}
           </Typography>
         </Box>
-        <Box>
-          <Typography>
+        <Box sx={{ display: 'flex' }}>
+          <Typography sx={{ width: 200, height: 30 }}>
             Art Title:
           </Typography>
           {(edit) ? (
@@ -158,24 +153,24 @@ function SubmissionDetailsPage() {
             </Typography>
           )}
         </Box>
-        <Box>
-          <Typography>
+        <Box sx={{ display: 'flex' }}>
+          <Typography sx={{ width: 200, height: 30 }}>
             Uploader:
           </Typography>
           <Typography>
             {details.uploader}
           </Typography>
         </Box>
-        <Box>
-          <Typography>
+        <Box sx={{ display: 'flex' }}>
+          <Typography sx={{ width: 200, height: 30 }}>
             Email:
           </Typography>
           <Typography>
             {details.email}
           </Typography>
         </Box>
-        <Box>
-          <Typography>
+        <Box sx={{ display: 'flex' }}>
+          <Typography sx={{ width: 200, height: 30 }}>
             Description:
           </Typography>
           {(edit) ? (
@@ -189,8 +184,8 @@ function SubmissionDetailsPage() {
             </Typography>
           )}
         </Box>
-        <Box>
-          <Typography>
+        <Box sx={{ display: 'flex' }}>
+          <Typography sx={{ width: 200, height: 30 }}>
             Media Type:
           </Typography>
           <Typography>
@@ -199,20 +194,20 @@ function SubmissionDetailsPage() {
             ))}
           </Typography>
         </Box>
-        <Box>
-          <Typography>
+        <Box sx={{ display: 'flex' }}>
+          <Typography sx={{ width: 200, height: 30 }}>
             Tags:
           </Typography>
-          <Typography>
+          <Box sx={{ display: 'flex' }}>
             {details.tags.map((tag) => (
-              <Typography>{tag}</Typography>
+              <Typography sx={{ marginRight: 1 }}>{tag}</Typography>
             ))}
-          </Typography>
+          </Box>
         </Box>
         <Box>
           {details.mediaData.map((media) => (
           // TODO: adjust the rendering for each type of media
-            <img src={media.MediaURL} alt={media.ContentType} />
+            <img style={{ height: 300, width: 300 }} src={media.MediaURL} alt={media.ContentType} />
           ))}
         </Box>
         <Box>
@@ -221,15 +216,21 @@ function SubmissionDetailsPage() {
             </>
           ) : (
             <Box>
-              <Button onClick={() => {
-                handleEditCancel();
-              }}
+              <Button
+                variant="outlined"
+                sx={{ color: '#4C4C9B', borderColor: '#4C4C9B' }}
+                onClick={() => {
+                  handleEditCancel();
+                }}
               >
                 Cancel
               </Button>
-              <Button onClick={() => {
-                handleEditSave();
-              }}
+              <Button
+                variant="contained"
+                sx={{ backgroundColor: '#4C4C9B' }}
+                onClick={() => {
+                  handleEditSave();
+                }}
               >
                 Save
               </Button>
@@ -237,7 +238,18 @@ function SubmissionDetailsPage() {
           )}
         </Box>
       </Box>
-      <Box>
+      <Box sx={{
+        width: '30%', marginRight: '5%', marginTop: '5%', marginBottom: '5%', marginLeft: '1%', padding: '2%', backgroundColor: '#FFFFFF',
+      }}
+      >
+        <Box sx={{ display: 'flex' }}>
+          <Typography>
+            Status:
+          </Typography>
+          <Typography>
+            {details.status}
+          </Typography>
+        </Box>
         <Typography>
           Action
         </Typography>
@@ -259,6 +271,7 @@ function SubmissionDetailsPage() {
         <Box>
           <Typography>Comments</Typography>
           <TextField
+            fullWidth
             value={comments}
             InputProps={{
               readOnly: !change,
@@ -279,23 +292,32 @@ function SubmissionDetailsPage() {
           ) : (
             <Box>
               {details.status === 'Incomplete' ? (
-                <Button onClick={() => {
-                  handleSubmit();
-                }}
+                <Button
+                  sx={{ backgroundColor: '#4C4C9B' }}
+                  variant="contained"
+                  onClick={() => {
+                    handleSubmit();
+                  }}
                 >
                   Submit
                 </Button>
               ) : (
                 <Box>
-                  <Button onClick={() => {
-                    handleChangeCancel();
-                  }}
+                  <Button
+                    variant="outlined"
+                    sx={{ color: '#4C4C9B', borderColor: '#4C4C9B' }}
+                    onClick={() => {
+                      handleChangeCancel();
+                    }}
                   >
                     Cancel
                   </Button>
-                  <Button onClick={() => {
-                    handleChangeSave();
-                  }}
+                  <Button
+                    variant="contained"
+                    sx={{ backgroundColor: '#4C4C9B' }}
+                    onClick={() => {
+                      handleChangeSave();
+                    }}
                   >
                     Save
                   </Button>

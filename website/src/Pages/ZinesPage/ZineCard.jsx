@@ -20,7 +20,9 @@ function ZineCard({
 
   return (
     <Box
-      style={{ background: 'gray', margin: '10px', width: '250px' }}
+      sx={{
+        backgroundColor: '#FFFFFF', border: 1, borderColor: '#C4C8CA', margin: '5px', width: '250px',
+      }}
       onClick={() => viewZine()}
     >
       <Typography>{title}</Typography>
