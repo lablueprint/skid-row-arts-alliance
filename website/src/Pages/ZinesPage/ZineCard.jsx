@@ -21,7 +21,7 @@ function ZineCard({
   return (
     <Box
       sx={{
-        backgroundColor: '#FFFFFF', border: 1, borderColor: '#C4C8CA', margin: '5px', width: '250px',
+        backgroundColor: '#FFFFFF', border: 1, borderColor: '#C4C8CA', width: '250px',
       }}
       onClick={() => viewZine()}
     >

@@ -2,7 +2,7 @@ import { React } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import './NavigationBar.css';
-import { Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { logout } from '../../redux/sliceAuth';
 
 function NavigationBar() {
@@ -13,21 +13,21 @@ function NavigationBar() {
   };
 
   return (
-    <div className="NavBar">
-      <li>
+    <Box className="NavBar" sx={{ padingLeft: '5' }}>
+      <Box>
         <Link to="/">Gallery</Link>
-      </li>
-      <li>
+      </Box>
+      <Box>
         <Link to="zines">Zines</Link>
-      </li>
-      <li>
+      </Box>
+      <Box>
         <Link to="events">Events</Link>
-      </li>
-      <li>
+      </Box>
+      <Box>
         <Link to="resources">Resources</Link>
-      </li>
+      </Box>
       <Button variant="outlined" onClick={() => { handleSignOut(); }}>Sign Out</Button>
-    </div>
+    </Box>
   );
 }
 
