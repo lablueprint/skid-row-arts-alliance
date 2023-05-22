@@ -41,7 +41,6 @@ export const {
   login,
   logout,
   refresh,
-  updateUser,
 } = authSlice.actions;
 const { reducer } = authSlice;
 export default reducer;

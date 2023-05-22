@@ -15,6 +15,8 @@ import EventDetailScreen from '../Screen/EventDetailScreen';
 import EventScreen from '../Screen/EventScreen';
 import ResourceDetailScreen from '../Screen/ResourceDetailScreen';
 import OrganizationDetailScreen from '../Screen/OrganizationDetailScreen';
+import OutwardProfileScreen from '../Screen/OutwardProfileScreen';
+import EditProfileScreen from '../Screen/EditProfileScreen';
 import { isTokenExpired } from '../redux/sliceAuth';
 
 const Tab = createBottomTabNavigator();
@@ -44,6 +46,8 @@ function AppNavigator() {
           <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
           <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
           <Stack.Screen name="Organization Details" component={OrganizationDetailScreen} />
+          <Stack.Screen name="Outward Profile" component={OutwardProfileScreen} />
+          <Stack.Screen name="Edit Profile" component={EditProfileScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     ) : (

@@ -7,7 +7,6 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { useSelector } from 'react-redux';
-import { serviceUpdateUser } from '../redux/services';
 
 const styles = StyleSheet.create({
   container: {
@@ -54,7 +53,7 @@ function ProfileScreen({
   const [email, onChangeEmail] = useState('');
   const [platform, setPlatform] = useState('');
   const [tag, onChangeTag] = useState('');
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [profilePicture, onChangeProfilePicture] = useState([]);
 
   const [submissions, setSubmissions] = useState([]);
@@ -198,6 +197,7 @@ function ProfileScreen({
             handleSignOut();
           }}
         />
+        <Button title="Edit" onPress={() => navigation.navigate('Edit Profile')} />
         <Text>
           <Text style={{ fontWeight: 'bold' }}>Name: </Text>
           currentUser.userName
