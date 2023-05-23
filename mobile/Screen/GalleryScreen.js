@@ -20,15 +20,13 @@ import ArtworkCard from '../Components/ArtworkCard';
 const styles = StyleSheet.create({
   header: {
     backgroundColor: 'white',
-    // padding: 13,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 35,
+    paddingBottom: 15,
   },
   headerText: {
     justifyContent: 'center',
-    // marginTop: 50,
     marginLeft: 20,
     fontFamily: 'MontserratSemiBold',
     fontSize: 28,
