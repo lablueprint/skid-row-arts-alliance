@@ -1,44 +1,90 @@
 import React from 'react';
 import {
-  View, Text, StyleSheet,
+  Image, View, Text, StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium
+} from '@expo-google-fonts/montserrat';
 
 const styles = StyleSheet.create({
-  h1: {
-    fontSize: 30,
-    fontWeight: 'bold',
+  flexContainer: {
+    flexDirection: 'row',
+  },
+  image: {
+    width: 500,
+    height: 200,
+  },
+  title: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 24,
+  },
+  header: {
+    fontSize: 24,
+    fontFamily: 'MontserratMedium',
+    color: '#1E2021',
+  },
+  normalText: {
+    fontSize: 16,
+    fontFamily: 'MontserratMedium',
+    color: '#1E2021',
+    lineHeight: 23,
+  },
+  infoIconTransparent: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
   },
 });
 
 function OrganizationDetailScreen({ route }) {
   const {
-    organizations, summary, number, email, website,
-  } = route.params;
+    image, organization, organizationDescription, phoneNumber, email, website,
+  } = route.params || {};
+
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+  });
+
+  const imageURL = image.uri;
 
   return (
     <View>
-      <Text style={styles.h1}>{organizations}</Text>
-      <Text>
+      <Text style={styles.title}>{organization}</Text>
+      <Image source={require('../assets/detailScreen/laPoverty.png')} style={styles.image}/>
+      <Text style={styles.normalText}>
         {' '}
-        {summary}
-        {' '}
-      </Text>
-      <Text>
-        {' '}
-        {number}
+        {organizationDescription}
         {' '}
       </Text>
-      <Text>
+      <Text style={styles.header}>
+        Contact Info
+      </Text>
+      <View style={styles.flexContainer}>
+      <Image source={require('../assets/detailScreen/callTransparent.png')} style={styles.infoIconTransparent} />
+      <Text style={styles.normalText}>
         {' '}
-        {email}
+        {phoneNumber}
         {' '}
       </Text>
-      <Text>
+      </View>
+      <View style={styles.flexContainer}>
+      <Image source={require('../assets/detailScreen/mailTransparent.png')} style={styles.infoIconTransparent} />
+      <Text style={styles.normalText}>
+        {' '}
+        studio526@gmail.com
+        {' '}
+      </Text>
+      </View>
+      <View style={styles.flexContainer}>
+      <Image source={require('../assets/detailScreen/globeTransparent.png')} style={styles.infoIconTransparent} />
+      <Text style={styles.normalText}>
         {' '}
         {website}
         {' '}
       </Text>
+      </View>
     </View>
   );
 }
@@ -46,9 +92,9 @@ function OrganizationDetailScreen({ route }) {
 OrganizationDetailScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      organizations: PropTypes.string.isRequired,
-      summary: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
+      organization: PropTypes.string.isRequired,
+      organizationDescription: PropTypes.string.isRequired,
+      phoneNumber: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
       website: PropTypes.string.isRequired,
     }),

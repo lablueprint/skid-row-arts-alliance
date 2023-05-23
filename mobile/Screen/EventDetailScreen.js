@@ -16,6 +16,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  normalText: {
+    fontSize: 16,
+    fontFamily: 'MontserratMedium',
+    color: '#1E2021',
+    lineHeight: 23,
+  },
+  flexContainer: {
+    flexDirection: 'row',
+  },
   button: {
     marginTop: 10,
     width: 350,
@@ -26,12 +35,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  image: {
+  coverImage: {
     width: '100%',
     height: '15%',
     resizeMode: 'cover',
     position: 'absolute',
     top: 0,
+  },
+  image: {
+    width: '100%',
+    height: '15%',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -203,10 +216,11 @@ function EventDetailScreen({
     }
   };
 
-  const onPressEvent = () => {
+  const onPressOrganization = () => {
     navigation.navigate('Organization Details', {
+      image,
       organization,
-      summary,
+      organizationDescription,
       phoneNumber,
       email,
       website,
@@ -231,17 +245,21 @@ function EventDetailScreen({
     return `${formattedHours}:${formattedMinutes} ${period}`;
   }
 
+  const imageURL = image.uri;
+
   const startTime = formatTime(new Date(startDate));
   const endTime = formatTime(new Date(endDate));
 
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const dayOfWeek = daysOfWeek[startDate.getDay()];
 
+  console.log(`String: ${imageURL}`);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View>
         <Image
-          source={image.uri}
+          source={{ uri: imageURL }}
           style={styles.image}
         />
       </View>
@@ -252,7 +270,7 @@ function EventDetailScreen({
           <Text style={styles.organizationText}>{organization}</Text>
           <Image source={require('../assets/detailScreen/info.png')} style={styles.infoImage} />
         </TouchableOpacity>
-        <View style={styles.info}>
+        <ScrollView style={styles.info}>
           <View style={styles.infoRow}>
             <Image source={require('../assets/detailScreen/calendarIcon.png')} style={styles.infoIcon} />
             <Text style={styles.infoText}>{dayOfWeek}</Text>
@@ -287,12 +305,12 @@ function EventDetailScreen({
               {website}
             </Text>
           </View>
-        </View>
-        <AddCalendarButton
-          eventName={title}
-          eventStartDate={startDate}
-          eventEndDate={endDate}
-        />
+          <AddCalendarButton
+            eventName={title}
+            eventStartDate={startDate}
+            eventEndDate={endDate}
+          />
+        </ScrollView>
         <TouchableOpacity style={styles.button}>
           <Text style={styles.infoText}>
             Add To Calendar
@@ -301,34 +319,43 @@ function EventDetailScreen({
         <Text style={styles.header}>
           Pictures
         </Text>
+        <Image source={require('../assets/detailScreen/laPoverty.png')} style={styles.image}/>
         <Text style={styles.header}>
           Event Description
         </Text>
-        <Text>
-          {eventDescription}
+        <Text style={styles.normalText}>
+          We create theater performances
         </Text>
         <Text style={styles.header}>
           More About the Organization
         </Text>
-        <Text>
+        <Text style={styles.normalText}>
           {organizationDescription}
         </Text>
         <View>
-          <Image source={require('../assets/detailScreen/callTransparent.png')} style={styles.infoIconTransparent} />
-          <Text>
-            {phoneNumber}
-          </Text>
-          <Image source={require('../assets/detailScreen/mailTransparent.png')} style={styles.infoIconTransparent} />
-          <Text>
-            {email}
-          </Text>
-          <Image source={require('../assets/detailScreen/globeTransparent.png')} style={styles.infoIconTransparent} />
-          <Text>
-            {website}
-          </Text>
-          <Text>
-            Learn More
-          </Text>
+          <View style={styles.flexContainer}>
+            <Image source={require('../assets/detailScreen/callTransparent.png')} style={styles.infoIconTransparent} />
+            <Text style={styles.normalText}>
+              {phoneNumber}
+            </Text>
+          </View>
+          <View style={styles.flexContainer}>
+            <Image source={require('../assets/detailScreen/mailTransparent.png')} style={styles.infoIconTransparent} />
+            <Text style={styles.normalText}>
+              studio526@gmail.com
+            </Text>
+          </View>
+          <View style={styles.flexContainer}>
+            <Image source={require('../assets/detailScreen/globeTransparent.png')} style={styles.infoIconTransparent} />
+            <Text style={styles.normalText}>
+              {website}
+            </Text>
+          </View>
+          <TouchableOpacity style={styles.button} onPress={() => onPressOrganization()}>
+            <Text style={styles.infoText}>
+              Learn More
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </ScrollView>

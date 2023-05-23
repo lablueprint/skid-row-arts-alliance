@@ -117,12 +117,16 @@ function EventCard({
   const startTime = formatTime(new Date(startDate));
   const endTime = formatTime(new Date(endDate));
 
+  const imageURL = image.uri;
+
+  console.log(imageURL);
+
   return (
     <View style={styles.card}>
-      <TouchableOpacity onPress={onPressEvent}>
+      <TouchableOpacity onPress={() => onPressEvent()}>
         <View>
           <Image
-            source={{ uri: image }}
+            source={{ uri: imageURL }}
             style={styles.cardImage}
           />
           <View style={styles.tag}>
@@ -151,7 +155,7 @@ function EventCard({
 EventCard.propTypes = {
   key: PropTypes.string,
   id: PropTypes.string.isRequired,
-  image: PropTypes.string.isRequired,
+  image: PropTypes.shape.isRequired,
   location: PropTypes.shape({
     name: PropTypes.string,
     address: PropTypes.string,
