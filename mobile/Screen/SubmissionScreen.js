@@ -1,3 +1,5 @@
+// TODO: Video preview
+// TODO: Improve carousel
 import React, { useState, useRef } from 'react';
 import {
   StyleSheet, TextInput, Text, View, ScrollView, Button, Image,
@@ -106,6 +108,8 @@ function SubmissionScreen({ navigation }) {
   const [previewFile, setPreviewFile] = useState(null);
   const [aspectRatio, setAspectRatio] = useState(1);
 
+  const [carouselIdx, setCarouselIdx] = useState(0);
+
   const tagOptions = {
     Image: ['traditional art', 'illustration', 'photography', 'graphic design', 'digital art'],
     Audio: ['music', 'poetry', 'speech'],
@@ -178,6 +182,7 @@ function SubmissionScreen({ navigation }) {
     setTags([]);
     setConfirmedTags([]);
     closePreview();
+    setCarouselIdx(0);
   };
 
   const getType = (uri, fileType) => {
@@ -280,6 +285,14 @@ function SubmissionScreen({ navigation }) {
       });
       reset();
       setPage('upload');
+      Alert.alert(
+        'Submission successful',
+        'Please allow up to 10 business days for the gallery to update!',
+        [
+          { text: 'OK' },
+        ],
+        { cancelable: false },
+      );
     } catch (err) {
       console.error(err);
     }
@@ -481,7 +494,7 @@ function SubmissionScreen({ navigation }) {
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ width: '100%' }}>
           <View style={{
             paddingTop: '9%',
-            paddingBottom: '19%',
+            paddingBottom: '20%',
             paddingHorizontal: '4%',
             flex: 1,
           }}
@@ -729,6 +742,11 @@ function SubmissionScreen({ navigation }) {
               </View>
             ) : ''}
 
+            <View style={{
+              width: '99%',
+              height: '13.5%',
+            }}
+            />
           </View>
 
           <Modal
@@ -1069,6 +1087,93 @@ function SubmissionScreen({ navigation }) {
 
             <View style={{
               width: '100%',
+              height: 200,
+              alignSelf: 'center',
+              marginTop: '10%',
+              borderRadius: 12,
+              borderWidth: 1,
+              borderColor: '#ddd',
+              justifyContent: 'center',
+            }}
+            >
+              <View
+                style={{
+                  backgroundColor: files[carouselIdx].type.includes('audio') ? '#f2f2f2' : 'black',
+                  width: '100%',
+                  justifyContent: 'center',
+                  borderRadius: 12,
+                  height: '100%',
+                }}
+              >
+                {files[carouselIdx].type.includes('audio') ? (
+                  <View
+                    style={{
+                      height: '100%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      paddingBottom: '10%',
+                      paddingTop: '14%',
+                      paddingHorizontal: '20%',
+                    }}
+                  >
+                    <AudioPlayer source={files[carouselIdx].uri} />
+                  </View>
+                ) : (
+                  <View style={{
+                    height: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  >
+                    <Image
+                      source={{ uri: thumbnails[carouselIdx] }}
+                      style={{ width: '100%', height: '100%', borderRadius: 12 }}
+                    />
+                  </View>
+                )}
+
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    zIndex: 100,
+                    right: '2.5%',
+                    backgroundColor: '#4C4C9B',
+                    padding: '1.5%',
+                    borderRadius: 100,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => {
+                    setCarouselIdx((carouselIdx + 1
+                  + thumbnails.length) % thumbnails.length);
+                  }}
+                >
+                  <Icon name="chevron-right" size={30} color="white" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    zIndex: 100,
+                    left: '2.5%',
+                    backgroundColor: '#4C4C9B',
+                    padding: '1.5%',
+                    borderRadius: 100,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => {
+                    setCarouselIdx((carouselIdx - 1
+                   + thumbnails.length) % thumbnails.length);
+                  }}
+                >
+                  <Icon name="chevron-left" size={30} color="white" />
+                </TouchableOpacity>
+              </View>
+
+            </View>
+
+            <View style={{
+              width: '100%',
               marginTop: '7.5%',
             }}
             >
@@ -1233,6 +1338,12 @@ function SubmissionScreen({ navigation }) {
                 </Text>
               </TouchableOpacity>
             </View>
+            <View style={{
+              width: '99%',
+              paddingBottom: '1.75%',
+            }}
+            />
+
           </View>
 
         </ScrollView>
