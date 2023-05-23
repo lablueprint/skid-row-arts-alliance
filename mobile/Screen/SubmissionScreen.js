@@ -16,6 +16,9 @@ import PropTypes from 'prop-types';
 
 import { URL } from '@env';
 
+import pako, { deflate, inflate } from 'pako';
+import { Buffer } from 'buffer';
+
 import AudioPlayer from '../Components/AudioPlayer';
 
 const audioIcon = require('../assets/audioIcon.png');
@@ -183,6 +186,9 @@ function SubmissionScreen({ navigation }) {
     if (uriType === 'mov') {
       return `${fileType}/quicktime`;
     }
+    if (uriType.includes('m4a')) {
+      return 'audio/x-m4a';
+    }
     return `${fileType}/${uriType}`;
   };
 
@@ -197,7 +203,41 @@ function SubmissionScreen({ navigation }) {
   };
 
   const submit = async () => {
-    if (files.length < 1) return; // Need at least one fight
+    if (files.length < 1) {
+      Alert.alert(
+        'Please upload a file',
+        'You need to upload at least one file to submit!',
+        [
+          { text: 'OK' },
+        ],
+        { cancelable: false },
+      );
+      return;
+    }
+
+    if (artworkTitle === '') {
+      Alert.alert(
+        'Empty title',
+        'Please include a title!',
+        [
+          { text: 'OK' },
+        ],
+        { cancelable: false },
+      );
+      return;
+    }
+
+    if (description === '') {
+      Alert.alert(
+        'Empty description',
+        'Please include a description!',
+        [
+          { text: 'OK' },
+        ],
+        { cancelable: false },
+      );
+      return;
+    }
 
     let thumbnailExists = true;
     const filesToSubmit = [];
