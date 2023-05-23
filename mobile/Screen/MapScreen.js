@@ -57,7 +57,6 @@ function MapScreen() {
 
   const getAllResources = async () => {
     try {
-      const result = await axios.get(`${URL}/resource/get`);
       setAllResources(result.data || []);
       const result = await axios.get(`${URL}/resource/get`, {
         headers: authHeader,

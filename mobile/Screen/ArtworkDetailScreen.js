@@ -1,14 +1,19 @@
+/* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react';
 import {
   StyleSheet, View, Text, ScrollView, Image, Switch, Button,
 } from 'react-native';
 import { useSelector } from 'react-redux';
+import { Card } from 'react-native-paper';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import VideoPlayer from 'expo-video-player';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 import AudioPlayer from '../Components/AudioPlayer';
 
 const styles = StyleSheet.create({
@@ -26,6 +31,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  savedArtCard: {
+    borderRadius: 20,
+    marginRight: 15,
+  },
+  userArtTitle: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 18,
+    paddingTop: 70,
+  },
+  userArtContainer: {
+    paddingVertical: 10,
+    flexDirection: 'row',
+  },
 });
 
 function ArtworkDetailScreen({
@@ -39,6 +57,11 @@ function ArtworkDetailScreen({
   const [loadImages, setLoadImages] = useState(false);
   const [isArtSaved, setIsArtSaved] = useState(false);
   const { id, authHeader } = useSelector((state) => state.auth);
+
+  const [loadSavedArt, setLoadSavedArt] = useState(false);
+  const [savedArt, setSavedArt] = useState([]);
+  const [loadAllThumnails, setLoadAllThumbnails] = useState(false);
+  const [allThumbnails, setAllThumbnails] = useState([]);
 
   const handleShare = async (mediaUrl) => {
     try {
@@ -118,9 +141,57 @@ function ArtworkDetailScreen({
     }
   };
 
+  const findThumbnail = (artID) => {
+    const artInfo = {
+      thumbNail: 'No Tag',
+    };
+    if (loadAllThumnails) {
+      allThumbnails.forEach((thumbnail) => {
+        if (thumbnail.SubmissionId === artID) {
+          artInfo.thumbNail = (thumbnail.ImageURL);
+        }
+      });
+    }
+    return artInfo.thumbNail;
+  };
+
+  const getOtherArtwork = async () => {
+    try {
+      setLoadSavedArt(false);
+      const res = await axios.get(`${URL}/user/getUser/${id}`, {
+        headers: authHeader,
+      });
+      setSavedArt(res.data.msg.userArtwork);
+      return res;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadSavedArt(true);
+    }
+  };
+
+  const getThumbnails = async () => {
+    try {
+      setLoadAllThumbnails(false);
+      const result = await axios.get(`${URL}/submissions/getthumbnails`, {
+        headers: authHeader,
+      });
+      setAllThumbnails(result.data);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadAllThumbnails(true);
+    }
+  };
+
   useEffect(() => {
     getSavedArt().then((status) => setIsArtSaved(status));
-    getSubmission();
+    // getSubmission();
+    getOtherArtwork();
+    getThumbnails();
   }, []);
 
   return (
@@ -198,6 +269,23 @@ function ArtworkDetailScreen({
           </>
         ) : <Text>Loading</Text>
       }
+      <View>
+        <Text style={styles.userArtTitle}>
+          Other work from this user
+        </Text>
+        <ScrollView horizontal contentContainerStyle={styles.userArtContainer}>
+          {loadSavedArt ? (
+            savedArt.map((oneArt) => (
+              <Card style={styles.savedArtCard}>
+                <Card.Cover
+                  style={{ height: 200, width: 200 }}
+                  source={{ uri: findThumbnail(oneArt) }}
+                />
+              </Card>
+            ))
+          ) : <Text>There is no user art</Text>}
+        </ScrollView>
+      </View>
     </ScrollView>
   );
 }
