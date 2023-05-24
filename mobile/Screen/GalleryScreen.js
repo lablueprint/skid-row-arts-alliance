@@ -5,6 +5,7 @@ import {
   Text,
   ScrollView,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { URL } from '@env';
 import PropTypes from 'prop-types';
@@ -25,11 +26,14 @@ const styles = StyleSheet.create({
 function GalleryScreen({ navigation }) {
   const [allImageData, setAllImageData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
+  const { authHeader } = useSelector((state) => state.auth);
 
   const getAllSubmissions = async () => {
     try {
       setLoadImages(false);
-      const res = await axios.get(`${URL}/submissions/get`);
+      const res = await axios.get(`${URL}/submissions/get`, {
+        headers: authHeader,
+      });
       setAllImageData(res.data);
       return res.data;
     } catch (err) {

@@ -11,7 +11,7 @@ function ArtworkCard({
 }) {
   const onPressEvent = () => {
     navigation.navigate('Artwork Details', {
-      id,
+      artworkId: id,
     });
   };
 
