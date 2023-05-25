@@ -52,7 +52,7 @@ function AppNavigator() {
           <Stack.Screen name="Saved Events Screen" component={SavedEventsScreen} />
           <Stack.Screen name="Saved Resources Screen" component={SavedResourcesScreen} />
           <Stack.Screen name="Saved Artwork Screen" component={SavedArtworkScreen} />
-          <Stack.Screen name="Outward Profile" component={OutwardProfileScreen} />
+          <Stack.Screen name="Outward Profile" component={OutwardProfileScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Edit Profile" component={EditProfileScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>

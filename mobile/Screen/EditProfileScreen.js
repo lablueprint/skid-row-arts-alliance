@@ -7,6 +7,7 @@ import axios from 'axios';
 import {
   StyleSheet, Text, TextInput, View, Button, Image, ScrollView, Modal, Pressable, ImageBackground,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/sliceAuth';
 
@@ -237,6 +238,13 @@ const styles = StyleSheet.create({
     paddingBottom: 9,
     alignItems: 'center',
   },
+  deleteAccountText: {
+    fontStyle: 'normal',
+    fontSize: 18,
+    lineHeight: 0,
+    fontFamily: 'MontserratSemiBold',
+    color: '#D50D0D',
+  },
   modalContainer: {
     flex: 1,
     alignItems: 'center',
@@ -320,6 +328,8 @@ function EditProfileScreen({
 
   const currentUser = useSelector((state) => state.auth);
 
+  const [image, setImage] = useState('https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500');
+
   const [currFirstName, setFirstName] = useState('');
   const [currLastName, setLastName] = useState('');
 
@@ -335,8 +345,22 @@ function EditProfileScreen({
 
   const dispatch = useDispatch();
 
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
   const handleAvatarChange = () => {
     console.log('pressed!');
+    pickImage();
   };
 
   const handleFirstNameChange = (text) => {
@@ -432,7 +456,7 @@ function EditProfileScreen({
         <View style={styles.row}>
           <Pressable onPress={handleAvatarChange}>
             <ImageBackground
-              source={{ uri: 'https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' }}
+              source={{ uri: image }}
               resizeMode="cover"
               style={styles.avatar}
             />
@@ -528,7 +552,7 @@ function EditProfileScreen({
         </View>
         <Text style={styles.manageAccountText}>Manage Account</Text>
         <Pressable style={styles.deleteAccountButton} onPress={handleDelete}>
-          <Text style={styles.cancelText}>Delete Account</Text>
+          <Text style={styles.deleteAccountText}>Delete Account</Text>
         </Pressable>
         <Modal visible={showModal} animationType="slide" transparent>
           <View style={styles.modalContainer}>

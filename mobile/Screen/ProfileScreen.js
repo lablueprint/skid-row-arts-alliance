@@ -325,68 +325,62 @@ function ProfileScreen({ navigation }) {
   // Display and edit profile info
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.nameAndEditButtonContainer}>
-        <View style={styles.nameContainer}>
-          <Text style={styles.name}>
-            {currFirstName}
-          </Text>
-          <Text style={styles.name}>
-            {currLastName}
-          </Text>
-        </View>
-        <Button title="Edit" onPress={() => navigation.navigate('Edit Profile')} />
+      <Button title="Edit" onPress={() => navigation.navigate('Edit Profile')} />
+      <View style={{
+        paddingTop: 30,
+        paddingBottom: 50,
+      }}
+      >
+        <Button
+          title="Sign Out"
+          onPress={() => {
+            handleSignOut();
+          }}
+        />
+        <Button title="Outward" onPress={() => navigation.navigate('Outward Profile')} />
+        <Text>
+          <Text style={{ fontWeight: 'bold' }}>Name: </Text>
+          currentUser.userName
+        </Text>
+        <Text>
+          <Text style={{ fontWeight: 'bold' }}>Email: </Text>
+          currentUser.userEmail
+        </Text>
+        <Text>
+          <Text style={{ fontWeight: 'bold' }}>Social Platform: </Text>
+          currentUser.userSocialPlatform
+        </Text>
+        <Text>
+          <Text style={{ fontWeight: 'bold' }}>Social Tag: </Text>
+          currentUser.userSocialTag
+        </Text>
       </View>
-      <View style={styles.avatarHandleContainer}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: 'https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' }}
-            resizeMode="cover"
-            style={styles.avatar}
-          />
+      <View style={styles.savedContainer}>
+        <View style={styles.savedHeadingAndSeeAll}>
+          <Text style={styles.heading}>
+            Events
+          </Text>
+          <TouchableOpacity onPress={onPressEventCard} style={styles.seeAllSavedButton}>
+            <Text style={styles.seeAllText}>See More</Text>
+          </TouchableOpacity>
         </View>
-        <View styles={styles.handleContainer}>
-          <Text styles={styles.handleText}>
-            {currFacebook}
-          </Text>
-          <Text styles={styles.handleText}>
-            {currTwitter}
-          </Text>
-          <Text styles={styles.handleText}>
-            {currInstagram}
-          </Text>
-        </View>
-      </View>
-      <View>
-        <View>
-          <Text>
-            {currBio}
-          </Text>
-        </View>
-        <View style={styles.savedContainer}>
-          <View style={styles.savedHeadingAndSeeAll}>
-            <Text style={styles.heading}>
-              Events
-            </Text>
-            <TouchableOpacity onPress={onPressEventCard} style={styles.seeAllSavedButton}>
-              <Text style={styles.seeAllText}>See More</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.savedCardContainer}>
-            {loadSavedEvent ? (
-              savedEvent.map((oneEvent) => (
-                <Card style={styles.savedEventCard}>
-                  <Card.Content>
-                    <Text style={styles.savedCategoryTitle}>
-                      {findEvent(oneEvent).tag}
-                    </Text>
-                    <Text style={styles.savedTitle}>
-                      {findEvent(oneEvent).eventName}
-                    </Text>
-                  </Card.Content>
-                </Card>
-              ))
-            ) : <Text>There is no saved events</Text>}
-          </View>
+        <View style={styles.savedCardContainer}>
+          {
+        loadSavedEvent ? (
+          savedEvent.map((oneEvent) => (
+            <Card style={styles.savedEventCard}>
+              <Card.Content>
+                <Text style={styles.savedCategoryTitle}>
+                  {findEvent(oneEvent).tag}
+                </Text>
+                <Text style={styles.savedTitle}>
+                  {findEvent(oneEvent).eventName}
+                </Text>
+              </Card.Content>
+            </Card>
+          ))
+        ) : <Text>There is no saved events</Text>
+        }
         </View>
         <View style={styles.savedContainer}>
           <View style={styles.savedHeadingAndSeeAll}>
