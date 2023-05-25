@@ -282,11 +282,14 @@ function SubmissionDetailsPage() {
         <Box>
           {!change ? (
             <Box>
-              <Button onClick={() => {
-                setChange(true);
-              }}
+              <Button
+                sx={{ backgroundColor: '#4C4C9B' }}
+                variant="contained"
+                onClick={() => {
+                  setChange(true);
+                }}
               >
-                Change
+                Revise
               </Button>
             </Box>
           ) : (

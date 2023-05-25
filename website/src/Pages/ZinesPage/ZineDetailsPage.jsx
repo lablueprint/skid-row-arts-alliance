@@ -213,7 +213,7 @@ function ZineDetailsPage() {
           </Box>
         </Box>
         <Box>
-          <object aria-label="zine pdf" data={details.url} type="application/pdf" height="800" width="65%" />
+          <object aria-label="zine pdf" data={details.url} type="application/pdf" height="800" width="80%" />
         </Box>
         <Box>
           {edit ? (
