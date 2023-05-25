@@ -6,7 +6,7 @@ const submissionController = require('../controllers/submissionController');
 // user facing functions
 submissionRouter.post('/post', submissionController.createSubmission);
 submissionRouter.get('/getthumbnails', submissionController.getGalleryThumbnails);
-submissionRouter.get('/getartwork', submissionController.getArtworkDetails);
+submissionRouter.get('/getartwork/:id', submissionController.getArtworkDetails);
 
 // admin facing functions
 submissionRouter.get('/getsubmissions', submissionController.getSubmissions);
