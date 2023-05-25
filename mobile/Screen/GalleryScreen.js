@@ -57,7 +57,7 @@ function GalleryScreen({ navigation }) {
               allImageData.map((imageData) => (
                 <ArtworkCard
                   ImageURL={imageData.ImageURL}
-                  id={imageData.SubmissionData._id}
+                  id={imageData.SubmissionId}
                   navigation={navigation}
                 />
               ))
