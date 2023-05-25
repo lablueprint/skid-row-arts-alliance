@@ -56,19 +56,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    marginVertical: 10,
-    marginLeft: 4,
+    height: '100%',
+    marginHorizontal: 4,
+    marginTop: '4%',
+    marginBottom: '4%',
   },
   tagBox: {
     paddingHorizontal: 13,
     paddingVertical: 8,
     marginHorizontal: 4,
-    marginVertical: 2,
     borderRadius: 20,
     backgroundColor: '#D0D0E8',
   },
   tagText: {
-    fontFamily: 'MontserratBold',
+    fontFamily: 'MontserratSemiBold',
     fontSize: 16,
     color: '#424288',
   },
@@ -113,7 +114,7 @@ function GalleryScreen({ navigation, route }) {
     <SafeAreaView>
       <View style={styles.header}>
         <Text style={styles.headerText}>Gallery</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Artwork Filter')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Artwork Filter', { selectedTags })}>
           <View style={styles.filterButton}>
             <Image
               source={require('../assets/filter/filter.png')}
@@ -147,6 +148,7 @@ function GalleryScreen({ navigation, route }) {
             navigation={navigation}
           />
         )}
+        style={styles.galleryContainer}
       />
     </SafeAreaView>
   );

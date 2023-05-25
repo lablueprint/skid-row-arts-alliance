@@ -196,14 +196,7 @@ function ArtworkDetailScreen({
 ArtworkDetailScreen.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      Encoding: PropTypes.string.isRequired,
-      key: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      description: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired,
-      tags: PropTypes.arrayOf(PropTypes.string),
     }),
   }).isRequired,
 };

@@ -101,7 +101,7 @@ const TAGS = [
   { id: '11', section: 'Video', label: 'short film' },
 ].map((tag) => ({ ...tag, selected: false }));
 
-function ArtworkFilterScreen({ navigation }) {
+function ArtworkFilterScreen({ navigation, route }) {
   const [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
     MontserratMedium: Montserrat_500Medium,
@@ -110,7 +110,11 @@ function ArtworkFilterScreen({ navigation }) {
   });
 
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState(
+    route.params?.selectedTags && route.params.selectedTags.length > 0
+      ? route.params.selectedTags
+      : [],
+  );
 
   const handleSelectCategory = (category) => {
     if (selectedCategories.includes(category)) {
@@ -258,6 +262,13 @@ function ArtworkFilterScreen({ navigation }) {
 ArtworkFilterScreen.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
+  }).isRequired,
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      selectedTags: PropTypes.arrayOf(PropTypes.shape({
+        label: PropTypes.string.isRequired,
+      })),
+    }),
   }).isRequired,
 };
 
