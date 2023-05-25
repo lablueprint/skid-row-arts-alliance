@@ -5,8 +5,8 @@ import jwt_decode from 'jwt-decode';
 
 const admin = JSON.parse(localStorage.getItem('admin'));
 
-const initialState = admin ? { id: admin.id, token: admin.token }
-  : { id: null, token: null };
+const initialState = admin ? { id: admin.id, token: admin.token, count: 0 }
+  : { id: null, token: null, count: 0 };
 
 export const sliceAuth = createSlice({
   name: 'sliceAuth',
@@ -22,10 +22,13 @@ export const sliceAuth = createSlice({
       state.token = null;
       localStorage.removeItem('admin');
     },
+    refresher: (state) => {
+      state.count += 1;
+    },
   },
 });
 
-export const { login, logout } = sliceAuth.actions;
+export const { login, logout, refresher } = sliceAuth.actions;
 
 export const isTokenExpired = (token) => {
   const decodedToken = jwt_decode(token);
