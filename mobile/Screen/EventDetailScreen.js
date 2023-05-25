@@ -8,6 +8,7 @@ import axios from 'axios';
 import {
   useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
+import AddCalendarButton from '../Components/AddCalendarButton';
 
 const styles = StyleSheet.create({
   container: {
@@ -99,6 +100,17 @@ const styles = StyleSheet.create({
     fontFamily: 'MontserratMedium',
     fontSize: 12,
     color: '#4C4C9B',
+  },
+  heading: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 20,
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  description: {
+    fontFamily: 'Montserrat',
+    fontSize: 13,
+    lineHeight: 20,
   },
 });
 
@@ -206,7 +218,7 @@ function EventDetailScreen({
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: image.uri }}
+        source={{ uri: image }}
         style={styles.image}
       />
       <View style={styles.overlay} />
@@ -252,6 +264,11 @@ function EventDetailScreen({
             </Text>
           </View>
         </View>
+        <AddCalendarButton
+          eventName={title}
+          eventStartDate={startDate}
+          eventEndDate={endDate}
+        />
       </View>
     </View>
   );
@@ -265,7 +282,7 @@ EventDetailScreen.propTypes = {
     params: PropTypes.shape({
       key: PropTypes.string,
       id: PropTypes.string.isRequired,
-      image: PropTypes.shape(),
+      image: PropTypes.string,
       title: PropTypes.string,
       location: PropTypes.shape({
         name: PropTypes.string,

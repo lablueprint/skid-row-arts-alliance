@@ -122,7 +122,7 @@ function EventCard({
       <TouchableOpacity onPress={onPressEvent}>
         <View>
           <Image
-            source={image}
+            source={{ uri: image }}
             style={styles.cardImage}
           />
           <View style={styles.tag}>
@@ -162,7 +162,7 @@ EventCard.propTypes = {
     }),
   }),
   title: PropTypes.string.isRequired,
-  description: PropTypes.string,
+  descriptions: PropTypes.string,
   startDate: PropTypes.instanceOf(Date).isRequired,
   endDate: PropTypes.instanceOf(Date).isRequired,
   tag: PropTypes.string.isRequired,

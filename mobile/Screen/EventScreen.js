@@ -116,7 +116,7 @@ function EventScreen({ navigation }) {
           image={event.ImageURL}
           title={event.EventData.title}
           location={event.EventData.location}
-          eventDescription={event.EventData.eventDescription}
+          description={event.EventData.description}
           startDate={new Date(event.EventData.startDate)}
           endDate={new Date(event.EventData.endDate)}
           tag={event.EventData.tag}
