@@ -63,7 +63,7 @@ function SavedResourcesScreen() {
     try {
       setLoadSavedResource(false);
       const res = await axios.get(`${URL}/user/getResources/63e33e2f578ad1d80bd2a347`);
-      setSavedResource(res.data.msg[0].savedResources.slice(0, 2));
+      setSavedResource(res.data.msg[0].savedResources);
       return res;
     } catch (err) {
       console.error(err);

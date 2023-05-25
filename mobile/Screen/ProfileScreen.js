@@ -1,6 +1,10 @@
+/* eslint-disable camelcase */
 import React, { useState, useEffect } from 'react';
 import { URL } from '@env';
 import axios from 'axios';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 import {
   StyleSheet, Text, View, Button, Image, ScrollView, TouchableOpacity,
 } from 'react-native';
@@ -50,13 +54,19 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   savedArtCard: {
-    paddingBottom: 10,
     borderRadius: 15,
     borderWidth: 1,
+    marginVertical: 10,
+  },
+  savedArtCardContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 0,
   },
   heading: {
     fontSize: 20,
     color: '#1E2021',
+    paddingTop: 10,
   },
   savedTitle: {
     fontSize: 16,
@@ -69,11 +79,13 @@ const styles = StyleSheet.create({
   },
   seeAllSavedButton: {
     backgroundColor: 'transparent',
-    paddingRight: 100,
+    marginLeft: 10,
   },
   seeAllText: {
     fontSize: 14,
     color: '#424288',
+    paddingTop: 15,
+    marginRight: 40,
   },
   imageContainer: {
     width: 100,
@@ -110,6 +122,7 @@ const styles = StyleSheet.create({
   name: {
     marginRight: 5,
     fontSize: 20,
+    fontFamily: 'Montserrat',
   },
 });
 
@@ -375,13 +388,15 @@ function ProfileScreen({ navigation }) {
             ) : <Text>There is no saved events</Text>}
           </View>
         </View>
-        <View>
-          <Text style={styles.heading}>
-            Resources
-          </Text>
-          <TouchableOpacity onPress={onPressResourceCard} style={styles.seeAllSavedButton}>
-            <Text style={styles.seeAllText}>See More</Text>
-          </TouchableOpacity>
+        <View style={styles.savedContainer}>
+          <View style={styles.savedHeadingAndSeeAll}>
+            <Text style={styles.heading}>
+              Resources
+            </Text>
+            <TouchableOpacity onPress={onPressResourceCard} style={styles.seeAllSavedButton}>
+              <Text style={styles.seeAllText}>See More</Text>
+            </TouchableOpacity>
+          </View>
           <View style={styles.savedCardContainer}>
             {loadSavedResource ? (
               savedResource.map((oneResource) => (
@@ -399,23 +414,25 @@ function ProfileScreen({ navigation }) {
             ) : <Text>There is no saved art</Text>}
           </View>
         </View>
-        <View>
-          <Text style={styles.heading}>
-            Art
-          </Text>
-          <TouchableOpacity onPress={onPressArtworkCard} style={styles.seeAllSavedButton}>
-            <Text style={styles.seeAllText}>See More</Text>
-          </TouchableOpacity>
+        <View style={styles.savedContainer}>
+          <View style={styles.savedHeadingAndSeeAll}>
+            <Text style={styles.heading}>
+              Art
+            </Text>
+            <TouchableOpacity onPress={onPressArtworkCard} style={styles.seeAllSavedButton}>
+              <Text style={styles.seeAllText}>See More</Text>
+            </TouchableOpacity>
+          </View>
           {loadSavedArt ? (
             savedArt.map((oneArt) => (
-              <Card>
-                <Card.Content style={styles.savedArtCard}>
-                  <Image // works with card.cover as well
-                    style={{ height: 250, width: 250 }}
+              <View style={styles.savedArtCardContainer}>
+                <Card style={styles.savedArtCard}>
+                  <Card.Cover
+                    style={{ height: 200, width: 200 }}
                     source={{ uri: findThumbnail(oneArt) }}
                   />
-                </Card.Content>
-              </Card>
+                </Card>
+              </View>
             ))
           ) : <Text>There is no saved art</Text>}
         </View>
