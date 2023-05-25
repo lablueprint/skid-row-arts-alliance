@@ -12,6 +12,7 @@ import GalleryPage from './Pages/GalleryPage/GalleryPage';
 import ZinesPage from './Pages/ZinesPage/ZinesPage';
 import EventsPage from './Pages/EventsPage/EventsPage';
 import ResourcesPage from './Pages/ResourcesPage/ResourcesPage';
+import SubmissionDetailsPage from './Pages/GalleryPage/SubmissionDetailsPage';
 import NavigationBar from './Components/NavigationBar/NavigationBar';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
             <Route path="/zines" element={(<ZinesPage />)} />
             <Route path="/events" element={(<EventsPage />)} />
             <Route path="/resources" element={(<ResourcesPage />)} />
+            <Route path="/submission" element={(<SubmissionDetailsPage />)} />
           </Routes>
         </div>
       </div>

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { URL } from '@env';
 import PropTypes from 'prop-types';
@@ -85,11 +86,14 @@ function GalleryScreen({ navigation, route }) {
     MontserratSemiBold: Montserrat_600SemiBold,
     MontserratBold: Montserrat_700Bold,
   });
+  const { authHeader } = useSelector((state) => state.auth);
 
   const getAllSubmissions = async () => {
     try {
       setLoadImages(false);
-      const res = await axios.get(`${URL}/submissions/get`);
+      const res = await axios.get(`${URL}/submissions/get`, {
+        headers: authHeader,
+      });
       setAllImageData(res.data);
       return res.data;
     } catch (err) {

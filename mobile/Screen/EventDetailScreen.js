@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   StyleSheet, View, Text, ScrollView, Image, Switch,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import { URL } from '@env';
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -39,15 +40,18 @@ function EventDetailScreen({
   navigation, route,
 }) {
   const {
-    id, title, organizations, day, location, time, summary, url, number, email, website,
+    eventId, title, organizations, day, location, time, summary, url, number, email, website,
   } = route.params;
 
   const [isEventSaved, setIsEventSaved] = useState(false);
+  const { id, authHeader } = useSelector((state) => state.auth);
 
-  const getSomeEvents = async () => {
+  const getSavedEvents = async () => {
     try {
-      const res = await axios.get(`${URL}/user/getEvents/63e33e2f578ad1d80bd2a347`);
-      if ((res.data.msg[0].savedEvents.find((elem) => elem === id.toString())) === undefined) {
+      const res = await axios.get(`${URL}/user/getEvents/${id}`, {
+        headers: authHeader,
+      });
+      if ((res.data.msg[0].savedEvents.find((elem) => elem === eventId.toString())) === undefined) {
         return false;
       }
       return true;
@@ -58,12 +62,14 @@ function EventDetailScreen({
   };
 
   useEffect(() => {
-    getSomeEvents().then((status) => setIsEventSaved(status));
+    getSavedEvents().then((status) => setIsEventSaved(status));
   }, []);
 
-  const addSavedEvent = async (eventId) => {
+  const addSavedEvent = async () => {
     try {
-      const res = await axios.patch(`${URL}/user/addEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
+      const res = await axios.patch(`${URL}/user/addEvent/${id}`, [eventId], {
+        headers: authHeader,
+      });
       setIsEventSaved(true);
       return res;
     } catch (err) {
@@ -71,9 +77,11 @@ function EventDetailScreen({
     }
   };
 
-  const removeSavedEvent = async (eventId) => {
+  const removeSavedEvent = async () => {
     try {
-      const res = await axios.patch(`${URL}/user/removeEvent/63e33e2f578ad1d80bd2a347`, [eventId]);
+      const res = await axios.patch(`${URL}/user/removeEvent/${id}`, [eventId], {
+        headers: authHeader,
+      });
       setIsEventSaved(false);
       return res;
     } catch (err) {
@@ -93,9 +101,9 @@ function EventDetailScreen({
 
   const onPressToggleSavedEvent = () => {
     if (isEventSaved) {
-      removeSavedEvent(id);
+      removeSavedEvent();
     } else {
-      addSavedEvent(id);
+      addSavedEvent();
     }
   };
 
@@ -135,7 +143,7 @@ EventDetailScreen.propTypes = {
   }).isRequired,
   route: PropTypes.shape({
     params: PropTypes.shape({
-      id: PropTypes.number.isRequired,
+      eventId: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
       organizations: PropTypes.string.isRequired,
       day: PropTypes.string.isRequired,
