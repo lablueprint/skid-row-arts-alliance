@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { S3_REGION, S3_BUCKET, URL } from '@env';
+import { URL } from '@env';
 import {
   useFonts, Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold, Montserrat_500Medium,
 } from '@expo-google-fonts/montserrat';
@@ -8,6 +8,7 @@ import {
   StyleSheet, Text, TextInput, View, Button, Image, ScrollView, Modal, Pressable, ImageBackground,
   PanResponder, Animated, Dimensions, TouchableWithoutFeedback,
 } from 'react-native';
+import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
 import { logout } from '../redux/sliceAuth';
@@ -353,8 +354,11 @@ function EditProfileScreen({
   const [currFacebook, setFacebook] = useState('');
   const [currInstagram, setInstagram] = useState('');
   const [currTwitter, setTwitter] = useState('');
+
   const [currProfilePicture, setProfilePicture] = useState('');
   const [newProfilePicture, setNewProfilePicture] = useState(null);
+
+  const [refreshPage, setRefreshPage] = useState(0);
 
   const [showModal, setShowModal] = useState(false);
   // const [showSaveModal, setShowSaveModal] = useState(false);
@@ -363,8 +367,6 @@ function EditProfileScreen({
 
   const [popup, setPopup] = useState(false);
   const closePopup = () => {
-    console.log(newProfilePicture);
-    console.log();
     setPopup(false);
   };
   const openPopup = () => {
@@ -457,8 +459,7 @@ function EditProfileScreen({
     }
   };
 
-  const handleAvatarChange = async () => {
-    console.log('uploading!');
+  const uploadProfilePicture = async () => {
     const fReader = new FileReader();
     const fPromise = new Promise((resolve) => {
       fReader.addEventListener('loadend', async () => {
@@ -474,7 +475,7 @@ function EditProfileScreen({
       const res = await axios.patch(`${URL}/user/addProfilePicture/${currentUser.id}`, {
         image: object,
       });
-      return res.body.s3key;
+      return res.data.s3key;
     } catch (err) {
       console.error(err);
     }
@@ -499,7 +500,6 @@ function EditProfileScreen({
   const getUserData = async () => {
     try {
       const res = await axios.get(`${URL}/user/getUser/${currentUser.id}`);
-      console.log(res.data);
       setFirstName(res.data.msg.firstName);
       setLastName(res.data.msg.lastName);
       setBio(res.data.msg.bio);
@@ -515,9 +515,11 @@ function EditProfileScreen({
   };
 
   const handleUpdate = async () => {
-    navigation.navigate('Profile');
     try {
-      const profilePictureKey = handleAvatarChange();
+      const profilePictureKey = await uploadProfilePicture();
+      if (!profilePictureKey) {
+        throw new Error('Profile Picture did not upload');
+      }
       const updatedUser = {
         firstName: currFirstName,
         lastName: currLastName,
@@ -532,7 +534,8 @@ function EditProfileScreen({
       await axios.patch(`${URL}/user/update/${currentUser.id}`, {
         updatedUser,
       });
-      setProfilePicture(profilePictureKey);
+      setRefreshPage((val) => val + 1);
+      navigation.navigate('Profile');
     } catch (err) {
       console.error(err);
     }
@@ -564,6 +567,10 @@ function EditProfileScreen({
     getUserData();
   }, []);
 
+  useEffect(() => {
+    getUserData();
+  }, [refreshPage]);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -579,7 +586,7 @@ function EditProfileScreen({
         <View style={styles.row}>
           <Pressable onPress={openPopup}>
             <ImageBackground
-              source={{ uri: newProfilePicture ? newProfilePicture.uri : `https://${S3_BUCKET}.s3.${S3_REGION}.amazonaws.com/${currProfilePicture}` }}
+              source={{ uri: newProfilePicture ? newProfilePicture.uri : currProfilePicture }}
               resizeMode="cover"
               style={styles.avatar}
             />
@@ -723,5 +730,11 @@ function EditProfileScreen({
     </View>
   );
 }
+
+EditProfileScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
 
 export default EditProfileScreen;

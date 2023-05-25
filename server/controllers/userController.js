@@ -77,6 +77,7 @@ const getEmail = async (req, res) => {
 const getSpecificUser = async (req, res) => {
   try {
     const data = await User.findById(req.params.id, '-password');
+    data.profilePicture = `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${data.profilePicture}`;
     console.log(data);
     res.json({
       msg: data,
@@ -141,58 +142,12 @@ const removeUserArtwork = async (req, res) => {
   }
 };
 
-const oldAddUserProfilePicture = async (req, res) => {
-  const image = req.body.blob;
-  const buf = Buffer.from(image, 'base64');
-  const keyString = `ProfilePictures/${req.params.id}`;
-  console.log(Object.keys(req.params.id));
-  console.log(Object.keys(req.body));
-  try {
-    await s3.upload({
-      Bucket: 'test-sraa',
-      Key: keyString,
-      ContentType: 'image/jpeg',
-      Body: buf,
-    }, (err, data) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(1, data);
-      }
-    });
-  } catch (err) {
-    console.error(err);
-  }
-  console.log('s3');
-
-  // try {
-  //   const data = await User.updateOne({ _id: req.params.id }, { $push: { profilePicture: req.body } });
-  //   res.json(data);
-  // } catch (err) {
-  //   console.log(err);
-  // }
-  console.log('done');
-};
-
 const addUserProfilePicture = async (req, res) => {
   // S3
   const { image } = req.body;
   const userId = req.params.id;
-  const d = new Date().toLocaleString();
-  const date = d.slice(0, d.length - 3)
-    .split('/')
-    .join('_')
-    .split(' ')
-    .join('_')
-    .replace(',', '');
-  const keyString = `${date}_${userId}`;
-  console.log(keyString);
+  const s3key = `ProfilePictures/${userId}.${image.type.split('/')[1]}`;
 
-  // Keys
-  const s3key = `Profile Pictures/${keyString}.${image.type.split('/')[1]}`;
-  console.log('********S3KEY: ', s3key)
-
-  // Thumbnail
   try {
     await s3.upload({
       Bucket: process.env.S3_BUCKET,
@@ -204,24 +159,20 @@ const addUserProfilePicture = async (req, res) => {
         console.log(err);
       }
     });
+    res.json({ s3key });
   } catch (err) {
     console.error(err);
-  }
-
-  try {
-    const response = await User.findByIdAndUpdate(userId, {profilePicture: s3key});
-    res.send({s3key});
-  } catch (err) {
-    console.error(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
   }
 };
 
 const getUserProfilePicture = async (req, res) => {
   try {
-    const data = await User.findById(req.params.id, 'profilePicture -_id');
-    console.log(data)
+    const { profilePicture } = await User.findById(req.params.id, 'profilePicture -_id');
+    console.log(profilePicture);
     res.json({
-      msg: data,
+      imageURL: `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${profilePicture}`,
     });
   } catch (err) {
     console.log(err);
