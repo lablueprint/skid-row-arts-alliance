@@ -1,7 +1,10 @@
 const express = require('express');
+const passport = require('../utils/passportConfig');
 
 const submissionRouter = express.Router();
 const submissionController = require('../controllers/submissionController');
+
+submissionRouter.use(passport.authenticate('jwt', { session: false }));
 
 // user facing functions
 submissionRouter.post('/post', submissionController.createSubmission);
