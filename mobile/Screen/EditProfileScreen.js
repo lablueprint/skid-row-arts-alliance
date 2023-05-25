@@ -11,6 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/sliceAuth';
 
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#ffffff',
@@ -85,6 +86,7 @@ const styles = StyleSheet.create({
     width: '50%',
     // borderWidth: 2,
     alignSelf: 'center',
+    position: 'relative',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -155,6 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: '#8A9195',
     borderWidth: 0.5,
+    position: 'relative',
   },
   bioTextInput: {
     fontFamily: 'Montserrat',
@@ -165,11 +168,12 @@ const styles = StyleSheet.create({
     paddingTop: '3%',
   },
   wordCount: {
-    marginTop: 5,
     color: 'gray',
     position: 'absolute',
-    top: 140,
-    left: 295,
+    // top: 140,
+    // left: 295,
+    marginLeft: '78%',
+    marginTop: '37%',
   },
   sociaMediaHandlesText: {
     marginTop: '6%',
@@ -249,8 +253,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent',
-    width: '65%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: '100%',
     alignSelf: 'center',
   },
   modalContent: {
@@ -261,6 +265,7 @@ const styles = StyleSheet.create({
     paddingBottom: 27,
     borderRadius: 10,
     alignItems: 'center',
+    width: '65%',
   },
   modalText: {
     fontSize: 16,
@@ -326,7 +331,7 @@ function EditProfileScreen({
     MontserratBold: Montserrat_700Bold,
   });
 
-  const currentUser = useSelector((state) => state.auth);
+  const { id, authHeader } = useSelector((state) => state.auth);
 
   const [image, setImage] = useState('https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500');
 
@@ -380,7 +385,9 @@ function EditProfileScreen({
 
   const getUserData = async () => {
     try {
-      const res = await axios.get(`${URL}/user/getUser/${currentUser.id}`);
+      const res = await axios.get(`${URL}/user/getUser/${id}`, {
+        headers: authHeader,
+      });
       setFirstName(res.data.msg.firstName);
       setLastName(res.data.msg.lastName);
       setBio(res.data.msg.bio);
@@ -407,7 +414,7 @@ function EditProfileScreen({
           twitter: currTwitter,
         },
       };
-      await axios.patch(`${URL}/user/update/${currentUser.id}`, {
+      await axios.patch(`${URL}/user/update/${id}`, {
         updatedUser,
       });
     } catch (err) {
@@ -421,9 +428,9 @@ function EditProfileScreen({
 
   const handleConfirmDelete = async () => {
     setShowModal(false);
-    dispatch(logout(currentUser));
+    dispatch(logout(id));
     try {
-      await axios.delete(`${URL}/user/delete/${currentUser.id}`);
+      await axios.delete(`${URL}/user/delete/${id}`);
     } catch (err) {
       console.error(err);
     }
@@ -554,7 +561,7 @@ function EditProfileScreen({
         <Pressable style={styles.deleteAccountButton} onPress={handleDelete}>
           <Text style={styles.deleteAccountText}>Delete Account</Text>
         </Pressable>
-        <Modal visible={showModal} animationType="slide" transparent>
+        <Modal visible={showModal} animationType="fade" transparent>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
