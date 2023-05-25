@@ -48,37 +48,30 @@ function MapFilter({ route, navigation }) {
   const eventCategories = [
     {
       title: 'visual art',
-      key: 'visualArt',
       length: 10,
     },
     {
       title: 'film',
-      key: 'film',
       length: 4,
     },
     {
       title: 'music',
-      key: 'music',
       length: 5,
     },
     {
       title: 'art-related community event',
-      key: 'artRelatedCommunityEvent',
       length: 27,
     },
     {
       title: 'performance/theater',
-      key: 'performance/theater',
       length: 19,
     },
     {
       title: 'spoken word',
-      key: 'spokenWord',
       length: 11,
     },
     {
       title: 'miscellaneous',
-      key: 'miscellaneous',
       length: 14,
     },
   ];
@@ -86,37 +79,30 @@ function MapFilter({ route, navigation }) {
   const resourceCategories = [
     {
       title: 'food',
-      key: 'food',
       length: 4,
     },
     {
       title: 'shelter',
-      key: 'shelter',
       length: 7,
     },
     {
       title: 'health',
-      key: 'health',
       length: 6,
     },
     {
       title: 'legal services',
-      key: 'legalServices',
       length: 14,
     },
     {
       title: 'shower',
-      key: 'shower',
       length: 6,
     },
     {
       title: 'mission',
-      key: 'mission',
       length: 7,
     },
     {
       title: 'social services',
-      key: 'socialServices',
       length: 15,
     },
   ];
@@ -178,10 +164,10 @@ function MapFilter({ route, navigation }) {
       <View style={styles.container}>
         {eventCategories.map((category) => (
           <TouchableOpacity
-            style={getButtonStyle(category, tempCategories[category.key])}
-            onPress={() => onPressCategories(category.key)}
+            style={getButtonStyle(category, tempCategories[category.title])}
+            onPress={() => onPressCategories(category.title)}
           >
-            <Text style={getTextStyle(tempCategories[category.key])}>{category.title}</Text>
+            <Text style={getTextStyle(tempCategories[category.title])}>{category.title}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -189,10 +175,10 @@ function MapFilter({ route, navigation }) {
       <View style={styles.container}>
         {resourceCategories.map((category) => (
           <TouchableOpacity
-            style={getButtonStyle(category, tempCategories[category.key])}
-            onPress={() => onPressCategories(category.key)}
+            style={getButtonStyle(category, tempCategories[category.title])}
+            onPress={() => onPressCategories(category.title)}
           >
-            <Text style={getTextStyle(tempCategories[category.key])}>{category.title}</Text>
+            <Text style={getTextStyle(tempCategories[category.title])}>{category.title}</Text>
           </TouchableOpacity>
         ))}
         <TouchableOpacity style={styles.applyButton} title="apply" onPress={() => onPressApply()}>
