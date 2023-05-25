@@ -152,7 +152,7 @@ function EventScreen({ navigation }) {
       )}
       {filteredEvents.map((event) => (
         <EventCard
-          id={event.id}
+          eventId={event.id}
           title={event.title}
           date={event.date.toLocaleDateString('en-US')}
           day={event.day}
