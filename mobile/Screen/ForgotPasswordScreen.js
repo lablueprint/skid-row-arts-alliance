@@ -1,12 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
 import {
   StyleSheet, Text, TextInput, View, Image, Alert, TouchableOpacity, Pressable,
 } from 'react-native';
-import { login } from '../redux/sliceAuth';
 
 const BackButton = require('../assets/backArrow.png');
 
