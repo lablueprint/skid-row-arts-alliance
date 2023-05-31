@@ -30,7 +30,7 @@ const userSignUp = async (req, res) => {
 const userSignIn = async (req, res, next) => {
   passport.authenticate('user-sign-in', (err, user, info) => {
     if (err) { return next(err); }
-    if (!user) { return res.json({error: info.message}); }
+    if (!user) { return res.json({ error: info.message }); }
     return req.logIn(user, { session: false }, (e) => {
       if (err) return next(e);
       // replace secret
@@ -39,16 +39,6 @@ const userSignIn = async (req, res, next) => {
     });
   })(req, res, next);
 };
-
-const userSignOut = async (req, res) => {
-  try {
-    // reminder that the frontend needs to delete the jwt stored in securestore
-    return res.send('Logging out');
-  } catch (err) {
-    return res.status(404).json({ error: 'Unable to logout properly' });
-  }
-};
-
 
 // admin
 const adminSignUp = async (req, res) => {
@@ -65,7 +55,7 @@ const adminSignUp = async (req, res) => {
     secureAdmin.password = hashedPassword;
     const admin = new Admin(secureAdmin);
     await admin.save(admin);
-    
+
     // only need to send status? next process should be redirecting to log in screen?
     return res.send('User successfully created!');
   } catch (err) {
@@ -86,11 +76,9 @@ const adminSignIn = async (req, res, next) => {
   })(req, res, next);
 };
 
-
 module.exports = {
   userSignUp,
   userSignIn,
-  userSignOut,
   adminSignUp,
   adminSignIn,
 };
