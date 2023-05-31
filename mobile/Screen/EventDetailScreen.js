@@ -10,27 +10,32 @@ import {
 } from '@expo-google-fonts/montserrat';
 import AddCalendarButton from '../Components/AddCalendarButton';
 
+const MAX_LINES = 3;
 const styles = StyleSheet.create({
   container: {
+    padding: 10,
+    paddingBottom: 50,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   normalText: {
+    marginBottom: 10,
     fontSize: 16,
-    fontFamily: 'MontserratMedium',
+    fontFamily: 'Montserrat',
     color: '#1E2021',
-    lineHeight: 23,
+    lineHeight: 23.2,
   },
   flexContainer: {
     flexDirection: 'row',
   },
   button: {
+    flexDirection: 'row',
     marginTop: 10,
-    width: 350,
-    height: 50,
+    width: '50%',
+    height: 45,
     borderColor: '#424288',
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
@@ -63,6 +68,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   header: {
+    marginTop: 40,
+    marginBottom: 20,
     fontFamily: 'MontserratMedium',
     fontSize: 20,
   },
@@ -99,9 +106,27 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   infoIconTransparent: {
+    marginRight: 15,
     width: 20,
     height: 20,
     resizeMode: 'contain',
+  },
+  saveIcon: {
+    width: 23,
+    height: 23,
+    resizeMode: 'contain',
+  },
+  arrowIcon: {
+    width: 10,
+    height: 13,
+    resizeMode: 'contain',
+    marginLeft: 15,
+  },
+  readMore: {
+    fontFamily: 'MontserratSemiBold',
+    fontSize: 14,
+    lineHeight: 20.3,
+    color: '#1E2021',
   },
   infoText: {
     fontFamily: 'MontserratSemiBold',
@@ -171,6 +196,10 @@ function EventDetailScreen({
   } = route.params;
 
   const [isEventSaved, setIsEventSaved] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const toggleShowFullDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
 
   const [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
@@ -255,6 +284,10 @@ function EventDetailScreen({
 
   console.log(`String: ${imageURL}`);
 
+  const saveIcon = isEventSaved ? require('../assets/detailScreen/saved.png') : require('../assets/detailScreen/unsaved.png');
+
+  const temp_description = "We create theater performances from scratch and withcreative inputfrom everyone involved.Improvise, write and perform with us.Skid Row’s original creative group continues to surprise. We mess around but, we’re absolutely serious."
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View>
@@ -265,8 +298,13 @@ function EventDetailScreen({
       </View>
       <View style={styles.overlay} />
       <ScrollView style={styles.overlayContent} showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>{title}</Text>
-        <TouchableOpacity style={styles.organizationContainer}>
+        <View style={styles.flexContainer}>
+          <Text style={styles.title}>{title}</Text>
+          <TouchableOpacity style={[{ paddingTop: 5 }, { marginLeft: '28%'} ]} onPress={onPressToggleSavedEvent}>
+            <Image style={styles.saveIcon} source={saveIcon} />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.organizationContainer} onPress={() => onPressOrganization()}>
           <Text style={styles.organizationText}>{organization}</Text>
           <Image source={require('../assets/detailScreen/info.png')} style={styles.infoImage} />
         </TouchableOpacity>
@@ -311,21 +349,17 @@ function EventDetailScreen({
             eventEndDate={endDate}
           />
         </ScrollView>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.infoText}>
-            Add To Calendar
-          </Text>
-        </TouchableOpacity>
-        <Text style={styles.header}>
-          Pictures
-        </Text>
-        <Image source={require('../assets/detailScreen/laPoverty.png')} style={styles.image}/>
         <Text style={styles.header}>
           Event Description
         </Text>
-        <Text style={styles.normalText}>
-          We create theater performances
-        </Text>
+        <Text style={styles.normalText} numberOfLines={showFullDescription ? undefined : MAX_LINES} ellipsizeMode="tail"> {temp_description} </Text>
+        {temp_description?.length > MAX_LINES && (
+          <TouchableOpacity onPress={toggleShowFullDescription}>
+            <Text style={styles.readMore}>
+              {showFullDescription ? 'Read less' : 'Read more'}
+            </Text>
+          </TouchableOpacity>
+        )}
         <Text style={styles.header}>
           More About the Organization
         </Text>
@@ -333,7 +367,7 @@ function EventDetailScreen({
           {organizationDescription}
         </Text>
         <View>
-          <View style={styles.flexContainer}>
+          <View style={[styles.flexContainer, {marginTop: 10}]}>
             <Image source={require('../assets/detailScreen/callTransparent.png')} style={styles.infoIconTransparent} />
             <Text style={styles.normalText}>
               {phoneNumber}
@@ -345,7 +379,7 @@ function EventDetailScreen({
               studio526@gmail.com
             </Text>
           </View>
-          <View style={styles.flexContainer}>
+          <View style={[styles.flexContainer, {marginBottom: 10}]}>
             <Image source={require('../assets/detailScreen/globeTransparent.png')} style={styles.infoIconTransparent} />
             <Text style={styles.normalText}>
               {website}
@@ -355,6 +389,7 @@ function EventDetailScreen({
             <Text style={styles.infoText}>
               Learn More
             </Text>
+            <Image style={styles.arrowIcon} source={require('../assets/detailScreen/arrowTransparent.png')}/>
           </TouchableOpacity>
         </View>
       </ScrollView>

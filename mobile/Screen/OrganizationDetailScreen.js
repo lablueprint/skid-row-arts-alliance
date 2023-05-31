@@ -8,29 +8,36 @@ import {
 } from '@expo-google-fonts/montserrat';
 
 const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+  },
   flexContainer: {
     flexDirection: 'row',
+    marginTop: 5,
+    marginBottom: 7,
+  },
+  textContainer: {
+    marginTop: 30,
+    marginBottom: 30,
   },
   image: {
-    width: 500,
-    height: 200,
-  },
-  title: {
-    fontFamily: 'MontserratMedium',
-    fontSize: 24,
+    width: '100%',
+    height: '30%',
   },
   header: {
-    fontSize: 24,
+    fontSize: 20,
     fontFamily: 'MontserratMedium',
     color: '#1E2021',
+    marginBottom: 15,
   },
   normalText: {
     fontSize: 16,
-    fontFamily: 'MontserratMedium',
+    fontFamily: 'Montserrat',
     color: '#1E2021',
     lineHeight: 23,
   },
   infoIconTransparent: {
+    marginRight: 15,
     width: 20,
     height: 20,
     resizeMode: 'contain',
@@ -50,14 +57,16 @@ function OrganizationDetailScreen({ route }) {
   const imageURL = image.uri;
 
   return (
-    <View>
-      <Text style={styles.title}>{organization}</Text>
+    <View style={styles.container}>
+      <Text style={styles.header}>{organization}</Text>
       <Image source={require('../assets/detailScreen/laPoverty.png')} style={styles.image}/>
-      <Text style={styles.normalText}>
-        {' '}
-        {organizationDescription}
-        {' '}
+      <View style={styles.textContainer}>
+        <Text style={styles.normalText}>
+          {' '}
+          {organizationDescription}
+          {' '}
       </Text>
+      </View>
       <Text style={styles.header}>
         Contact Info
       </Text>
