@@ -1,10 +1,26 @@
 // component that renders artwork cards on gallery screen
 import * as React from 'react';
 import {
-  Image, TouchableOpacity,
+  Dimensions, StyleSheet, Image, TouchableOpacity,
 } from 'react-native';
 import { Card } from 'react-native-paper';
 import PropTypes from 'prop-types';
+
+const cardWidth = (Dimensions.get('window').width / 2) - 6;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    borderRadius: 0,
+    margin: 3,
+    width: cardWidth,
+    alignItems: 'center',
+  },
+  image: {
+    height: cardWidth,
+    width: cardWidth,
+  },
+});
 
 function ArtworkCard({
   ImageURL, id, navigation,
@@ -17,9 +33,9 @@ function ArtworkCard({
 
   return (
     <TouchableOpacity>
-      <Card onPress={onPressEvent}>
-        <Image // works with card.cover as well
-          style={{ height: 250, width: 250 }}
+      <Card style={styles.container} onPress={onPressEvent}>
+        <Image
+          style={styles.image}
           source={{ uri: ImageURL }}
         />
       </Card>
