@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function MapScreen() {
+function MapScreen({ navigation }) {
   const [allEvents, setAllEvents] = useState([]);
   const [allResources, setAllResources] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
@@ -187,10 +187,19 @@ function MapScreen() {
             id={event.EventData._id}
             image={{ uri: event.ImageURL }}
             title={event.EventData.title}
+            location={event.EventData.location}
             description={event.EventData.description}
             startDate={new Date(event.EventData.startDate)}
             endDate={new Date(event.EventData.endDate)}
-            isEvent
+            tag={event.EventData.tag}
+            phoneNumber={event.EventData.phoneNumber}
+            organization={event.EventData.organization}
+            recurringMonthly={event.EventData.recurringMonthly}
+            recurringWeekly={event.EventData.recurringWeekly}
+            website={event.EventData.website}
+            organizationDescription={event.EventData.organizationDescription}
+            navigation={navigation}
+            isEvent={true}
           />
         ))}
         {allResources.map((resource) => (
