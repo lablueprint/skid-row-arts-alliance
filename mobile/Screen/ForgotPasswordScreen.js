@@ -186,11 +186,11 @@ function ForgotPasswordScreen({ navigation }) {
 
   const handleSendCode = async () => {
     try {
-      const res = await axios.patch(`${URL}/passwordReset/create`, { email });
-      console.log(res);
+      await axios.patch(`${URL}/passwordReset/create`, { email });
+      return true;
     } catch (err) {
       console.error(err);
-      return err;
+      return false;
     }
   };
 
