@@ -128,15 +128,23 @@ function ArtworkFilterScreen({ navigation, route }) {
       : [],
   );
 
+  const isAllTagsSelected = {
+    Image: selectedTags.filter((tag) => tag.section === 'Image').length === 5,
+    Audio: selectedTags.filter((tag) => tag.section === 'Audio').length === 3,
+    Video: selectedTags.filter((tag) => tag.section === 'Video').length === 3,
+  };
+
   const handleSelectCategory = (category) => {
-    if (selectedCategories.includes(category)) {
+    if (selectedCategories.includes(category) || isAllTagsSelected[category]) {
       // Deselect the category
       setSelectedCategories(selectedCategories.filter((cat) => cat !== category));
       setSelectedTags(selectedTags.filter((tag) => tag.section !== category));
     } else {
       // Select the category
       setSelectedCategories([...selectedCategories, category]);
-      setSelectedTags([...selectedTags, ...TAGS.filter((tag) => tag.section === category)]);
+      // Filter out existing tags to avoid duplicates
+      const newTags = TAGS.filter((tag) => tag.section === category && !selectedTags.includes(tag));
+      setSelectedTags([...selectedTags, ...newTags]);
     }
   };
 
@@ -149,6 +157,10 @@ function ArtworkFilterScreen({ navigation, route }) {
     navigation.navigate('Gallery', { selectedTags });
   };
 
+  console.log('CAT: ', selectedCategories.map(cat => cat.label).join(', '));
+  console.log('TAG: ', selectedTags.map(tag => tag.label).join(', '));
+  console.log('SELECTED: ', isAllTagsSelected.Image);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headingContainer}>
@@ -156,7 +168,7 @@ function ArtworkFilterScreen({ navigation, route }) {
           <Text style={styles.heading}>Image</Text>
           <TouchableOpacity onPress={() => handleSelectCategory('Image')} style={styles.row}>
             <Image
-              source={selectedCategories.includes('Image') ? require('../assets/filter/selectAllChecked.png') : require('../assets/filter/selectAllUnchecked.png')}
+              source={selectedCategories.includes('Image') || isAllTagsSelected.Image ? require('../assets/filter/selectAllChecked.png') : require('../assets/filter/selectAllUnchecked.png')}
               style={styles.selectAllButton}
             />
             <Text style={styles.selectAllText}>Select All</Text>
@@ -194,7 +206,7 @@ function ArtworkFilterScreen({ navigation, route }) {
         <Text style={styles.heading}>Audio</Text>
         <TouchableOpacity onPress={() => handleSelectCategory('Audio')} style={styles.row}>
           <Image
-            source={selectedCategories.includes('Audio') ? require('../assets/filter/selectAllChecked.png') : require('../assets/filter/selectAllUnchecked.png')}
+            source={selectedCategories.includes('Audio') || isAllTagsSelected.Audio ? require('../assets/filter/selectAllChecked.png') : require('../assets/filter/selectAllUnchecked.png')}
             style={styles.selectAllButton}
           />
           <Text style={styles.selectAllText}>Select All</Text>
@@ -231,7 +243,7 @@ function ArtworkFilterScreen({ navigation, route }) {
         <Text style={styles.heading}>Video</Text>
         <TouchableOpacity onPress={() => handleSelectCategory('Video')} style={styles.row}>
           <Image
-            source={selectedCategories.includes('Video') ? require('../assets/filter/selectAllChecked.png') : require('../assets/filter/selectAllUnchecked.png')}
+            source={selectedCategories.includes('Video') || isAllTagsSelected.Video ? require('../assets/filter/selectAllChecked.png') : require('../assets/filter/selectAllUnchecked.png')}
             style={styles.selectAllButton}
           />
           <Text style={styles.selectAllText}>Select All</Text>
