@@ -6,11 +6,13 @@ import {
 import Pdf from 'react-native-pdf';
 import { Slider } from '@miblanchard/react-native-slider';
 import SlidingUpPanel from 'rn-sliding-up-panel';
-import { Button } from 'react-native-paper';
 import PropTypes from 'prop-types';
 
-const { height } = Dimensions.get('window');
+const { height } = Dimensions.get('window').height;
+const { width } = Dimensions.get('window').width;
+
 const BackButton = require('../assets/backArrowWhite.png');
+const PreviousButton = require('../assets/backArrow.png');
 const ThreeLines = require('../assets/tableOfContents.png');
 
 const styles = StyleSheet.create({
@@ -24,6 +26,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    height: Dimensions.get('window').height * 0.10,
     padding: 10,
     paddingTop: 30,
     paddingBottom: 15,
@@ -67,8 +70,9 @@ const styles = StyleSheet.create({
   slider: {
     alignItems: 'stretch',
     justifyContent: 'flex-start',
-    margin: 15,
-    paddingBottom: 10,
+    marginHorizontal: Dimensions.get('window').width * 0.10,
+    paddingTop: Dimensions.get('window').height * 0.025,
+    paddingBottom: Dimensions.get('window').height * 0.05,
   },
   counterContainer: {
     marginTop: 5,
@@ -85,6 +89,19 @@ const styles = StyleSheet.create({
   },
   contentsText: {
     fontSize: 13,
+  },
+  thumb: {
+    backgroundColor: '#F8F8F8',
+    borderRadius: 30 / 2,
+    height: 25,
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    width: 25,
   },
 });
 
@@ -139,13 +156,15 @@ function ZineDetailsScreen({ navigation, route }) {
         }}
         style={styles.pdf}
       />
+
       <View style={styles.slider}>
         <Slider
           value={currentValue}
           minimumValue={1}
           maximumValue={pages}
           step={1}
-          minimumTrackTintColor="orange"
+          minimumTrackTintColor="#7373BA"
+          thumbStyle={styles.thumb}
           onSlidingComplete={(newSliderValue) => handleOnSliderChange(newSliderValue)}
         />
         <View style={styles.counterContainer}>
