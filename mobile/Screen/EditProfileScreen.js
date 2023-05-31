@@ -11,11 +11,11 @@ import * as ImagePicker from 'expo-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/sliceAuth';
 
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#ffffff',
     height: '100%',
+    paddingBottom: '-50%',
   },
   headerContainer: {
     width: '90%',
@@ -78,6 +78,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     alignSelf: 'center',
   },
+  // scrollView: {
+  //   paddingBottom: '50%',
+  // },
   row: {
     marginTop: '6%',
     aspectRatio: 1,
@@ -459,7 +462,7 @@ function EditProfileScreen({
           <Text style={styles.saveText}>Save</Text>
         </Pressable>
       </View>
-      <ScrollView>
+      <ScrollView style={styles.scrollView}>
         <View style={styles.row}>
           <Pressable onPress={handleAvatarChange}>
             <ImageBackground
