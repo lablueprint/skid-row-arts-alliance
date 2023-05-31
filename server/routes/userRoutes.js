@@ -19,7 +19,6 @@ userRouter.patch('/update/:id', userController.updateUser);
 userRouter.patch('/addEvent/:id', userController.addUserEvent);
 userRouter.patch('/addResource/:id', userController.addUserResource);
 userRouter.patch('/addArtwork/:id', userController.addUserArtwork);
-// userRouter.patch('/addProfilePicture/:id', userController.addUserProfilePicture);
 userRouter.patch('/addProfilePicture/:id', userController.addUserProfilePicture);
 userRouter.patch('/removeEvent/:id', userController.removerUserEvent);
 userRouter.patch('/removeResource/:id', userController.removeUserResource);

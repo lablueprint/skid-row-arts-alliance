@@ -87,6 +87,7 @@ const getEmail = async (req, res) => {
 const getSpecificUser = async (req, res) => {
   try {
     const data = await User.findById(req.params.id, '-password');
+    data.profilePicture = `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${data.profilePicture}`;
     console.log(data);
     res.json({
       msg: data,
@@ -174,43 +175,36 @@ const removeUserArtwork = async (req, res) => {
 };
 
 const addUserProfilePicture = async (req, res) => {
-  const image = req.body.blob;
-  const buf = Buffer.from(image, 'base64');
-  const keyString = `ProfilePictures/${req.params.id}`;
-  console.log(Object.keys(req.params.id));
-  console.log(Object.keys(req.body));
+  // S3
+  const { image } = req.body;
+  const userId = req.params.id;
+  const s3key = `ProfilePictures/${userId}.${image.type.split('/')[1]}`;
+
   try {
     await s3.upload({
-      Bucket: 'test-sraa',
-      Key: keyString,
-      ContentType: 'image/jpeg',
-      Body: buf,
-    }, (err, data) => {
+      Bucket: process.env.S3_BUCKET,
+      Key: s3key,
+      ContentType: image.type,
+      Body: Buffer.from(image.uri, 'base64'),
+    }, (err) => {
       if (err) {
         console.log(err);
-      } else {
-        console.log(1, data);
       }
     });
+    res.json({ s3key });
   } catch (err) {
     console.error(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
   }
-  console.log('s3');
-
-  // try {
-  //   const data = await User.updateOne({ _id: req.params.id }, { $push: { profilePicture: req.body } });
-  //   res.json(data);
-  // } catch (err) {
-  //   console.log(err);
-  // }
-  console.log('done');
 };
 
 const getUserProfilePicture = async (req, res) => {
   try {
-    const data = await User.find({ _id: req.params.id }, 'profilePicture -_id');
+    const { profilePicture } = await User.findById(req.params.id, 'profilePicture -_id');
+    console.log(profilePicture);
     res.json({
-      msg: data,
+      imageURL: `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${profilePicture}`,
     });
   } catch (err) {
     console.log(err);
