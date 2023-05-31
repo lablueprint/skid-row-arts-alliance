@@ -1,10 +1,38 @@
-import { React } from 'react';
+import { React, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Box, Container, Typography } from '@mui/material';
+import axios from 'axios';
+import ZineCard from './ZineCard';
 
 function ZinesPage() {
+  const { count } = useSelector((state) => state.sliceAuth);
+  const [zines, setZines] = useState([]);
+
+  const getZines = async () => {
+    const response = await axios.get('http://localhost:4000/zine/get');
+    setZines(response.data);
+  };
+
+  useEffect(() => {
+    getZines();
+  }, [count]);
+
   return (
-    <div>
-      <header>Zines Page</header>
-    </div>
+    <Container>
+      <Typography variant="h5">Published Zines</Typography>
+      <Box>
+        {zines.map((zine) => (
+          <ZineCard
+            key={zine._id}
+            id={zine._id}
+            title="The Skid Row Arts Zine"
+            season={zine.season}
+            year={zine.year}
+            url={zine.url}
+          />
+        ))}
+      </Box>
+    </Container>
   );
 }
 

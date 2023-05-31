@@ -14,6 +14,9 @@ import ArtworkDetailScreen from '../Screen/ArtworkDetailScreen';
 import EventDetailScreen from '../Screen/EventDetailScreen';
 import EventScreen from '../Screen/EventScreen';
 import ResourceDetailScreen from '../Screen/ResourceDetailScreen';
+import SavedEventsScreen from '../Screen/SavedEventsScreen';
+import SavedResourcesScreen from '../Screen/SavedResourcesScreen';
+import SavedArtworkScreen from '../Screen/SavedArtworkScreen';
 import OrganizationDetailScreen from '../Screen/OrganizationDetailScreen';
 import OutwardProfileScreen from '../Screen/OutwardProfileScreen';
 import EditProfileScreen from '../Screen/EditProfileScreen';
@@ -46,7 +49,10 @@ function AppNavigator() {
           <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
           <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
           <Stack.Screen name="Organization Details" component={OrganizationDetailScreen} />
-          <Stack.Screen name="Outward Profile" component={OutwardProfileScreen} />
+          <Stack.Screen name="Saved Events Screen" component={SavedEventsScreen} />
+          <Stack.Screen name="Saved Resources Screen" component={SavedResourcesScreen} />
+          <Stack.Screen name="Saved Artwork Screen" component={SavedArtworkScreen} />
+          <Stack.Screen name="Outward Profile" component={OutwardProfileScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Edit Profile" component={EditProfileScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>

@@ -9,9 +9,11 @@ import {
   PanResponder, Animated, Dimensions, TouchableWithoutFeedback,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import * as ImagePicker from 'expo-image-picker';
 import { useSelector, useDispatch } from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
 import { logout } from '../redux/sliceAuth';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -87,6 +89,7 @@ const styles = StyleSheet.create({
     width: '50%',
     // borderWidth: 2,
     alignSelf: 'center',
+    position: 'relative',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -157,6 +160,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: '#8A9195',
     borderWidth: 0.5,
+    position: 'relative',
   },
   bioTextInput: {
     fontFamily: 'Montserrat',
@@ -167,11 +171,12 @@ const styles = StyleSheet.create({
     paddingTop: '3%',
   },
   wordCount: {
-    marginTop: 5,
     color: 'gray',
     position: 'absolute',
-    top: 140,
-    left: 295,
+    // top: 140,
+    // left: 295,
+    marginLeft: '78%',
+    marginTop: '37%',
   },
   sociaMediaHandlesText: {
     marginTop: '6%',
@@ -240,12 +245,19 @@ const styles = StyleSheet.create({
     paddingBottom: 9,
     alignItems: 'center',
   },
+  deleteAccountText: {
+    fontStyle: 'normal',
+    fontSize: 18,
+    lineHeight: 0,
+    fontFamily: 'MontserratSemiBold',
+    color: '#D50D0D',
+  },
   modalContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent',
-    width: '65%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    width: '100%',
     alignSelf: 'center',
   },
   modalContent: {
@@ -256,6 +268,7 @@ const styles = StyleSheet.create({
     paddingBottom: 27,
     borderRadius: 10,
     alignItems: 'center',
+    width: '65%',
   },
   modalText: {
     fontSize: 16,
@@ -343,7 +356,9 @@ function EditProfileScreen({
     MontserratBold: Montserrat_700Bold,
   });
 
-  const currentUser = useSelector((state) => state.auth);
+  const { id, authHeader } = useSelector((state) => state.auth);
+
+  const [image, setImage] = useState('https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500');
 
   const [currFirstName, setFirstName] = useState('');
   const [currLastName, setLastName] = useState('');
@@ -480,6 +495,15 @@ function EditProfileScreen({
       console.error(err);
     }
     return null;
+    
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
+  const handleAvatarChange = () => {
+    console.log('pressed!');
+    pickImage();
   };
 
   const handleFirstNameChange = (text) => {
@@ -499,7 +523,9 @@ function EditProfileScreen({
 
   const getUserData = async () => {
     try {
-      const res = await axios.get(`${URL}/user/getUser/${currentUser.id}`);
+      const res = await axios.get(`${URL}/user/getUser/${id}`, {
+        headers: authHeader,
+      });
       setFirstName(res.data.msg.firstName);
       setLastName(res.data.msg.lastName);
       setBio(res.data.msg.bio);
@@ -531,7 +557,7 @@ function EditProfileScreen({
         },
         profilePicture: profilePictureKey,
       };
-      await axios.patch(`${URL}/user/update/${currentUser.id}`, {
+      await axios.patch(`${URL}/user/update/${id}`, {
         updatedUser,
       });
       setRefreshPage((val) => val + 1);
@@ -547,9 +573,9 @@ function EditProfileScreen({
 
   const handleConfirmDelete = async () => {
     setShowModal(false);
-    dispatch(logout(currentUser));
+    dispatch(logout(id));
     try {
-      await axios.delete(`${URL}/user/delete/${currentUser.id}`);
+      await axios.delete(`${URL}/user/delete/${id}`);
     } catch (err) {
       console.error(err);
     }
@@ -682,9 +708,9 @@ function EditProfileScreen({
         </View>
         <Text style={styles.manageAccountText}>Manage Account</Text>
         <Pressable style={styles.deleteAccountButton} onPress={handleDelete}>
-          <Text style={styles.cancelText}>Delete Account</Text>
+          <Text style={styles.deleteAccountText}>Delete Account</Text>
         </Pressable>
-        <Modal visible={showModal} animationType="slide" transparent>
+        <Modal visible={showModal} animationType="fade" transparent>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>

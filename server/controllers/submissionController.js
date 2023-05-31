@@ -8,37 +8,37 @@ const s3 = new AWS.S3({
   region: process.env.S3_REGION,
 });
 
-const deleteThumbnail = async (key) => {
-  s3.deleteObject({
-    Bucket: process.env.S3_BUCKET,
-    Key: key,
-  }, function(e, data) {
-    if (e) {
-      console.log(e)
-    }
-    else {
-      console.log(data)
-    }
-  });
-}
+// const deleteThumbnail = async (key) => {
+//   s3.deleteObject({
+//     Bucket: process.env.S3_BUCKET,
+//     Key: key,
+//   }, (e, data) => {
+//     if (e) {
+//       console.log(e);
+//     } else {
+//       console.log(data);
+//     }
+//   });
+// };
 
-const deleteSubmissions = async (keys) => {
-  const s3Promises = await objects.slice(0, objects.length - thumbnailExists)
-    .map(async (_, index) => s3.deleteObject({
-      Bucket: process.env.S3_BUCKET,
-      Key: s3keys[index],
-    }).promise());
+// const deleteSubmissions = async (keys) => {
+//   const s3Promises = await objects.slice(0, objects.length - thumbnailExists)
+//     .map(async (_, index) => s3.deleteObject({
+//       Bucket: process.env.S3_BUCKET,
+//       Key: s3keys[index],
+//     }).promise());
 
-  Promise.all(s3Promises).catch(() => {
-    res.send("Failsafe failed to delete submissions", err);
-    return;
-  });
-  res.send(err);
-}
+//   Promise.all(s3Promises).catch(() => {
+//     res.send('Failsafe failed to delete submissions', err);
+//   });
+//   res.send(err);
+// };
 
 const createSubmission = async (req, res) => {
   // S3
-  const { objects, name, title, thumbnailExists } = req.body;
+  const {
+    objects, name, title, thumbnailExists,
+  } = req.body;
   const d = new Date().toLocaleString();
   const date = d.slice(0, d.length - 3)
     .split('/')
@@ -56,7 +56,7 @@ const createSubmission = async (req, res) => {
   const thumbnail = thumbnailExists ? `Thumbnails/${keyString}.${objects[objects.length - thumbnailExists].type.split('/')[1]}` : 'Thumbnails/default.jpg';
 
   // Thumbnail
-  if(thumbnailExists) {
+  if (thumbnailExists) {
     try {
       await s3.upload({
         Bucket: process.env.S3_BUCKET,
@@ -84,8 +84,8 @@ const createSubmission = async (req, res) => {
   Promise.all(s3Promises).catch((err) => console.error(err));
 
   const mediaTypes = [];
-  objects.slice(0, objects.length - thumbnailExists).forEach(o => {
-    mediaTypes.push(o.type.slice(0, o.type.indexOf('/')))
+  objects.slice(0, objects.length - thumbnailExists).forEach((o) => {
+    mediaTypes.push(o.type.slice(0, o.type.indexOf('/')));
   });
 
   // Mongo
@@ -100,8 +100,8 @@ const createSubmission = async (req, res) => {
     tags: req.body.tags,
     mediaTypes,
     date: d.slice(0, d.indexOf(',')),
-    status: "Incomplete",
-    comments: "",
+    status: 'Incomplete',
+    comments: '',
   });
 
   try {
@@ -122,8 +122,7 @@ const deleteSubmission = async (req, res) => {
   }
 };
 
-const getAllSubmissions = async (req, res) => {
-  console.log('test');
+const getGalleryThumbnails = async (req, res) => {
   try {
     console.log('jhi');
     // S3 Key retrieval from MongoDB
@@ -131,11 +130,10 @@ const getAllSubmissions = async (req, res) => {
     const filter = {};
     const allSubmissions = await Submission.find(filter);
 
-    // TODO: remove default thumbnail in the future
     const thumbnailKeys = allSubmissions.map((submission) => (submission.thumbnail ? submission.thumbnail : '0007Squirtle.png'));
     // Reformat data for response
     const responseList = thumbnailKeys.map((key, idx) => ({
-      SubmissionData: allSubmissions[idx],
+      SubmissionId: allSubmissions[idx]._id,
       ImageURL: `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${key}`,
     }));
     res.send(responseList);
@@ -146,10 +144,10 @@ const getAllSubmissions = async (req, res) => {
   }
 };
 
-const getSubmission = async (req, res) => {
+const getArtworkDetails = async (req, res) => {
   try {
     // Art submission retrieval from MongoDB
-    const submission = await Submission.findById(req.query.id);
+    const submission = await Submission.findById(req.params.id);
 
     // Retrieve data about S3 objects related to current submission
     const s3Promises = submission.s3keys.map(async (key) => s3.getObject({
@@ -174,9 +172,44 @@ const getSubmission = async (req, res) => {
   }
 };
 
+const getSubmissions = async (req, res) => {
+  try {
+    // S3 Key retrieval from MongoDB
+    // Empty `filter` means "match all documents"
+    const filter = {};
+    const allSubmissions = await Submission.find(filter);
+
+    // Reformat data for response
+    const responseList = allSubmissions.map((submission) => ({
+      id: submission._id,
+      title: submission.title,
+      name: submission.name,
+      status: submission.status,
+      type: submission.mediaTypes,
+      date: submission.date,
+    }));
+    res.send(responseList);
+  } catch (err) {
+    console.error(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
+  }
+};
+
+const updateSubmission = async (req, res) => {
+  try {
+    const data = await Submission.findByIdAndUpdate(req.params.id, req.body);
+    res.send(data);
+  } catch (err) {
+    res.send(err);
+  }
+};
+
 module.exports = {
   createSubmission,
   deleteSubmission,
-  getAllSubmissions,
-  getSubmission,
+  getGalleryThumbnails,
+  getArtworkDetails,
+  getSubmissions,
+  updateSubmission,
 };

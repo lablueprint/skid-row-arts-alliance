@@ -10,7 +10,8 @@ const socialMediaSchema = new mongoose.Schema({
     type: String,
   },
 });
-
+// TODO: adjust the schema to have the status and media type(s)
+// requires updating frontend to account for status to display or not
 const submissionSchema = new mongoose.Schema({
   name: {
     required: true,
@@ -59,7 +60,7 @@ const submissionSchema = new mongoose.Schema({
   comments: {
     required: false,
     type: String,
-  }
+  },
 });
 
 module.exports = mongoose.model('Submission', submissionSchema);

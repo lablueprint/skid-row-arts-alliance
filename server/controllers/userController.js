@@ -41,6 +41,16 @@ const addUserEvent = async (req, res) => {
   }
 };
 
+// send resource as ["resourceID"]
+const addUserResource = async (req, res) => {
+  try {
+    const data = await User.updateOne({ _id: req.params.id }, { $push: { savedResources: req.body } });
+    res.json(data);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 // send artwork as ["artworkID"]
 const addUserArtwork = async (req, res) => {
   try {
@@ -98,6 +108,17 @@ const getUserEvents = async (req, res) => {
   }
 };
 
+const getUserResources = async (req, res) => {
+  try {
+    const data = await User.find({ _id: req.params.id }, 'savedResources -_id');
+    res.json({
+      msg: data,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const getUserArtwork = async (req, res) => {
   try {
     const data = await User.find({ _id: req.params.id }, 'savedArtwork -_id');
@@ -125,6 +146,17 @@ const removerUserEvent = async (req, res) => {
   try {
     // eslint-disable-next-line max-len
     const data = await User.updateOne({ _id: req.params.id }, { $pullAll: { savedEvents: req.body } });
+    res.json(data);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// send event as ["eventID"]
+const removeUserResource = async (req, res) => {
+  try {
+    // eslint-disable-next-line max-len
+    const data = await User.updateOne({ _id: req.params.id }, { $pullAll: { savedResources: req.body } });
     res.json(data);
   } catch (err) {
     console.log(err);
@@ -184,13 +216,16 @@ module.exports = {
   getAllUserInfo,
   updateUser,
   addUserEvent,
+  addUserResource,
   addUserArtwork,
   deleteUser,
   getEmail,
   getSpecificUser,
   getUserEvents,
+  getUserResources,
   getUserArtwork,
   removerUserEvent,
+  removeUserResource,
   removeUserArtwork,
   addUserProfilePicture,
   getUserProfilePicture,
