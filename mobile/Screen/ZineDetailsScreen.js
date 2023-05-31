@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     marginHorizontal: Dimensions.get('window').width * 0.10,
     paddingTop: Dimensions.get('window').height * 0.025,
     paddingBottom: Dimensions.get('window').height * 0.05,
+    width: Dimensions.get('window').width * 0.7,
   },
   counterContainer: {
     marginTop: 5,
@@ -103,6 +104,11 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     width: 25,
   },
+  navContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+  },
 });
 
 function ZineDetailsScreen({ navigation, route }) {
@@ -114,9 +120,11 @@ function ZineDetailsScreen({ navigation, route }) {
   const source = { uri: url, cache: true };
   const [currentValue, setCurrentValue] = useState(1);
   const handleOnSliderChange = (newValue) => {
-    const value = Number(newValue);
-    setCurrentValue(value);
-    ref.setPage(value);
+    if (newValue > 0 && newValue <= pages) {
+      const value = Number(newValue);
+      setCurrentValue(value);
+      ref.setPage(value);
+    }
   };
   const draggedValue = useRef(new Animated.Value(0)).current;
   const draggableRange = { top: 670, bottom: 0 };
@@ -156,24 +164,45 @@ function ZineDetailsScreen({ navigation, route }) {
         }}
         style={styles.pdf}
       />
-
-      <View style={styles.slider}>
-        <Slider
-          value={currentValue}
-          minimumValue={1}
-          maximumValue={pages}
-          step={1}
-          minimumTrackTintColor="#7373BA"
-          thumbStyle={styles.thumb}
-          onSlidingComplete={(newSliderValue) => handleOnSliderChange(newSliderValue)}
-        />
-        <View style={styles.counterContainer}>
-          <Text style={styles.pageCounter}>
-            {currentValue}
-            /
-            {pages}
-          </Text>
+      <View style={styles.navContainer}>
+        <TouchableOpacity
+          onPress={() => {
+            handleOnSliderChange(currentValue - 1);
+          }}
+        >
+          <Image
+            source={PreviousButton}
+            style={styles.backButton}
+          />
+        </TouchableOpacity>
+        <View style={styles.slider}>
+          <Slider
+            value={currentValue}
+            minimumValue={1}
+            maximumValue={pages}
+            step={1}
+            minimumTrackTintColor="#7373BA"
+            thumbStyle={styles.thumb}
+            onSlidingComplete={(newSliderValue) => handleOnSliderChange(newSliderValue)}
+          />
+          <View style={styles.counterContainer}>
+            <Text style={styles.pageCounter}>
+              {currentValue}
+              /
+              {pages}
+            </Text>
+          </View>
         </View>
+        <TouchableOpacity
+          onPress={() => {
+            handleOnSliderChange(currentValue + 1);
+          }}
+        >
+          <Image
+            source={PreviousButton}
+            style={styles.backButton}
+          />
+        </TouchableOpacity>
       </View>
       <SlidingUpPanel
         ref={panel}
