@@ -212,7 +212,7 @@ function ForgotPasswordScreen({ navigation }) {
 
   const handleResetPassword = async () => {
     try {
-      const res = await axios.patch(`${URL}/passwordReset/reset`, { id, password });
+      await axios.patch(`${URL}/passwordReset/reset`, { id, password });
     } catch (err) {
       console.error(err);
       return err;
