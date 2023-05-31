@@ -22,11 +22,23 @@ const styles = StyleSheet.create({
   heading: {
     fontFamily: 'MontserratMedium',
     fontSize: 20,
+    flex: 1,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   selectAllButton: {
     width: 14,
     height: 14,
     marginLeft: 10,
+    right: 0,
+  },
+  selectAllText: {
+    fontSize: 14,
+    marginLeft: 8,
+    fontFamily: 'MontserratMedium',
   },
   tags: {
     paddingTop: 15,
@@ -140,13 +152,16 @@ function ArtworkFilterScreen({ navigation, route }) {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headingContainer}>
-        <Text style={styles.heading}>Image</Text>
-        <TouchableOpacity onPress={() => handleSelectCategory('Image')}>
-          <Image
-            source={selectedCategories.includes('Image') ? require('../assets/filter/selectAllChecked.png') : require('../assets/filter/selectAllUnchecked.png')}
-            style={styles.selectAllButton}
-          />
-        </TouchableOpacity>
+        <View style={styles.row}>
+          <Text style={styles.heading}>Image</Text>
+          <TouchableOpacity onPress={() => handleSelectCategory('Image')} style={styles.row}>
+            <Image
+              source={selectedCategories.includes('Image') ? require('../assets/filter/selectAllChecked.png') : require('../assets/filter/selectAllUnchecked.png')}
+              style={styles.selectAllButton}
+            />
+            <Text style={styles.selectAllText}>Select All</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.tags}>
         {TAGS.filter((tag) => tag.section === 'Image').map((tag) => (
@@ -175,13 +190,14 @@ function ArtworkFilterScreen({ navigation, route }) {
           </TouchableOpacity>
         ))}
       </View>
-      <View style={styles.headingContainer}>
+      <View style={styles.row}>
         <Text style={styles.heading}>Audio</Text>
-        <TouchableOpacity onPress={() => handleSelectCategory('Audio')}>
+        <TouchableOpacity onPress={() => handleSelectCategory('Audio')} style={styles.row}>
           <Image
             source={selectedCategories.includes('Audio') ? require('../assets/filter/selectAllChecked.png') : require('../assets/filter/selectAllUnchecked.png')}
             style={styles.selectAllButton}
           />
+          <Text style={styles.selectAllText}>Select All</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.tags}>
@@ -211,13 +227,14 @@ function ArtworkFilterScreen({ navigation, route }) {
           </TouchableOpacity>
         ))}
       </View>
-      <View style={styles.headingContainer}>
+      <View style={styles.row}>
         <Text style={styles.heading}>Video</Text>
-        <TouchableOpacity onPress={() => handleSelectCategory('Video')}>
+        <TouchableOpacity onPress={() => handleSelectCategory('Video')} style={styles.row}>
           <Image
             source={selectedCategories.includes('Video') ? require('../assets/filter/selectAllChecked.png') : require('../assets/filter/selectAllUnchecked.png')}
             style={styles.selectAllButton}
           />
+          <Text style={styles.selectAllText}>Select All</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.tags}>
