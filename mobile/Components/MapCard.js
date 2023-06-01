@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, View, Image, Text, Dimensions, TouchableOpacity,
+  StyleSheet, View, Image, Text, Dimensions, TouchableOpacity, ScrollView,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     height: 70,
     alignSelf: 'center',
   },
-  tag: {
+  eventTag: {
     position: 'absolute',
     flexDirection: 'row',
     backgroundColor: '#F5E1E9E5',
@@ -43,11 +43,29 @@ const styles = StyleSheet.create({
     top: 10,
   },
   tagImage: {
-    height: 15,
-    width: 15,
+    height: 14,
+    width: 14,
   },
-  tagText: {
+  eventTagText: {
     color: '#D26090',
+    fontFamily: 'Montserrat',
+    paddingLeft: 6,
+    fontSize: 14,
+  },
+  resourceTag: {
+    position: 'absolute',
+    flexDirection: 'row',
+    backgroundColor: '#F3DECC',
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    right: 10,
+    top: 10,
+  },
+  resourceTagText: {
+    color: '#B96F30',
     fontFamily: 'Montserrat',
     paddingLeft: 6,
     fontSize: 14,
@@ -129,6 +147,7 @@ function MapCard({
   recurringWeekly,
   website,
   organizationDescription,
+  resourceType,
   isEvent,
 }) {
   const [fontsLoaded] = useFonts({
@@ -137,6 +156,51 @@ function MapCard({
     MontserratSemiBold: Montserrat_600SemiBold,
     MontserratBold: Montserrat_700Bold,
   });
+
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const dayOfWeek = daysOfWeek[startDate.getUTCDay()];
+  function formatTime(dateObject) {
+    const hours = dateObject.getHours();
+    const minutes = dateObject.getMinutes();
+    let formattedHours = hours % 12;
+    formattedHours = formattedHours === 0 ? 12 : formattedHours;
+    const period = hours >= 12 ? 'pm' : 'am';
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+    return `${formattedHours}:${formattedMinutes} ${period}`;
+  }
+  const startTime = formatTime(new Date(startDate));
+  const endTime = formatTime(new Date(endDate));
+  let formattedDate = 'No date specified';
+  if (dayOfWeek !== undefined && startTime !== null && endTime !== null) {
+    formattedDate = `${dayOfWeek}, ${startTime} - ${endTime}`;
+  }
+
+  let tagIcon;
+  if (!isEvent) { // Resources don't have startDates
+    switch (resourceType) {
+      case 'food':
+        tagIcon = require('../assets/map/foodTag.png');
+        break;
+      case 'shelter':
+        tagIcon = require('../assets/map/shelterTag.png');
+        break;
+      case 'mission':
+        tagIcon = require('../assets/map/missionTag.png');
+        break;
+      case 'shower':
+        tagIcon = require('../assets/map/showerTag.png');
+        break;
+      case 'social':
+        tagIcon = require('../assets/map/socialTag.png');
+        break;
+      case 'legal':
+        tagIcon = require('../assets/map/legalTag.png');
+        break;
+      default:
+        tagIcon = require('../assets/map/shelterTag.png');
+    }
+  }
+
   return (
     <View style={styles.card} key={id}>
       <View>
@@ -145,13 +209,23 @@ function MapCard({
           style={styles.cardImage}
           resizeMode="cover"
         />
-        <View style={styles.tag}>
-          <Image
-            source={require('../assets/map/brush.png')}
-            style={styles.tagImage}
-          />
-          <Text style={styles.tagText}>{tag}</Text>
-        </View>
+        {isEvent ? (
+          <View style={styles.eventTag}>
+            <Image
+              source={require('../assets/map/brush.png')}
+              style={styles.tagImage}
+            />
+            <Text style={styles.eventTagText}>{tag.toLowerCase()}</Text>
+          </View>
+        ) : (
+          <View style={styles.resourceTag}>
+            <Image
+              source={tagIcon}
+              style={styles.tagImage}
+            />
+            <Text style={styles.resourceTagText}>{tag.toLowerCase()}</Text>
+          </View>
+        )}
       </View>
       <View style={styles.textContent}>
         <Text style={styles.organization}>
@@ -165,8 +239,12 @@ function MapCard({
             source={require('../assets/map/calendar.png')}
             style={styles.infoIcon}
           />
-          <Text style={styles.infoText}>
-            lorem ipsum
+          <Text style={styles.infoText} numberOfLines={1}>
+            {isEvent ? (
+              formattedDate ?? 'No date specified'
+            ) : (
+              description
+            )}
           </Text>
         </View>
         <View style={styles.row}>
@@ -174,20 +252,22 @@ function MapCard({
             source={require('../assets/map/location.png')}
             style={styles.infoIcon}
           />
-          <Text style={styles.infoText}>
-            lorem ipsum
-          </Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            <Text style={styles.infoText}>
+              {location?.address ?? 'No address available'}
+            </Text>
+          </ScrollView>
         </View>
       </View>
-      {isEvent
-      && (
-        <TouchableOpacity style={styles.detailsButton} onPress={() => onPressEvent()}>
-          <Text style={styles.detailsButtonText}>
-            More Details
-            {'  >'}
-          </Text>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity style={styles.detailsButton} onPress={() => onPressEvent()}>
+        <Text style={styles.detailsButtonText}>
+          More Details
+          {'  >'}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -206,7 +286,7 @@ MapCard.propTypes = {
     }),
   }),
   title: PropTypes.string.isRequired,
-  descriptions: PropTypes.string,
+  description: PropTypes.string,
   startDate: PropTypes.instanceOf(Date).isRequired,
   endDate: PropTypes.instanceOf(Date).isRequired,
   tag: PropTypes.string.isRequired,
@@ -216,6 +296,7 @@ MapCard.propTypes = {
   recurringWeekly: PropTypes.bool,
   website: PropTypes.string,
   organizationDescription: PropTypes.string,
+  resourceType: PropTypes.string,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,

@@ -14,9 +14,8 @@ import MapCard from '../Components/MapCard';
 import MapMarker from '../Components/MapMarker';
 
 const { width, height } = Dimensions.get('window');
-
-const CARD_HEIGHT = height / 4;
-const CARD_WIDTH = CARD_HEIGHT + 70;
+const CARD_HEIGHT = (3 * height) / 10;
+const CARD_WIDTH = CARD_HEIGHT + 50;
 
 const styles = StyleSheet.create({
   container: {
@@ -29,7 +28,6 @@ const styles = StyleSheet.create({
     bottom: 30,
     left: 0,
     right: 0,
-    paddingVertical: 10,
   },
   endPadding: {
     paddingRight: width - CARD_WIDTH,
@@ -142,12 +140,6 @@ function MapScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* To be implemented later */}
-      {/* <Button title="Workshop">Workshop</Button>
-      <Button title="Food">Food</Button>
-      <Button title="Shelter">Shelter</Button>
-      <Button title="Mission">Mission</Button>
-      <Button title="Shower/Laundry">Shower/Laundry</Button> */}
       <MapView
         ref={mapRef}
         initialRegion={state.region}
@@ -165,7 +157,7 @@ function MapScreen({ navigation }) {
         horizontal
         scrollEventThrottle={1}
         showsHorizontalScrollIndicator={false}
-        snapToInterval={CARD_WIDTH}
+        snapToInterval={CARD_WIDTH + 20}
         onScroll={Animated.event(
           [
             {
@@ -199,7 +191,7 @@ function MapScreen({ navigation }) {
             website={event.EventData.website}
             organizationDescription={event.EventData.organizationDescription}
             navigation={navigation}
-            isEvent={true}
+            isEvent
           />
         ))}
         {allResources.map((resource) => (
@@ -208,9 +200,20 @@ function MapScreen({ navigation }) {
             id={resource.ResourceData._id}
             image={{ uri: resource.ImageURL }}
             title={resource.ResourceData.title}
+            location={resource.ResourceData.location}
             description={resource.ResourceData.description}
             startDate={new Date(resource.ResourceData.startDate)}
             endDate={new Date(resource.ResourceData.endDate)}
+            tag={resource.ResourceData.tag}
+            phoneNumber={resource.ResourceData.phoneNumber}
+            organization={resource.ResourceData.organization}
+            recurringMonthly={resource.ResourceData.recurringMonthly}
+            recurringWeekly={resource.ResourceData.recurringWeekly}
+            website={resource.ResourceData.website}
+            organizationDescription={resource.ResourceData.organizationDescription}
+            thumbnail={resource.ResourceData.thumbnail}
+            resourceType={resource.ResourceData.resourceType}
+            navigation={navigation}
             isEvent={false}
           />
         ))}
