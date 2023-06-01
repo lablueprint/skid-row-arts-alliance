@@ -71,12 +71,11 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'flex-start',
     marginHorizontal: Dimensions.get('window').width * 0.10,
-    paddingTop: Dimensions.get('window').height * 0.025,
-    paddingBottom: Dimensions.get('window').height * 0.05,
     width: Dimensions.get('window').width * 0.7,
   },
   counterContainer: {
     marginTop: 5,
+    marginBottom: 30,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -106,8 +105,13 @@ const styles = StyleSheet.create({
   },
   navContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    marginHorizontal: Dimensions.get('window').width * 0.05,
+    paddingTop: Dimensions.get('window').height * 0.02,
+  },
+  flipped: {
+    transform: [{ scaleX: -1 }],
   },
 });
 
@@ -185,13 +189,6 @@ function ZineDetailsScreen({ navigation, route }) {
             thumbStyle={styles.thumb}
             onSlidingComplete={(newSliderValue) => handleOnSliderChange(newSliderValue)}
           />
-          <View style={styles.counterContainer}>
-            <Text style={styles.pageCounter}>
-              {currentValue}
-              /
-              {pages}
-            </Text>
-          </View>
         </View>
         <TouchableOpacity
           onPress={() => {
@@ -200,9 +197,16 @@ function ZineDetailsScreen({ navigation, route }) {
         >
           <Image
             source={PreviousButton}
-            style={styles.backButton}
+            style={styles.flipped}
           />
         </TouchableOpacity>
+      </View>
+      <View style={styles.counterContainer}>
+        <Text style={styles.pageCounter}>
+          {currentValue}
+          /
+          {pages}
+        </Text>
       </View>
       <SlidingUpPanel
         ref={panel}
