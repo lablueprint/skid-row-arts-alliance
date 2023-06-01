@@ -28,14 +28,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: Dimensions.get('window').height * 0.10,
     padding: 10,
-    paddingTop: 30,
+    paddingTop: Dimensions.get('window').height * 0.055,
     paddingBottom: 15,
     backgroundColor: '#4C4C9B',
   },
   headerText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: Dimensions.get('window').height * 0.02,
+    fontFamily: 'MontserratSemiBold',
   },
   icons: {
     height: '5%',
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     justifyContent: 'flex-start',
     marginHorizontal: Dimensions.get('window').width * 0.10,
-    width: Dimensions.get('window').width * 0.7,
+    width: Dimensions.get('window').width * 0.75,
   },
   counterContainer: {
     marginTop: 5,
@@ -80,7 +81,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   pageCounter: {
-    fontSize: 16,
+    fontSize: Dimensions.get('window').height * 0.018,
+    fontFamily: 'MontserratBold',
   },
   contents: {
     flexDirection: 'row',
