@@ -111,26 +111,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const onPressEvent = () => {
-  navigation.navigate('Event Details', {
-    key,
-    id,
-    image,
-    location,
-    title,
-    description,
-    startDate,
-    endDate,
-    tag,
-    phoneNumber,
-    organization,
-    recurringMonthly,
-    recurringWeekly,
-    website,
-    organizationDescription,
-  });
-};
-
 function MapCard({
   key,
   id,
@@ -148,6 +128,7 @@ function MapCard({
   website,
   organizationDescription,
   resourceType,
+  navigation,
   isEvent,
 }) {
   const [fontsLoaded] = useFonts({
@@ -156,6 +137,10 @@ function MapCard({
     MontserratSemiBold: Montserrat_600SemiBold,
     MontserratBold: Montserrat_700Bold,
   });
+
+  if (!fontsLoaded) {
+    console.log('Loading font...');
+  }
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const dayOfWeek = daysOfWeek[startDate.getUTCDay()];
@@ -200,6 +185,31 @@ function MapCard({
         tagIcon = require('../assets/map/shelterTag.png');
     }
   }
+
+  const onPressEvent = () => {
+    if (isEvent) {
+      navigation.navigate('Event Details', {
+        key,
+        id,
+        image,
+        // location,
+        title,
+        description,
+        startDate,
+        endDate,
+        tag,
+        phoneNumber,
+        organization,
+        recurringMonthly,
+        recurringWeekly,
+        website,
+        organizationDescription,
+      });
+    } else {
+      navigation.navigate('Resource Details', {
+      });
+    }
+  };
 
   return (
     <View style={styles.card} key={id}>
@@ -262,7 +272,7 @@ function MapCard({
           </ScrollView>
         </View>
       </View>
-      <TouchableOpacity style={styles.detailsButton} onPress={() => onPressEvent()}>
+      <TouchableOpacity style={styles.detailsButton} onPress={onPressEvent}>
         <Text style={styles.detailsButtonText}>
           More Details
           {'  >'}
