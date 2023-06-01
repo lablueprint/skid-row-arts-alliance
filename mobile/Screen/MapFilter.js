@@ -1,42 +1,64 @@
 import React, { useState } from 'react';
 import {
-  View, TouchableOpacity, ScrollView, Text, StyleSheet,
+  Image, View, TouchableOpacity, ScrollView, Text, StyleSheet,
 } from 'react-native';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
+  bigContainer: {
+    padding: 23,
+    paddingBottom: 50,
+  },
   container: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 20,
+  },
+  image: {
+    height: 18,
+    width: 18,
+    resizeMode: 'contain',
+    marginRight: 10,
   },
   text: {
+    fontFamily: 'Montserrat',
     fontSize: 16,
-    marginTop: 10,
-    marginLeft: 10,
-    color: 'grey',
+    color: '#5B6772',
   },
   header: {
-    color: 'dimgrey',
+    fontFamily: 'MontserratSemiBold',
+    color: '#5B6772',
     fontSize: 16,
-    marginTop: 25,
-    marginBottom: 10,
-    fontWeight: 'bold',
-    marginLeft: 10,
+    marginTop: 24,
+    marginBottom: 15,
   },
   applyButton: {
-    marginTop: 20,
-    marginBottom: 50,
-    width: '95%',
+    width: '50%',
     borderRadius: 4,
     height: 45,
     backgroundColor: '#424288',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: '#424288',
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 7,
+  },
+  clearButton: {
+    width: '40%',
+    borderRadius: 4,
+    height: 45,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#424288',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 20,
+  },
+  bottomButtons: {
+    fontFamily: 'MontserratSemiBold',
+    fontSize: 16,
   },
 });
 
@@ -45,65 +67,65 @@ function MapFilter({ route, navigation }) {
     categories, setCategories,
   } = route.params;
 
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
+
   const eventCategories = [
     {
       title: 'visual art',
-      length: 10,
     },
     {
       title: 'film',
-      length: 4,
     },
     {
       title: 'music',
-      length: 5,
     },
     {
       title: 'art-related community event',
-      length: 27,
     },
     {
-      title: 'performance/theater',
-      length: 19,
+      title: 'performance / theater',
     },
     {
       title: 'spoken word',
-      length: 11,
     },
     {
       title: 'miscellaneous',
-      length: 14,
     },
   ];
 
   const resourceCategories = [
     {
       title: 'food',
-      length: 4,
+      image: require('../assets/map/food.png'),
     },
     {
       title: 'shelter',
-      length: 7,
+      image: require('../assets/map/shelter.png'),
     },
     {
       title: 'health',
-      length: 6,
+      image: require('../assets/map/health.png'),
     },
     {
       title: 'legal services',
-      length: 14,
+      image: require('../assets/map/legal_services.png'),
     },
     {
       title: 'shower',
-      length: 6,
+      image: require('../assets/map/shower.png'),
     },
     {
       title: 'mission',
-      length: 7,
+      image: require('../assets/map/mission.png'),
     },
     {
       title: 'social services',
-      length: 15,
+      image: require('../assets/map/social_services.png'),
     },
   ];
 
@@ -120,16 +142,21 @@ function MapFilter({ route, navigation }) {
     } return '#D0D0E8';
   };
 
-  const getButtonStyle = (object, category) => ({
-    width: ((object.length) + 5) * 9,
+  const getButtonStyle = (category) => ({
     height: 50,
     backgroundColor: getButtonColor(category),
     borderWidth: 2,
-    borderRadius: 10,
+    borderRadius: 9,
     borderColor: getBorderColor(category),
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 7,
+    marginRight: 16,
+    marginBottom: 17,
+    flexDirection: 'row',
+    paddingRight: 20,
+    paddingLeft: 20,
+    paddingTop: 8.5,
+    paddingBottom: 8.5,
   });
 
   const getTextColor = (category) => {
@@ -139,6 +166,7 @@ function MapFilter({ route, navigation }) {
   };
 
   const getTextStyle = (category) => ({
+    fontFamily: 'MontserratMedium',
     color: getTextColor(category),
     fontSize: 16,
   });
@@ -157,33 +185,57 @@ function MapFilter({ route, navigation }) {
     navigation.goBack();
   };
 
+  const onPressClear = () => {
+    const objectCopy = { ...tempCategories };
+    for (let i = 0; i < eventCategories.length; i += 1) {
+      const property = eventCategories[i].title;
+      objectCopy[property] = false;
+    }
+    for (let i = 0; i < resourceCategories.length; i += 1) {
+      const property = resourceCategories[i].title;
+      objectCopy[property] = false;
+    }
+    setTempCategories(objectCopy);
+  };
+
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={styles.bigContainer}>
       <Text style={styles.text}>Select Multiple Filtering Options.</Text>
       <Text style={styles.header}>Events</Text>
       <View style={styles.container}>
         {eventCategories.map((category) => (
           <TouchableOpacity
-            style={getButtonStyle(category, tempCategories[category.title])}
+            style={getButtonStyle(tempCategories[category.title])}
             onPress={() => onPressCategories(category.title)}
           >
             <Text style={getTextStyle(tempCategories[category.title])}>{category.title}</Text>
           </TouchableOpacity>
         ))}
       </View>
-      <Text style={styles.header}>Resources</Text>
+      <Text style={[styles.header, { marginTop: 10 }]}>Resources</Text>
       <View style={styles.container}>
         {resourceCategories.map((category) => (
           <TouchableOpacity
-            style={getButtonStyle(category, tempCategories[category.title])}
+            style={getButtonStyle(tempCategories[category.title])}
             onPress={() => onPressCategories(category.title)}
           >
+            <Image
+              source={category.image}
+              style={styles.image}
+            />
             <Text style={getTextStyle(tempCategories[category.title])}>{category.title}</Text>
           </TouchableOpacity>
         ))}
+      </View>
+      <View style={[styles.container, { marginTop: 35 }]}>
+        <TouchableOpacity style={styles.clearButton} title="apply" onPress={() => onPressClear()}>
+          <Text style={[styles.bottomButtons, { color: '#424288'}]}>
+            Clear All
+          </Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.applyButton} title="apply" onPress={() => onPressApply()}>
-          <Text style={[styles.title, { color: 'white' }, { fontWeight: '600' }]}>
-            Apply Filter
+          <Text style={[styles.bottomButtons, { color: '#FFFFFF'}]}>
+            Apply
           </Text>
         </TouchableOpacity>
       </View>
