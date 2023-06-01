@@ -10,19 +10,7 @@ import ZineCard from '../Components/ZineCard';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-  },
-  fullItem: {
-    width: '100%',
-    height: 150,
-    backgroundColor: 'gray',
-    marginBottom: 10,
-  },
-  rowItem: {
-    width: '50%',
-    height: 150,
-    backgroundColor: 'gray',
-    marginBottom: 10,
+    padding: Dimensions.get('window').width * 0.025,
   },
   rowContainer: {
     flexDirection: 'row',
@@ -31,14 +19,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   scrollViewContentContainer: {
-    paddingBottom: 20, // add some padding to the bottom to prevent the last item from being cut off
+    paddingBottom: Dimensions.get('window').height * 0.025, // add some padding to the bottom to prevent the last item from being cut off
   },
   textSection: {
-    paddingHorizontal: 10,
+    paddingHorizontal: Dimensions.get('window').width * 0.02,
   },
   header: {
-    padding: 10,
-    marginBottom: 10,
+    padding: Dimensions.get('window').width * 0.02,
+    marginBottom: Dimensions.get('window').height * 0.005,
   },
   headerText: {
     fontSize: Dimensions.get('window').height * 0.05,
@@ -53,12 +41,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    padding: 10,
+    padding: Dimensions.get('window').width * 0.02,
   },
   bigCardContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
   },
 });
 

@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   pdf: {
     width: Dimensions.get('window').width * 0.42,
     height: Dimensions.get('window').height * 0.3,
-    paddingBottom: 10,
+    paddingBottom: Dimensions.get('window').height * 0.01,
   },
   bigPdf: {
     width: Dimensions.get('window').width,

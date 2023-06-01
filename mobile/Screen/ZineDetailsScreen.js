@@ -29,9 +29,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: Dimensions.get('window').height * 0.10,
-    padding: 10,
+    padding: Dimensions.get('window').height * 0.01,
     paddingTop: Dimensions.get('window').height * 0.055,
-    paddingBottom: 15,
+    paddingBottom: Dimensions.get('window').height * 0.01,
     backgroundColor: '#4C4C9B',
   },
   headerText: {
@@ -39,9 +39,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: Dimensions.get('window').height * 0.02,
     fontFamily: 'MontserratSemiBold',
-  },
-  icons: {
-    height: '5%',
   },
   pdf: {
     flex: 1,
@@ -57,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   panelHeader: {
-    height: 60,
+    height: Dimensions.get('window').height * 0.06,
     backgroundColor: '#E7E9EC',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -72,7 +69,7 @@ const styles = StyleSheet.create({
   icon: {
     alignItems: 'center',
     justifyContent: 'center',
-    bottom: 2,
+    bottom: Dimensions.get('window').height * 0.001,
   },
   slider: {
     alignItems: 'stretch',
@@ -81,8 +78,8 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width * 0.75,
   },
   counterContainer: {
-    marginTop: 5,
-    marginBottom: 30,
+    marginTop: Dimensions.get('window').height * 0.001,
+    marginBottom: Dimensions.get('window').height * 0.035,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -93,7 +90,7 @@ const styles = StyleSheet.create({
   contents: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 15,
+    padding: Dimensions.get('window').height * 0.015,
   },
   contentContainer: {
     alignItems: 'center',
@@ -124,19 +121,19 @@ const styles = StyleSheet.create({
   },
   thumb: {
     backgroundColor: '#F8F8F8',
-    borderRadius: 30 / 2,
-    height: 25,
+    borderRadius: Dimensions.get('window').height * 0.025,
+    height: Dimensions.get('window').height * 0.025,
     shadowColor: 'black',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: Dimensions.get('window').height * 0.0025,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 2,
-    width: 25,
+    shadowRadius: Dimensions.get('window').height * 0.0025,
+    width: Dimensions.get('window').height * 0.025,
   },
   line: {
-    height: 1,
+    height: Dimensions.get('window').height * 0.0025,
     backgroundColor: '#C4C8CA',
   },
   flipped: {
