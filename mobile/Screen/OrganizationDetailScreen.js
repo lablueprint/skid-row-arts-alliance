@@ -44,9 +44,9 @@ const styles = StyleSheet.create({
   },
 });
 
-function OrganizationDetailScreen({ route }) {
+function OrganizationDetailScreen({ route, navigation }) {
   const {
-    image, organization, organizationDescription, phoneNumber, email, website,
+    organization, organizationDescription, phoneNumber, website,
   } = route.params || {};
 
   const [fontsLoaded] = useFonts({
@@ -54,51 +54,55 @@ function OrganizationDetailScreen({ route }) {
     MontserratMedium: Montserrat_500Medium,
   });
 
-  const imageURL = image.uri;
+  React.useLayoutEffect(() => {
+    navigation.setOptions({ headerTitle: organization });
+  }, [navigation, organization]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>{organization}</Text>
       <Image source={require('../assets/detailScreen/laPoverty.png')} style={styles.image}/>
       <View style={styles.textContainer}>
         <Text style={styles.normalText}>
           {' '}
           {organizationDescription}
           {' '}
-      </Text>
+        </Text>
       </View>
       <Text style={styles.header}>
         Contact Info
       </Text>
       <View style={styles.flexContainer}>
-      <Image source={require('../assets/detailScreen/callTransparent.png')} style={styles.infoIconTransparent} />
-      <Text style={styles.normalText}>
-        {' '}
-        {phoneNumber}
-        {' '}
-      </Text>
+        <Image source={require('../assets/detailScreen/callTransparent.png')} style={styles.infoIconTransparent} />
+        <Text style={styles.normalText}>
+          {' '}
+          {phoneNumber}
+          {' '}
+        </Text>
       </View>
       <View style={styles.flexContainer}>
-      <Image source={require('../assets/detailScreen/mailTransparent.png')} style={styles.infoIconTransparent} />
-      <Text style={styles.normalText}>
-        {' '}
-        studio526@gmail.com
-        {' '}
-      </Text>
+        <Image source={require('../assets/detailScreen/mailTransparent.png')} style={styles.infoIconTransparent} />
+        <Text style={styles.normalText}>
+          {' '}
+          studio526@gmail.com
+          {' '}
+        </Text>
       </View>
       <View style={styles.flexContainer}>
-      <Image source={require('../assets/detailScreen/globeTransparent.png')} style={styles.infoIconTransparent} />
-      <Text style={styles.normalText}>
-        {' '}
-        {website}
-        {' '}
-      </Text>
+        <Image source={require('../assets/detailScreen/globeTransparent.png')} style={styles.infoIconTransparent} />
+        <Text style={styles.normalText}>
+          {' '}
+          {website}
+          {' '}
+        </Text>
       </View>
     </View>
   );
 }
 
 OrganizationDetailScreen.propTypes = {
+  navigation: PropTypes.shape({
+    setOptions: PropTypes.func.isRequired,
+  }).isRequired,
   route: PropTypes.shape({
     params: PropTypes.shape({
       organization: PropTypes.string.isRequired,

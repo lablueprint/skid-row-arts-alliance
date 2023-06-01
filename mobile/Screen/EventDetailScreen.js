@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   title: {
+    width: '80%',
     fontFamily: 'MontserratMedium',
     fontSize: 24,
   },
@@ -300,7 +301,7 @@ function EventDetailScreen({
       <ScrollView style={styles.overlayContent} showsVerticalScrollIndicator={false}>
         <View style={styles.flexContainer}>
           <Text style={styles.title}>{title}</Text>
-          <TouchableOpacity style={[{ paddingTop: 5 }, { marginLeft: '28%'} ]} onPress={onPressToggleSavedEvent}>
+          <TouchableOpacity style={[{ paddingTop: 5 }, { marginLeft: 45} ]} onPress={onPressToggleSavedEvent}>
             <Image style={styles.saveIcon} source={saveIcon} />
           </TouchableOpacity>
         </View>
