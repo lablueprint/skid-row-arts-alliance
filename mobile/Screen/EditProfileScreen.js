@@ -360,8 +360,6 @@ function EditProfileScreen({
 
   const { id, authHeader } = useSelector((state) => state.auth);
 
-  const [image, setImage] = useState('https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500');
-
   const [currFirstName, setFirstName] = useState('');
   const [currLastName, setLastName] = useState('');
 
@@ -489,7 +487,7 @@ function EditProfileScreen({
     const object = { uri: stream, type: newProfilePicture.type };
 
     try {
-      const res = await axios.patch(`${URL}/user/addProfilePicture/${currentUser.id}`, {
+      const res = await axios.patch(`${URL}/user/addProfilePicture/${id}`, {
         image: object,
       });
       return res.data.s3key;
