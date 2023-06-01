@@ -7,9 +7,11 @@ import Pdf from 'react-native-pdf';
 import { Slider } from '@miblanchard/react-native-slider';
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import PropTypes from 'prop-types';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 
 const { height } = Dimensions.get('window').height;
-const { width } = Dimensions.get('window').width;
 
 const BackButton = require('../assets/backArrowWhite.png');
 const PreviousButton = require('../assets/backArrow.png');
@@ -51,17 +53,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#E7E9EC',
     position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   panelHeader: {
     height: 60,
     backgroundColor: '#E7E9EC',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    flexDirection: 'row',
+    width: Dimensions.get('window').width * 0.95,
   },
   textHeader: {
-    fontSize: 16,
+    fontSize: Dimensions.get('window').height * 0.02,
     alignItems: 'center',
-    fontWeight: 'bold',
+    fontFamily: 'MontserratBold',
   },
   icon: {
     alignItems: 'center',
@@ -89,8 +95,32 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 15,
   },
+  contentContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  contentSelection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: Dimensions.get('window').width * 0.9,
+  },
+  contentTitleContainer: {
+    width: Dimensions.get('window').width * 0.85,
+  },
   contentsText: {
-    fontSize: 13,
+    fontSize: Dimensions.get('window').height * 0.018,
+    fontFamily: 'Montserrat',
+  },
+  contentsNumber: {
+    fontSize: Dimensions.get('window').height * 0.018,
+    fontFamily: 'Montserrat',
+  },
+  navContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    marginHorizontal: Dimensions.get('window').width * 0.05,
+    paddingTop: Dimensions.get('window').height * 0.02,
   },
   thumb: {
     backgroundColor: '#F8F8F8',
@@ -105,15 +135,15 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     width: 25,
   },
-  navContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    marginHorizontal: Dimensions.get('window').width * 0.05,
-    paddingTop: Dimensions.get('window').height * 0.02,
+  line: {
+    height: 1,
+    backgroundColor: '#C4C8CA',
   },
   flipped: {
     transform: [{ scaleX: -1 }],
+  },
+  hidden: {
+    tintColor: '#E7E9EC',
   },
 });
 
@@ -121,10 +151,12 @@ function ZineDetailsScreen({ navigation, route }) {
   const {
     title, date, contents, url,
   } = route.params;
+
   let ref;
   const [pages, setPages] = useState(1);
   const source = { uri: url, cache: true };
   const [currentValue, setCurrentValue] = useState(1);
+
   const handleOnSliderChange = (newValue) => {
     if (newValue > 0 && newValue <= pages) {
       const value = Number(newValue);
@@ -134,6 +166,13 @@ function ZineDetailsScreen({ navigation, route }) {
   };
   const draggedValue = useRef(new Animated.Value(0)).current;
   const draggableRange = { top: 670, bottom: 0 };
+
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
 
   const panel = useRef(null);
 
@@ -220,18 +259,37 @@ function ZineDetailsScreen({ navigation, route }) {
       >
         <View style={styles.panel}>
           <View style={styles.panelHeader}>
+            <TouchableOpacity
+              onPress={() => panel.current.hide()}
+            >
+              <Image
+                source={PreviousButton}
+                style={styles.backButton}
+              />
+            </TouchableOpacity>
             <Animated.View>
               <Text style={styles.textHeader}>Contents</Text>
             </Animated.View>
+            <Image
+              source={PreviousButton}
+              style={styles.hidden}
+            />
           </View>
-          <ScrollView>
+          <ScrollView contentContainerStyle={styles.contentContainer}>
             {contents.map((content) => (
               <TouchableOpacity
                 style={styles.contents}
                 onPress={() => { handleOnSliderChange(content.sectionPage); }}
               >
-                <Text style={styles.contentsText}>{content.sectionTitle}</Text>
-                <Text style={styles.contentsText}>{content.sectionPage}</Text>
+                <View>
+                  <View style={styles.contentSelection}>
+                    <View style={styles.contentTitleContainer}>
+                      <Text style={styles.contentsText} numberOfLines={1} ellipsizeMode="tail">{content.sectionTitle}</Text>
+                    </View>
+                    <Text style={styles.contentsNumber}>{content.sectionPage}</Text>
+                  </View>
+                  <View style={styles.line} />
+                </View>
               </TouchableOpacity>
             ))}
           </ScrollView>
