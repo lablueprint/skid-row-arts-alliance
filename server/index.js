@@ -12,6 +12,7 @@ const port = process.env.PORT;
 // Route imports
 const authRouter = require('./routes/authRoutes');
 const eventRouter = require('./routes/eventRoutes');
+const passwordResetRouter = require('./routes/passwordResetRoutes');
 const resourceRouter = require('./routes/resourceRoutes');
 const submissionRouter = require('./routes/submissionRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -34,6 +35,7 @@ app.use(express.urlencoded({ limit: '200mb', extended: true }));
 // Use the api routes
 app.use('/auth', authRouter);
 app.use('/event', eventRouter);
+app.use('/passwordReset', passwordResetRouter);
 app.use('/resource', resourceRouter);
 app.use('/submissions', submissionRouter);
 app.use('/user', userRouter);
