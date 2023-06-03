@@ -17,7 +17,6 @@ import { logout } from '../redux/sliceAuth';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#ffffff',
-    // height: '100%',
   },
   headerContainer: {
     width: '90%',
@@ -71,7 +70,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     flex: 2,
     alignSelf: 'center',
-    marginLeft: '10%',
+    marginLeft: '9.5%',
   },
   avatar: {
     width: '100%',
@@ -80,14 +79,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     alignSelf: 'center',
   },
-  // scrollView: {
-  //   paddingBottom: '50%',
-  // },
   row: {
     marginTop: '6%',
     aspectRatio: 1,
     overflow: 'hidden',
-    height: '20%', // this changes size of avatar
+    height: '18%', // this changes size of avatar
     width: '50%',
     // borderWidth: 2,
     alignSelf: 'center',
@@ -110,8 +106,8 @@ const styles = StyleSheet.create({
     width: '25%',
     height: '25%',
     position: 'absolute',
-    top: 43,
-    left: 43,
+    top: '37%',
+    left: '37%',
   },
   nameText: {
     marginTop: '7%',
@@ -157,12 +153,13 @@ const styles = StyleSheet.create({
     marginTop: '1.1%',
     width: '90%',
     backgroundColor: '#F2F2F2',
-    height: '27.5%',
+    height: 160,
     alignSelf: 'center',
     borderRadius: 8,
     borderColor: '#8A9195',
     borderWidth: 0.5,
-    position: 'relative',
+    justifyContent: 'space-between',
+    // maxHeight: '27.5%',
   },
   bioTextInput: {
     fontFamily: 'Montserrat',
@@ -171,14 +168,15 @@ const styles = StyleSheet.create({
     paddingLeft: '4%',
     paddingRight: '4%',
     paddingTop: '3%',
+    // borderWidth: 2,
+    maxHeight: '100%',
+    flex: 1,
   },
   wordCount: {
     color: 'gray',
-    position: 'absolute',
-    // top: 140,
-    // left: 295,
-    marginLeft: '78%',
-    marginTop: '37%',
+    alignSelf: 'flex-end',
+    paddingBottom: '3%',
+    paddingRight: '4%',
   },
   sociaMediaHandlesText: {
     marginTop: '6%',
@@ -231,25 +229,25 @@ const styles = StyleSheet.create({
   manageAccountText: {
     marginTop: '6%',
     marginLeft: '5%',
-    marginBottom: '1.3%',
+    marginBottom: '3%',
     fontFamily: 'Montserrat',
     fontSize: 16,
   },
   deleteAccountButton: {
-    width: '55%',
+    width: '36.7%',
     marginLeft: '5%',
     borderRadius: 4,
     borderWidth: 1,
     borderColor: '#D50D0D',
-    paddingRight: 18,
-    paddingLeft: 18,
+    // paddingRight: 18,
+    // paddingLeft: 18,
     paddingTop: 9,
     paddingBottom: 9,
     alignItems: 'center',
   },
   deleteAccountText: {
     fontStyle: 'normal',
-    fontSize: 18,
+    fontSize: 13,
     lineHeight: 0,
     fontFamily: 'MontserratSemiBold',
     color: '#D50D0D',
@@ -281,21 +279,19 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     alignSelf: 'center',
+    // borderWidth: 2,
   },
   cancelButton: {
     borderWidth: 1,
     borderColor: '#424288',
     borderRadius: 4,
-    paddingRight: 18,
-    paddingLeft: 18,
     paddingTop: 4,
     paddingBottom: 4,
-    width: '49%',
+    width: '43%',
     alignItems: 'center',
-    marginRight: 10,
   },
   cancelText: {
     fontStyle: 'normal',
@@ -308,13 +304,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#4C4C9B',
     borderRadius: 4,
-    paddingRight: 24,
-    paddingLeft: 24,
     paddingTop: 4,
     paddingBottom: 4,
-    width: '49%',
+    width: '43%',
     alignItems: 'center',
-    marginLeft: 10,
     backgroundColor: '#4C4C9B',
   },
   yesText: {
@@ -343,7 +336,6 @@ const styles = StyleSheet.create({
   titleandXContainer: {
     flexDirection: 'row',
     // borderWidth: 2,
-    marginBottom: '0%',
     height: '20%',
     marginBottom: '7%',
   },
@@ -372,7 +364,6 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 24,
     fontFamily: 'MontserratMedium',
-    // flex: 1,
     paddingLeft: '2%',
     alignSelf: 'center',
   },
@@ -418,23 +409,24 @@ const styles = StyleSheet.create({
   },
   modalIconTitles: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignSelf: 'center',
-    // borderWidth: 2,
-    width: '62%',
+    width: '56%',
     marginBottom: '-20%',
+    // borderWidth: 2,
   },
   takePhotoText: {
     color: '#424288',
     fontFamily: 'MontserratBold',
     textAlign: 'center',
-    marginRight: '41%',
-    marginLeft: '4%',
+    // borderWidth: 2,
+    marginLeft: '3.5%',
   },
   cameraRollText: {
     color: '#424288',
     fontFamily: 'MontserratBold',
     textAlign: 'center',
+    // borderWidth: 2,
   },
   modalOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -693,8 +685,9 @@ function EditProfileScreen({
           <Text style={styles.saveText}>Save</Text>
         </Pressable>
       </View>
-      <View style={{ paddingBottom: 200, minHeight: '100%'}}>
-        <ScrollView style={{marginBottom: -2000, flexGrow: 1 }}>
+      <View style={{}}>
+        <ScrollView style={{ maxHeight: '100%'}}>
+          <ScrollView style={{ height: 1050 }}>
           <View style={styles.row}>
             <Pressable onPress={openPopup}>
               <ImageBackground
@@ -875,6 +868,7 @@ function EditProfileScreen({
               </View>
             </TouchableWithoutFeedback>
           </Modal>
+          </ScrollView>
         </ScrollView>
       </View>
     </View>
