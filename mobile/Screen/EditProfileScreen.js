@@ -6,7 +6,8 @@ import {
 import axios from 'axios';
 import {
   StyleSheet, Text, TextInput, View, Button, Image, ScrollView, Modal, Pressable, ImageBackground,
-  PanResponder, Animated, Dimensions, TouchableWithoutFeedback,
+  PanResponder, Animated, Dimensions, TouchableWithoutFeedback, TouchableOpacity, 
+  TouchableHighlight,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,7 +17,7 @@ import { logout } from '../redux/sliceAuth';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#ffffff',
-    height: '100%',
+    // height: '100%',
   },
   headerContainer: {
     width: '90%',
@@ -332,18 +333,112 @@ const styles = StyleSheet.create({
   modalContentContainer: {
     backgroundColor: 'white',
     width: '100%',
-    padding: 16,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    padding: '4%',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    shadowColor: 'black',
+    shadowRadius: 10,
+    shadowOpacity: 0.11,
+  },
+  titleandXContainer: {
+    flexDirection: 'row',
+    // borderWidth: 2,
+    marginBottom: '0%',
+    height: '20%',
+    marginBottom: '7%',
+  },
+  titleContainer: {
+    // borderWidth: 2,
+    flexDirection: 'row',
+    width: '99%',
+    justifyContent: 'center',
+    height: '100%',
+  },
+  exitIconContainer: {
+    flexDirection: 'row',
+    // borderWidth: 2,
+    marginLeft: '-6%',
+    width: '10%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+  },
+  exIcon: {
+    height: '75%',
+    width: '75%',
+    overflow: 'visible',
+    // borderWidth: 1,
   },
   modalTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
+    fontFamily: 'MontserratMedium',
+    // flex: 1,
+    paddingLeft: '2%',
+    alignSelf: 'center',
   },
   newModalText: {
     fontSize: 16,
-    marginBottom: 16,
+    marginBottom: 10,
+  },
+  modalPicContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    // borderWidth: 2,
+    marginBottom: '1.5%',
+  },
+  purpleCircle1: {
+    backgroundColor: '#D0D0E8',
+    borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
+    width: Dimensions.get('window').width * 0.15,
+    height: Dimensions.get('window').width * 0.15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: '12%',
+  },
+  purpleCircle2: {
+    backgroundColor: '#D0D0E8',
+    borderRadius: Math.round(Dimensions.get('window').width + Dimensions.get('window').height) / 2,
+    width: Dimensions.get('window').width * 0.15,
+    height: Dimensions.get('window').width * 0.15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: '12%',
+  },
+  cameraIcon: {
+    height: '55%',
+    width: '55%',
+    overflow: 'visible',
+  },
+  selectPhotoIcon: {
+    height: '60%',
+    width: '60%',
+    overflow: 'visible',
+  },
+  modalIconTitles: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    // borderWidth: 2,
+    width: '62%',
+    marginBottom: '-20%',
+  },
+  takePhotoText: {
+    color: '#424288',
+    fontFamily: 'MontserratBold',
+    textAlign: 'center',
+    marginRight: '41%',
+    marginLeft: '4%',
+  },
+  cameraRollText: {
+    color: '#424288',
+    fontFamily: 'MontserratBold',
+    textAlign: 'center',
+  },
+  modalOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
 
@@ -598,151 +693,190 @@ function EditProfileScreen({
           <Text style={styles.saveText}>Save</Text>
         </Pressable>
       </View>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.row}>
-          <Pressable onPress={openPopup}>
-            <ImageBackground
-              source={{ uri: newProfilePicture ? newProfilePicture.uri : currProfilePicture }}
-              resizeMode="cover"
-              style={styles.avatar}
-            />
-            <View style={styles.overlay} />
-            <Image
-              source={require('../assets/edit.png')}
-              style={styles.editLogo}
-            />
-          </Pressable>
-        </View>
-        <Text style={styles.nameText}>Name</Text>
-        <View style={styles.nameRowContainer}>
-          <View style={styles.nameContainer}>
+      <View style={{ paddingBottom: 200, minHeight: '100%'}}>
+        <ScrollView style={{marginBottom: -2000, flexGrow: 1 }}>
+          <View style={styles.row}>
+            <Pressable onPress={openPopup}>
+              <ImageBackground
+                source={{ uri: newProfilePicture ? newProfilePicture.uri : currProfilePicture }}
+                resizeMode="cover"
+                style={styles.avatar}
+              />
+              <View style={styles.overlay} />
+              <Image
+                source={require('../assets/edit.png')}
+                style={styles.editLogo}
+              />
+            </Pressable>
+          </View>
+          <Text style={styles.nameText}>Name</Text>
+          <View style={styles.nameRowContainer}>
+            <View style={styles.nameContainer}>
+              <TextInput
+                multiline={false}
+                value={currFirstName}
+                onChangeText={handleFirstNameChange}
+                placeholder="Enter first name..."
+                style={styles.nameTextInput}
+              />
+            </View>
+            <View style={styles.nameContainer}>
+              <TextInput
+                multiline={false}
+                value={currLastName}
+                onChangeText={handleLastNameChange}
+                placeholder="Enter last name..."
+                style={styles.nameTextInput}
+              />
+            </View>
+          </View>
+          <Text style={styles.bioText}>Bio</Text>
+          <View style={styles.bioContainer}>
             <TextInput
-              multiline={false}
-              value={currFirstName}
-              onChangeText={handleFirstNameChange}
-              placeholder="Enter first name..."
-              style={styles.nameTextInput}
+              multiline
+              value={currBio}
+              onChangeText={handleBioChange}
+              placeholder="Enter bio..."
+              style={styles.bioTextInput}
             />
+            <Text style={styles.wordCount}>
+              {wordCount}
+              /150 words
+            </Text>
           </View>
-          <View style={styles.nameContainer}>
-            <TextInput
-              multiline={false}
-              value={currLastName}
-              onChangeText={handleLastNameChange}
-              placeholder="Enter last name..."
-              style={styles.nameTextInput}
-            />
-          </View>
-        </View>
-        <Text style={styles.bioText}>Bio</Text>
-        <View style={styles.bioContainer}>
-          <TextInput
-            multiline
-            value={currBio}
-            onChangeText={handleBioChange}
-            placeholder="Enter bio..."
-            style={styles.bioTextInput}
-          />
-          <Text style={styles.wordCount}>
-            {wordCount}
-            /150 words
-          </Text>
-        </View>
-        <Text style={styles.sociaMediaHandlesText}>Social Media Handles</Text>
-        <View style={styles.socialMediaContainer}>
-          <View style={styles.socialMediaRow}>
-            <View style={{ flex: 0, flexDirection: 'row' }}>
-              <Image
-                source={require('../assets/facebook.png')}
-                style={styles.socialMediaLogo}
-              />
-              <TextInput
-                multiline={false}
-                value={currFacebook}
-                onChangeText={setFacebook}
-                placeholder="Enter Facebook Name..."
-                style={styles.socialRowText}
-              />
+          <Text style={styles.sociaMediaHandlesText}>Social Media Handles</Text>
+          <View style={styles.socialMediaContainer}>
+            <View style={styles.socialMediaRow}>
+              <View style={{ flex: 0, flexDirection: 'row' }}>
+                <Image
+                  source={require('../assets/facebook.png')}
+                  style={styles.socialMediaLogo}
+                />
+                <TextInput
+                  multiline={false}
+                  value={currFacebook}
+                  onChangeText={setFacebook}
+                  placeholder="Enter Facebook Name..."
+                  style={styles.socialRowText}
+                />
+              </View>
             </View>
-          </View>
-          <View style={styles.socialMediaRow}>
-            <View style={{ flex: 0, flexDirection: 'row' }}>
-              <Image
-                source={require('../assets/instagram.png')}
-                style={styles.socialMediaLogo}
-              />
-              <TextInput
-                multiline={false}
-                value={currInstagram}
-                onChangeText={setInstagram}
-                placeholder="Enter Instagram Handle..."
-                style={styles.socialRowText}
-              />
+            <View style={styles.socialMediaRow}>
+              <View style={{ flex: 0, flexDirection: 'row' }}>
+                <Image
+                  source={require('../assets/instagram.png')}
+                  style={styles.socialMediaLogo}
+                />
+                <TextInput
+                  multiline={false}
+                  value={currInstagram}
+                  onChangeText={setInstagram}
+                  placeholder="Enter Instagram Handle..."
+                  style={styles.socialRowText}
+                />
+              </View>
             </View>
-          </View>
-          <View style={styles.socialMediaRowBottom}>
-            <View style={{ flex: 0, flexDirection: 'row' }}>
-              <Image
-                source={require('../assets/twitter.png')}
-                style={styles.socialMediaLogo}
-              />
-              <TextInput
-                multiline={false}
-                value={currTwitter}
-                onChangeText={setTwitter}
-                placeholder="Enter Instagram Handle..."
-                style={styles.socialRowText}
-              />
-            </View>
-          </View>
-        </View>
-        <Text style={styles.manageAccountText}>Manage Account</Text>
-        <Pressable style={styles.deleteAccountButton} onPress={handleDelete}>
-          <Text style={styles.deleteAccountText}>Delete Account</Text>
-        </Pressable>
-        <Modal visible={showModal} animationType="fade" transparent>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
-              <View style={styles.buttonContainer}>
-                <Pressable style={styles.cancelButton} onPress={handleCancelDelete}>
-                  <Text style={styles.cancelText}>Cancel</Text>
-                </Pressable>
-                <Pressable style={styles.yesButton} onPress={handleConfirmDelete}>
-                  <Text style={styles.yesText}>Yes</Text>
-                </Pressable>
+            <View style={styles.socialMediaRowBottom}>
+              <View style={{ flex: 0, flexDirection: 'row' }}>
+                <Image
+                  source={require('../assets/twitter.png')}
+                  style={styles.socialMediaLogo}
+                />
+                <TextInput
+                  multiline={false}
+                  value={currTwitter}
+                  onChangeText={setTwitter}
+                  placeholder="Enter Instagram Handle..."
+                  style={styles.socialRowText}
+                />
               </View>
             </View>
           </View>
-        </Modal>
-        <Modal
-          animationType="slide"
-          transparent
-          visible={popup}
-          onRequestClose={closePopup}
-        >
-          <TouchableWithoutFeedback onPress={closePopup}>
-            <View style={styles.newModalContainer}>
-              <Animated.View
-                style={[
-                  styles.modalContentContainer,
-                  {
-                    transform: [{ translateY: panY }],
-                  },
-                ]}
-                {...panResponder.panHandlers}
-              >
-                <Text style={styles.modalTitle}>Profile Picture</Text>
-                <Text style={styles.modalText}>
-                  Attach a profile picture by tapping an option below!
-                </Text>
-                <Button title="Camera Roll" onPress={pickImage} />
-                <Button title="Use Camera" onPress={openCamera} />
-              </Animated.View>
+          <Text style={styles.manageAccountText}>Manage Account</Text>
+          <Pressable style={styles.deleteAccountButton} onPress={handleDelete}>
+            <Text style={styles.deleteAccountText}>Delete Account</Text>
+          </Pressable>
+          <Modal visible={showModal} animationType="fade" transparent>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalText}>Are you sure you want to delete your account?</Text>
+                <View style={styles.buttonContainer}>
+                  <Pressable style={styles.cancelButton} onPress={handleCancelDelete}>
+                    <Text style={styles.cancelText}>Cancel</Text>
+                  </Pressable>
+                  <Pressable style={styles.yesButton} onPress={handleConfirmDelete}>
+                    <Text style={styles.yesText}>Yes</Text>
+                  </Pressable>
+                </View>
+              </View>
             </View>
-          </TouchableWithoutFeedback>
-        </Modal>
-      </ScrollView>
+          </Modal>
+          <Modal
+            animationType="slide"
+            transparent
+            visible={popup}
+            onRequestClose={closePopup}
+          >
+            <View style={styles.modalOverlay} />
+            <TouchableWithoutFeedback onPress={closePopup}>
+              <View style={styles.newModalContainer}>
+                <Animated.View
+                  style={[
+                    styles.modalContentContainer,
+                    {
+                      transform: [{ translateY: panY }],
+                    },
+                  ]}
+                  {...panResponder.panHandlers}
+                >
+                  <View style={styles.titleandXContainer}>
+                    <View style={styles.titleContainer}>
+                      <Text style={styles.modalTitle}>Choose a Photo</Text>
+                    </View>
+                    <View style={styles.exitIconContainer}>
+                      <Pressable onPress={closePopup} style={{ width: '100%' }}>
+                        <Image
+                            source={require('../assets/ex.png')}
+                            resizeMode="cover"
+                            style={styles.exIcon}
+                        />
+                      </Pressable>
+                    </View>
+                  </View>
+                  <View style={styles.modalPicContainer}>
+                    <Pressable style={styles.purpleCircle1} onPress={openCamera}>
+                      <Image
+                        source={require('../assets/add_a_photo.png')}
+                        resizeMode="cover"
+                        style={styles.cameraIcon}
+                      />
+                    </Pressable>
+                    <Pressable style={styles.purpleCircle2} onPress={pickImage}>
+                      <Image
+                        source={require('../assets/multi_photo.png')}
+                        resizeMode="cover"
+                        style={styles.selectPhotoIcon}
+                      />
+                    </Pressable>
+                  </View>
+                  <View style={styles.modalIconTitles}>
+                    <Text style={styles.takePhotoText}>
+                      Take
+                      {'\n'}
+                      Photo
+                    </Text>
+                    <Text style={styles.cameraRollText}>
+                      Camera
+                      {'\n'}
+                      Roll
+                    </Text>
+                  </View>
+                </Animated.View>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+        </ScrollView>
+      </View>
     </View>
   );
 }
