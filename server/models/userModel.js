@@ -61,6 +61,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     type: [String],
   },
+  passwordResetCode: {
+    required: false,
+    type: String,
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);
