@@ -3848,10 +3848,10 @@
     "path-browserify" "^1.0.0"
     "url-parse" "^1.5.9"
 
-"expo-av@^13.2.1":
-  "integrity" "sha512-mC0mYSzaOaZgXjzhW2l4Ag325JjH6q5IbptfwD7gkMOFYy7VPOMxEMUnetadbs3DDzmgE6vUWrTjUIUbwq59qg=="
-  "resolved" "https://registry.npmjs.org/expo-av/-/expo-av-13.2.1.tgz"
-  "version" "13.2.1"
+"expo-av@~13.0.3":
+  "integrity" "sha512-9SpXOjY2MUK+jCIL68EUro/aHBlbZ3B4cY1nRr2aTPfv/dLD3bXRZNTTtSwOgsHbuKO6XwjHgCoYbd9T0GcE4A=="
+  "resolved" "https://registry.npmjs.org/expo-av/-/expo-av-13.0.3.tgz"
+  "version" "13.0.3"
 
 "expo-calendar@^11.1.1":
   "integrity" "sha512-ErXERbhdzI7RhdEFF94p5+UljoMT6p+POf2eDmoBicg7RieM/6kHDUL75B0JzBFy9FS86RDDdsIHFf2gzl6qWw=="
@@ -6542,6 +6542,14 @@
   "resolved" "https://registry.npmjs.org/path-type/-/path-type-4.0.0.tgz"
   "version" "4.0.0"
 
+"path@^0.12.7":
+  "integrity" "sha512-aXXC6s+1w7otVF9UletFkFcDsJeO7lSZBPUQhtb5O0xJe8LtYhj/GxldoL09bBj9+ZmE2hNoHqQSFMN5fikh4Q=="
+  "resolved" "https://registry.npmjs.org/path/-/path-0.12.7.tgz"
+  "version" "0.12.7"
+  dependencies:
+    "process" "^0.11.1"
+    "util" "^0.10.3"
+
 "picocolors@^1.0.0":
   "integrity" "sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ=="
   "resolved" "https://registry.npmjs.org/picocolors/-/picocolors-1.0.0.tgz"
@@ -6624,6 +6632,11 @@
   "resolved" "https://registry.npmjs.org/process-nextick-args/-/process-nextick-args-2.0.1.tgz"
   "version" "2.0.1"
 
+"process@^0.11.1":
+  "integrity" "sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A=="
+  "resolved" "https://registry.npmjs.org/process/-/process-0.11.10.tgz"
+  "version" "0.11.10"
+
 "progress@2.0.3":
   "integrity" "sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA=="
   "resolved" "https://registry.npmjs.org/progress/-/progress-2.0.3.tgz"
@@ -6656,7 +6669,7 @@
     "kleur" "^3.0.3"
     "sisteransi" "^1.0.5"
 
-"prop-types@*", "prop-types@^15.5.6", "prop-types@^15.6.0", "prop-types@^15.7.2", "prop-types@^15.8.1":
+"prop-types@*", "prop-types@^15.5.6", "prop-types@^15.5.8", "prop-types@^15.6.0", "prop-types@^15.7.2", "prop-types@^15.8.1":
   "integrity" "sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg=="
   "resolved" "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   "version" "15.8.1"
@@ -6860,6 +6873,11 @@
   "resolved" "https://registry.npmjs.org/react-native-gradle-plugin/-/react-native-gradle-plugin-0.70.3.tgz"
   "version" "0.70.3"
 
+"react-native-loading-spinner-overlay@^3.0.1":
+  "integrity" "sha512-4GdR54HQnKg2HPSSisVizfTLuyhSh4splY9eb8mKiYF1Ihjn/5EmdNo5bN3S7uKPFRC3WLzIZIouX6G6fXfnjw=="
+  "resolved" "https://registry.npmjs.org/react-native-loading-spinner-overlay/-/react-native-loading-spinner-overlay-3.0.1.tgz"
+  "version" "3.0.1"
+
 "react-native-maps@1.3.2":
   "integrity" "sha512-NB7HGRZOgxxXCWzrhIVucx/bsrEWANvk3DLci1ov4P9MQnEVQYQCCkTxsnaEvO191GeBOCRDyYn6jckqbfMtmg=="
   "resolved" "https://registry.npmjs.org/react-native-maps/-/react-native-maps-1.3.2.tgz"
@@ -6901,6 +6919,13 @@
   "resolved" "https://registry.npmjs.org/react-native-sound/-/react-native-sound-0.11.2.tgz"
   "version" "0.11.2"
 
+"react-native-spinkit@^1.5.1":
+  "integrity" "sha512-XkTgP4e+/MZpbI1GdZTIEQ+6WeMWQT4duWnSiXaaVW7py0rtaBLswtAEA6uXQGUhnxMnPWZhbLz7QponpH3ciQ=="
+  "resolved" "https://registry.npmjs.org/react-native-spinkit/-/react-native-spinkit-1.5.1.tgz"
+  "version" "1.5.1"
+  dependencies:
+    "prop-types" "^15.5.8"
+
 "react-native-svg@^13.9.0":
   "integrity" "sha512-Ey18POH0dA0ob/QiwCBVrxIiwflhYuw0P0hBlOHeY4J5cdbs8ngdKHeWC/Kt9+ryP6fNoEQ1PUgPYw2Bs/rp5Q=="
   "resolved" "https://registry.npmjs.org/react-native-svg/-/react-native-svg-13.9.0.tgz"
@@ -6908,6 +6933,11 @@
   dependencies:
     "css-select" "^5.1.0"
     "css-tree" "^1.1.3"
+
+"react-native-video-info@^0.1.3":
+  "integrity" "sha512-IWAsqti6RxZGwnH+b2YhO1GS1c00auRiZEPotmWUpYMWWKWyqSJAa6nFast4C4uGA8mDg3I1giJp7Z5g2AgrFA=="
+  "resolved" "https://registry.npmjs.org/react-native-video-info/-/react-native-video-info-0.1.3.tgz"
+  "version" "0.1.3"
 
 "react-native-video@^5.2.1":
   "integrity" "sha512-aJlr9MeTuQ0LpZ4n+EC9RvhoKeiPbLtI2Rxy8u7zo/wzGevbRpWHSBj9xZ5YDBXnAVXzuqyNIkGhdw7bfdIBZw=="
@@ -8286,6 +8316,13 @@
   "integrity" "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw=="
   "resolved" "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz"
   "version" "1.0.2"
+
+"util@^0.10.3":
+  "integrity" "sha512-0Pm9hTQ3se5ll1XihRic3FDIku70C+iHUdT/W926rSgHV5QgXsYbKZN8MSC3tJtSkhuROzvsQjAaFENRXr+19A=="
+  "resolved" "https://registry.npmjs.org/util/-/util-0.10.4.tgz"
+  "version" "0.10.4"
+  dependencies:
+    "inherits" "2.0.3"
 
 "util@^0.12.4":
   "integrity" "sha512-kZf/K6hEIrWHI6XqOFUiiMa+79wE/D8Q+NCNAWclkyg3b4d2k7s0QGepNjiABc+aR3N1PAyHL7p6UcLY6LmrnA=="

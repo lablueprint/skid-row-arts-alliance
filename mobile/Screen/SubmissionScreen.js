@@ -1,16 +1,14 @@
-// TODO: Video preview
 // TODO: Improve carousel
 import React, { useState, useRef } from 'react';
 import {
-  StyleSheet, TextInput, Text, View, ScrollView, Button, Image,
+  StyleSheet, TextInput, Text, View, ScrollView, Image,
   Modal, TouchableWithoutFeedback, PanResponder, Animated, Dimensions, TouchableOpacity, Alert,
-  Video,
+  ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import * as VideoThumbnails from 'expo-video-thumbnails';
-import VideoPlayer from 'expo-video-player';
 
 import Icon from 'react-native-vector-icons/Feather';
 
@@ -18,9 +16,7 @@ import PropTypes from 'prop-types';
 
 import { URL } from '@env';
 
-import pako, { deflate, inflate } from 'pako';
-import { Buffer } from 'buffer';
-
+import { Video as ExpoVideo, ResizeMode } from 'expo-av';
 import AudioPlayer from '../Components/AudioPlayer';
 
 const audioIcon = require('../assets/audioIcon.png');
@@ -106,9 +102,12 @@ function SubmissionScreen({ navigation }) {
 
   const [preview, setPreview] = useState('none');
   const [previewFile, setPreviewFile] = useState(null);
-  const [aspectRatio, setAspectRatio] = useState(1);
+  const [aspectRatio, setAspectRatio] = useState(-1);
+  const [videoAR, setVideoAR] = useState(-1);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const [carouselIdx, setCarouselIdx] = useState(0);
+  const [controlsVisible, setControlsVisible] = useState(false);
 
   const tagOptions = {
     Image: ['traditional art', 'illustration', 'photography', 'graphic design', 'digital art'],
@@ -116,10 +115,17 @@ function SubmissionScreen({ navigation }) {
     Video: ['short film', 'performance', 'music video'],
   };
 
+  const resetAspectRatios = () => {
+    setAspectRatio(-1);
+    setVideoAR(-1);
+    setVideoLoaded(false);
+    setControlsVisible(true);
+  };
+
   const closePreview = () => {
     setPreview('none');
     setPreviewFile(null);
-    setAspectRatio(1);
+    resetAspectRatios();
   };
 
   const openPreview = (file, type) => {
@@ -176,13 +182,14 @@ function SubmissionScreen({ navigation }) {
   const reset = () => {
     setArtworkTitle('');
     setDescription('');
-    setPage('upload');
     setFiles([]);
     setThumbnails([]);
     setTags([]);
     setConfirmedTags([]);
     closePreview();
+    closePopup();
     setCarouselIdx(0);
+    setPage('upload');
   };
 
   const getType = (uri, fileType) => {
@@ -284,7 +291,6 @@ function SubmissionScreen({ navigation }) {
         tags: confirmedTags,
       });
       reset();
-      setPage('upload');
       Alert.alert(
         'Submission successful',
         'Please allow up to 10 business days for the gallery to update!',
@@ -298,7 +304,7 @@ function SubmissionScreen({ navigation }) {
     }
   };
 
-  const addFile = async (fileURI, fileType) => {
+  const addFile = async (fileURI, fileType, fileName) => {
     if (files.length >= 5) {
       alertLimit();
       return;
@@ -317,9 +323,18 @@ function SubmissionScreen({ navigation }) {
       } catch (err) {
         console.error(err);
       }
-    } else { // Implement default thumbnail in future if we have additional file types (e.g. audio)
-      setFiles((prev) => ([...prev, { uri: fileURI, type: Array.from(new Set(fileType.split('/').filter((type) => type !== 'mp4'))).join('/') }]));
+    } else if (fileType.includes('audio')) {
+      setFiles((prev) => ([...prev, { uri: fileURI, type: Array.from(new Set(fileType.split('/').filter((type) => type !== 'mp4'))).join('/'), label: fileName }]));
       setThumbnails((prev) => ([...prev, 'default']));
+    } else {
+      Alert.alert(
+        'Invalid file type',
+        'We only accept images, videos, and audios!',
+        [
+          { text: 'OK' },
+        ],
+        { cancelable: false },
+      );
     }
   };
 
@@ -391,23 +406,19 @@ function SubmissionScreen({ navigation }) {
     });
 
     if (result.type === 'success') {
-      addFile(result.uri, getType(result.uri, result.mimeType));
+      addFile(result.uri, getType(result.uri, result.mimeType), result.name);
     }
   };
 
   if (page === 'upload') {
     const images = [];
-    const imageLabels = [];
     const videos = [];
-    const videoLabels = [];
     const audios = [];
     files.forEach((f, i) => {
       if (f.type.includes('image')) {
         images.push(thumbnails[i]);
-        imageLabels.push(f.uri);
       } else if (f.type.includes('video')) {
         videos.push(thumbnails[i]);
-        videoLabels.push(f.uri);
       } else {
         audios.push(f);
       }
@@ -416,9 +427,11 @@ function SubmissionScreen({ navigation }) {
     let previewDisplay = '';
     if (previewFile !== null) {
       if (preview === 'image') {
-        Image.getSize(previewFile, (width, height) => {
-          setAspectRatio(width / height);
-        });
+        if (aspectRatio === -1) {
+          Image.getSize(previewFile, (width, height) => {
+            setAspectRatio(width / height);
+          });
+        }
         previewDisplay = (
           <TouchableWithoutFeedback onPress={closePreview}>
             <View style={{
@@ -433,9 +446,9 @@ function SubmissionScreen({ navigation }) {
               <Image
                 source={{ uri: previewFile }}
                 style={{
-                  width: '87.5%',
+                  width: '80%',
+                  maxHeight: '80%',
                   aspectRatio,
-                  maxHeight: '90%',
                   borderRadius: 30,
                   backgroundColor: 'white',
                 }}
@@ -445,29 +458,27 @@ function SubmissionScreen({ navigation }) {
         );
       } else if (preview === 'video') {
         previewDisplay = (
-          <TouchableWithoutFeedback onPress={closePreview}>
+          <TouchableWithoutFeedback>
             <View style={{
-              zIndex: 3,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              height: '100%',
+              width: '80%',
+              maxHeight: '80%',
+              zIndex: 100,
+              aspectRatio: parseFloat(`${videoAR === -1 ? 1 : videoAR}`),
             }}
             >
-              <View style={{
-                width: '66.5%', maxHeight: '50%', backgroundColor: 'red', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}
-              >
-                <VideoPlayer
-                  videoProps={{
-                    shouldPlay: true,
-                    source: {
-                      uri: files[thumbnails.indexOf(previewFile)].uri,
-                    },
-                  }}
-                />
-              </View>
+              <ExpoVideo
+                onReadyForDisplay={(e) => {
+                  setVideoAR(e.naturalSize.width / e.naturalSize.height);
+                }}
+                source={{ uri: files[thumbnails.indexOf(previewFile)].uri }}
+                style={{
+                  height: '100%', width: '100%', borderRadius: 10, opacity: videoAR !== -1 ? 1 : 0,
+                }}
+                onLoad={() => { setVideoLoaded(true); }}
+                useNativeControls={videoLoaded}
+                resizeMode={ResizeMode.CONTAIN}
+                isLooping
+              />
             </View>
           </TouchableWithoutFeedback>
         );
@@ -476,7 +487,8 @@ function SubmissionScreen({ navigation }) {
           <View style={{
             backgroundColor: 'white',
             zIndex: 3,
-            width: '87.5%',
+            width: '80%',
+            maxHeight: '80%',
             aspectRatio: 2,
             padding: '5%',
             paddingTop: '7.5%',
@@ -587,29 +599,19 @@ function SubmissionScreen({ navigation }) {
                     justifyContent: 'space-between',
                   }}
                 >
-                  {images.map((uri, i) => (
-                    <View style={{
-                      width: '48%',
-                      marginTop: '4%',
-                    }}
+                  {images.map((uri) => (
+                    <View
+                      style={{
+                        width: '48%',
+                        marginTop: '4%',
+                      }}
+                      key={uri}
                     >
                       <ThumbnailDisplay
-                        key={uri}
                         uri={uri}
                         remove={removeFile}
                         preview={() => { openPreview(uri, 'image'); }}
                       />
-                      <Text
-                        numberOfLines={1}
-                        style={{
-                          marginTop: '5%',
-                          fontSize: 16,
-                          fontWeight: '300',
-                          maxWidth: '96%',
-                        }}
-                      >
-                        {imageLabels[i]}
-                      </Text>
                     </View>
                   ))}
                 </View>
@@ -638,29 +640,19 @@ function SubmissionScreen({ navigation }) {
                     justifyContent: 'space-between',
                   }}
                 >
-                  {videos.map((uri, i) => (
-                    <View style={{
-                      width: '48%',
-                      marginTop: '4%',
-                    }}
+                  {videos.map((uri) => (
+                    <View
+                      style={{
+                        width: '48%',
+                        marginTop: '4%',
+                      }}
+                      key={uri}
                     >
                       <ThumbnailDisplay
-                        key={uri}
                         uri={uri}
                         remove={removeFile}
                         preview={() => { openPreview(uri, 'video'); }}
                       />
-                      <Text
-                        numberOfLines={1}
-                        style={{
-                          marginTop: '5%',
-                          fontSize: 16,
-                          fontWeight: '300',
-                          maxWidth: '96%',
-                        }}
-                      >
-                        {videoLabels[i]}
-                      </Text>
                     </View>
                   ))}
                 </View>
@@ -691,9 +683,12 @@ function SubmissionScreen({ navigation }) {
                 >
                   {audios.map((file, i) => (
                     /* eslint-disable react/no-array-index-key */
-                    <TouchableOpacity onPress={() => { openPreview(file.uri, 'audio'); }} activeOpacity={0.6}>
+                    <TouchableOpacity
+                      onPress={() => { openPreview(file.uri, 'audio'); }}
+                      activeOpacity={0.6}
+                      key={`${file}${i}`}
+                    >
                       <View
-                        key={`${file}${i}`}
                         style={{
                           width: '100%',
                           backgroundColor: '#ccc',
@@ -720,10 +715,10 @@ function SubmissionScreen({ navigation }) {
                             fontWeight:
                             '500',
                             marginLeft: '6%',
-                            maxWidth: '80%',
+                            maxWidth: '65%',
                           }}
                         >
-                          {file.uri}
+                          {file.label}
                         </Text>
                         <TouchableWithoutFeedback onPress={() => { removeAudioFile(file.uri); }}>
                           <View style={{
@@ -763,6 +758,24 @@ function SubmissionScreen({ navigation }) {
               }}
               />
             </TouchableWithoutFeedback>
+            {(videoAR === -1 && preview === 'video')
+            || (aspectRatio !== -1 && preview === 'image')
+              ? (
+                <View style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  position: 'absolute',
+                }}
+                >
+                  <ActivityIndicator
+                    size="large"
+                    color="#4c4c9b"
+                  />
+                </View>
+              ) : ''}
             <View style={{
               width: '100%',
               height: '100%',
@@ -1031,6 +1044,8 @@ function SubmissionScreen({ navigation }) {
                 );
                 return;
               }
+              closePreview();
+              closePopup();
               setPage('fields');
             }}
           >
@@ -1048,9 +1063,83 @@ function SubmissionScreen({ navigation }) {
       </View>
     );
   } if (page === 'fields') {
+    let carouselDisplay = '';
+    if (files[carouselIdx].type.includes('image')) {
+      if (aspectRatio === -1) {
+        Image.getSize(files[carouselIdx].uri, (width, height) => {
+          setAspectRatio(width / height);
+        });
+      }
+      carouselDisplay = (
+        <View style={{
+          height: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 12,
+        }}
+        >
+          <Image
+            source={{ uri: files[carouselIdx].uri }}
+            style={{
+              height: '100%',
+              aspectRatio,
+              maxWidth: '100%',
+              borderRadius: 12,
+            }}
+          />
+        </View>
+      );
+    } else if (files[carouselIdx].type.includes('video')) {
+      carouselDisplay = (
+        <TouchableWithoutFeedback onPress={() => { setControlsVisible(!controlsVisible); }}>
+          <View style={{
+            height: '100%',
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 12,
+          }}
+          >
+            <ExpoVideo
+              onReadyForDisplay={(e) => {
+                setVideoAR(e.naturalSize.width / e.naturalSize.height);
+              }}
+              source={{ uri: files[carouselIdx].uri }}
+              style={{
+                height: '100%', width: '100%', borderRadius: 10, opacity: 1,
+              }}
+              onLoad={() => { setVideoLoaded(true); }}
+              useNativeControls={videoLoaded && controlsVisible}
+              resizeMode={ResizeMode.CONTAIN}
+              isLooping
+            />
+          </View>
+        </TouchableWithoutFeedback>
+      );
+    } else {
+      carouselDisplay = (
+        <View
+          style={{
+            height: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingBottom: '10%',
+            paddingTop: '14%',
+            paddingHorizontal: '20%',
+            borderRadius: 12,
+          }}
+        >
+          <AudioPlayer source={files[carouselIdx].uri} />
+        </View>
+      );
+    }
+
     return (
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ width: '100%' }}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          style={{ width: '100%' }}
+        >
           <View style={{
             paddingTop: '9%',
             paddingBottom: '19%',
@@ -1073,7 +1162,11 @@ function SubmissionScreen({ navigation }) {
                   zIndex: 100,
                   left: '1%',
                 }}
-                onPress={() => { setPage('upload'); }}
+                onPress={() => {
+                  closePopup();
+                  closePreview();
+                  setPage('upload');
+                }}
               >
                 <Icon name="chevron-left" size={30} color="black" />
               </TouchableOpacity>
@@ -1096,78 +1189,79 @@ function SubmissionScreen({ navigation }) {
               justifyContent: 'center',
             }}
             >
+              {(videoAR === -1 && files[carouselIdx].type.includes('video')) || (aspectRatio === -1 && files[carouselIdx].type.includes('image'))
+                ? (
+                  <View style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'absolute',
+                  }}
+                  >
+                    <ActivityIndicator
+                      size="large"
+                      color="#4c4c9b"
+                    />
+                  </View>
+                ) : ''}
               <View
                 style={{
-                  backgroundColor: files[carouselIdx].type.includes('audio') ? '#f2f2f2' : 'black',
+                  backgroundColor: files[carouselIdx].type.includes('audio') ? '#f2f2f2' : 'rgba(0, 0, 0, 0)',
                   width: '100%',
                   justifyContent: 'center',
                   borderRadius: 12,
                   height: '100%',
                 }}
               >
-                {files[carouselIdx].type.includes('audio') ? (
-                  <View
-                    style={{
-                      height: '100%',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      paddingBottom: '10%',
-                      paddingTop: '14%',
-                      paddingHorizontal: '20%',
-                    }}
-                  >
-                    <AudioPlayer source={files[carouselIdx].uri} />
-                  </View>
-                ) : (
-                  <View style={{
-                    height: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  >
-                    <Image
-                      source={{ uri: thumbnails[carouselIdx] }}
-                      style={{ width: '100%', height: '100%', borderRadius: 12 }}
-                    />
-                  </View>
-                )}
-
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    zIndex: 100,
-                    right: '2.5%',
-                    backgroundColor: '#4C4C9B',
-                    padding: '1.5%',
-                    borderRadius: 100,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  onPress={() => {
-                    setCarouselIdx((carouselIdx + 1
+                {carouselDisplay}
+                {files.length > 1
+                  ? (
+                    <TouchableOpacity
+                      style={{
+                        position: 'absolute',
+                        zIndex: 100,
+                        right: '2.5%',
+                        backgroundColor: '#4C4C9B',
+                        padding: '1.5%',
+                        borderRadius: 100,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                      onPress={() => {
+                        setCarouselIdx((carouselIdx + 1
                   + thumbnails.length) % thumbnails.length);
-                  }}
-                >
-                  <Icon name="chevron-right" size={30} color="white" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    zIndex: 100,
-                    left: '2.5%',
-                    backgroundColor: '#4C4C9B',
-                    padding: '1.5%',
-                    borderRadius: 100,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  onPress={() => {
-                    setCarouselIdx((carouselIdx - 1
+                        resetAspectRatios();
+                      }}
+                    >
+                      <Icon name="chevron-right" size={30} color="white" />
+                    </TouchableOpacity>
+                  )
+                  : ''}
+
+                {files.length > 1
+                  ? (
+                    <TouchableOpacity
+                      style={{
+                        position: 'absolute',
+                        zIndex: 100,
+                        left: '2.5%',
+                        backgroundColor: '#4C4C9B',
+                        padding: '1.5%',
+                        borderRadius: 100,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                      onPress={() => {
+                        setCarouselIdx((carouselIdx - 1
                    + thumbnails.length) % thumbnails.length);
-                  }}
-                >
-                  <Icon name="chevron-left" size={30} color="white" />
-                </TouchableOpacity>
+                        resetAspectRatios();
+                      }}
+                    >
+                      <Icon name="chevron-left" size={30} color="white" />
+                    </TouchableOpacity>
+                  ) : ''}
               </View>
 
             </View>
@@ -1197,7 +1291,6 @@ function SubmissionScreen({ navigation }) {
                   paddingHorizontal: '5%',
                   fontSize: 16,
                   color: '#888',
-                  caretColor: 'red',
                 }}
                 value={artworkTitle}
                 onChangeText={(e) => { setArtworkTitle(e); }}
@@ -1315,7 +1408,11 @@ function SubmissionScreen({ navigation }) {
                 ))}
               </View>
               <TouchableOpacity
-                onPress={() => { setPage('tags'); }}
+                onPress={() => {
+                  closePopup();
+                  closePreview();
+                  setPage('tags');
+                }}
                 style={{
                   marginTop: '3.5%',
                   padding: '1.5%',
@@ -1416,6 +1513,8 @@ function SubmissionScreen({ navigation }) {
                   left: '1%',
                 }}
                 onPress={() => {
+                  closePopup();
+                  closePreview();
                   setTags(confirmedTags);
                   setPage('fields');
                 }}
@@ -1533,6 +1632,8 @@ function SubmissionScreen({ navigation }) {
                 borderRadius: 5,
               }}
               onPress={() => {
+                closePopup();
+                closePreview();
                 setConfirmedTags(tags);
                 setPage('fields');
               }}

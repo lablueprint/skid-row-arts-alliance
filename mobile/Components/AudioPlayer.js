@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Audio } from 'expo-av';
 import {
-  Button, StyleSheet, Text, View,
+  Button, StyleSheet, Text, View, ActivityIndicator,
 } from 'react-native';
 import { Slider } from '@miblanchard/react-native-slider';
 import PropTypes from 'prop-types';
@@ -36,6 +36,7 @@ function AudioPlayer({ source }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [position, setPosition] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   const onPlaybackStatusUpdate = (status) => {
     if (status.isLoaded && !status.isBuffering) {
@@ -45,6 +46,7 @@ function AudioPlayer({ source }) {
 
   useEffect(() => {
     async function loadAudio() {
+      setLoading(true);
       const { sound, status } = await Audio.Sound.createAsync(
         { uri: source },
         { shouldPlay: false },
@@ -53,6 +55,7 @@ function AudioPlayer({ source }) {
       setAudio(sound);
       await sound.getStatusAsync();
       setDuration(status.durationMillis);
+      setLoading(false);
     }
     loadAudio();
     return () => {
@@ -60,7 +63,7 @@ function AudioPlayer({ source }) {
         audio.unloadAsync();
       }
     };
-  }, []);
+  }, [source]);
 
   useFocusEffect(
     useCallback(() => () => {
@@ -114,7 +117,9 @@ function AudioPlayer({ source }) {
         />
         <View style={styles.timestampContainer}>
           <Text style={styles.timestamp}>{formatTime(position * duration)}</Text>
-          <Text style={styles.timestamp}>{formatTime(duration)}</Text>
+          {loading
+            ? <ActivityIndicator color="#4c4c9b" />
+            : <Text style={styles.timestamp}>{formatTime(duration)}</Text> }
         </View>
       </View>
     </View>
