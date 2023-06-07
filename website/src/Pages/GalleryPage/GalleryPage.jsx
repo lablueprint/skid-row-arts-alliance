@@ -1,10 +1,12 @@
 import { React, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Container, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function GalleryPage() {
+  const { authHeader } = useSelector((state) => state.sliceAuth);
   const navigate = useNavigate();
   const [submissionData, setSubmissionData] = useState([]);
 
@@ -17,7 +19,9 @@ function GalleryPage() {
     { field: 'Date', width: 150 }];
 
   const getSubmissionData = async () => {
-    const response = await axios.get('http://localhost:4000/submissions/getsubmissions');
+    const response = await axios.get('http://localhost:4000/submissions/getsubmissions', {
+      headers: authHeader,
+    });
     const data = response.data.map((submission, index) => (
       {
         id: index,

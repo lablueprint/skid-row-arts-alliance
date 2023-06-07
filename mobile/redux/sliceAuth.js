@@ -7,10 +7,10 @@ import jwt_decode from 'jwt-decode';
 const user = SecureStore.getItemAsync('user');
 
 const initialState = user ? {
-  isLoggedIn: true, refresh: 0, id: user.id, token: user.token,
+  isLoggedIn: true, refresh: 0, id: user.id, token: user.token, authHeader: user.authHeader,
 }
   : {
-    isLoggedIn: false, refresh: 0, id: null, token: null,
+    isLoggedIn: false, refresh: 0, id: null, token: null, authHeader: null,
   };
 
 const authSlice = createSlice({

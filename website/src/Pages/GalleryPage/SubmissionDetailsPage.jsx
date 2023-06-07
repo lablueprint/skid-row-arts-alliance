@@ -3,9 +3,11 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { React, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 
 function SubmissionDetailsPage() {
+  const { authHeader } = useSelector((state) => state.sliceAuth);
   const location = useLocation();
   const {
     id,
@@ -31,7 +33,10 @@ function SubmissionDetailsPage() {
   const [update, setUpdate] = useState(0);
 
   const getSubmissionDetails = async () => {
-    const artwork = await axios.get('http://localhost:4000/submissions/getartwork', { params: { id } });
+    const artwork = await axios.get('http://localhost:4000/submissions/getartwork', {
+      params: { id },
+      headers: authHeader,
+    });
     setDetails({
       mediaData: artwork.data.MediaData,
       status: artwork.data.Submission.status,
@@ -72,6 +77,8 @@ function SubmissionDetailsPage() {
     await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
       title,
       description,
+    }, {
+      headers: authHeader,
     });
     setUpdate((val) => val + 1);
     setEdit(false);

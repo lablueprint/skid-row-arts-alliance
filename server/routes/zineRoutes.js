@@ -3,6 +3,7 @@ const express = require('express');
 const zineRouter = express.Router();
 const zineController = require('../controllers/zineController');
 
+// TODO: secure Zines route
 zineRouter.post('/post', zineController.createZine);
 
 zineRouter.get('/get', zineController.getAllZines);
