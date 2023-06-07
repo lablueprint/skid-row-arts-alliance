@@ -114,10 +114,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     flexDirection: 'row',
   },
+  loading: {
+    textAlign: 'center',
+  },
 });
 
 function ArtworkDetailScreen({
-  route,
+  route, navigation,
 }) {
   const {
     artworkId,
@@ -275,6 +278,10 @@ function ArtworkDetailScreen({
     setShowFullDescription(!showFullDescription);
   };
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({ headerTitle: '' });
+  }, [navigation]);
+
   useEffect(() => {
     getSavedArt().then((status) => setIsArtSaved(status));
     getSubmission();
@@ -377,7 +384,7 @@ function ArtworkDetailScreen({
               })
             }
           </>
-        ) : <Text>Loading</Text>
+        ) : <Text style={styles.loading}>Loading...</Text>
       }
       <View style={styles.belowImage}>
         <Text style={{ fontFamily: 'Montserrat', paddingTop: 6 }} numberOfLines={showFullDescription ? undefined : MAX_LINES} ellipsizeMode="tail">{submission.description}</Text>
@@ -432,6 +439,9 @@ ArtworkDetailScreen.propTypes = {
       tags: PropTypes.arrayOf(PropTypes.string),
       artworkId: PropTypes.string.isRequired,
     }),
+  }).isRequired,
+  navigation: PropTypes.shape({
+    setOptions: PropTypes.func.isRequired,
   }).isRequired,
 };
 
