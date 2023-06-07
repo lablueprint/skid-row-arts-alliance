@@ -1,32 +1,55 @@
-import { React } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import './NavigationBar.css';
 import { Button } from '@mui/material';
 import { logout } from '../../redux/sliceAuth';
+import './NavigationBar.css';
+import '../../fonts/Montserrat.css';
 
 function NavigationBar() {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const [activePage, setActivePage] = useState('');
+
+  useEffect(() => {
+    setActivePage(location.pathname);
+  }, [location.pathname]);
 
   const handleSignOut = async () => {
     dispatch(logout());
   };
 
+  const isPageActive = (path) => (activePage === path ? 'active' : '');
+
   return (
     <div className="NavBar">
-      <li>
-        <Link to="/">Gallery</Link>
+      <li className={isPageActive('/')}>
+        <Link to="/" className={`nav-link ${isPageActive('/')}`}>
+          Gallery
+        </Link>
       </li>
-      <li>
-        <Link to="zines">Zines</Link>
+      <li className={isPageActive('/zines')}>
+        <Link to="/zines" className={`nav-link ${isPageActive('/zines')}`}>
+          Zines
+        </Link>
       </li>
-      <li>
-        <Link to="events">Events</Link>
+      <li className={isPageActive('/events')}>
+        <Link to="/events" className={`nav-link ${isPageActive('/events')}`}>
+          Events
+        </Link>
       </li>
-      <li>
-        <Link to="resources">Resources</Link>
+      <li className={isPageActive('/resources')}>
+        <Link to="/resources" className={`nav-link ${isPageActive('/resources')}`}>
+          Resources
+        </Link>
       </li>
-      <Button variant="outlined" onClick={() => { handleSignOut(); }}>Sign Out</Button>
+      <Button
+        variant="outlined"
+        className="sign-out-button"
+        onClick={handleSignOut}
+      >
+        Sign Out
+      </Button>
     </div>
   );
 }
