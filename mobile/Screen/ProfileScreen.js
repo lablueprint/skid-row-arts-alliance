@@ -1,14 +1,11 @@
-/* eslint-disable camelcase */
 import React, { useState, useEffect } from 'react';
 import { URL } from '@env';
 import axios from 'axios';
 import {
-  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
-} from '@expo-google-fonts/montserrat';
-import {
   StyleSheet, Text, View, Button, Image, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { Card } from 'react-native-paper';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 
 const cardGap = 15;
@@ -151,10 +148,13 @@ function ProfileScreen({ navigation }) {
   const [currTwitter, setTwitter] = useState('');
 
   const [showBio, setShowBio] = useState(true);
+  const { id, authHeader } = useSelector((state) => state.auth);
 
   const getUserData = async () => {
     try {
-      const res = await axios.get(`${URL}/user/getUser/63e33e2f578ad1d80bd2a347`);
+      const res = await axios.get(`${URL}/user/getUser/${id}`, {
+        headers: authHeader,
+      });
       console.log(res.data.msg);
       setFirstName(res.data.msg.firstName);
       setLastName(res.data.msg.lastName);
@@ -219,7 +219,9 @@ function ProfileScreen({ navigation }) {
   const getSavedArtwork = async () => {
     try {
       setLoadSavedArt(false);
-      const res = await axios.get(`${URL}/user/getArtwork/63e33e2f578ad1d80bd2a347`);
+      const res = await axios.get(`${URL}/user/getArtwork/${id}`, {
+        headers: authHeader,
+      });
       setSavedArt(res.data.msg[0].savedArtwork.slice(0, 2));
       return res;
     } catch (err) {
@@ -233,7 +235,9 @@ function ProfileScreen({ navigation }) {
   const getSavedEvent = async () => {
     try {
       setLoadSavedEvent(false);
-      const res = await axios.get(`${URL}/user/getEvents/63e33e2f578ad1d80bd2a347`);
+      const res = await axios.get(`${URL}/user/getEvents/${id}`, {
+        headers: authHeader,
+      });
       setSavedEvent(res.data.msg[0].savedEvents.slice(0, 2));
       return res;
     } catch (err) {
@@ -247,7 +251,9 @@ function ProfileScreen({ navigation }) {
   const getSavedResource = async () => {
     try {
       setLoadSavedResource(false);
-      const res = await axios.get(`${URL}/user/getResources/63e33e2f578ad1d80bd2a347`);
+      const res = await axios.get(`${URL}/user/getResources/${id}`, {
+        headers: authHeader,
+      });
       setSavedResource(res.data.msg[0].savedResources.slice(0, 2));
       return res;
     } catch (err) {
@@ -261,7 +267,9 @@ function ProfileScreen({ navigation }) {
   const getAllEvents = async () => {
     try {
       setLoadAllEvent(false);
-      const result = await axios.get(`${URL}/event/get`);
+      const result = await axios.get(`${URL}/event/get`, {
+        headers: authHeader,
+      });
       setAllEvents(result.data);
       return result.data;
     } catch (err) {
@@ -275,7 +283,9 @@ function ProfileScreen({ navigation }) {
   const getAllResources = async () => {
     try {
       setLoadAllResources(false);
-      const result = await axios.get(`${URL}/resource/get`);
+      const result = await axios.get(`${URL}/resource/get`, {
+        headers: authHeader,
+      });
       setAllResources(result.data);
       return result.data;
     } catch (err) {
@@ -289,7 +299,9 @@ function ProfileScreen({ navigation }) {
   const getThumbnails = async () => {
     try {
       setLoadAllThumbnails(false);
-      const result = await axios.get(`${URL}/submissions/getthumbnails`);
+      const result = await axios.get(`${URL}/submissions/getthumbnails`, {
+        headers: authHeader,
+      });
       setAllThumbnails(result.data);
       return result.data;
     } catch (err) {
@@ -325,62 +337,68 @@ function ProfileScreen({ navigation }) {
   // Display and edit profile info
   return (
     <ScrollView style={styles.container}>
-      <Button title="Edit" onPress={() => navigation.navigate('Edit Profile')} />
-      <View style={{
-        paddingTop: 30,
-        paddingBottom: 50,
-      }}
-      >
-        <Button
-          title="Sign Out"
-          onPress={() => {
-            handleSignOut();
-          }}
-        />
-        <Button title="Outward" onPress={() => navigation.navigate('Outward Profile')} />
-        <Text>
-          <Text style={{ fontWeight: 'bold' }}>Name: </Text>
-          currentUser.userName
-        </Text>
-        <Text>
-          <Text style={{ fontWeight: 'bold' }}>Email: </Text>
-          currentUser.userEmail
-        </Text>
-        <Text>
-          <Text style={{ fontWeight: 'bold' }}>Social Platform: </Text>
-          currentUser.userSocialPlatform
-        </Text>
-        <Text>
-          <Text style={{ fontWeight: 'bold' }}>Social Tag: </Text>
-          currentUser.userSocialTag
-        </Text>
-      </View>
-      <View style={styles.savedContainer}>
-        <View style={styles.savedHeadingAndSeeAll}>
-          <Text style={styles.heading}>
-            Events
+      <View style={styles.nameAndEditButtonContainer}>
+        <View style={styles.nameContainer}>
+          <Text style={styles.name}>
+            {currFirstName}
           </Text>
-          <TouchableOpacity onPress={onPressEventCard} style={styles.seeAllSavedButton}>
-            <Text style={styles.seeAllText}>See More</Text>
-          </TouchableOpacity>
+          <Text style={styles.name}>
+            {currLastName}
+          </Text>
         </View>
-        <View style={styles.savedCardContainer}>
-          {
-        loadSavedEvent ? (
-          savedEvent.map((oneEvent) => (
-            <Card style={styles.savedEventCard}>
-              <Card.Content>
-                <Text style={styles.savedCategoryTitle}>
-                  {findEvent(oneEvent).tag}
-                </Text>
-                <Text style={styles.savedTitle}>
-                  {findEvent(oneEvent).eventName}
-                </Text>
-              </Card.Content>
-            </Card>
-          ))
-        ) : <Text>There is no saved events</Text>
-        }
+        <Button title="Edit" onPress={() => navigation.navigate('Edit Profile')} />
+      </View>
+      <View style={styles.avatarHandleContainer}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri: 'https://images.pexels.com/photos/1454769/pexels-photo-1454769.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' }}
+            resizeMode="cover"
+            style={styles.avatar}
+          />
+        </View>
+        <View styles={styles.handleContainer}>
+          <Text styles={styles.handleText}>
+            {currFacebook}
+          </Text>
+          <Text styles={styles.handleText}>
+            {currTwitter}
+          </Text>
+          <Text styles={styles.handleText}>
+            {currInstagram}
+          </Text>
+        </View>
+      </View>
+      <View>
+        <View>
+          <Text>
+            {currBio}
+          </Text>
+        </View>
+        <View style={styles.savedContainer}>
+          <View style={styles.savedHeadingAndSeeAll}>
+            <Text style={styles.heading}>
+              Events
+            </Text>
+            <TouchableOpacity onPress={onPressEventCard} style={styles.seeAllSavedButton}>
+              <Text style={styles.seeAllText}>See More</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.savedCardContainer}>
+            {loadSavedEvent ? (
+              savedEvent.map((oneEvent) => (
+                <Card style={styles.savedEventCard}>
+                  <Card.Content>
+                    <Text style={styles.savedCategoryTitle}>
+                      {findEvent(oneEvent).tag}
+                    </Text>
+                    <Text style={styles.savedTitle}>
+                      {findEvent(oneEvent).eventName}
+                    </Text>
+                  </Card.Content>
+                </Card>
+              ))
+            ) : <Text>There is no saved events</Text>}
+          </View>
         </View>
         <View style={styles.savedContainer}>
           <View style={styles.savedHeadingAndSeeAll}>

@@ -6,9 +6,9 @@ import axios from 'axios';
 import { URL } from '@env';
 import { Card } from 'react-native-paper';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 const cardGap = 17;
-
 const cardWidth = (Dimensions.get('window').width - cardGap * 3) / 2;
 
 const styles = StyleSheet.create({
@@ -43,6 +43,8 @@ function SavedEventsScreen() {
   const [loadSavedEvent, setLoadSavedEvent] = useState(false);
   const [savedEvent, setSavedEvent] = useState([]);
 
+  const { id, authHeader } = useSelector((state) => state.auth);
+
   const findEvent = (eventID) => {
     const eventInfo = {
       tag: 'No Tag',
@@ -62,7 +64,9 @@ function SavedEventsScreen() {
   const getSavedEvent = async () => {
     try {
       setLoadSavedEvent(false);
-      const res = await axios.get(`${URL}/user/getEvents/63e33e2f578ad1d80bd2a347`);
+      const res = await axios.get(`${URL}/user/getEvents/${id}`, {
+        headers: authHeader,
+      });
       setSavedEvent(res.data.msg[0].savedEvents);
       return res;
     } catch (err) {
@@ -76,7 +80,9 @@ function SavedEventsScreen() {
   const getAllEvents = async () => {
     try {
       setLoadAllEvent(false);
-      const result = await axios.get(`${URL}/event/get`);
+      const result = await axios.get(`${URL}/event/get`, {
+        headers: authHeader,
+      });
       setAllEvents(result.data);
       return result.data;
     } catch (err) {

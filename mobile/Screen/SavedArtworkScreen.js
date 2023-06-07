@@ -6,6 +6,7 @@ import axios from 'axios';
 import { URL } from '@env';
 import { Card } from 'react-native-paper';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 const cardGap = 17;
 
@@ -43,6 +44,8 @@ function SavedArtworkScreen() {
   const [loadSavedArt, setLoadSavedArt] = useState(false);
   const [savedArt, setSavedArt] = useState([]);
 
+  const { id, authHeader } = useSelector((state) => state.auth);
+
   const findThumbnail = (artID) => {
     const artInfo = {
       thumbNail: 'No Tag',
@@ -60,7 +63,9 @@ function SavedArtworkScreen() {
   const getSavedArtwork = async () => {
     try {
       setLoadSavedArt(false);
-      const res = await axios.get(`${URL}/user/getArtwork/63e33e2f578ad1d80bd2a347`);
+      const res = await axios.get(`${URL}/user/getArtwork/${id}`, {
+        headers: authHeader,
+      });
       setSavedArt(res.data.msg[0].savedArtwork.slice(0, 2));
       return res;
     } catch (err) {
@@ -74,7 +79,9 @@ function SavedArtworkScreen() {
   const getThumbnails = async () => {
     try {
       setLoadAllThumbnails(false);
-      const result = await axios.get(`${URL}/submissions/getthumbnails`);
+      const result = await axios.get(`${URL}/submissions/getthumbnails`, {
+        headers: authHeader,
+      });
       setAllThumbnails(result.data);
       return result.data;
     } catch (err) {
