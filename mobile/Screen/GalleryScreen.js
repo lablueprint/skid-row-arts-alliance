@@ -94,7 +94,6 @@ function GalleryScreen({ navigation, route }) {
       const res = await axios.get(`${URL}/submissions/getthumbnails`, {
         headers: authHeader,
       });
-      console.log(res.data);
       setAllImageData(res.data);
       return res.data;
     } catch (err) {
