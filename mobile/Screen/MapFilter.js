@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   applyButton: {
-    width: '50%',
+    width: '45%',
     borderRadius: 4,
     height: 45,
     backgroundColor: '#424288',
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   clearButton: {
-    width: '40%',
+    width: '45%',
     borderRadius: 4,
     height: 45,
     backgroundColor: '#FFFFFF',
@@ -74,29 +74,7 @@ function MapFilter({ route, navigation }) {
     MontserratBold: Montserrat_700Bold,
   });
 
-  const eventCategories = [
-    {
-      title: 'visual art',
-    },
-    {
-      title: 'film',
-    },
-    {
-      title: 'music',
-    },
-    {
-      title: 'art-related community event',
-    },
-    {
-      title: 'performance / theater',
-    },
-    {
-      title: 'spoken word',
-    },
-    {
-      title: 'miscellaneous',
-    },
-  ];
+  const eventCategories = ['visual art', 'film', 'music', 'art-related community event', 'performance / theater', 'spoken word', 'miscellaneous'];
 
   const resourceCategories = [
     {
@@ -188,7 +166,7 @@ function MapFilter({ route, navigation }) {
   const onPressClear = () => {
     const objectCopy = { ...tempCategories };
     for (let i = 0; i < eventCategories.length; i += 1) {
-      const property = eventCategories[i].title;
+      const property = eventCategories[i];
       objectCopy[property] = false;
     }
     for (let i = 0; i < resourceCategories.length; i += 1) {
@@ -205,10 +183,10 @@ function MapFilter({ route, navigation }) {
       <View style={styles.container}>
         {eventCategories.map((category) => (
           <TouchableOpacity
-            style={getButtonStyle(tempCategories[category.title])}
-            onPress={() => onPressCategories(category.title)}
+            style={getButtonStyle(tempCategories[category])}
+            onPress={() => onPressCategories(category)}
           >
-            <Text style={getTextStyle(tempCategories[category.title])}>{category.title}</Text>
+            <Text style={getTextStyle(tempCategories[category])}>{category}</Text>
           </TouchableOpacity>
         ))}
       </View>
