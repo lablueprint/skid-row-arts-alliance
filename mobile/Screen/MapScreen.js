@@ -1,10 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   StyleSheet,
   View,
   Animated,
   Dimensions,
+  TouchableOpacity,
+  Text,
+  Image,
 } from 'react-native';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { URL } from '@env';
@@ -21,12 +27,54 @@ const CARD_WIDTH = CARD_HEIGHT + 70;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    backgroundColor: 'white',
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    height: '30%',
+    paddingTop: 35,
+  },
+  headerText: {
     justifyContent: 'center',
+    marginLeft: 20,
+    fontFamily: 'MontserratSemiBold',
+    fontSize: 28,
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#424288',
+    borderRadius: 5,
+    alignSelf: 'center',
+    paddingHorizontal: 17,
+    paddingVertical: 7,
+    marginRight: 20,
+  },
+  filterImage: {
+    width: 16,
+    height: 16,
+  },
+  filterText: {
+    fontFamily: 'MontserratSemiBold',
+    color: '#424288',
+    marginLeft: 10,
+  },
+  mapContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  map: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
   scrollView: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 0,
     left: 0,
     right: 0,
     paddingVertical: 10,
@@ -34,13 +82,34 @@ const styles = StyleSheet.create({
   endPadding: {
     paddingRight: width - CARD_WIDTH,
   },
+  button: {
+    width: '40%',
+    height: 45,
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: '#C0C0DC',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 7,
+    position: 'absolute',
+    zIndex: 1,
+  },
 });
 
-function MapScreen() {
+function MapScreen({ navigation }) {
   const [allEvents, setAllEvents] = useState([]);
   const [allResources, setAllResources] = useState([]);
+  const [tempAllEvents, setTempAllEvents] = useState([]);
+  const [tempAllResources, setTempAllResources] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
   const { authHeader } = useSelector((state) => state.auth);
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
 
   const getAllEvents = async () => {
     try {
@@ -48,6 +117,7 @@ function MapScreen() {
         headers: authHeader,
       });
       setAllEvents(result.data || []);
+      setTempAllEvents(result.data || []);
       return result.data;
     } catch (err) {
       console.error(err);
@@ -61,6 +131,7 @@ function MapScreen() {
         headers: authHeader,
       });
       setAllResources(result.data || []);
+      setTempAllResources(result.data || []);
       return result.data;
     } catch (err) {
       console.error(err);
@@ -72,6 +143,101 @@ function MapScreen() {
     getAllEvents();
     getAllResources();
   }, []);
+
+  const [categories, setCategories] = useState({
+    visualArt: false,
+    film: false,
+    music: false,
+    artRelatedCommunityEvent: false,
+    performanceTheater: false,
+    spokenWord: false,
+    miscellaneous: false,
+    food: false,
+    shelter: false,
+    health: false,
+    legalServices: false,
+    shower: false,
+    mission: false,
+    socialServices: false,
+  });
+
+  const filter = () => {
+    let resourcesArray = [];
+    let eventsArray = [];
+
+    // all events are workshops
+    if (categories.visualArt) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'Visual Art'));
+    }
+
+    if (categories.film) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'Film'));
+    }
+
+    if (categories.music) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'Music'));
+    }
+
+    if (categories.artRelatedCommunityEvent) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'art-related community event'));
+    }
+
+    if (categories.performanceTheater) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'performance/theater'));
+    }
+
+    if (categories.spokenWord) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'spoken word'));
+    }
+
+    if (categories.miscellaneous) {
+      eventsArray = eventsArray.concat(tempAllEvents.filter((event) => event.EventData.tag === 'miscellaneous'));
+    }
+
+    if (categories.food) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Food'));
+    }
+
+    if (categories.shelter) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Shelter'));
+    }
+
+    if (categories.health) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Health'));
+    }
+    if (categories.legalServices) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Legal Services'));
+    }
+
+    if (categories.shower) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Shower'));
+    }
+
+    if (categories.socialServices) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Social Services'));
+    }
+
+    if (categories.food || categories.shelter || categories.mission) {
+      resourcesArray = resourcesArray.concat(tempAllResources.filter((resource) => resource.ResourceData.tag === 'Mission'));
+    }
+    // if all are false
+    const allCategoriesAreFalse = Object.values(categories).every((value) => value === false);
+
+    if (allCategoriesAreFalse) {
+      resourcesArray = tempAllResources;
+      eventsArray = tempAllEvents;
+    }
+
+    setAllResources(resourcesArray);
+    setAllEvents(eventsArray);
+  };
+
+  const onPressEvent = () => {
+    navigation.navigate('Filter', {
+      categories,
+      setCategories,
+    });
+  };
 
   const state = {
     region: {
@@ -140,26 +306,35 @@ function MapScreen() {
     });
   };
 
+  useEffect(() => { filter(); }, [categories]);
+
   return (
     <View style={styles.container}>
-      {/* To be implemented later */}
-      {/* <Button title="Workshop">Workshop</Button>
-      <Button title="Food">Food</Button>
-      <Button title="Shelter">Shelter</Button>
-      <Button title="Mission">Mission</Button>
-      <Button title="Shower/Laundry">Shower/Laundry</Button> */}
-      <MapView
-        ref={mapRef}
-        initialRegion={state.region}
-        style={styles.container}
-      >
-        <MapMarker
-          allCards={allCards}
-          interpolations={interpolations}
-          onMarkerPress={onMarkerPress}
-        />
-
-      </MapView>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Map</Text>
+        <TouchableOpacity onPress={() => onPressEvent()}>
+          <View style={styles.filterButton}>
+            <Image
+              source={require('../assets/map/filter.png')}
+              style={styles.filterImage}
+            />
+            <Text style={styles.filterText}>Filter</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.mapContainer}>
+        <MapView
+          ref={mapRef}
+          initialRegion={state.region}
+          style={styles.map}
+        >
+          <MapMarker
+            allCards={allCards}
+            interpolations={interpolations}
+            onMarkerPress={onMarkerPress}
+          />
+        </MapView>
+      </View>
       <Animated.ScrollView
         ref={scrollViewRef}
         horizontal
@@ -209,5 +384,11 @@ function MapScreen() {
     </View>
   );
 }
+
+MapScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
 
 export default MapScreen;

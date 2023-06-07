@@ -55,6 +55,10 @@ const resourceSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  tag: {
+    required: true,
+    type: String,
+  }
 });
 
 module.exports = mongoose.model('Resource', resourceSchema);

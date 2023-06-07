@@ -37,6 +37,7 @@ const events = [{
   email: 'studio526@gmail.com',
   website: 'studio526.com',
   url: 'https:/upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
+  tags: 'Workshop',
 },
 {
   id: 2,
@@ -52,6 +53,7 @@ const events = [{
   email: 'studio526@gmail.com',
   website: 'studio526.com',
   url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
+  tags: 'Workshop',
 },
 {
   id: 3,
@@ -67,6 +69,7 @@ const events = [{
   email: 'studio526@gmail.com',
   website: 'studio526.com',
   url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
+  tags: 'Workshop',
 }];
 
 const resources = [
@@ -81,6 +84,7 @@ const resources = [
     email: 'studio526@gmail.com',
     website: 'studio526.com',
     url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
+    tags: 'Food',
   },
   {
     id: 2,
@@ -93,6 +97,7 @@ const resources = [
     email: 'studio526@gmail.com',
     website: 'studio526.com',
     url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
+    tags: 'Shelter',
   },
   {
     id: 3,
@@ -105,6 +110,7 @@ const resources = [
     email: 'studio526@gmail.com',
     website: 'studio526.com',
     url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
+    tags: 'Mission',
   },
 
 ];
@@ -166,6 +172,7 @@ function EventScreen({ navigation }) {
           summary={event.summary}
           url={event.url}
           navigation={navigation}
+          tag={event.tag}
         />
       ))}
       {resources.map((resource) => (
@@ -181,6 +188,7 @@ function EventScreen({ navigation }) {
           number={resource.number}
           email={resource.email}
           website={resource.website}
+          tag={resource.tag}
         />
       ))}
     </ScrollView>

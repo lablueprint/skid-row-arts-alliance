@@ -23,7 +23,8 @@
     "nodemailer": "^6.9.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {
     "eslint": "^8.27.0",

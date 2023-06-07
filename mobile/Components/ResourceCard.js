@@ -5,7 +5,7 @@ import {
 import PropTypes from 'prop-types';
 
 function ResourceCard({
-  navigation, title, day, time, location, summary, url, number, email, website,
+  navigation, title, day, time, location, summary, url, number, email, website, tag,
 }) {
   const onPressEvent = () => {
     navigation.navigate('Resource Details', {
@@ -35,6 +35,9 @@ function ResourceCard({
         <Paragraph>
           {location}
         </Paragraph>
+        <Paragraph>
+          {tag}
+        </Paragraph>
       </Card.Content>
       <Card.Cover source={{ uri: url }} />
       <Card.Actions>
@@ -54,6 +57,7 @@ ResourceCard.propTypes = {
   number: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   website: PropTypes.string.isRequired,
+  tag: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,

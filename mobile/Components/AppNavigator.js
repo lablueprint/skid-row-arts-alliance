@@ -25,6 +25,7 @@ import EventDetailScreen from '../Screen/EventDetailScreen';
 import EventScreen from '../Screen/EventScreen';
 import ResourceDetailScreen from '../Screen/ResourceDetailScreen';
 import OrganizationDetailScreen from '../Screen/OrganizationDetailScreen';
+import MapFilter from '../Screen/MapFilter';
 import ArtworkFilterScreen from '../Screen/ArtworkFilterScreen';
 import { isTokenExpired } from '../redux/sliceAuth';
 
@@ -141,6 +142,7 @@ function HomeStackScreen({ navigation }) {
         component={MapScreen}
         options={{
           tabBarIcon: MapIcon,
+          headerShown: false,
         }}
       />
       <Tab.Screen
@@ -189,6 +191,7 @@ function AppNavigator() {
           <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
           <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
           <Stack.Screen name="Organization Details" component={OrganizationDetailScreen} />
+          <Stack.Screen name="Filter" component={MapFilter} />
           <Stack.Screen name="Artwork Filter" component={ArtworkFilterScreen} />
         </Stack.Navigator>
       </NavigationContainer>
