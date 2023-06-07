@@ -11,7 +11,7 @@ function GalleryPage() {
   // TODO: further styling needed for pagination
   const columns = [
     { field: 'Submission Title', width: 200 },
-    { field: 'Uploader', width: 150 },
+    { field: 'Uploader' },
     { field: 'Status' },
     { field: 'Media Type' },
     { field: 'Date' }];
@@ -45,8 +45,8 @@ function GalleryPage() {
   };
 
   return (
-    <Container>
-      <Typography variant="h5">Recent Submissions</Typography>
+    <Container sx={{ mt: 5, width: '95%' }}>
+      <Typography variant="h5">Gallery Submissions</Typography>
       <DataGrid
         rows={submissionData}
         columns={columns}
