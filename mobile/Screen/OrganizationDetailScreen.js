@@ -44,9 +44,44 @@ const styles = StyleSheet.create({
   },
 });
 
+const organizations = [
+  {
+    title: 'Los Angeles Poverty Department',
+    image: require('../assets/detailScreen/mailTransparent.png'),
+    description: 'Founded in 1985 by director-performer-activist John Malpede, Los Angeles Poverty Department (LAPD)is a non-profit arts organization, the first performance group in the nation made up principally of homeless people, and the first arts program of any kind for homeless people in Los Angeles. LAPD creates performances and multidisciplinary artworks that connect the experience of people living in poverty to the social forces that shape their lives and communities. LAPD’s works express the realities, hopes, dreams and rights of people who live and work in L.A.’s Skid Row.',
+    phoneNumber: 'placeholder',
+    email: 'placeholder',
+    website: 'placeholder',
+  },
+  {
+    title: 'Piece by Piece',
+    image: require('../assets/detailScreen/mailTransparent.png'),
+    description: 'Our mission is to empower residents who have experienced homelessness or economic insecurity by providing free mosaic art workshops enabling them to build confidence, earn supplementary income, promote wellness and an improved quality of life.',
+    phoneNumber: 'placeholder',
+    email: 'placeholder',
+    website: 'placeholder',
+  },
+  {
+    title: 'Street Symphony',
+    image: require('../assets/detailScreen/mailTransparent.png'),
+    description: 'Our mission is to empower residents who have experienced homelessness or economic insecurity by providing free mosaic art workshops enabling them to build confidence, earn supplementary income, promote wellness and an improved quality of life.',
+    phoneNumber: 'placeholder',
+    email: 'placeholder',
+    website: 'placeholder',
+  },
+  {
+    title: 'Urban Voices Project',
+    image: require('../assets/detailScreen/mailTransparent.png'),
+    description: 'Urban Voices Project uses music to create supportive community spaces in Skid Row and the Los Angeles area that bridge vulnerable individuals to a sense of purpose and improved health.',
+    phoneNumber: 'placeholder',
+    email: 'placeholder',
+    website: 'placeholder',
+  },
+];
+
 function OrganizationDetailScreen({ route, navigation }) {
   const {
-    organization, organizationDescription, phoneNumber, website,
+    organization,
   } = route.params || {};
 
   const [fontsLoaded] = useFonts({
@@ -58,13 +93,19 @@ function OrganizationDetailScreen({ route, navigation }) {
     navigation.setOptions({ headerTitle: organization });
   }, [navigation, organization]);
 
+  // Find the organization object based on the title
+  const selectedOrganization = organizations.find((org) => org.title === organization);
+
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/detailScreen/laPoverty.png')} style={styles.image}/>
+      <Image
+        source={selectedOrganization.image}
+        style={styles.image}
+      />
       <View style={styles.textContainer}>
         <Text style={styles.normalText}>
           {' '}
-          {organizationDescription}
+          {selectedOrganization.description}
           {' '}
         </Text>
       </View>
@@ -75,7 +116,7 @@ function OrganizationDetailScreen({ route, navigation }) {
         <Image source={require('../assets/detailScreen/callTransparent.png')} style={styles.infoIconTransparent} />
         <Text style={styles.normalText}>
           {' '}
-          {phoneNumber}
+          {selectedOrganization.phoneNumber}
           {' '}
         </Text>
       </View>
@@ -83,7 +124,7 @@ function OrganizationDetailScreen({ route, navigation }) {
         <Image source={require('../assets/detailScreen/mailTransparent.png')} style={styles.infoIconTransparent} />
         <Text style={styles.normalText}>
           {' '}
-          studio526@gmail.com
+          {selectedOrganization.email}
           {' '}
         </Text>
       </View>
@@ -91,7 +132,7 @@ function OrganizationDetailScreen({ route, navigation }) {
         <Image source={require('../assets/detailScreen/globeTransparent.png')} style={styles.infoIconTransparent} />
         <Text style={styles.normalText}>
           {' '}
-          {website}
+          {selectedOrganization.website}
           {' '}
         </Text>
       </View>
