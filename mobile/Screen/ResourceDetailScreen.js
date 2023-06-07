@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 });
 
 function ResourceDetailScreen({
-  route,
+  navigation, route,
 }) {
   const {
     title, day, time, location, summary, number, email, website,
@@ -81,8 +81,12 @@ function ResourceDetailScreen({
 }
 
 ResourceDetailScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
   route: PropTypes.shape({
     params: PropTypes.shape({
+      id: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
       date: PropTypes.string.isRequired,
       day: PropTypes.string.isRequired,
