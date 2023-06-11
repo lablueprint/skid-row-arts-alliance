@@ -43,7 +43,7 @@ const addUserArtwork = async (req, res) => {
 
 const getAllUserInfo = async (req, res) => {
   try {
-    const data = await User.find();
+    const data = await User.find({}, '-password -passwordResetCode');
     res.send(data);
   } catch (err) {
     console.error(err);
@@ -65,7 +65,7 @@ const getEmail = async (req, res) => {
 
 const getSpecificUser = async (req, res) => {
   try {
-    const data = await User.findById(req.params.id, '-password');
+    const data = await User.findById(req.params.id, '-password -passwordResetCode');
     res.json({
       msg: data,
     });
