@@ -3,9 +3,12 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import { React, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function ZineDetailsPage() {
+  const { authHeader } = useSelector((state) => state.sliceAuth);
+
   const location = useLocation();
   const {
     id,
@@ -30,7 +33,9 @@ function ZineDetailsPage() {
   const [update, setUpdate] = useState(0);
 
   const getZineDetails = async () => {
-    const zine = await axios.get(`http://localhost:4000/zine/getzine/${id}`);
+    const zine = await axios.get(`http://localhost:4000/zine/getzine/${id}`, {
+      headers: authHeader,
+    });
     setDetails({
       url: zine.data.url,
       title: zine.data.title,
@@ -49,7 +54,9 @@ function ZineDetailsPage() {
   }, [update]);
 
   const handleDelete = async () => {
-    await axios.delete(`http://localhost:4000/zine/delete/${id}`);
+    await axios.delete(`http://localhost:4000/zine/delete/${id}`, {
+      headers: authHeader,
+    });
     navigate('/zines');
   };
 
@@ -87,6 +94,8 @@ function ZineDetailsPage() {
       season,
       year,
       contents,
+    }, {
+      headers: authHeader,
     });
     setUpdate((val) => val + 1);
     setEdit(false);
