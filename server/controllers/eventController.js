@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
 const Event = require('../models/eventModel');
 
 // Example of creating a document in the database
 const createEvent = async (req, res) => {
   const event = new Event(req.body);
   try {
+    // TODO: need to adjust the time and date specifically for how they decide to combine everything
     const data = await event.save(event);
     res.send(data);
   } catch (err) {
@@ -19,14 +19,8 @@ const getAllEvents = async (req, res) => {
     const filter = {};
     const allEvents = await Event.find(filter);
 
-    // TODO: remove default thumbnail in the future
-    const thumbnailKeys = allEvents.map((event) => (event.thumbnail ? event.thumbnail : '0001Bulbasaur.png'));
-    // Reformat data for response
-    const responseList = thumbnailKeys.map((key, idx) => ({
-      EventData: allEvents[idx],
-      ImageURL: `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/MapCards/${key}`,
-    }));
-    res.send(responseList);
+    // TODO: replace AWS thumbnails with hardcoded defaults
+    res.send(allEvents);
   } catch (err) {
     console.error(err);
     res.status(err.statusCode ? err.statusCode : 400);

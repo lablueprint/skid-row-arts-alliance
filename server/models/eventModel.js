@@ -11,31 +11,32 @@ const locationCoordsSchema = new mongoose.Schema({
   },
 });
 
+// TODO: edit the mobile app parsing of data
 const dateSchema = new mongoose.Schema({
-  startDate: {
-    required: true,
+  date: {
+    required: false,
     type: Date,
   },
-  endDate: {
+  day: {
     required: true,
-    type: Date,
+    type: String,
   },
   recurring: {
     required: true,
-    type: Boolean,
+    type: String,
+  },
+  startTime: {
+    required: true,
+    type: String,
+  },
+  endTime: {
+    required: true,
+    type: String,
   },
 });
 
 const locationSchema = new mongoose.Schema({
-  name: {
-    required: true,
-    type: String,
-  },
   address: {
-    required: true,
-    type: String,
-  },
-  specialinstructions: {
     required: true,
     type: String,
   },
@@ -50,15 +51,15 @@ const eventSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  date: {
+  dateDetails: {
     required: true,
     type: dateSchema,
   },
-  location: {
+  locationDetails: {
     required: true,
     type: locationSchema,
   },
-  nonprofits: {
+  hosts: {
     required: true,
     type: [String],
   },
@@ -66,9 +67,9 @@ const eventSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  tags: {
+  tag: {
     required: true,
-    type: [String],
+    type: String,
   },
   thumbnail: {
     required: true,
