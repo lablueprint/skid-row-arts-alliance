@@ -63,10 +63,14 @@ passport.use('jwt', new JWTStrategy(
   async (userId, done) => {
     try {
       const userExists = await User.findById(userId.id);
-      if (!userExists) {
-        return done(null, false);
+      if (userExists) {
+        return done(null, userExists);
       }
-      return done(null, userExists);
+      const adminExists = await Admin.findById(userId.id);
+      if (adminExists) {
+        return done(null, adminExists);
+      }
+      return done(null, false);
     } catch (error) {
       return done(error, false);
     }
