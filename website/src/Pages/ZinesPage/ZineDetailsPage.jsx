@@ -5,6 +5,11 @@ import axios from 'axios';
 import { React, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 
 function ZineDetailsPage() {
   const { authHeader } = useSelector((state) => state.sliceAuth);
@@ -27,7 +32,7 @@ function ZineDetailsPage() {
   });
   const [title, setTitle] = useState('');
   const [season, setSeason] = useState('');
-  const [year, setYear] = useState('');
+  const [year, setYear] = useState(dayjs());
   const [contents, setContents] = useState([]);
   const [edit, setEdit] = useState(false);
   const [update, setUpdate] = useState(0);
@@ -45,7 +50,7 @@ function ZineDetailsPage() {
     });
     setTitle(zine.data.title);
     setSeason(zine.data.season);
-    setYear(zine.data.year);
+    setYear(dayjs(zine.data.year));
     setContents(zine.data.contents);
   };
 
@@ -92,7 +97,7 @@ function ZineDetailsPage() {
     await axios.patch(`http://localhost:4000/zine/update/${id}`, {
       title,
       season,
-      year,
+      year: String(year.year()),
       contents,
     }, {
       headers: authHeader,
@@ -156,10 +161,13 @@ function ZineDetailsPage() {
                   <MenuItem value="Spring">Spring</MenuItem>
                 </Select>
               </FormControl>
-              <TextField
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  views={['year']}
+                  value={year}
+                  onChange={(newYear) => setYear(newYear)}
+                />
+              </LocalizationProvider>
             </Box>
           ) : (
             <Typography>
