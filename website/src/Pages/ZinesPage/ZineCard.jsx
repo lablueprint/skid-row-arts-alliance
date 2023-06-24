@@ -10,7 +10,7 @@ function ZineCard({
 }) {
   const navigate = useNavigate();
 
-  const viewZine = () => {
+  const viewZineDetails = () => {
     navigate('/zine', {
       state: {
         id,
@@ -23,7 +23,7 @@ function ZineCard({
       sx={{
         backgroundColor: '#FFFFFF', border: 1, borderColor: '#C4C8CA', width: '250px',
       }}
-      onClick={() => viewZine()}
+      onClick={() => viewZineDetails()}
     >
       <Typography>{title}</Typography>
       <Typography>
