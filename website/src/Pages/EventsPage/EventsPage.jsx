@@ -5,8 +5,7 @@ import {
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-// TODO: come back to this after add event works
-// import EventCard from './EventCard';
+import EventCard from './EventCard';
 
 function EventsPage() {
   const { authHeader } = useSelector((state) => state.sliceAuth);
@@ -23,7 +22,6 @@ function EventsPage() {
 
   useEffect(() => {
     getEvents();
-    console.log(events);
   }, []);
 
   const addNewEvent = () => {
@@ -49,21 +47,23 @@ function EventsPage() {
           </Button>
         </Box>
       </Box>
-      {/* <Box>
+      <Box>
         {events.map((event) => (
           <EventCard
+            key={event.id}
             id={event.id}
-            day={event.dateDetails.day}
+            recurring={event.dateDetails.recurring}
             date={event.dateDetails.date}
-            startTime={event.startTime}
-            endTime={event.endTime}
+            day={event.dateDetails.day}
+            week={event.dateDetails.week}
+            startTime={event.dateDetails.startTime}
+            endTime={event.dateDetails.endTime}
             title={event.title}
             nonprofits={event.nonprofits}
-            recurring={event.recurring}
             tag={event.tag}
           />
         ))}
-      </Box> */}
+      </Box>
     </Container>
   );
 }

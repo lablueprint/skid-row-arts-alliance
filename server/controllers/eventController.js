@@ -4,7 +4,6 @@ const Event = require('../models/eventModel');
 const createEvent = async (req, res) => {
   const event = new Event(req.body);
   try {
-    // TODO: need to adjust the time and date specifically for how they decide to combine everything
     const data = await event.save(event);
     res.send(data);
   } catch (err) {

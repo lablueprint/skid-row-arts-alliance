@@ -9,7 +9,6 @@ import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-// import axios from 'axios';
 
 function AddEventPage() {
   const { authHeader } = useSelector((state) => state.sliceAuth);
@@ -39,19 +38,20 @@ function AddEventPage() {
       date: date.toISOString().slice(0, 10),
       day: date.day(),
       week,
-      startTime,
-      endTime,
+      startTime: startTime.format('h:mm a'),
+      endTime: endTime.format('h:mm a'),
+    };
+    const locationDetails = {
+      address,
+      coordinates: {
+        latitude: Number(latitude),
+        longitude: Number(longitude),
+      },
     };
     const newEvent = {
       title,
       dateDetails,
-      locationDetails: {
-        address,
-        coordinates: {
-          latitude: Number(latitude),
-          longitude: Number(longitude),
-        },
-      },
+      locationDetails,
       hosts,
       description,
       tag,

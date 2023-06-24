@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 
 function EventCard({
-  id, day, date, startTime, endTime, title, nonprofits, recurring, tag,
+  id, recurring, date, day, week, startTime, endTime, title, nonprofits, tag,
 }) {
   const navigate = useNavigate();
 
@@ -19,8 +19,10 @@ function EventCard({
   return (
     <Box onClick={() => viewEvent()}>
       <Box>
-        <Typography>{day}</Typography>
+        <Typography>{recurring}</Typography>
         <Typography>{date}</Typography>
+        <Typography>{day}</Typography>
+        <Typography>{week}</Typography>
       </Box>
       <Box>
         <Typography>{startTime}</Typography>
@@ -44,8 +46,9 @@ function EventCard({
 
 EventCard.propTypes = {
   id: PropTypes.string.isRequired,
-  day: PropTypes.string.isRequired,
-  date: PropTypes.instanceOf(Date).isRequired,
+  day: PropTypes.number.isRequired,
+  date: PropTypes.string.isRequired,
+  week: PropTypes.number.isRequired,
   startTime: PropTypes.string.isRequired,
   endTime: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,

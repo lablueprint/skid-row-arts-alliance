@@ -19,7 +19,7 @@ const dateSchema = new mongoose.Schema({
   },
   date: {
     required: true,
-    type: Date,
+    type: String,
   },
   day: {
     required: true,
@@ -65,7 +65,7 @@ const eventSchema = new mongoose.Schema({
   },
   hosts: {
     required: true,
-    type: [String],
+    type: String,
   },
   description: {
     required: true,
