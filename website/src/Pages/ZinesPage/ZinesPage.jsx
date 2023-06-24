@@ -5,11 +5,13 @@ import axios from 'axios';
 import ZineCard from './ZineCard';
 
 function ZinesPage() {
-  const { count } = useSelector((state) => state.sliceAuth);
+  const { count, authHeader } = useSelector((state) => state.sliceAuth);
   const [zines, setZines] = useState([]);
 
   const getZines = async () => {
-    const allZines = await axios.get('http://localhost:4000/zine/get');
+    const allZines = await axios.get('http://localhost:4000/zine/get', {
+      headers: authHeader,
+    });
     setZines(allZines.data);
   };
 

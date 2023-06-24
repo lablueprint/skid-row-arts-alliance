@@ -1,9 +1,11 @@
 const express = require('express');
+const passport = require('../utils/passportConfig');
 
 const zineRouter = express.Router();
 const zineController = require('../controllers/zineController');
 
-// TODO: secure Zines route
+zineRouter.use(passport.authenticate('jwt', { session: false }));
+
 zineRouter.post('/post', zineController.createZine);
 
 zineRouter.get('/get', zineController.getAllZines);
