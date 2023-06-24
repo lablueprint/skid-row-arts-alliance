@@ -13,17 +13,21 @@ const locationCoordsSchema = new mongoose.Schema({
 
 // TODO: edit the mobile app parsing of data
 const dateSchema = new mongoose.Schema({
+  recurring: {
+    required: true,
+    type: String,
+  },
   date: {
-    required: false,
+    required: true,
     type: Date,
   },
   day: {
     required: true,
-    type: String,
+    type: Number,
   },
-  recurring: {
+  week: {
     required: true,
-    type: String,
+    type: Number,
   },
   startTime: {
     required: true,
@@ -68,10 +72,6 @@ const eventSchema = new mongoose.Schema({
     type: String,
   },
   tag: {
-    required: true,
-    type: String,
-  },
-  thumbnail: {
     required: true,
     type: String,
   },

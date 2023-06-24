@@ -7,33 +7,59 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 // import axios from 'axios';
 
 function AddEventPage() {
+  const { authHeader } = useSelector((state) => state.sliceAuth);
+
   const navigate = useNavigate();
 
   const [title, setTitle] = useState('');
-  const [hosts, setHosts] = useState([]);
+  const [hosts, setHosts] = useState('');
   const [tag, setTag] = useState('');
   const [date, setDate] = useState(dayjs());
-  const [day, setDay] = useState('');
   const [recurrence, setRecurrence] = useState('');
   const [startTime, setStartTime] = useState(dayjs());
   const [endTime, setEndTime] = useState(dayjs().add(1, 'h'));
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [address, setAddress] = useState('');
-  const [details, setDetails] = useState('');
+  const [description, setDescription] = useState('');
 
   const backToEvents = () => {
     navigate('/events');
   };
 
   const createEvent = async () => {
-    // await axios.post('http://localhost:4000/events/create');
-    // TODO: convert the text objects to the final form, set lat and long to numbers
-    // new Date(date)
-    // backToEvents();
+    const week = date.week() - date.startOf('month').week() + 1;
+    const dateDetails = {
+      recurring: recurrence,
+      date: date.toISOString().slice(0, 10),
+      day: date.day(),
+      week,
+      startTime,
+      endTime,
+    };
+    const newEvent = {
+      title,
+      dateDetails,
+      locationDetails: {
+        address,
+        coordinates: {
+          latitude: Number(latitude),
+          longitude: Number(longitude),
+        },
+      },
+      hosts,
+      description,
+      tag,
+    };
+    await axios.post('http://localhost:4000/event/create', newEvent, {
+      headers: authHeader,
+    });
+    backToEvents();
   };
 
   return (
@@ -91,25 +117,6 @@ function AddEventPage() {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker value={date} onChange={(newDate) => setDate(newDate)} />
           </LocalizationProvider>
-        </Box>
-        <Box>
-          <Typography>Day</Typography>
-          <FormControl fullWidth>
-            <Select
-              value={day}
-              onChange={(e) => {
-                setDay(e.target.value);
-              }}
-            >
-              <MenuItem value="Monday">Monday</MenuItem>
-              <MenuItem value="Tuesday">Tuesday</MenuItem>
-              <MenuItem value="Wednesday">Wednesday</MenuItem>
-              <MenuItem value="Thursday">Thursday</MenuItem>
-              <MenuItem value="Friday">Friday</MenuItem>
-              <MenuItem value="Saturday">Saturday</MenuItem>
-              <MenuItem value="Sunday">Sunday</MenuItem>
-            </Select>
-          </FormControl>
         </Box>
         <Box>
           <Typography>Recurrence</Typography>
@@ -171,10 +178,10 @@ function AddEventPage() {
         />
       </Box>
       <Box>
-        <Typography>Details</Typography>
+        <Typography>Description</Typography>
         <TextField
-          value={details}
-          onChange={(e) => setDetails(e.target.value)}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </Box>
       <Box>
