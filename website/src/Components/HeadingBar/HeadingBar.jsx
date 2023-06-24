@@ -7,10 +7,10 @@ function HeadingBar() {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    let prevScrollPos = window.pageYOffset;
+    let prevScrollPos = window.scrollY;
 
     const handleScroll = () => {
-      const currentScrollPos = window.pageYOffset;
+      const currentScrollPos = window.scrollY;
       setIsVisible(prevScrollPos > currentScrollPos);
       prevScrollPos = currentScrollPos;
     };
