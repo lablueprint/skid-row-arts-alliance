@@ -33,8 +33,7 @@ function SubmissionDetailsPage() {
   const [update, setUpdate] = useState(0);
 
   const getSubmissionDetails = async () => {
-    const artwork = await axios.get('http://localhost:4000/submissions/getartwork', {
-      params: { id },
+    const artwork = await axios.get(`http://localhost:4000/submissions/getartwork/${id}`, {
       headers: authHeader,
     });
     setDetails({
@@ -92,6 +91,8 @@ function SubmissionDetailsPage() {
     await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
       status: formatStatus,
       comments,
+    }, {
+      headers: authHeader,
     });
     setChange(false);
   };
@@ -113,6 +114,8 @@ function SubmissionDetailsPage() {
       description,
       status: formatStatus,
       comments,
+    }, {
+      headers: authHeader,
     });
     setUpdate((val) => val + 1);
     setChange(false);

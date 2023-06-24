@@ -22,7 +22,7 @@ export const sliceAuth = createSlice({
       state.authHeader = {
         Authorization: `Bearer ${action.payload.token}`,
       };
-      localStorage.setItem('admin', JSON.stringify(action.payload));
+      localStorage.setItem('admin', JSON.stringify(state));
     },
     logout: (state) => {
       state.id = null;
