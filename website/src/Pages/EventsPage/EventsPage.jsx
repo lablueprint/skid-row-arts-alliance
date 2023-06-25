@@ -9,29 +9,39 @@ import dayjs from 'dayjs';
 import EventCard from './EventCard';
 
 const isoWeek = require('dayjs/plugin/isoWeek');
-const weekday = require('dayjs/plugin/weekday');
+const customParseFormat = require('dayjs/plugin/customParseFormat');
 
 dayjs.extend(isoWeek);
-dayjs.extend(weekday);
+dayjs.extend(customParseFormat);
 
 function EventsPage() {
   const { authHeader } = useSelector((state) => state.sliceAuth);
   const navigate = useNavigate();
 
-  const [events, setEvents] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);
   const [dateRange, setDateRange] = useState({
-    mondayMonth: dayjs().format('MMMM'),
+    mondayMonth: dayjs().isoWeekday(0).format('MMMM'),
     monday: dayjs().isoWeekday(0).format('DD'),
-    sundayMonth: dayjs().format('MMMM'),
+    sundayMonth: dayjs().isoWeekday(6).format('MMMM'),
     sunday: dayjs().isoWeekday(6).format('DD'),
     diff: 0,
   });
+  // const [eventsInRange, setEventsInRange] = useState([]);
 
   const getEvents = async () => {
-    const allEvents = await axios.get('http://localhost:4000/event/getevents', {
+    const events = await axios.get('http://localhost:4000/event/getevents', {
       headers: authHeader,
     });
-    setEvents(allEvents.data);
+    setAllEvents(events.data);
+    // const currRange = dayjs();
+
+    // // TODO: handle cases
+    // // if occurs once, check if date in range
+    // // if monthly, check if the week aligns
+    // const showEvents = events.data.forEach((event) => {
+    //   event.date.isSameOrAfter(dayjs().isoWeekday(0)) &&
+    // inputDate.isSameOrBefore(dayjs().isoWeekday(6));
+    // })
   };
 
   useEffect(() => {
@@ -94,16 +104,17 @@ function EventsPage() {
         </Box>
       </Box>
       <Box>
-        {events.map((event) => (
+        {allEvents.map((event) => (
           <EventCard
             key={event.id}
             id={event.id}
             recurring={event.dateDetails.recurring}
+            day={event.dateDetails.day}
             date={event.dateDetails.date}
             startTime={event.dateDetails.startTime}
             endTime={event.dateDetails.endTime}
             title={event.title}
-            nonprofits={event.nonprofits}
+            host={event.host}
             tag={event.tag}
           />
         ))}

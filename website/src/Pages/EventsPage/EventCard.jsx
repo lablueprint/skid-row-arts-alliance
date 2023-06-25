@@ -2,11 +2,17 @@ import { React } from 'react';
 import { Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
+
+const isoWeek = require('dayjs/plugin/isoWeek');
+
+dayjs.extend(isoWeek);
 
 function EventCard({
-  id, recurring, date, startTime, endTime, title, nonprofits, tag,
+  id, recurring, day, date, startTime, endTime, title, host, tag,
 }) {
   const navigate = useNavigate();
+  const dayLetters = dayjs().isoWeekday(day).format('ddd').toUpperCase();
 
   const editEventDetails = () => {
     navigate('/event', {
@@ -17,24 +23,35 @@ function EventCard({
   };
 
   return (
-    <Box sx={{ display: 'flex' }} onClick={() => editEventDetails()}>
-      <Box>
-        <Typography>{date}</Typography>
+    <Box sx={{ display: 'flex', border: 1 }} onClick={() => editEventDetails()}>
+      <Box sx={{ margin: 2 }}>
+        <Typography>{dayLetters}</Typography>
+        <Typography>
+          {date.slice(5, 7)}
+          /
+          {date.slice(8, 10)}
+        </Typography>
       </Box>
-      <Box>
-        <Typography>{startTime}</Typography>
-        <Typography>{endTime}</Typography>
+      <Box sx={{ margin: 2 }}>
+        <Typography>
+          {startTime}
+          {' '}
+          -
+          {' '}
+          {endTime}
+        </Typography>
       </Box>
-      <Box>
-        <Typography>{title}</Typography>
+      <Box sx={{ margin: 2 }}>
+        <Typography>
+          {title.substring(0, 31)}
+          ...
+        </Typography>
+        <Typography>{host}</Typography>
       </Box>
-      <Box>
-        <Typography>{nonprofits}</Typography>
-      </Box>
-      <Box>
+      <Box sx={{ margin: 2 }}>
         <Typography>{recurring}</Typography>
       </Box>
-      <Box>
+      <Box sx={{ margin: 2 }}>
         <Typography>{tag}</Typography>
       </Box>
     </Box>
@@ -43,11 +60,12 @@ function EventCard({
 
 EventCard.propTypes = {
   id: PropTypes.string.isRequired,
+  day: PropTypes.number.isRequired,
   date: PropTypes.string.isRequired,
   startTime: PropTypes.string.isRequired,
   endTime: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  nonprofits: PropTypes.string.isRequired,
+  host: PropTypes.string.isRequired,
   recurring: PropTypes.string.isRequired,
   tag: PropTypes.string.isRequired,
 };

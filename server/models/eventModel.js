@@ -63,7 +63,7 @@ const eventSchema = new mongoose.Schema({
     required: true,
     type: locationSchema,
   },
-  hosts: {
+  host: {
     required: true,
     type: String,
   },
