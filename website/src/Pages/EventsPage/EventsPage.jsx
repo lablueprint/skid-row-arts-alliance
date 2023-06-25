@@ -9,55 +9,75 @@ import dayjs from 'dayjs';
 import EventCard from './EventCard';
 
 const isoWeek = require('dayjs/plugin/isoWeek');
-const customParseFormat = require('dayjs/plugin/customParseFormat');
+const isBetween = require('dayjs/plugin/isBetween');
 
 dayjs.extend(isoWeek);
-dayjs.extend(customParseFormat);
+dayjs.extend(isBetween);
 
 function EventsPage() {
   const { authHeader } = useSelector((state) => state.sliceAuth);
   const navigate = useNavigate();
 
   const [allEvents, setAllEvents] = useState([]);
-  const [dateRange, setDateRange] = useState({
-    mondayMonth: dayjs().isoWeekday(0).format('MMMM'),
-    monday: dayjs().isoWeekday(0).format('DD'),
-    sundayMonth: dayjs().isoWeekday(6).format('MMMM'),
-    sunday: dayjs().isoWeekday(6).format('DD'),
-    diff: 0,
-  });
-  // const [eventsInRange, setEventsInRange] = useState([]);
+  const [dateRange, setDateRange] = useState({});
+  const [eventsInRange, setEventsInRange] = useState([]);
+
+  const identifyEventsInRange = async (week, diff, events) => {
+    const monday = week.isoWeekday(0);
+    const sunday = week.isoWeekday(6);
+
+    const newDateRange = {
+      mondayMonth: monday.format('MMMM'),
+      monday: monday.format('DD'),
+      sundayMonth: sunday.format('MMMM'),
+      sunday: sunday.format('DD'),
+      diff,
+    };
+    setDateRange(newDateRange);
+
+    const initialEvents = [];
+    events.forEach((event) => {
+      const dateObject = dayjs(event.dateDetails.date, 'YYYY-MM-DD');
+      if (event.dateDetails.recurring === 'Does not repeat'
+      && dateObject.isBetween(monday, sunday, null, '[]')) {
+        initialEvents.push(event);
+      } else if (event.dateDetails.recurring === 'Weekly') {
+        const weeklyEvent = { ...event };
+        weeklyEvent.dateDetails.date = week.isoWeekday(event.dateDetails.day)
+          .toISOString().slice(0, 10);
+        initialEvents.push(weeklyEvent);
+      } else {
+        const weekOfMonth = week.isoWeek() - week.startOf('month').isoWeek() + 1;
+        if (weekOfMonth === event.dateDetails.week) {
+          const monthlyEvent = { ...event };
+          monthlyEvent.dateDetails.date = week.isoWeekday(event.dateDetails.day)
+            .toISOString().slice(0, 10);
+          initialEvents.push(monthlyEvent);
+        }
+      }
+    });
+    return initialEvents;
+  };
 
   const getEvents = async () => {
-    const events = await axios.get('http://localhost:4000/event/getevents', {
+    const response = await axios.get('http://localhost:4000/event/getevents', {
       headers: authHeader,
     });
-    setAllEvents(events.data);
-    // const currRange = dayjs();
+    const events = response.data;
+    setAllEvents(events);
 
-    // // TODO: handle cases
-    // // if occurs once, check if date in range
-    // // if monthly, check if the week aligns
-    // const showEvents = events.data.forEach((event) => {
-    //   event.date.isSameOrAfter(dayjs().isoWeekday(0)) &&
-    // inputDate.isSameOrBefore(dayjs().isoWeekday(6));
-    // })
+    const initialEvents = await identifyEventsInRange(dayjs(), 0, events);
+    setEventsInRange(initialEvents);
   };
 
   useEffect(() => {
     getEvents();
   }, []);
 
-  const updateWeek = (newDiff) => {
+  const updateWeek = async (newDiff) => {
     const newWeek = dayjs().add(newDiff, 'week');
-    const newDateRange = {
-      mondayMonth: newWeek.isoWeekday(0).format('MMMM'),
-      monday: newWeek.isoWeekday(0).format('DD'),
-      sundayMonth: newWeek.isoWeekday(6).format('MMMM'),
-      sunday: newWeek.isoWeekday(6).format('DD'),
-      diff: newDiff,
-    };
-    setDateRange(newDateRange);
+    const updatedEvents = await identifyEventsInRange(newWeek, newDiff, allEvents);
+    setEventsInRange(updatedEvents);
   };
 
   const addNewEvent = () => {
@@ -104,7 +124,7 @@ function EventsPage() {
         </Box>
       </Box>
       <Box>
-        {allEvents.map((event) => (
+        {eventsInRange.map((event) => (
           <EventCard
             key={event.id}
             id={event.id}

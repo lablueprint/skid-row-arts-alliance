@@ -49,7 +49,12 @@ function EventCard({
         <Typography>{host}</Typography>
       </Box>
       <Box sx={{ margin: 2 }}>
-        <Typography>{recurring}</Typography>
+        { recurring === 'Does not repeat' ? (
+          <>
+          </>
+        ) : (
+          <Typography>{recurring}</Typography>
+        )}
       </Box>
       <Box sx={{ margin: 2 }}>
         <Typography>{tag}</Typography>
