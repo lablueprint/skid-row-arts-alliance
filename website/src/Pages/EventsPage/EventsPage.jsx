@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from 'react';
 import {
-  Box, Button, Container, Typography,
+  Box, Button, Container, Typography, Modal,
 } from '@mui/material';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
@@ -21,6 +21,8 @@ function EventsPage() {
   const [allEvents, setAllEvents] = useState([]);
   const [dateRange, setDateRange] = useState({});
   const [eventsInRange, setEventsInRange] = useState([]);
+  const [openPreview, setOpenPreview] = useState(false);
+  const [previewDetails, setPreviewDetails] = useState({});
 
   const identifyEventsInRange = async (week, diff, events) => {
     const monday = week.isoWeekday(0);
@@ -59,6 +61,8 @@ function EventsPage() {
     return initialEvents;
   };
 
+  // TODO: sort the events in ascending order
+
   const getEvents = async () => {
     const response = await axios.get('http://localhost:4000/event/getevents', {
       headers: authHeader,
@@ -82,6 +86,14 @@ function EventsPage() {
 
   const addNewEvent = () => {
     navigate('/events/add');
+  };
+
+  // TODO: create popup modal that displays some details then go to an edit page
+  // add onclick to the box and then have a useState boolean for popup
+
+  const previewEventDetails = (eventDetails) => {
+    setOpenPreview(true);
+    setPreviewDetails(eventDetails);
   };
 
   return (
@@ -125,20 +137,74 @@ function EventsPage() {
       </Box>
       <Box>
         {eventsInRange.map((event) => (
-          <EventCard
-            key={event.id}
-            id={event.id}
-            recurring={event.dateDetails.recurring}
-            day={event.dateDetails.day}
-            date={event.dateDetails.date}
-            startTime={event.dateDetails.startTime}
-            endTime={event.dateDetails.endTime}
-            title={event.title}
-            host={event.host}
-            tag={event.tag}
-          />
+          <Box onClick={() => previewEventDetails(event)}>
+            <EventCard
+              key={event.id}
+              recurring={event.dateDetails.recurring}
+              day={event.dateDetails.day}
+              date={event.dateDetails.date}
+              startTime={event.dateDetails.startTime}
+              endTime={event.dateDetails.endTime}
+              title={event.title}
+              host={event.host}
+              tag={event.tag}
+            />
+          </Box>
         ))}
       </Box>
+      <Modal
+        open={openPreview}
+        onClose={() => setOpenPreview(false)}
+      >
+        <Box sx={{
+          position: 'relative',
+          top: '50%',
+          left: '50%',
+          width: 600,
+          height: 500,
+          backgroundColor: 'white',
+        }}
+        >
+          <Box>
+            <Button>Edit</Button>
+            <Button>Delete</Button>
+            <Button onClick={() => setOpenPreview(false)}>Close</Button>
+          </Box>
+          <Box>
+            <Typography>
+              {previewDetails.title}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex' }}>
+            <Typography>
+              {previewDetails.host}
+            </Typography>
+            <Typography>
+              {previewDetails.tag}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex' }}>
+            <Typography>
+              {dayjs(previewDetails.dateDetails.date).toString().slice(0, 11)}
+            </Typography>
+            <Typography>
+              {previewDetails.dateDetails.startTime}
+              -
+              {previewDetails.dateDetails.endTime}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography>
+              {previewDetails.locationDetails.address}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography>
+              {previewDetails.description}
+            </Typography>
+          </Box>
+        </Box>
+      </Modal>
     </Container>
   );
 }

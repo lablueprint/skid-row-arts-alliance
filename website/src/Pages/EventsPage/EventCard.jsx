@@ -1,7 +1,6 @@
 import { React } from 'react';
 import { Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 const isoWeek = require('dayjs/plugin/isoWeek');
@@ -9,21 +8,12 @@ const isoWeek = require('dayjs/plugin/isoWeek');
 dayjs.extend(isoWeek);
 
 function EventCard({
-  id, recurring, day, date, startTime, endTime, title, host, tag,
+  recurring, day, date, startTime, endTime, title, host, tag,
 }) {
-  const navigate = useNavigate();
   const dayLetters = dayjs().isoWeekday(day).format('ddd').toUpperCase();
 
-  const editEventDetails = () => {
-    navigate('/event', {
-      state: {
-        id,
-      },
-    });
-  };
-
   return (
-    <Box sx={{ display: 'flex', border: 1 }} onClick={() => editEventDetails()}>
+    <Box sx={{ display: 'flex', border: 1 }}>
       <Box sx={{ margin: 2 }}>
         <Typography>{dayLetters}</Typography>
         <Typography>
@@ -64,7 +54,6 @@ function EventCard({
 }
 
 EventCard.propTypes = {
-  id: PropTypes.string.isRequired,
   day: PropTypes.number.isRequired,
   date: PropTypes.string.isRequired,
   startTime: PropTypes.string.isRequired,
