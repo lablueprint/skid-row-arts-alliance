@@ -41,7 +41,7 @@ function App() {
             <Route path="/submission" element={(<SubmissionDetailsPage />)} />
             <Route path="/zine" element={(<ZineDetailsPage />)} />
             <Route path="/events/add" element={(<AddEventPage />)} />
-            <Route path="/event" element={(<EventDetailsPage />)} />
+            <Route path="/events/edit" element={(<EventDetailsPage />)} />
           </Routes>
         </div>
       </div>

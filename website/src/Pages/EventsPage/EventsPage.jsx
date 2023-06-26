@@ -22,7 +22,7 @@ function EventsPage() {
   const [dateRange, setDateRange] = useState({});
   const [eventsInRange, setEventsInRange] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
-  const [previewDetails, setPreviewDetails] = useState({});
+  const [previewDetails, setPreviewDetails] = useState(null);
 
   const identifyEventsInRange = async (week, diff, events) => {
     const monday = week.isoWeekday(0);
@@ -88,8 +88,13 @@ function EventsPage() {
     navigate('/events/add');
   };
 
-  // TODO: create popup modal that displays some details then go to an edit page
-  // add onclick to the box and then have a useState boolean for popup
+  const editEventDetails = (id) => {
+    navigate('/events/edit', {
+      state: {
+        id,
+      },
+    });
+  };
 
   const previewEventDetails = (eventDetails) => {
     setOpenPreview(true);
@@ -156,54 +161,59 @@ function EventsPage() {
         open={openPreview}
         onClose={() => setOpenPreview(false)}
       >
-        <Box sx={{
-          position: 'relative',
-          top: '50%',
-          left: '50%',
-          width: 600,
-          height: 500,
-          backgroundColor: 'white',
-        }}
-        >
-          <Box>
-            <Button>Edit</Button>
-            <Button>Delete</Button>
-            <Button onClick={() => setOpenPreview(false)}>Close</Button>
+        { previewDetails !== null ? (
+          <Box sx={{
+            position: 'relative',
+            top: '50%',
+            left: '50%',
+            width: 600,
+            height: 500,
+            backgroundColor: 'white',
+          }}
+          >
+            <Box>
+              <Button onClick={() => editEventDetails(previewDetails.id)}>Edit</Button>
+              <Button>Delete</Button>
+              <Button onClick={() => setOpenPreview(false)}>Close</Button>
+            </Box>
+            <Box>
+              <Typography>
+                {previewDetails.title}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex' }}>
+              <Typography>
+                {previewDetails.host}
+              </Typography>
+              <Typography>
+                {previewDetails.tag}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex' }}>
+              <Typography>
+                {dayjs(previewDetails.dateDetails.date).toString().slice(0, 11)}
+              </Typography>
+              <Typography>
+                {previewDetails.dateDetails.startTime}
+                -
+                {previewDetails.dateDetails.endTime}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography>
+                {previewDetails.locationDetails.address}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography>
+                {previewDetails.description}
+              </Typography>
+            </Box>
           </Box>
-          <Box>
-            <Typography>
-              {previewDetails.title}
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex' }}>
-            <Typography>
-              {previewDetails.host}
-            </Typography>
-            <Typography>
-              {previewDetails.tag}
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex' }}>
-            <Typography>
-              {dayjs(previewDetails.dateDetails.date).toString().slice(0, 11)}
-            </Typography>
-            <Typography>
-              {previewDetails.dateDetails.startTime}
-              -
-              {previewDetails.dateDetails.endTime}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography>
-              {previewDetails.locationDetails.address}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography>
-              {previewDetails.description}
-            </Typography>
-          </Box>
-        </Box>
+        ) : (
+          <>
+          </>
+        )}
       </Modal>
     </Container>
   );
