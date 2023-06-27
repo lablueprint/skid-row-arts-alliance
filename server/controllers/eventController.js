@@ -38,15 +38,14 @@ const updateEvent = async (req, res) => {
 };
 
 const deleteEvent = async (req, res) => {
-  Event.findByIdAndRemove(req.params.id, (error, data) => {
-    if (error) {
-      console.error(error);
-    } else {
-      res.json({
-        msg: data,
-      });
-    }
-  });
+  try {
+    const response = await Event.findByIdAndRemove(req.params.id);
+    res.send(response);
+  } catch (err) {
+    console.error(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
+  }
 };
 
 module.exports = {

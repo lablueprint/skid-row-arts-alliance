@@ -23,6 +23,7 @@ function EventsPage() {
   const [eventsInRange, setEventsInRange] = useState([]);
   const [openPreview, setOpenPreview] = useState(false);
   const [previewDetails, setPreviewDetails] = useState(null);
+  const [refresh, setRefresh] = useState(0);
 
   const sortEvents = (eventA, eventB) => {
     if (eventA.dateDetails.date < eventB.dateDetails.date) {
@@ -92,7 +93,7 @@ function EventsPage() {
 
   useEffect(() => {
     getEvents();
-  }, []);
+  }, [refresh]);
 
   const updateWeek = async (newDiff) => {
     const newWeek = dayjs().add(newDiff, 'week');
@@ -110,6 +111,14 @@ function EventsPage() {
         id,
       },
     });
+  };
+
+  const deleteEvent = async (eventId) => {
+    await axios.delete(`http://localhost:4000/event/delete/${eventId}`, {
+      headers: authHeader,
+    });
+    setOpenPreview(false);
+    setRefresh((val) => val + 1);
   };
 
   const previewEventDetails = (eventDetails) => {
@@ -158,7 +167,9 @@ function EventsPage() {
       </Box>
       <Box>
         {eventsInRange.map((event) => (
-          <Box onClick={() => previewEventDetails(event)}>
+          <Box
+            onClick={() => previewEventDetails(event)}
+          >
             <EventCard
               key={event.id}
               recurring={event.dateDetails.recurring}
@@ -188,8 +199,8 @@ function EventsPage() {
           }}
           >
             <Box>
-              <Button onClick={() => editEventDetails(previewDetails.id)}>Edit</Button>
-              <Button>Delete</Button>
+              <Button onClick={() => editEventDetails(previewDetails._id)}>Edit</Button>
+              <Button onClick={() => deleteEvent(previewDetails._id)}>Delete</Button>
               <Button onClick={() => setOpenPreview(false)}>Close</Button>
             </Box>
             <Box>
