@@ -16,7 +16,7 @@ function AddEventPage() {
   const navigate = useNavigate();
 
   const [title, setTitle] = useState('');
-  const [hosts, setHosts] = useState('');
+  const [host, setHost] = useState('');
   const [tag, setTag] = useState('');
   const [date, setDate] = useState(dayjs());
   const [recurrence, setRecurrence] = useState('');
@@ -35,7 +35,7 @@ function AddEventPage() {
     const week = date.week() - date.startOf('month').week() + 1;
     const dateDetails = {
       recurring: recurrence,
-      date: date.toISOString().slice(0, 10),
+      date: dayjs(date).format('YYYY-MM-DD'),
       day: date.day(),
       week,
       startTime: startTime.format('h:mm a'),
@@ -52,7 +52,7 @@ function AddEventPage() {
       title,
       dateDetails,
       locationDetails,
-      hosts,
+      host,
       description,
       tag,
     };
@@ -79,9 +79,9 @@ function AddEventPage() {
           <Typography>Host</Typography>
           <FormControl fullWidth>
             <Select
-              value={hosts}
+              value={host}
               onChange={(e) => {
-                setHosts(e.target.value);
+                setHost(e.target.value);
               }}
             >
               <MenuItem value="Los Angeles Poverty Department">Los Angeles Poverty Department</MenuItem>
@@ -115,7 +115,10 @@ function AddEventPage() {
         <Box>
           <Typography>Date</Typography>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker value={date} onChange={(newDate) => setDate(newDate)} />
+            <DatePicker
+              value={date}
+              onChange={(newDate) => setDate(newDate)}
+            />
           </LocalizationProvider>
         </Box>
         <Box>

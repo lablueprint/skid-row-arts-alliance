@@ -24,6 +24,23 @@ function EventsPage() {
   const [openPreview, setOpenPreview] = useState(false);
   const [previewDetails, setPreviewDetails] = useState(null);
 
+  const sortEvents = (eventA, eventB) => {
+    if (eventA.dateDetails.date < eventB.dateDetails.date) {
+      return -1;
+    } if (eventA.date > eventB.date) {
+      return 1;
+    }
+    const timeA = new Date(`2000-01-01 ${eventA.dateDetails.startTime}`);
+    const timeB = new Date(`2000-01-01 ${eventB.startTime}`);
+
+    if (timeA < timeB) {
+      return -1;
+    } if (timeA > timeB) {
+      return 1;
+    }
+    return 0;
+  };
+
   const identifyEventsInRange = async (week, diff, events) => {
     const monday = week.isoWeekday(0);
     const sunday = week.isoWeekday(6);
@@ -46,22 +63,21 @@ function EventsPage() {
       } else if (event.dateDetails.recurring === 'Weekly') {
         const weeklyEvent = { ...event };
         weeklyEvent.dateDetails.date = week.isoWeekday(event.dateDetails.day)
-          .toISOString().slice(0, 10);
+          .format('YYYY-MM-DD').slice(0, 10);
         initialEvents.push(weeklyEvent);
       } else {
         const weekOfMonth = week.isoWeek() - week.startOf('month').isoWeek() + 1;
         if (weekOfMonth === event.dateDetails.week) {
           const monthlyEvent = { ...event };
           monthlyEvent.dateDetails.date = week.isoWeekday(event.dateDetails.day)
-            .toISOString().slice(0, 10);
+            .format('YYYY-MM-DD').slice(0, 10);
           initialEvents.push(monthlyEvent);
         }
       }
     });
+    initialEvents.sort(sortEvents);
     return initialEvents;
   };
-
-  // TODO: sort the events in ascending order
 
   const getEvents = async () => {
     const response = await axios.get('http://localhost:4000/event/getevents', {
