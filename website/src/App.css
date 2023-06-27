@@ -1,8 +1,10 @@
 .App {
     display: flex;
     position: relative;
+    margin-top: 70px;
 }
 
 .content {
     width: 100%;
+    background-color: #F8F8F8;
 }
