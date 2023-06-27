@@ -33,7 +33,7 @@ const userSignIn = async (req, res, next) => {
     if (!user) { return res.json({ error: info.message }); }
     return req.logIn(user, { session: false }, (e) => {
       if (err) return next(e);
-      // replace secret
+      // TODO: replace secret
       const token = jwt.sign({ id: user.id }, 'secret');
       return res.json({ id: user._id, token });
     });
@@ -69,7 +69,7 @@ const adminSignIn = async (req, res, next) => {
     if (!user) { return res.json(info.message); }
     return req.login(user, { session: false }, (e) => {
       if (err) return next(e);
-      // replace secret and add an expiration
+      // TODO: replace secret and add an expiration
       const token = jwt.sign({ id: user.id }, 'secret', { expiresIn: '1h' });
       return res.json({ id: user._id, token });
     });

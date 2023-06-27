@@ -58,7 +58,7 @@ passport.use('admin-sign-in', new LocalStrategy(
 passport.use('jwt', new JWTStrategy(
   {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: 'secret', // to be replaced
+    secretOrKey: 'secret', // TODO: replace
   },
   async (userId, done) => {
     try {

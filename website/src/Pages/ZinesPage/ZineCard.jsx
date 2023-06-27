@@ -1,31 +1,32 @@
 import { React } from 'react';
-import { useDispatch } from 'react-redux';
-import { Button, Box, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Document, Page } from 'react-pdf/dist/esm/entry.webpack5';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import { refresher } from '../../redux/sliceAuth';
+import { useNavigate } from 'react-router-dom';
 
 function ZineCard({
   id, title, season, year, url,
 }) {
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  // TODO: create mini pop up
-  const handleEditZineDetails = async () => {
-    console.log(id);
-  };
-
-  const handleDeleteZineDetails = async () => {
-    await axios.delete(`http://localhost:4000/zine/delete/${id}`);
-    dispatch(refresher());
+  const viewZineDetails = () => {
+    navigate('/zine', {
+      state: {
+        id,
+      },
+    });
   };
 
   return (
-    <Box style={{ background: 'gray', margin: '10px' }}>
-      <Typography variant="h6">{title}</Typography>
-      <Typography variant="body1">
+    <Box
+      sx={{
+        backgroundColor: '#FFFFFF', border: 1, borderColor: '#C4C8CA', width: '250px',
+      }}
+      onClick={() => viewZineDetails()}
+    >
+      <Typography>{title}</Typography>
+      <Typography>
         {season}
         {' '}
         {year}
@@ -35,8 +36,6 @@ function ZineCard({
           <Page pageNumber={1} renderTextLayer={false} height={250} />
         </Document>
       </Box>
-      <Button variant="contained" onClick={() => handleEditZineDetails()}>Edit</Button>
-      <Button variant="contained" onClick={() => handleDeleteZineDetails()}>Delete</Button>
     </Box>
   );
 }

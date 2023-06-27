@@ -5,8 +5,12 @@ import jwt_decode from 'jwt-decode';
 
 const admin = JSON.parse(localStorage.getItem('admin'));
 
-const initialState = admin ? { id: admin.id, token: admin.token, count: 0 }
-  : { id: null, token: null, count: 0 };
+const initialState = admin ? {
+  id: admin.id, token: admin.token, count: 0, authHeader: admin.authHeader,
+}
+  : {
+    id: null, token: null, count: 0, authHeader: null,
+  };
 
 export const sliceAuth = createSlice({
   name: 'sliceAuth',
@@ -15,11 +19,15 @@ export const sliceAuth = createSlice({
     login: (state, action) => {
       state.id = action.payload.id;
       state.token = action.payload.token;
-      localStorage.setItem('admin', JSON.stringify(action.payload));
+      state.authHeader = {
+        Authorization: `Bearer ${action.payload.token}`,
+      };
+      localStorage.setItem('admin', JSON.stringify(state));
     },
     logout: (state) => {
       state.id = null;
       state.token = null;
+      state.authHeader = null;
       localStorage.removeItem('admin');
     },
     refresher: (state) => {

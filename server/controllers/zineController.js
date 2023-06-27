@@ -31,9 +31,7 @@ const getAllZines = async (req, res) => {
 const getSpecificZine = async (req, res) => {
   try {
     const data = await Zine.findById(req.params.id);
-    res.json({
-      msg: data,
-    });
+    res.json(data);
   } catch (err) {
     console.error(err);
   }

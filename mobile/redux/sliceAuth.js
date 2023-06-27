@@ -7,10 +7,10 @@ import jwt_decode from 'jwt-decode';
 const user = SecureStore.getItemAsync('user');
 
 const initialState = user ? {
-  isLoggedIn: true, refresh: 0, id: user.id, token: user.token,
+  refresh: 0, id: user.id, token: user.token, authHeader: user.authHeader,
 }
   : {
-    isLoggedIn: false, refresh: 0, id: null, token: null,
+    refresh: 0, id: null, token: null, authHeader: null,
   };
 
 const authSlice = createSlice({
@@ -18,7 +18,6 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      state.isLoggedIn = true;
       state.refresh = 0;
       state.id = action.payload.id;
       state.token = action.payload.token;
@@ -28,7 +27,6 @@ const authSlice = createSlice({
       SecureStore.setItemAsync('user', JSON.stringify(action.payload));
     },
     logout: (state) => {
-      state.isLoggedIn = false;
       state.refresh = 0;
       state.id = null;
       state.token = null;
