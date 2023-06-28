@@ -116,17 +116,15 @@ function EventCard({
 
   const startTime = formatTime(new Date(startDate));
   const endTime = formatTime(new Date(endDate));
+  console.log(image);
 
-  const imageURL = image.uri;
-
-  console.log(imageURL);
 
   return (
     <View style={styles.card}>
       <TouchableOpacity onPress={() => onPressEvent()}>
         <View>
           <Image
-            source={{ uri: imageURL }}
+            source={image}
             style={styles.cardImage}
           />
           <View style={styles.tag}>

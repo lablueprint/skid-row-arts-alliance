@@ -39,13 +39,13 @@ function EventScreen({ navigation }) {
 
   const imageThumbnails = {
     'art & community': "require('../assets/eventThumbnails/art&community.png')",
-    exhibit: 'require(../assets/eventThumbnails/exhibit.png)',
-    film: 'require(../assets/eventThumbnails/film.png)',
-    music: 'require(../assets/eventThumbnails/music.png)',
-    performance: 'require(../assets/eventThumbnails/performance.png)',
-    'spoken word': 'require(../assets/eventThumbnails/spokenWord.png)',
-    miscellaneous: 'require(../assets/eventThumbnails/miscellaneous.png)',
-    'visual art': 'require(../assets/eventThumbnails/visualArt.png)',
+    exhibit: "require('../assets/eventThumbnails/exhibit.png')",
+    film: "require('../assets/eventThumbnails/film.png')",
+    music: "require('../assets/eventThumbnails/music.png')",
+    performance: "require('../assets/eventThumbnails/performance.png')",
+    'spoken word': "require('../assets/eventThumbnails/spokenWord.png')",
+    miscellaneous: "require('../assets/eventThumbnails/miscellaneous.png')",
+    'visual art': "require('../assets/eventThumbnails/visualArt.png')",
   };
 
   const getAllEvents = async () => {
