@@ -37,6 +37,17 @@ function EventScreen({ navigation }) {
     MontserratMedium: Montserrat_500Medium,
   });
 
+  const imageThumbnails = {
+    'art & community': "require('../assets/eventThumbnails/art&community.png')",
+    exhibit: 'require(../assets/eventThumbnails/exhibit.png)',
+    film: 'require(../assets/eventThumbnails/film.png)',
+    music: 'require(../assets/eventThumbnails/music.png)',
+    performance: 'require(../assets/eventThumbnails/performance.png)',
+    'spoken word': 'require(../assets/eventThumbnails/spokenWord.png)',
+    miscellaneous: 'require(../assets/eventThumbnails/miscellaneous.png)',
+    'visual art': 'require(../assets/eventThumbnails/visualArt.png)',
+  };
+
   const getAllEvents = async () => {
     try {
       const result = await axios.get(`${URL}/event/get`);
@@ -114,7 +125,7 @@ function EventScreen({ navigation }) {
         <EventCard
           key={event.EventData._id}
           id={event.EventData._id}
-          image={{ uri: event.ImageURL }}
+          image={imageThumbnails[event.EventData.tag]}
           title={event.EventData.title}
           location={event.EventData.location}
           description={event.EventData.description}
