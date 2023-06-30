@@ -7,7 +7,8 @@ const createEvent = async (req, res) => {
     const data = await event.save(event);
     res.send(data);
   } catch (err) {
-    console.error(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
   }
 };
 
@@ -21,20 +22,19 @@ const getAllEvents = async (req, res) => {
     // TODO: replace AWS thumbnails with hardcoded defaults
     res.send(allEvents);
   } catch (err) {
-    console.error(err);
     res.status(err.statusCode ? err.statusCode : 400);
     res.send(err);
   }
 };
 
 const updateEvent = async (req, res) => {
-  Event.findByIdAndUpdate(req.params.id, req.body, (err, data) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.json(data);
-    }
-  });
+  try {
+    const response = await Event.findByIdAndUpdate(req.params.id, req.body);
+    res.send(response);
+  } catch (err) {
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
+  }
 };
 
 const deleteEvent = async (req, res) => {
@@ -42,7 +42,6 @@ const deleteEvent = async (req, res) => {
     const response = await Event.findByIdAndRemove(req.params.id);
     res.send(response);
   } catch (err) {
-    console.error(err);
     res.status(err.statusCode ? err.statusCode : 400);
     res.send(err);
   }

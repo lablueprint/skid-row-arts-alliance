@@ -106,9 +106,10 @@ function EventsPage() {
   };
 
   const editEventDetails = (id) => {
+    const eventDetails = allEvents.find((e) => e._id === id);
     navigate('/events/edit', {
       state: {
-        id,
+        eventDetails,
       },
     });
   };
@@ -168,10 +169,10 @@ function EventsPage() {
       <Box>
         {eventsInRange.map((event) => (
           <Box
+            key={event._id}
             onClick={() => previewEventDetails(event)}
           >
             <EventCard
-              key={event.id}
               recurring={event.dateDetails.recurring}
               day={event.dateDetails.day}
               date={event.dateDetails.date}
