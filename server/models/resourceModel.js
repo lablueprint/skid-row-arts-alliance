@@ -50,10 +50,6 @@ const resourceSchema = new mongoose.Schema({
     required: true,
     type: locationSchema,
   },
-  host: {
-    required: true,
-    type: String,
-  },
   phoneNumber: {
     required: true,
     type: String,
