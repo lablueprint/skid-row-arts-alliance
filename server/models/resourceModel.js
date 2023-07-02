@@ -54,7 +54,7 @@ const resourceSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  description: {
+  phoneNumber: {
     required: true,
     type: String,
   },
