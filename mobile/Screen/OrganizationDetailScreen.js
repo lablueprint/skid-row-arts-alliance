@@ -44,44 +44,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const organizations = [
-  {
-    title: 'Los Angeles Poverty Department',
-    image: require('../assets/orgPics/lapd.png'),
-    description: 'Founded in 1985 by director-performer-activist John Malpede, Los Angeles Poverty Department (LAPD)is a non-profit arts organization, the first performance group in the nation made up principally of homeless people, and the first arts program of any kind for homeless people in Los Angeles. LAPD creates performances and multidisciplinary artworks that connect the experience of people living in poverty to the social forces that shape their lives and communities. LAPD’s works express the realities, hopes, dreams and rights of people who live and work in L.A.’s Skid Row.',
-    phoneNumber: '(213) 413-1077',
-    email: 'info@lapovertydept.org',
-    website: 'www.lapovertydept.org',
-  },
-  {
-    title: 'Piece by Piece',
-    image: require('../assets/orgPics/piecebypiece.png'),
-    description: 'Our mission is to empower residents who have experienced homelessness or economic insecurity by providing free mosaic art workshops enabling them to build confidence, earn supplementary income, promote wellness and an improved quality of life.',
-    phoneNumber: '(213) 459-1420',
-    email: 'info@piecebypiece.org',
-    website: 'https://www.piecebypiece.org',
-  },
-  {
-    title: 'Street Symphony',
-    image: require('../assets/orgPics/streetsymphony.png'),
-    description: 'Connection through music. Street Symphony engages communities directly affected by homelessness and incarceration in LA County through performances, workshops and teaching artistry.',
-    phoneNumber: '(213) 222-6221',
-    email: 'contact@streetsymphony.org',
-    website: 'www.streetsymphony.org',
-  },
-  {
-    title: 'Urban Voices Project',
-    image: require('../assets/orgPics/urbanvoices.png'),
-    description: 'Urban Voices Project uses music to create supportive community spaces in Skid Row and the Los Angeles area that bridge vulnerable individuals to a sense of purpose and improved health.',
-    phoneNumber: '(714) 606-4818',
-    email: 'info@urbanvoicesproject.org',
-    website: 'urbanvoicesproject.org',
-  },
-];
-
 function OrganizationDetailScreen({ route, navigation }) {
   const {
-    organization,
+    selectedOrganization,
   } = route.params || {};
 
   const [fontsLoaded] = useFonts({
@@ -90,11 +55,8 @@ function OrganizationDetailScreen({ route, navigation }) {
   });
 
   React.useLayoutEffect(() => {
-    navigation.setOptions({ headerTitle: organization });
-  }, [navigation, organization]);
-
-  // Find the organization object based on the title
-  const selectedOrganization = organizations.find((org) => org.title === organization);
+    navigation.setOptions({ headerTitle: selectedOrganization.title });
+  }, [navigation, selectedOrganization.title]);
 
   return (
     <View style={styles.container}>
@@ -104,9 +66,7 @@ function OrganizationDetailScreen({ route, navigation }) {
       />
       <View style={styles.textContainer}>
         <Text style={styles.normalText}>
-          {' '}
           {selectedOrganization.description}
-          {' '}
         </Text>
       </View>
       <Text style={styles.header}>
@@ -115,25 +75,19 @@ function OrganizationDetailScreen({ route, navigation }) {
       <View style={styles.flexContainer}>
         <Image source={require('../assets/detailScreen/callTransparent.png')} style={styles.infoIconTransparent} />
         <Text style={styles.normalText}>
-          {' '}
           {selectedOrganization.phoneNumber}
-          {' '}
         </Text>
       </View>
       <View style={styles.flexContainer}>
         <Image source={require('../assets/detailScreen/mailTransparent.png')} style={styles.infoIconTransparent} />
         <Text style={styles.normalText}>
-          {' '}
           {selectedOrganization.email}
-          {' '}
         </Text>
       </View>
       <View style={styles.flexContainer}>
         <Image source={require('../assets/detailScreen/globeTransparent.png')} style={styles.infoIconTransparent} />
         <Text style={styles.normalText}>
-          {' '}
           {selectedOrganization.website}
-          {' '}
         </Text>
       </View>
     </View>

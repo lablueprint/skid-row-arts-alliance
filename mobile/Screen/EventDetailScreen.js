@@ -13,6 +13,7 @@ import AddCalendarButton from '../Components/AddCalendarButton';
 const MAX_LINES = 3;
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
     padding: 10,
     paddingBottom: 50,
     flex: 1,
@@ -46,10 +47,8 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     position: 'absolute',
     top: 0,
-  },
-  image: {
-    width: '100%',
-    height: '15%',
+    left: 0,
+    right: 0,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
@@ -177,25 +176,57 @@ function EventDetailScreen({
   navigation, route,
 }) {
   const {
-    key,
     id,
     image,
+    startTime,
+    endTime,
+    day,
+    week,
     location,
     title,
     description,
     startDate,
-    endDate,
-    tag,
-    phoneNumber,
     organization,
     recurringMonthly,
     recurringWeekly,
-    email,
-    website,
-    eventDescription,
-    organizationDescription,
-  } = route.params;
+  } = route.params || {};
 
+  const organizations = [
+    {
+      title: 'Los Angeles Poverty Department',
+      image: require('../assets/orgPics/lapd.png'),
+      description: 'Founded in 1985 by director-performer-activist John Malpede, Los Angeles Poverty Department (LAPD)is a non-profit arts organization, the first performance group in the nation made up principally of homeless people, and the first arts program of any kind for homeless people in Los Angeles. LAPD creates performances and multidisciplinary artworks that connect the experience of people living in poverty to the social forces that shape their lives and communities. LAPD’s works express the realities, hopes, dreams and rights of people who live and work in L.A.’s Skid Row.',
+      phoneNumber: '(213) 413-1077',
+      email: 'info@lapovertydept.org',
+      website: 'www.lapovertydept.org',
+    },
+    {
+      title: 'Piece by Piece',
+      image: require('../assets/orgPics/piecebypiece.png'),
+      description: 'Our mission is to empower residents who have experienced homelessness or economic insecurity by providing free mosaic art workshops enabling them to build confidence, earn supplementary income, promote wellness and an improved quality of life.',
+      phoneNumber: '(213) 459-1420',
+      email: 'info@piecebypiece.org',
+      website: 'https://www.piecebypiece.org',
+    },
+    {
+      title: 'Street Symphony',
+      image: require('../assets/orgPics/streetsymphony.png'),
+      description: 'Connection through music. Street Symphony engages communities directly affected by homelessness and incarceration in LA County through performances, workshops and teaching artistry.',
+      phoneNumber: '(213) 222-6221',
+      email: 'contact@streetsymphony.org',
+      website: 'www.streetsymphony.org',
+    },
+    {
+      title: 'Urban Voices Project',
+      image: require('../assets/orgPics/urbanvoices.png'),
+      description: 'Urban Voices Project uses music to create supportive community spaces in Skid Row and the Los Angeles area that bridge vulnerable individuals to a sense of purpose and improved health.',
+      phoneNumber: '(714) 606-4818',
+      email: 'info@urbanvoicesproject.org',
+      website: 'urbanvoicesproject.org',
+    },
+  ];
+
+  const selectedOrganization = organizations.find((org) => org.title === organization);
   const [isEventSaved, setIsEventSaved] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const toggleShowFullDescription = () => {
@@ -248,12 +279,7 @@ function EventDetailScreen({
 
   const onPressOrganization = () => {
     navigation.navigate('Organization Details', {
-      image,
-      organization,
-      organizationDescription,
-      phoneNumber,
-      email,
-      website,
+      selectedOrganization,
     });
   };
 
@@ -265,38 +291,20 @@ function EventDetailScreen({
     }
   };
 
-  function formatTime(dateObject) {
-    const hours = dateObject.getHours();
-    const minutes = dateObject.getMinutes();
-    let formattedHours = hours % 12;
-    formattedHours = formattedHours === 0 ? 12 : formattedHours;
-    const period = hours >= 12 ? 'pm' : 'am';
-    const formattedMinutes = minutes.toString().padStart(2, '0');
-    return `${formattedHours}:${formattedMinutes} ${period}`;
-  }
-
-  const imageURL = image.uri;
-
-  const startTime = formatTime(new Date(startDate));
-  const endTime = formatTime(new Date(endDate));
-
+  // TO DO: add 'first' tuesdays, etc.
   const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const dayOfWeek = daysOfWeek[startDate.getDay()];
-
-  console.log(`String: ${imageURL}`);
+  const dayOfWeek = daysOfWeek[day];
+  const weeksOfMonth = ['First', 'Second', 'Third', 'Fourth'];
+  const weekOfMonth = weeksOfMonth[week - 1];
 
   const saveIcon = isEventSaved ? require('../assets/detailScreen/saved.png') : require('../assets/detailScreen/unsaved.png');
 
-  const temp_description = "We create theater performances from scratch and withcreative inputfrom everyone involved.Improvise, write and perform with us.Skid Row’s original creative group continues to surprise. We mess around but, we’re absolutely serious."
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View>
-        <Image
-          source={{ uri: imageURL }}
-          style={styles.image}
-        />
-      </View>
+      <Image
+        source={image}
+        style={styles.coverImage}
+      />
       <View style={styles.overlay} />
       <ScrollView style={styles.overlayContent} showsVerticalScrollIndicator={false}>
         <View style={styles.flexContainer}>
@@ -312,18 +320,18 @@ function EventDetailScreen({
         <ScrollView style={styles.info}>
           <View style={styles.infoRow}>
             <Image source={require('../assets/detailScreen/calendarIcon.png')} style={styles.infoIcon} />
-            <Text style={styles.infoText}>{dayOfWeek}</Text>
+            {recurringMonthly && <Text style={styles.infoText}>{weekOfMonth} {dayOfWeek}{'s'}</Text>}
+            {!recurringMonthly && <Text style={styles.infoText}>{dayOfWeek}</Text>}
             <View style={styles.frequency}>
               {recurringMonthly && <Text style={styles.frequencyText}>Monthly</Text>}
               {recurringWeekly && <Text style={styles.frequencyText}>Weekly</Text>}
+              {!recurringMonthly && !recurringWeekly && <Text style={styles.frequencyText}>Does not Repeat</Text>}
             </View>
           </View>
           <View style={styles.infoRow}>
             <Image source={require('../assets/detailScreen/clockIcon.png')} style={styles.infoIcon} />
             <Text style={styles.infoText}>
-              {startTime}
-              -
-              {endTime}
+              {startTime}{' '}-{' '}{endTime}
             </Text>
           </View>
           <View style={styles.infoRow}>
@@ -335,26 +343,26 @@ function EventDetailScreen({
           <View style={styles.infoRow}>
             <Image source={require('../assets/detailScreen/phoneIcon.png')} style={styles.infoIcon} />
             <Text style={styles.infoText}>
-              {phoneNumber}
+              {selectedOrganization.phoneNumber}
             </Text>
           </View>
           <View style={styles.lastRow}>
             <Image source={require('../assets/detailScreen/websiteIcon.png')} style={styles.infoIcon} />
             <Text style={styles.infoText}>
-              {website}
+              {selectedOrganization.website}
             </Text>
           </View>
           <AddCalendarButton
             eventName={title}
             eventStartDate={startDate}
-            eventEndDate={endDate}
+            // eventEndDate={endDate}
           />
         </ScrollView>
         <Text style={styles.header}>
           Event Description
         </Text>
-        <Text style={styles.normalText} numberOfLines={showFullDescription ? undefined : MAX_LINES} ellipsizeMode="tail"> {temp_description} </Text>
-        {temp_description?.length > MAX_LINES && (
+        <Text style={styles.normalText} numberOfLines={showFullDescription ? undefined : MAX_LINES} ellipsizeMode="tail"> {description} </Text>
+        {description?.length > MAX_LINES && (
           <TouchableOpacity onPress={toggleShowFullDescription}>
             <Text style={styles.readMore}>
               {showFullDescription ? 'Read less' : 'Read more'}
@@ -365,25 +373,25 @@ function EventDetailScreen({
           More About the Organization
         </Text>
         <Text style={styles.normalText}>
-          {organizationDescription}
+          {selectedOrganization.description}
         </Text>
         <View>
           <View style={[styles.flexContainer, {marginTop: 10}]}>
             <Image source={require('../assets/detailScreen/callTransparent.png')} style={styles.infoIconTransparent} />
             <Text style={styles.normalText}>
-              {phoneNumber}
+              {selectedOrganization.phoneNumber}
             </Text>
           </View>
           <View style={styles.flexContainer}>
             <Image source={require('../assets/detailScreen/mailTransparent.png')} style={styles.infoIconTransparent} />
             <Text style={styles.normalText}>
-              studio526@gmail.com
+              {selectedOrganization.email}
             </Text>
           </View>
           <View style={[styles.flexContainer, {marginBottom: 10}]}>
             <Image source={require('../assets/detailScreen/globeTransparent.png')} style={styles.infoIconTransparent} />
             <Text style={styles.normalText}>
-              {website}
+              {selectedOrganization.website}
             </Text>
           </View>
           <TouchableOpacity style={styles.button} onPress={() => onPressOrganization()}>
@@ -406,7 +414,7 @@ EventDetailScreen.propTypes = {
     params: PropTypes.shape({
       key: PropTypes.string,
       id: PropTypes.string.isRequired,
-      image: PropTypes.string,
+      image: PropTypes.number.isRequired,
       title: PropTypes.string,
       location: PropTypes.shape({
         name: PropTypes.string,

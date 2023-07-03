@@ -37,15 +37,15 @@ function EventScreen({ navigation }) {
     MontserratMedium: Montserrat_500Medium,
   });
 
-  const imageThumbnails = {
-    'art & community': "require('../assets/eventThumbnails/art&community.png')",
-    exhibit: "require('../assets/eventThumbnails/exhibit.png')",
-    film: "require('../assets/eventThumbnails/film.png')",
-    music: "require('../assets/eventThumbnails/music.png')",
-    performance: "require('../assets/eventThumbnails/performance.png')",
-    'spoken word': "require('../assets/eventThumbnails/spokenWord.png')",
-    miscellaneous: "require('../assets/eventThumbnails/miscellaneous.png')",
-    'visual art': "require('../assets/eventThumbnails/visualArt.png')",
+  const eventThumbnails = {
+    'art & community': require('../assets/eventThumbnails/artCommunity.png'),
+    exhibit: require('../assets/eventThumbnails/exhibit.png'),
+    film: require('../assets/eventThumbnails/film.png'),
+    music: require('../assets/eventThumbnails/music.png'),
+    performance: require('../assets/eventThumbnails/performance.png'),
+    'spoken word': require('../assets/eventThumbnails/spokenWord.png'),
+    miscellaneous: require('../assets/eventThumbnails/miscellaneous.png'),
+    'visual art': require('../assets/eventThumbnails/visualArt.png'),
   };
 
   const getAllEvents = async () => {
@@ -68,13 +68,49 @@ function EventScreen({ navigation }) {
     setShowCalendar(!showCalendar);
   };
 
+  const getWeek = (date) => {
+    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const dayOfWeek = firstDayOfMonth.getDay() || 7; // Convert Sunday to 7
+    const dayOfMonth = date.getDate();
+
+    const adjustedDayOfMonth = dayOfMonth + dayOfWeek - 1;
+    const weekOfMonth = Math.ceil(adjustedDayOfMonth / 7);
+
+    return weekOfMonth;
+  };
+  // const weekNum = (date, weekday) => {
+  //   const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+
+  //   let count = 0;
+  //   for (let day = firstDay; day <= date; day.setDate(day.getDate() + 1)) {
+  //     if (day.getDay() === weekday) {
+  //       count += 1;
+  //     }
+  //   }
+  //   console.log(count);
+  //   return count;
+  // };
+
+  // the way the calendar works is you have to double click it to select another date
   const filterEvents = (date) => {
     if (!date) {
       setFilteredEvents(allEvents);
     } else {
+      const inputDate = new Date(date);
+      inputDate.setHours(17, 0, 0);
       const filtered = allEvents.filter((event) => {
-        const startDate = new Date(event.EventData.startDate);
-        return startDate >= new Date(date);
+        const eventDate = new Date(event.EventData.dateDetails.date);
+        const dayOfWeek = event.EventData.dateDetails.day;
+        const rec = event.EventData.dateDetails.recurring;
+        const weekOfMonth = event.EventData.dateDetails.week;
+
+        if (rec === 'Weekly') {
+          return (inputDate >= eventDate && inputDate.getDay() === dayOfWeek);
+        }
+        if (rec === 'Monthly') {
+          return (inputDate >= eventDate && inputDate.getDay() === dayOfWeek && getWeek(inputDate) === weekOfMonth)
+        }
+        return (inputDate.getTime() === eventDate.getTime());
       });
       setFilteredEvents(filtered);
     }
@@ -125,19 +161,23 @@ function EventScreen({ navigation }) {
         <EventCard
           key={event.EventData._id}
           id={event.EventData._id}
-          image={imageThumbnails[event.EventData.tag]}
+          startTime={event.EventData.dateDetails.startTime}
+          endTime={event.EventData.dateDetails.endTime}
+          day={event.EventData.dateDetails.day}
+          week={event.EventData.dateDetails.week}
+          image={eventThumbnails[event.EventData.tag]}
           title={event.EventData.title}
-          location={event.EventData.location}
+          location={event.EventData.locationDetails}
           description={event.EventData.description}
-          startDate={new Date(event.EventData.startDate)}
-          endDate={new Date(event.EventData.endDate)}
+          startDate={new Date(event.EventData.dateDetails.date)}
+          // endDate={new Date(event.EventData.endDate)}
           tag={event.EventData.tag}
-          phoneNumber={event.EventData.phoneNumber}
-          organization={event.EventData.organization}
-          recurringMonthly={event.EventData.recurringMonthly}
-          recurringWeekly={event.EventData.recurringWeekly}
-          website={event.EventData.website}
-          organizationDescription={event.EventData.organizationDescription}
+          // phoneNumber={event.EventData.phoneNumber}
+          organization={event.EventData.host}
+          recurringMonthly={event.EventData.dateDetails.recurring === 'Monthly'}
+          recurringWeekly={event.EventData.dateDetails.recurring === 'Weekly'}
+          // website={event.EventData.website}
+          // organizationDescription={event.EventData.organizationDescription}
           navigation={navigation}
         />
       ))}

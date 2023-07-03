@@ -156,12 +156,6 @@ function MapScreen() {
 
   return (
     <View style={styles.container}>
-      {/* To be implemented later */}
-      {/* <Button title="Workshop">Workshop</Button>
-      <Button title="Food">Food</Button>
-      <Button title="Shelter">Shelter</Button>
-      <Button title="Mission">Mission</Button>
-      <Button title="Shower/Laundry">Shower/Laundry</Button> */}
       <MapView
         ref={mapRef}
         initialRegion={state.region}

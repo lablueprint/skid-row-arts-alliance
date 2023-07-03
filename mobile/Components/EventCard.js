@@ -67,8 +67,11 @@ function EventCard({
   location,
   title,
   description,
+  startTime,
+  endTime,
+  day,
+  week,
   startDate,
-  endDate,
   tag,
   navigation,
   phoneNumber,
@@ -86,15 +89,16 @@ function EventCard({
 
   const onPressEvent = () => {
     navigation.navigate('Event Details', {
-      key,
       id,
       image,
       location,
       title,
+      day,
+      week,
+      startTime,
+      endTime,
       description,
       startDate,
-      endDate,
-      tag,
       phoneNumber,
       organization,
       recurringMonthly,
@@ -104,20 +108,8 @@ function EventCard({
     });
   };
 
-  function formatTime(dateObject) {
-    const hours = dateObject.getHours();
-    const minutes = dateObject.getMinutes();
-    let formattedHours = hours % 12;
-    formattedHours = formattedHours === 0 ? 12 : formattedHours;
-    const period = hours >= 12 ? 'pm' : 'am';
-    const formattedMinutes = minutes.toString().padStart(2, '0');
-    return `${formattedHours}:${formattedMinutes} ${period}`;
-  }
-
-  const startTime = formatTime(new Date(startDate));
-  const endTime = formatTime(new Date(endDate));
-  console.log(image);
-
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayOfWeek = daysOfWeek[day];
 
   return (
     <View style={styles.card}>
@@ -139,9 +131,7 @@ function EventCard({
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.time}>
             {startTime}
-            {' '}
             -
-            {' '}
             {endTime}
           </Text>
         </View>
@@ -153,7 +143,7 @@ function EventCard({
 EventCard.propTypes = {
   key: PropTypes.string,
   id: PropTypes.string.isRequired,
-  image: PropTypes.shape.isRequired,
+  image: PropTypes.number.isRequired,
   location: PropTypes.shape({
     name: PropTypes.string,
     address: PropTypes.string,
