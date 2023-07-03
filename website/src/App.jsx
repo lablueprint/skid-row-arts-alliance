@@ -16,6 +16,8 @@ import SubmissionDetailsPage from './Pages/GalleryPage/SubmissionDetailsPage';
 import HeadingBar from './Components/HeadingBar/HeadingBar';
 import NavigationBar from './Components/NavigationBar/NavigationBar';
 import ZineDetailsPage from './Pages/ZinesPage/ZineDetailsPage';
+import AddResourcePage from './Pages/ResourcesPage/AddResourcePage';
+import EditResourcePage from './Pages/ResourcesPage/EditResourcePage';
 
 function App() {
   const { id, token } = useSelector((state) => state.sliceAuth);
@@ -40,6 +42,9 @@ function App() {
             <Route path="/resources" element={(<ResourcesPage />)} />
             <Route path="/submission" element={(<SubmissionDetailsPage />)} />
             <Route path="/zine" element={(<ZineDetailsPage />)} />
+            <Route path="/resources/add" element={(<AddResourcePage />)} />
+            <Route path="/resources/edit" element={(<EditResourcePage />)} />
+
           </Routes>
         </div>
       </div>
