@@ -28,7 +28,8 @@ function ResourcesPage() {
       headers: authHeader,
     });
     const resources = response.data;
-    setAllResources(resources);
+    const updatedResources = resources.map((r) => ({ ...r, days: [0, 1, 0, 0, 1, 0, 1] }));
+    setAllResources(updatedResources);
   };
 
   useEffect(() => {
@@ -39,9 +40,13 @@ function ResourcesPage() {
     navigate('/resources/add');
   };
 
-  const editResourceDetails = () => {
-    // TODO: edit resources
-    navigate();
+  const editResourceDetails = (id) => {
+    const resourceDetails = allResources.find((e) => e._id === id);
+    navigate('/resources/edit', {
+      state: {
+        resourceDetails,
+      },
+    });
   };
 
   const deleteResource = async () => {
@@ -122,26 +127,26 @@ function ResourcesPage() {
               <Typography>
                 TODO map the days
               </Typography>
-              <Typography>
+              {/* <Typography>
                 {previewDetails.dateDetails.startTime}
                 -
                 {previewDetails.dateDetails.endTime}
-              </Typography>
+              </Typography> */}
             </Box>
             <Box>
-              <Typography>
+              {/* <Typography>
                 {previewDetails.locationDetails.phoneNumber}
-              </Typography>
+              </Typography> */}
             </Box>
             <Box>
-              <Typography>
+              {/* <Typography>
                 {previewDetails.locationDetails.address}
-              </Typography>
+              </Typography> */}
             </Box>
             <Box>
-              <Typography>
+              {/* <Typography>
                 {previewDetails.website}
-              </Typography>
+              </Typography> */}
             </Box>
           </Box>
         ) : (
