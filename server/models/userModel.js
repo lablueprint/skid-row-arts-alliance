@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 
 const socialSchema = new mongoose.Schema({
-  platform: {
-    required: true,
+  instagram: {
+    required: false,
     type: String,
   },
-  accountTag: {
-    required: true,
+  facebook: {
+    required: false,
+    type: String,
+  },
+  twitter: {
+    required: false,
     type: String,
   },
 });
@@ -33,8 +37,12 @@ const userSchema = new mongoose.Schema({
     required: false,
     type: socialSchema,
   },
+  bio: {
+    required: false,
+    type: String,
+  },
   profilePicture: {
-    required: true,
+    required: false,
     type: String,
   },
   savedEvents: {
@@ -49,6 +57,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     type: [String],
   },
+  passwordResetCode: {
+    required: false,
+    type: String,
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);

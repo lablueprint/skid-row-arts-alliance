@@ -68,28 +68,18 @@ function EventScreen({ navigation }) {
     setShowCalendar(!showCalendar);
   };
 
-  const getWeek = (date) => {
-    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
-    const dayOfWeek = firstDayOfMonth.getDay() || 7; // Convert Sunday to 7
-    const dayOfMonth = date.getDate();
+  const weekNum = (date, weekday) => {
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
 
-    const adjustedDayOfMonth = dayOfMonth + dayOfWeek - 1;
-    const weekOfMonth = Math.ceil(adjustedDayOfMonth / 7);
-
-    return weekOfMonth;
+    let count = 0;
+    for (let day = firstDay; day <= date; day.setDate(day.getDate() + 1)) {
+      if (day.getDay() === weekday) {
+        count += 1;
+      }
+    }
+    console.log(count);
+    return count;
   };
-  // const weekNum = (date, weekday) => {
-  //   const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-
-  //   let count = 0;
-  //   for (let day = firstDay; day <= date; day.setDate(day.getDate() + 1)) {
-  //     if (day.getDay() === weekday) {
-  //       count += 1;
-  //     }
-  //   }
-  //   console.log(count);
-  //   return count;
-  // };
 
   // the way the calendar works is you have to double click it to select another date
   const filterEvents = (date) => {
@@ -108,7 +98,7 @@ function EventScreen({ navigation }) {
           return (inputDate >= eventDate && inputDate.getDay() === dayOfWeek);
         }
         if (rec === 'Monthly') {
-          return (inputDate >= eventDate && inputDate.getDay() === dayOfWeek && getWeek(inputDate) === weekOfMonth)
+          return (inputDate >= eventDate && inputDate.getDay() === dayOfWeek && weekNum(inputDate, dayOfWeek) === weekOfMonth)
         }
         return (inputDate.getTime() === eventDate.getTime());
       });
@@ -170,14 +160,10 @@ function EventScreen({ navigation }) {
           location={event.EventData.locationDetails}
           description={event.EventData.description}
           startDate={new Date(event.EventData.dateDetails.date)}
-          // endDate={new Date(event.EventData.endDate)}
           tag={event.EventData.tag}
-          // phoneNumber={event.EventData.phoneNumber}
           organization={event.EventData.host}
           recurringMonthly={event.EventData.dateDetails.recurring === 'Monthly'}
           recurringWeekly={event.EventData.dateDetails.recurring === 'Weekly'}
-          // website={event.EventData.website}
-          // organizationDescription={event.EventData.organizationDescription}
           navigation={navigation}
         />
       ))}
