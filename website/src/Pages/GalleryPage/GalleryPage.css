@@ -1,0 +1,17 @@
+.title {
+  color: #1e2021;
+  font-family: "Montserrat-SemiBold", sans-serif;
+  letter-spacing: 1.6px;
+}
+
+.status-dot {
+  margin-right: 0.5rem;
+  height: 1rem;
+  width: 1rem;
+}
+
+.dropdown-option-text {
+  font-family: "Montserrat-Regular", sans-serif;
+  color: #53595C;
+  line-height: 0;
+}
