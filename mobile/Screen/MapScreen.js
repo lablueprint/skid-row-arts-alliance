@@ -195,44 +195,38 @@ function MapScreen({navigation}) {
       >
         {allEvents.map((event) => (
           <MapCard
-            key={event.EventData._id}
             id={event.EventData._id}
+            startTime={event.EventData.dateDetails.startTime}
+            endTime={event.EventData.dateDetails.endTime}
+            day={event.EventData.dateDetails.day}
+            week={event.EventData.dateDetails.week}
             image={eventThumbnails[event.EventData.tag]}
             title={event.EventData.title}
-            location={event.EventData.location}
+            location={event.EventData.locationDetails}
             description={event.EventData.description}
-            startDate={new Date(event.EventData.locationDetails.date)}
-            endDate={new Date(event.EventData.endDate)}
+            startDate={new Date(event.EventData.dateDetails.date)}
             tag={event.EventData.tag}
-            phoneNumber={event.EventData.phoneNumber}
-            organization={event.EventData.organization}
-            recurringMonthly={event.EventData.recurringMonthly}
-            recurringWeekly={event.EventData.recurringWeekly}
-            website={event.EventData.website}
-            organizationDescription={event.EventData.organizationDescription}
+            organization={event.EventData.host}
+            recurringMonthly={event.EventData.dateDetails.recurring === 'Monthly'}
+            recurringWeekly={event.EventData.dateDetails.recurring === 'Weekly'}
             navigation={navigation}
             isEvent
           />
         ))}
         {allResources.map((resource) => (
           <MapCard
-            key={resource.ResourceData._id}
             id={resource.ResourceData._id}
             image={resourceThumbnails[resource.ResourceData.tag]}
             title={resource.ResourceData.title}
-            location={resource.ResourceData.location}
+            location={resource.ResourceData.locationDetails}
+            startTime={resource.ResourceData.dateDetails.startTime}
+            endTime={resource.ResrouceData.dateDetails.endTime}
+            days={resource.ResourceData.dateDetails.days}
             description={resource.ResourceData.description}
-            startDate={new Date(resource.ResourceData.date)}
-            endDate={new Date(resource.ResourceData.endDate)}
             tag={resource.ResourceData.tag}
             phoneNumber={resource.ResourceData.phoneNumber}
-            organization={resource.ResourceData.organization}
-            recurringMonthly={resource.ResourceData.recurringMonthly}
-            recurringWeekly={resource.ResourceData.recurringWeekly}
             website={resource.ResourceData.website}
-            organizationDescription={resource.ResourceData.organizationDescription}
-            thumbnail={resource.ResourceData.thumbnail}
-            resourceType={resource.ResourceData.resourceType}
+            email={resource.ResourceData.email}
             navigation={navigation}
             isEvent={false}
           />

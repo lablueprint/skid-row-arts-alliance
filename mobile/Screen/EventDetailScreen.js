@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Image, Switch, TouchableOpacity,
+  StyleSheet, View, Text, ScrollView, Image, TouchableOpacity,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { URL } from '@env';
@@ -192,42 +192,25 @@ function EventDetailScreen({
     recurringWeekly,
   } = route.params || {};
 
-  const organizations = [
-    {
-      title: 'Los Angeles Poverty Department',
-      image: require('../assets/orgPics/lapd.png'),
-      description: 'Founded in 1985 by director-performer-activist John Malpede, Los Angeles Poverty Department (LAPD)is a non-profit arts organization, the first performance group in the nation made up principally of homeless people, and the first arts program of any kind for homeless people in Los Angeles. LAPD creates performances and multidisciplinary artworks that connect the experience of people living in poverty to the social forces that shape their lives and communities. LAPD’s works express the realities, hopes, dreams and rights of people who live and work in L.A.’s Skid Row.',
-      phoneNumber: '(213) 413-1077',
-      email: 'info@lapovertydept.org',
-      website: 'www.lapovertydept.org',
-    },
-    {
-      title: 'Piece by Piece',
-      image: require('../assets/orgPics/piecebypiece.png'),
-      description: 'Our mission is to empower residents who have experienced homelessness or economic insecurity by providing free mosaic art workshops enabling them to build confidence, earn supplementary income, promote wellness and an improved quality of life.',
-      phoneNumber: '(213) 459-1420',
-      email: 'info@piecebypiece.org',
-      website: 'https://www.piecebypiece.org',
-    },
-    {
-      title: 'Street Symphony',
-      image: require('../assets/orgPics/streetsymphony.png'),
-      description: 'Connection through music. Street Symphony engages communities directly affected by homelessness and incarceration in LA County through performances, workshops and teaching artistry.',
-      phoneNumber: '(213) 222-6221',
-      email: 'contact@streetsymphony.org',
-      website: 'www.streetsymphony.org',
-    },
-    {
-      title: 'Urban Voices Project',
-      image: require('../assets/orgPics/urbanvoices.png'),
-      description: 'Urban Voices Project uses music to create supportive community spaces in Skid Row and the Los Angeles area that bridge vulnerable individuals to a sense of purpose and improved health.',
-      phoneNumber: '(714) 606-4818',
-      email: 'info@urbanvoicesproject.org',
-      website: 'urbanvoicesproject.org',
-    },
-  ];
+  const [allOrgs, setAllOrgs] = useState([]);
 
-  const selectedOrganization = organizations.find((org) => org.title === organization);
+  const getAllOrgs = async () => {
+    try {
+      const result = await axios.get(`${URL}/nonprofit/get`);
+      setAllOrgs(result.data || []);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  useEffect(() => {
+    getAllOrgs();
+  }, []);
+
+  const selectedOrganization = allOrgs.find((org) => org.organizationTitle === organization);
+
   const [isEventSaved, setIsEventSaved] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const toggleShowFullDescription = () => {
@@ -298,8 +281,7 @@ function EventDetailScreen({
     }
   };
 
-  // TO DO: add 'first' tuesdays, etc.
-  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const dayOfWeek = daysOfWeek[day];
   const weeksOfMonth = ['First', 'Second', 'Third', 'Fourth'];
   const weekOfMonth = weeksOfMonth[week - 1];
@@ -328,7 +310,8 @@ function EventDetailScreen({
           <View style={styles.infoRow}>
             <Image source={require('../assets/detailScreen/calendarIcon.png')} style={styles.infoIcon} />
             {recurringMonthly && <Text style={styles.infoText}>{weekOfMonth} {dayOfWeek}{'s'}</Text>}
-            {!recurringMonthly && <Text style={styles.infoText}>{dayOfWeek}</Text>}
+            {!recurringMonthly && <Text style={styles.infoText}>{dayOfWeek}{'s'}</Text>}
+            {!recurringMonthly && !recurringWeekly && <Text style={styles.infoText}>{dayOfWeek}</Text>}
             <View style={styles.frequency}>
               {recurringMonthly && <Text style={styles.frequencyText}>Monthly</Text>}
               {recurringWeekly && <Text style={styles.frequencyText}>Weekly</Text>}
@@ -362,7 +345,6 @@ function EventDetailScreen({
           <AddCalendarButton
             eventName={title}
             eventStartDate={startDate}
-            // eventEndDate={endDate}
           />
         </ScrollView>
         <Text style={styles.header}>
@@ -434,14 +416,12 @@ EventDetailScreen.propTypes = {
       }),
       description: PropTypes.string,
       startDate: PropTypes.instanceOf(Date),
-      endDate: PropTypes.instanceOf(Date),
       tag: PropTypes.string,
       phoneNumber: PropTypes.string,
       organization: PropTypes.string,
       recurringMonthly: PropTypes.bool,
       recurringWeekly: PropTypes.bool,
       website: PropTypes.string,
-      organizationDescription: PropTypes.string,
     }),
   }).isRequired,
 };

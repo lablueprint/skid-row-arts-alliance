@@ -75,9 +75,9 @@ const eventSchema = new mongoose.Schema({
     type: String,
   },
   eventDescription: {
-    retuired: true, 
+    required: true,
     type: [String],
-  }
+  },
 });
 
 module.exports = mongoose.model('Event', eventSchema);

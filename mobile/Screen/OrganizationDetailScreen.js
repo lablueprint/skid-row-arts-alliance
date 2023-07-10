@@ -49,19 +49,28 @@ function OrganizationDetailScreen({ route, navigation }) {
     selectedOrganization,
   } = route.params || {};
 
+  const orgImages = {
+    'Los Angeles Poverty Department': require('../assets/orgPics/lapd.png'),
+    'Piece by Piece': require('../assets/orgPics/piecebypiece.png'),
+    'Street Symphony': require('../assets/orgPics/streetsymphony.png'),
+    'Urban Voices Project': require('../assets/orgPics/urbanvoices.png'),
+  };
+
+  const orgImage = orgImages[selectedOrganization.organizationTitle]
+
   const [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
     MontserratMedium: Montserrat_500Medium,
   });
 
   React.useLayoutEffect(() => {
-    navigation.setOptions({ headerTitle: selectedOrganization.title });
-  }, [navigation, selectedOrganization.title]);
+    navigation.setOptions({ headerTitle: selectedOrganization.organizationTitle });
+  }, [navigation, selectedOrganization.organizationTitle]);
 
   return (
     <View style={styles.container}>
       <Image
-        source={selectedOrganization.image}
+        source={orgImage}
         style={styles.image}
       />
       <View style={styles.textContainer}>
@@ -100,11 +109,7 @@ OrganizationDetailScreen.propTypes = {
   }).isRequired,
   route: PropTypes.shape({
     params: PropTypes.shape({
-      organization: PropTypes.string.isRequired,
-      organizationDescription: PropTypes.string.isRequired,
-      phoneNumber: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      website: PropTypes.string.isRequired,
+      selectedOrganization: PropTypes.shape,
     }),
   }).isRequired,
 };

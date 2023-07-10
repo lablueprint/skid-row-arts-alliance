@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
 });
 
 function EventCard({
-  key,
   id,
   image,
   location,
@@ -79,7 +78,6 @@ function EventCard({
   recurringMonthly,
   recurringWeekly,
   website,
-  organizationDescription,
 }) {
   const [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
@@ -104,12 +102,8 @@ function EventCard({
       recurringMonthly,
       recurringWeekly,
       website,
-      organizationDescription,
     });
   };
-
-  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const dayOfWeek = daysOfWeek[day];
 
   return (
     <View style={styles.card}>
@@ -141,7 +135,6 @@ function EventCard({
 }
 
 EventCard.propTypes = {
-  key: PropTypes.string,
   id: PropTypes.string.isRequired,
   image: PropTypes.number.isRequired,
   location: PropTypes.shape({
@@ -151,19 +144,21 @@ EventCard.propTypes = {
     coordinates: PropTypes.shape({
       latitude: PropTypes.number,
       longitude: PropTypes.number,
-    }),
-  }),
+    }).isRequired,
+  }).isRequired,
   title: PropTypes.string.isRequired,
-  descriptions: PropTypes.string,
+  description: PropTypes.string.isRequired,
   startDate: PropTypes.instanceOf(Date).isRequired,
-  endDate: PropTypes.instanceOf(Date).isRequired,
+  startTime: PropTypes.string.isRequired,
+  endTime: PropTypes.string.isRequired,
   tag: PropTypes.string.isRequired,
-  phoneNumber: PropTypes.string,
-  organization: PropTypes.string,
-  recurringMonthly: PropTypes.bool,
-  recurringWeekly: PropTypes.bool,
-  website: PropTypes.string,
-  organizationDescription: PropTypes.string,
+  day: PropTypes.number.isRequired,
+  week: PropTypes.number.isRequired,
+  phoneNumber: PropTypes.string.isRequired,
+  organization: PropTypes.string.isRequired,
+  recurringMonthly: PropTypes.bool.isRequired,
+  recurringWeekly: PropTypes.bool.isRequired,
+  website: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
