@@ -1,6 +1,6 @@
 import { React, useState } from 'react';
 import {
-  Box, Button, Container, FormControl, MenuItem, Select, TextField, Typography,
+  Box, Button, Container, FormControl, Grid, MenuItem, Select, TextField, Typography,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -9,6 +9,7 @@ import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import EventImageCard from './EventImageCard';
 
 function AddEventPage() {
   const { authHeader } = useSelector((state) => state.sliceAuth);
@@ -26,6 +27,7 @@ function AddEventPage() {
   const [longitude, setLongitude] = useState('');
   const [address, setAddress] = useState('');
   const [description, setDescription] = useState('');
+  const [images, setImages] = useState([]);
 
   const backToEvents = () => {
     navigate('/events');
@@ -60,6 +62,18 @@ function AddEventPage() {
       headers: authHeader,
     });
     backToEvents();
+  };
+
+  const uploadImage = (event) => {
+    const files = Array.from(event.target.files);
+    const uploadedImages = files.map((file) => URL.createObjectURL(file));
+    setImages([...images, ...uploadedImages]);
+  };
+
+  const removeImage = (index) => {
+    const updatedImages = [...images];
+    updatedImages.splice(index, 1);
+    setImages(updatedImages);
   };
 
   return (
@@ -186,6 +200,32 @@ function AddEventPage() {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+      </Box>
+      <Box>
+        <Grid container spacing={2}>
+          {images.map((image, index) => (
+            <Grid item>
+              <EventImageCard image={image} index={index} removeImage={removeImage} />
+            </Grid>
+          ))}
+        </Grid>
+        <label style={{ marginTop: '20px' }} htmlFor="upload-button">
+          <Button
+            variant="outlined"
+            component="span"
+            sx={{ marginTop: '20px' }}
+          >
+            Upload Images
+          </Button>
+          <input
+            accept="image/*"
+            id="upload-button"
+            multiple
+            style={{ display: 'none' }}
+            type="file"
+            onChange={uploadImage}
+          />
+        </label>
       </Box>
       <Box>
         <Button onClick={() => backToEvents()}>Cancel</Button>
