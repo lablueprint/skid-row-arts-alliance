@@ -1,8 +1,45 @@
+const AWS = require('aws-sdk');
 const Event = require('../models/eventModel');
+
+// Connect to the AWS S3 Storage
+const s3 = new AWS.S3({
+  accessKeyId: process.env.ACCESS_KEY_ID,
+  secretAccessKey: process.env.SECRET_ACCESS_KEY,
+  region: process.env.S3_REGION,
+});
 
 // Example of creating a document in the database
 const createEvent = async (req, res) => {
-  const event = new Event(req.body);
+  const { newEvent } = req.body;
+  const eventData = JSON.parse(newEvent);
+
+  // Handle uploaded images
+  const { files } = req;
+  const images = [];
+  if (files) {
+    try {
+      await Promise.all(
+        files.map(async (file) => {
+          const imageKey = `EventImages/${file.originalname}`;
+          const params = {
+            Bucket: process.env.S3_BUCKET,
+            Key: imageKey,
+            ContentType: file.mimetype,
+            Body: file.buffer,
+          };
+          await s3.upload(params).promise();
+          images.push(imageKey);
+        }),
+      );
+    } catch (err) {
+      res.status(err.statusCode ? err.statusCode : 400);
+      res.send(err);
+    }
+    eventData.images = images;
+  }
+  console.log(eventData);
+
+  const event = new Event(eventData);
   try {
     const data = await event.save(event);
     res.send(data);
@@ -17,9 +54,20 @@ const getAllEvents = async (req, res) => {
     // S3 Key retrieval from MongoDB
     // Empty `filter` means "match all documents"
     const filter = {};
-    const allEvents = await Event.find(filter);
+    const events = await Event.find(filter);
 
-    // TODO: replace AWS thumbnails with hardcoded defaults
+    const allEvents = await Promise.all(
+      events.map(async (event) => {
+        const updatedImages = await Promise.all(
+          event.images.map(async (imageKey) => `https://${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com/${imageKey}`),
+        );
+        return {
+          ...event.toObject(),
+          images: updatedImages,
+        };
+      }),
+    );
+    console.log(allEvents);
     res.send(allEvents);
   } catch (err) {
     res.status(err.statusCode ? err.statusCode : 400);

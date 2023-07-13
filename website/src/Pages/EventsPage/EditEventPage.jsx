@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from 'react';
 import {
-  Box, Button, Container, FormControl, MenuItem, Select, TextField, Typography,
+  Box, Button, Container, FormControl, Grid, MenuItem, Select, TextField, Typography,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -9,6 +9,7 @@ import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import EventImageCard from './EventImageCard';
 
 function EditEventPage() {
   const location = useLocation();
@@ -31,6 +32,8 @@ function EditEventPage() {
   const [longitude, setLongitude] = useState('');
   const [address, setAddress] = useState('');
   const [description, setDescription] = useState('');
+  const [imageData, setImageData] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
 
   useEffect(() => {
     setTitle(eventDetails.title);
@@ -44,6 +47,9 @@ function EditEventPage() {
     setLongitude(eventDetails.locationDetails.coordinates.longitude);
     setAddress(eventDetails.locationDetails.address);
     setDescription(eventDetails.description);
+    setImageData(eventDetails.images);
+    setImagePreviews(eventDetails.images);
+    console.log(eventDetails.images);
   }, []);
 
   const backToEvents = () => {
@@ -75,10 +81,35 @@ function EditEventPage() {
       description,
       tag,
     };
-    await axios.patch(`http://localhost:4000/event/update/${eventDetails._id}`, updatedEvent, {
-      headers: authHeader,
+
+    const formData = new FormData();
+    formData.append('newEvent', JSON.stringify(updatedEvent));
+    imageData.forEach((image) => {
+      formData.append('image', image);
+    });
+    await axios.patch(`http://localhost:4000/event/update/${eventDetails._id}`, formData, {
+      headers: {
+        ...authHeader,
+        'Content-Type': 'multipart/form-data',
+      },
     });
     backToEvents();
+  };
+
+  const uploadImage = (event) => {
+    const files = Array.from(event.target.files);
+    setImageData([...imageData, ...files]);
+    const updatedImagePreviews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviews([...imagePreviews, ...updatedImagePreviews]);
+  };
+
+  const removeImage = (index) => {
+    const updatedImageData = [...imageData];
+    updatedImageData.splice(index, 1);
+    setImageData(updatedImageData);
+    const updatedImagePreviews = [...imagePreviews];
+    updatedImagePreviews.splice(index, 1);
+    setImagePreviews(updatedImagePreviews);
   };
 
   return (
@@ -205,6 +236,36 @@ function EditEventPage() {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+      </Box>
+      <Box>
+        <Grid container spacing={2}>
+          {imagePreviews.map((image, index) => (
+            <Grid item>
+              <EventImageCard
+                image={image}
+                index={index}
+                removeImage={removeImage}
+              />
+            </Grid>
+          ))}
+        </Grid>
+        <label style={{ marginTop: '20px' }} htmlFor="upload-button">
+          <Button
+            variant="outlined"
+            component="span"
+            sx={{ marginTop: '20px' }}
+          >
+            Upload Images
+          </Button>
+          <input
+            accept="image/*"
+            id="upload-button"
+            multiple
+            style={{ display: 'none' }}
+            type="file"
+            onChange={uploadImage}
+          />
+        </label>
       </Box>
       <Box>
         <Button onClick={() => backToEvents()}>Cancel</Button>

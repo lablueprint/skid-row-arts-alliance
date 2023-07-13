@@ -27,7 +27,8 @@ function AddEventPage() {
   const [longitude, setLongitude] = useState('');
   const [address, setAddress] = useState('');
   const [description, setDescription] = useState('');
-  const [images, setImages] = useState([]);
+  const [imageData, setImageData] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
 
   const backToEvents = () => {
     navigate('/events');
@@ -58,22 +59,35 @@ function AddEventPage() {
       description,
       tag,
     };
-    await axios.post('http://localhost:4000/event/create', newEvent, {
-      headers: authHeader,
+
+    const formData = new FormData();
+    formData.append('newEvent', JSON.stringify(newEvent));
+    imageData.forEach((image) => {
+      formData.append('image', image);
     });
-    backToEvents();
+    await axios.post('http://localhost:4000/event/create', formData, {
+      headers: {
+        ...authHeader,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    // backToEvents();
   };
 
   const uploadImage = (event) => {
     const files = Array.from(event.target.files);
-    const uploadedImages = files.map((file) => URL.createObjectURL(file));
-    setImages([...images, ...uploadedImages]);
+    setImageData([...imageData, ...files]);
+    const updatedImagePreviews = files.map((file) => URL.createObjectURL(file));
+    setImagePreviews([...imagePreviews, ...updatedImagePreviews]);
   };
 
   const removeImage = (index) => {
-    const updatedImages = [...images];
-    updatedImages.splice(index, 1);
-    setImages(updatedImages);
+    const updatedImageData = [...imageData];
+    updatedImageData.splice(index, 1);
+    setImageData(updatedImageData);
+    const updatedImagePreviews = [...imagePreviews];
+    updatedImagePreviews.splice(index, 1);
+    setImagePreviews(updatedImagePreviews);
   };
 
   return (
@@ -203,9 +217,13 @@ function AddEventPage() {
       </Box>
       <Box>
         <Grid container spacing={2}>
-          {images.map((image, index) => (
+          {imagePreviews.map((image, index) => (
             <Grid item>
-              <EventImageCard image={image} index={index} removeImage={removeImage} />
+              <EventImageCard
+                image={image}
+                index={index}
+                removeImage={removeImage}
+              />
             </Grid>
           ))}
         </Grid>
