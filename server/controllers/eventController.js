@@ -80,12 +80,14 @@ const updateEvent = async (req, res) => {
 
   const { files } = req;
   const updatedImageKeys = files.map((file) => `EventImages/${file.originalname}`);
+  // Updated image keys that should appear in MongoDB and S3
   const updatedImages = [...eventData.images, ...updatedImageKeys];
 
   eventData.images = updatedImages;
   try {
     // Add the updated event details to the MongoDB document
     const response = await Event.findByIdAndUpdate(req.params.id, eventData, { new: false });
+    // Original image keys that should be replaced
     const originalImages = [...response.images];
 
     // Delete the image keys that were removed from the original
@@ -117,7 +119,13 @@ const updateEvent = async (req, res) => {
 
 const deleteEvent = async (req, res) => {
   try {
-    const response = await Event.findByIdAndRemove(req.params.id);
+    const response = await Event.findByIdAndRemove(req.params.id, { new: true });
+    await Promise.all(response.images.map(async (key) => {
+      await s3.deleteObject({
+        Bucket: process.env.S3_BUCKET,
+        Key: key,
+      }).promise();
+    }));
     res.send(response);
   } catch (err) {
     res.status(err.statusCode ? err.statusCode : 400);

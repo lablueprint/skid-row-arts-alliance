@@ -71,7 +71,7 @@ function AddEventPage() {
         'Content-Type': 'multipart/form-data',
       },
     });
-    // backToEvents();
+    backToEvents();
   };
 
   const uploadImage = (event) => {
