@@ -48,8 +48,7 @@ function EditEventPage() {
     setAddress(eventDetails.locationDetails.address);
     setDescription(eventDetails.description);
     setImageData(eventDetails.images);
-    setImagePreviews(eventDetails.images);
-    console.log(eventDetails.images);
+    setImagePreviews(eventDetails.imageUrls);
   }, []);
 
   const backToEvents = () => {
@@ -73,6 +72,7 @@ function EditEventPage() {
         longitude: Number(longitude),
       },
     };
+    const originalImages = imageData.filter((image) => typeof image === 'string');
     const updatedEvent = {
       title,
       dateDetails,
@@ -80,10 +80,11 @@ function EditEventPage() {
       host,
       description,
       tag,
+      images: originalImages,
     };
 
     const formData = new FormData();
-    formData.append('newEvent', JSON.stringify(updatedEvent));
+    formData.append('updatedEvent', JSON.stringify(updatedEvent));
     imageData.forEach((image) => {
       formData.append('image', image);
     });
@@ -93,7 +94,7 @@ function EditEventPage() {
         'Content-Type': 'multipart/form-data',
       },
     });
-    backToEvents();
+    // backToEvents();
   };
 
   const uploadImage = (event) => {

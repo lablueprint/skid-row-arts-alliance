@@ -19,15 +19,15 @@ const createEvent = async (req, res) => {
   if (files) {
     try {
       await Promise.all(
+        // Upload the images to S3 and add their keys to the images array
         files.map(async (file) => {
           const imageKey = `EventImages/${file.originalname}`;
-          const params = {
+          await s3.upload({
             Bucket: process.env.S3_BUCKET,
             Key: imageKey,
             ContentType: file.mimetype,
             Body: file.buffer,
-          };
-          await s3.upload(params).promise();
+          }).promise();
           images.push(imageKey);
         }),
       );
@@ -37,8 +37,8 @@ const createEvent = async (req, res) => {
     }
     eventData.images = images;
   }
-  console.log(eventData);
 
+  // Create a new event with the data and potential images
   const event = new Event(eventData);
   try {
     const data = await event.save(event);
@@ -63,11 +63,10 @@ const getAllEvents = async (req, res) => {
         );
         return {
           ...event.toObject(),
-          images: updatedImages,
+          imageUrls: updatedImages,
         };
       }),
     );
-    console.log(allEvents);
     res.send(allEvents);
   } catch (err) {
     res.status(err.statusCode ? err.statusCode : 400);
@@ -76,9 +75,40 @@ const getAllEvents = async (req, res) => {
 };
 
 const updateEvent = async (req, res) => {
+  const { updatedEvent } = req.body;
+  const eventData = JSON.parse(updatedEvent);
+
+  const { files } = req;
+  const updatedImageKeys = files.map((file) => `EventImages/${file.originalname}`);
+  const updatedImages = [...eventData.images, ...updatedImageKeys];
+
+  eventData.images = updatedImages;
   try {
-    const response = await Event.findByIdAndUpdate(req.params.id, req.body);
-    res.send(response);
+    // Add the updated event details to the MongoDB document
+    const response = await Event.findByIdAndUpdate(req.params.id, eventData, { new: false });
+    const originalImages = [...response.images];
+
+    // Delete the image keys that were removed from the original
+    const toDelete = originalImages.filter((imageKey) => !updatedImages.includes(imageKey));
+    await Promise.all(toDelete.map(async (key) => {
+      await s3.deleteObject({
+        Bucket: process.env.S3_BUCKET,
+        Key: key,
+      }).promise();
+    }));
+
+    // Add the image files that were added from the original
+    files.forEach(async (file) => {
+      const imageKey = `EventImages/${file.originalname}`;
+      await s3.upload({
+        Bucket: process.env.S3_BUCKET,
+        Key: imageKey,
+        ContentType: file.mimetype,
+        Body: file.buffer,
+      }).promise();
+    });
+
+    res.send(eventData);
   } catch (err) {
     res.status(err.statusCode ? err.statusCode : 400);
     res.send(err);
