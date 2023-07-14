@@ -5,6 +5,7 @@ import axios from 'axios';
 import { React, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import MediaRenderer from './MediaRenderer';
 
 function SubmissionDetailsPage() {
   const { authHeader } = useSelector((state) => state.sliceAuth);
@@ -14,7 +15,7 @@ function SubmissionDetailsPage() {
   } = location.state;
 
   const [details, setDetails] = useState({
-    mediaData: [''],
+    mediaData: null,
     status: '',
     title: '',
     uploader: '',
@@ -215,10 +216,11 @@ function SubmissionDetailsPage() {
           </Box>
         </Box>
         <Box>
-          {details.mediaData.map((media) => (
-          // TODO: adjust the rendering for each type of media
-            <img style={{ height: 300, width: 300 }} src={media.MediaURL} alt={media.ContentType} />
-          ))}
+          { details.mediaData ? (
+            <MediaRenderer mediaArray={details.mediaData} />
+          ) : (
+            null
+          )}
         </Box>
         <Box>
           {!edit ? (
