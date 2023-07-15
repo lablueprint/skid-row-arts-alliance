@@ -56,11 +56,11 @@ function GalleryPage() {
 
   // TODO: further styling needed for pagination
   const columns = [
-    { field: 'Submission Title', width: 200 },
-    { field: 'Uploader', width: 150 },
-    { field: 'Status', width: 150 },
-    { field: 'Media Type', width: 200 },
-    { field: 'Date', width: 150 },
+    { field: 'Submission Title', width: 250 },
+    { field: 'Uploader', width: 200 },
+    { field: 'Status', width: 200 },
+    { field: 'Media Type', width: 250 },
+    { field: 'Date', width: 200 },
   ];
 
   const getSubmissionData = async () => {
@@ -100,7 +100,7 @@ function GalleryPage() {
       <h1 className="title">Gallery Submissions</h1>
       <div className="filters">
         <FormControl sx={{ minWidth: 225 }} size="small">
-          <InputLabel id="status-multiselect-label">Status</InputLabel>
+          <InputLabel id="status-multiselect-label" sx={{ fontFamily: 'Montserrat-Regular, sans-serif' }}>Status</InputLabel>
           <Select
             labelId="status-multiselect-label"
             id="status-multiselect"
@@ -145,7 +145,7 @@ function GalleryPage() {
           </Select>
         </FormControl>
         <FormControl sx={{ minWidth: 225, ml: 2 }} size="small">
-          <InputLabel id="media-type-multiselect-label">Media Type</InputLabel>
+          <InputLabel id="media-type-multiselect-label" sx={{ fontFamily: 'Montserrat-Regular, sans-serif' }}>Media Type</InputLabel>
           <Select
             labelId="media-type-multiselect-label"
             id="media-type-multiselect"
@@ -196,6 +196,16 @@ function GalleryPage() {
         autoHeight
         checkboxSelection
         onRowClick={(params) => viewArtwork(params)}
+        sx={{
+          fontFamily: 'Montserrat-Regular, sans-serif',
+          '& .MuiDataGrid-columnHeader': {
+            backgroundColor: '#4C4C9B',
+            color: 'white',
+            fontFamily: 'Montserrat-Medium, sans-serif',
+            fontSize: '17px',
+          },
+          mb: 6,
+        }}
       />
     </Container>
   );
