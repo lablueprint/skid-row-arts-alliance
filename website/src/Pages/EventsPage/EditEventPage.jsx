@@ -113,10 +113,22 @@ function EditEventPage() {
     setImagePreviews(updatedImagePreviews);
   };
 
+  const deleteEvent = async () => {
+    await axios.delete(`http://localhost:4000/event/delete/${eventDetails._id}`, {
+      headers: authHeader,
+    });
+    backToEvents();
+  };
+
   return (
     <Container>
       <Box>
-        <Typography variant="h5">Edit Event Info</Typography>
+        <Box>
+          <Typography variant="h5">Edit Event Info</Typography>
+        </Box>
+        <Box>
+          <Button onClick={() => deleteEvent()}>Delete Event</Button>
+        </Box>
       </Box>
       <Box>
         <Typography>Event Title</Typography>
