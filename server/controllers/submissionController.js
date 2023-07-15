@@ -127,7 +127,6 @@ const getGalleryThumbnails = async (req, res) => {
     }));
     res.send(responseList);
   } catch (err) {
-    console.error(err);
     res.status(err.statusCode ? err.statusCode : 400);
     res.send(err);
   }
@@ -178,7 +177,6 @@ const getSubmissions = async (req, res) => {
     }));
     res.send(responseList);
   } catch (err) {
-    console.error(err);
     res.status(err.statusCode ? err.statusCode : 400);
     res.send(err);
   }
