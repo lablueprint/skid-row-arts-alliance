@@ -8,32 +8,6 @@ const s3 = new AWS.S3({
   region: process.env.S3_REGION,
 });
 
-// const deleteThumbnail = async (key) => {
-//   s3.deleteObject({
-//     Bucket: process.env.S3_BUCKET,
-//     Key: key,
-//   }, (e, data) => {
-//     if (e) {
-//       console.log(e);
-//     } else {
-//       console.log(data);
-//     }
-//   });
-// };
-
-// const deleteSubmissions = async (keys) => {
-//   const s3Promises = await objects.slice(0, objects.length - thumbnailExists)
-//     .map(async (_, index) => s3.deleteObject({
-//       Bucket: process.env.S3_BUCKET,
-//       Key: s3keys[index],
-//     }).promise());
-
-//   Promise.all(s3Promises).catch(() => {
-//     res.send('Failsafe failed to delete submissions', err);
-//   });
-//   res.send(err);
-// };
-
 const createSubmission = async (req, res) => {
   // S3
   const {
@@ -65,11 +39,13 @@ const createSubmission = async (req, res) => {
         Body: Buffer.from(objects[objects.length - thumbnailExists].uri, 'base64'),
       }, (err) => {
         if (err) {
-          console.log(err);
+          res.status(err.statusCode ? err.statusCode : 400);
+          res.send(err);
         }
       });
     } catch (err) {
-      console.error(err);
+      res.status(err.statusCode ? err.statusCode : 400);
+      res.send(err);
     }
   }
 
@@ -81,7 +57,10 @@ const createSubmission = async (req, res) => {
       ContentType: object.type,
       Body: Buffer.from(object.uri, 'base64'),
     }).promise());
-  Promise.all(s3Promises).catch((err) => console.error(err));
+  Promise.all(s3Promises).catch((err) => {
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
+  });
 
   const mediaTypes = [];
   objects.slice(0, objects.length - thumbnailExists).forEach((o) => {
@@ -108,17 +87,28 @@ const createSubmission = async (req, res) => {
     const response = await submission.save(submission);
     res.send(response);
   } catch (err) {
-    console.error(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
   }
 };
 
 const deleteSubmission = async (req, res) => {
-  const { id } = req.params;
   try {
-    await Submission.deleteOne({ _id: id });
-    res.send(`Successfully deleted ${id}`);
+    const response = await Submission.findById(req.params.id);
+    await Promise.all(response.s3keys.map(async (key) => {
+      await s3.deleteObject({
+        Bucket: process.env.S3_BUCKET,
+        Key: key,
+      }).promise();
+    }));
+    await s3.deleteObject({
+      Bucket: process.env.S3_BUCKET,
+      Key: response.thumbnail,
+    }).promise();
+    res.send(response);
   } catch (err) {
-    console.error(err);
+    res.status(err.statusCode ? err.statusCode : 400);
+    res.send(err);
   }
 };
 
@@ -165,7 +155,6 @@ const getArtworkDetails = async (req, res) => {
       Submission: submission,
     });
   } catch (err) {
-    console.error(err);
     res.status(err.statusCode ? err.statusCode : 400);
     res.send(err);
   }
@@ -200,6 +189,7 @@ const updateSubmission = async (req, res) => {
     const data = await Submission.findByIdAndUpdate(req.params.id, req.body);
     res.send(data);
   } catch (err) {
+    res.status(err.statusCode ? err.statusCode : 400);
     res.send(err);
   }
 };

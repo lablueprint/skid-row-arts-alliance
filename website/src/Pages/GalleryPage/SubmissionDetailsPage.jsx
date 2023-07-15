@@ -4,7 +4,7 @@ import {
 import axios from 'axios';
 import { React, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MediaRenderer from './MediaRenderer';
 
 function SubmissionDetailsPage() {
@@ -13,6 +13,7 @@ function SubmissionDetailsPage() {
   const {
     id,
   } = location.state;
+  const navigate = useNavigate();
 
   const [details, setDetails] = useState({
     mediaData: null,
@@ -65,6 +66,10 @@ function SubmissionDetailsPage() {
   useEffect(() => {
     getSubmissionDetails();
   }, [update]);
+
+  const backToGallery = () => {
+    navigate('/');
+  };
 
   const handleEditCancel = () => {
     setTitle(details.title);
@@ -122,8 +127,27 @@ function SubmissionDetailsPage() {
     setChange(false);
   };
 
+  const handleDelete = async () => {
+    await axios.delete(`http://localhost:4000/submissions/deletesubmission/${id}`, {
+      headers: authHeader,
+    });
+    backToGallery();
+  };
+
   return (
     <Box sx={{ display: 'flex', backgroundColor: '#F8F8F8' }}>
+      <Box>
+        <Box>
+          <Button onClick={() => backToGallery()}>
+            Back to Gallery
+          </Button>
+        </Box>
+        <Box>
+          <Button onClick={() => handleDelete()}>
+            Delete Submission
+          </Button>
+        </Box>
+      </Box>
       <Box sx={{
         width: '60%', marginLeft: '5%', marginTop: '5%', marginBottom: '5%', marginRight: '1%', padding: '2%', backgroundColor: '#FFFFFF',
       }}
