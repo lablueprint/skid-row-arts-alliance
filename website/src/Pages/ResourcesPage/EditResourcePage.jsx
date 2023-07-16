@@ -29,17 +29,20 @@ function EditResourcePage() {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [address, setAddress] = useState('');
+  const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
 
   useEffect(() => {
     setTitle(resourceDetails.title);
     setTag(resourceDetails.tag);
+    setPhoneNumber(resourceDetails.phoneNumber);
     setDays(resourceDetails.days);
     setStartTime(dayjs(resourceDetails.dateDetails.startTime, 'h:mm a'));
     setEndTime(dayjs(resourceDetails.dateDetails.endTime, 'h:mm a'));
     setLatitude(resourceDetails.locationDetails.coordinates.latitude);
     setLongitude(resourceDetails.locationDetails.coordinates.longitude);
     setAddress(resourceDetails.locationDetails.address);
+    setEmail(resourceDetails.email);
     setWebsite(resourceDetails.website);
     const daysOfWeek = [0, 0, 0, 0, 0, 0, 0];
     resourceDetails.dateDetails.days.forEach((dayIndex) => {
@@ -97,6 +100,8 @@ function EditResourcePage() {
       dateDetails,
       locationDetails,
       tag,
+      phoneNumber,
+      email,
       website,
     };
     await axios.patch(`http://localhost:4000/resource/update/${resourceDetails._id}`, updatedResource, {
@@ -238,15 +243,18 @@ function EditResourcePage() {
         />
       </Box>
       <Box>
+        <Typography>Email</Typography>
+        <TextField
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </Box>
+      <Box>
         <Typography>Website</Typography>
         <TextField
           value={website}
           onChange={(e) => setWebsite(e.target.value)}
         />
-      </Box>
-      <Box>
-        <Typography>Thumbnail</Typography>
-        TODO: picture preview
       </Box>
       <Box>
         <Button onClick={() => backToResources()}>Cancel</Button>

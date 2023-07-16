@@ -2,6 +2,7 @@ const Resource = require('../models/resourceModel');
 
 const createResource = async (req, res) => {
   const resource = new Resource(req.body);
+  console.log(resource);
   try {
     const data = await resource.save(resource);
     res.send(data);
@@ -21,7 +22,7 @@ const updateResource = async (req, res) => {
   }
 };
 
-const getAllResources = async (req, res) => {
+const getAllResources = async (_, res) => {
   try {
     const allResources = await Resource.find();
     res.send(allResources);

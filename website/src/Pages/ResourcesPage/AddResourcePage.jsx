@@ -24,8 +24,8 @@ function AddResourcePage() {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [address, setAddress] = useState('');
+  const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
-  const [thumbnail, setThumbnail] = useState('');
 
   const updateDays = (num) => {
     const updatedDaysStatus = [...days];
@@ -34,7 +34,6 @@ function AddResourcePage() {
   };
 
   const backToResources = () => {
-    setThumbnail('');
     navigate('/resources');
   };
 
@@ -54,11 +53,11 @@ function AddResourcePage() {
   };
 
   const createResource = async () => {
-    const daysOfWeek = days.map((day, index) => {
+    const daysOfWeek = [];
+    days.forEach((day, index) => {
       if (day) {
-        return index;
+        daysOfWeek.push(index);
       }
-      return null;
     });
     const dateDetails = {
       days: daysOfWeek,
@@ -77,8 +76,9 @@ function AddResourcePage() {
       dateDetails,
       locationDetails,
       tag,
+      phoneNumber,
+      email,
       website,
-      thumbnail,
     };
     await axios.post('http://localhost:4000/resource/post', newResource, {
       headers: authHeader,
@@ -219,15 +219,18 @@ function AddResourcePage() {
         />
       </Box>
       <Box>
+        <Typography>Email</Typography>
+        <TextField
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+      </Box>
+      <Box>
         <Typography>Website</Typography>
         <TextField
           value={website}
           onChange={(e) => setWebsite(e.target.value)}
         />
-      </Box>
-      <Box>
-        <Typography>Thumbnail</Typography>
-        TODO: picture preview
       </Box>
       <Box>
         <Button onClick={() => backToResources()}>Cancel</Button>

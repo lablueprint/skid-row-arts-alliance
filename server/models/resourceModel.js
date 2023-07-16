@@ -58,7 +58,11 @@ const resourceSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  thumbnail: {
+  email: {
+    required: true,
+    type: String,
+  },
+  website: {
     required: true,
     type: String,
   },

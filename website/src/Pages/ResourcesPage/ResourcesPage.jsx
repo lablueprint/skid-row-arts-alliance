@@ -138,7 +138,7 @@ function ResourcesPage() {
             </Box>
             <Box>
               <Typography>
-                {previewDetails.locationDetails.phoneNumber}
+                {previewDetails.phoneNumber}
               </Typography>
             </Box>
             <Box>
