@@ -2,7 +2,6 @@ const Resource = require('../models/resourceModel');
 
 const createResource = async (req, res) => {
   const resource = new Resource(req.body);
-  console.log(resource);
   try {
     const data = await resource.save(resource);
     res.send(data);
