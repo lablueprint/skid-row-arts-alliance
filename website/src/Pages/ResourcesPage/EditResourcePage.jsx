@@ -3,10 +3,10 @@ import {
   Box, Button, Container, FormControl, MenuItem, Select, TextField, Typography,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { TimePicker } from '@mui/x-date-pickers';
-// import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 
@@ -23,8 +23,9 @@ function EditResourcePage() {
   const [title, setTitle] = useState('');
   const [tag, setTag] = useState('');
   const [days, setDays] = useState([]);
-  //   const [startTime, setStartTime] = useState(dayjs());
-  //   const [endTime, setEndTime] = useState(dayjs().add(1, 'h'));
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [startTime, setStartTime] = useState(dayjs());
+  const [endTime, setEndTime] = useState(dayjs().add(1, 'h'));
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [address, setAddress] = useState('');
@@ -34,12 +35,17 @@ function EditResourcePage() {
     setTitle(resourceDetails.title);
     setTag(resourceDetails.tag);
     setDays(resourceDetails.days);
-    // setStartTime(dayjs(resourceDetails.dateDetails.startTime, 'h:mm a'));
-    // setEndTime(dayjs(resourceDetails.dateDetails.endTime, 'h:mm a'));
-    // setLatitude(resourceDetails.locationDetails.coordinates.latitude);
-    // setLongitude(resourceDetails.locationDetails.coordinates.longitude);
-    // setAddress(resourceDetails.locationDetails.address);
-    // setWebsite(resourceDetails.website);
+    setStartTime(dayjs(resourceDetails.dateDetails.startTime, 'h:mm a'));
+    setEndTime(dayjs(resourceDetails.dateDetails.endTime, 'h:mm a'));
+    setLatitude(resourceDetails.locationDetails.coordinates.latitude);
+    setLongitude(resourceDetails.locationDetails.coordinates.longitude);
+    setAddress(resourceDetails.locationDetails.address);
+    setWebsite(resourceDetails.website);
+    const daysOfWeek = [0, 0, 0, 0, 0, 0, 0];
+    resourceDetails.dateDetails.days.forEach((dayIndex) => {
+      daysOfWeek[dayIndex] = 1;
+    });
+    setDays(daysOfWeek);
   }, []);
 
   const updateDays = (num) => {
@@ -52,11 +58,32 @@ function EditResourcePage() {
     navigate('/resources');
   };
 
+  const handlePhoneNumberChange = (event) => {
+    const inputValue = event.target.value;
+
+    // Remove all non-numeric characters from the input value
+    const numericValue = inputValue.replace(/\D/g, '');
+
+    // Format the phone number once it reaches 10 digits
+    if (numericValue.length === 10) {
+      const formattedValue = `(${numericValue.slice(0, 3)}) ${numericValue.slice(3, 6)}-${numericValue.slice(6, 10)}`;
+      setPhoneNumber(formattedValue);
+    } else if (numericValue.length < 10) {
+      setPhoneNumber(numericValue);
+    }
+  };
+
   const editResource = async () => {
-    // TODO: update for resources
+    const daysOfWeek = [];
+    days.forEach((day, index) => {
+      if (day) {
+        daysOfWeek.push(index);
+      }
+    });
     const dateDetails = {
-    //   startTime: startTime.format('h:mm a'),
-    //   endTime: endTime.format('h:mm a'),
+      days: daysOfWeek,
+      startTime: startTime.format('h:mm a'),
+      endTime: endTime.format('h:mm a'),
     };
     const locationDetails = {
       address,
@@ -81,7 +108,7 @@ function EditResourcePage() {
   return (
     <Container>
       <Box>
-        <Typography variant="h5">Edit Resource Info</Typography>
+        <Typography variant="h5">Edit Resource Card</Typography>
       </Box>
       <Box>
         <Typography>Resource Title</Typography>
@@ -116,7 +143,6 @@ function EditResourcePage() {
           onClick={() => updateDays(0)}
         >
           M
-
         </Button>
         <Button
           variant="contained"
@@ -124,7 +150,6 @@ function EditResourcePage() {
           onClick={() => updateDays(1)}
         >
           Tu
-
         </Button>
         <Button
           variant="contained"
@@ -132,7 +157,6 @@ function EditResourcePage() {
           onClick={() => updateDays(2)}
         >
           W
-
         </Button>
         <Button
           variant="contained"
@@ -140,7 +164,6 @@ function EditResourcePage() {
           onClick={() => updateDays(3)}
         >
           Th
-
         </Button>
         <Button
           variant="contained"
@@ -148,7 +171,6 @@ function EditResourcePage() {
           onClick={() => updateDays(4)}
         >
           F
-
         </Button>
         <Button
           variant="contained"
@@ -156,7 +178,6 @@ function EditResourcePage() {
           onClick={() => updateDays(5)}
         >
           Sa
-
         </Button>
         <Button
           variant="contained"
@@ -164,12 +185,18 @@ function EditResourcePage() {
           onClick={() => updateDays(6)}
         >
           Su
-
         </Button>
       </Box>
       <Box>
+        <Typography>Phone Number</Typography>
+        <TextField
+          value={phoneNumber}
+          onChange={handlePhoneNumberChange}
+        />
+      </Box>
+      <Box>
         <Typography>Hours</Typography>
-        {/* <Box>
+        <Box>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <TimePicker
               value={startTime}
@@ -185,7 +212,7 @@ function EditResourcePage() {
               onChange={(newTime) => setEndTime(newTime)}
             />
           </LocalizationProvider>
-        </Box> */}
+        </Box>
       </Box>
       <Box>
         <Box>

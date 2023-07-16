@@ -22,14 +22,14 @@ function ResourcesPage() {
   const [openPreview, setOpenPreview] = useState(false);
   const [previewDetails, setPreviewDetails] = useState(null);
   const [refresh, setRefresh] = useState(0);
+  const daysOfWeek = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
 
   const getResources = async () => {
     const response = await axios.get('http://localhost:4000/resource/get', {
       headers: authHeader,
     });
     const resources = response.data;
-    const updatedResources = resources.map((r) => ({ ...r, days: [0, 1, 0, 0, 1, 0, 1] }));
-    setAllResources(updatedResources);
+    setAllResources(resources);
   };
 
   useEffect(() => {
@@ -49,9 +49,12 @@ function ResourcesPage() {
     });
   };
 
-  const deleteResource = async () => {
-    // TODO: delete resources
+  const deleteResource = async (id) => {
+    await axios.delete(`http://localhost:4000/resource/delete/${id}`, {
+      headers: authHeader,
+    });
     setRefresh((val) => val + 1);
+    setOpenPreview(false);
   };
 
   const previewResourceDetails = (eventDetails) => {
@@ -81,12 +84,12 @@ function ResourcesPage() {
             onClick={() => previewResourceDetails(resource)}
           >
             <ResourceCard
-              title={resource.ResourceData.title}
-              tag={resource.ResourceData.tag}
-              days={resource.ResourceData.days}
-              startTime={resource.ResourceData.startTime}
-              endTime={resource.ResourceData.endTime}
-              address={resource.ResourceData.address}
+              title={resource.title}
+              tag={resource.tag}
+              days={resource.days}
+              startTime={resource.startTime}
+              endTime={resource.endTime}
+              address={resource.address}
             />
           </Box>
         ))}
@@ -124,29 +127,29 @@ function ResourcesPage() {
               </Typography>
             </Box>
             <Box sx={{ display: 'flex' }}>
+              <Box>
+                {previewDetails.dateDetails.days.map((dayIndex) => daysOfWeek[dayIndex]).join(', ')}
+              </Box>
               <Typography>
-                TODO map the days
-              </Typography>
-              {/* <Typography>
                 {previewDetails.dateDetails.startTime}
                 -
                 {previewDetails.dateDetails.endTime}
-              </Typography> */}
+              </Typography>
             </Box>
             <Box>
-              {/* <Typography>
+              <Typography>
                 {previewDetails.locationDetails.phoneNumber}
-              </Typography> */}
+              </Typography>
             </Box>
             <Box>
-              {/* <Typography>
+              <Typography>
                 {previewDetails.locationDetails.address}
-              </Typography> */}
+              </Typography>
             </Box>
             <Box>
-              {/* <Typography>
+              <Typography>
                 {previewDetails.website}
-              </Typography> */}
+              </Typography>
             </Box>
           </Box>
         ) : (
