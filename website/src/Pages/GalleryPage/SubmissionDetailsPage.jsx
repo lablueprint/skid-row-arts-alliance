@@ -10,6 +10,9 @@ import '../../fonts/Montserrat.css';
 import imgIcon from '../../assets/imgIcon.png';
 import vidIcon from '../../assets/vidIcon.png';
 import audIcon from '../../assets/audIcon.png';
+import incompleteDot from '../../assets/incompleteDot.png';
+import rejectedDot from '../../assets/rejectedDot.png';
+import approvedDot from '../../assets/approvedDot.png';
 import editIcon from '../../assets/editIcon.png';
 
 function SubmissionDetailsPage() {
@@ -131,6 +134,19 @@ function SubmissionDetailsPage() {
     image: <img src={imgIcon} alt="Pic icon" className="media-type-icon" />,
     video: <img src={vidIcon} alt="Video icon" className="media-type-icon" />,
     audio: <img src={audIcon} alt="Audio icon" className="media-type-icon" />,
+  };
+
+  const getStatusImage = (status) => {
+    switch (status) {
+      case 'Approved':
+        return approvedDot;
+      case 'Incomplete':
+        return incompleteDot;
+      case 'Rejected':
+        return rejectedDot;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -341,13 +357,20 @@ function SubmissionDetailsPage() {
           <p className="details-label">
             Status:
           </p>
-          <p className="details-text">
-            {details.status}
-          </p>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <img
+              src={getStatusImage(details.status)}
+              alt={details.status}
+              style={{ marginRight: '0.5rem', width: '12px', height: '12px' }}
+            />
+            <p className="details-text">
+              {details.status}
+            </p>
+          </Box>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <p className="details-label">
-            Action
+            Action:
           </p>
           <Box>
             <FormControl fullWidth>
@@ -370,7 +393,7 @@ function SubmissionDetailsPage() {
           </Box>
         </Box>
         <Box>
-          <p className="details-label">Comments</p>
+          <p className="details-label">Comments:</p>
           <TextField
             fullWidth
             multiline
