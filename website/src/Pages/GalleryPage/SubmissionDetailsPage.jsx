@@ -1,5 +1,5 @@
 import {
-  Box, Typography, Select, MenuItem, TextField, Button, FormControl,
+  Box, Select, MenuItem, TextField, Button, FormControl,
 } from '@mui/material';
 import axios from 'axios';
 import { React, useEffect, useState } from 'react';
@@ -252,14 +252,18 @@ function SubmissionDetailsPage() {
             <div>
               {media.ContentType?.startsWith('image/') && (
               <img
-                style={{ width: '100%', borderRadius: 5, marginBottom: 20 }}
+                style={{
+                  width: '100%', borderRadius: 5, marginBottom: 20, border: '1px solid #4C4C9B',
+                }}
                 src={media.MediaURL}
                 alt={media.ContentType}
               />
               )}
               {media.ContentType?.startsWith('video/') && (
               <video
-                style={{ width: '100%', borderRadius: 5, marginBottom: 20 }}
+                style={{
+                  width: '100%', borderRadius: 5, marginBottom: 20, border: '1px solid #4C4C9B',
+                }}
                 src={media.MediaURL}
                 controls
               >
@@ -273,7 +277,9 @@ function SubmissionDetailsPage() {
               )}
               {media.ContentType?.startsWith('audio/') && (
               <audio
-                style={{ width: '100%', borderRadius: 5, marginBottom: 20 }}
+                style={{
+                  width: '100%', borderRadius: 5, marginBottom: 20,
+                }}
                 src={media.MediaURL}
                 controls
               >
@@ -332,40 +338,48 @@ function SubmissionDetailsPage() {
       }}
       >
         <Box sx={{ display: 'flex' }}>
-          <Typography>
+          <p className="details-label">
             Status:
-          </Typography>
-          <Typography>
+          </p>
+          <p className="details-text">
             {details.status}
-          </Typography>
+          </p>
         </Box>
-        <Typography>
-          Action
-        </Typography>
-        <Box>
-          <FormControl fullWidth>
-            <Select
-              value={action}
-              defaultValue={action}
-              onChange={(e) => {
-                setAction(e.target.value);
-              }}
-              disabled={!change}
-            >
-              <MenuItem value="Approve">Approve</MenuItem>
-              <MenuItem value="Reject">Reject</MenuItem>
-            </Select>
-          </FormControl>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <p className="details-label">
+            Action
+          </p>
+          <Box>
+            <FormControl fullWidth>
+              <Select
+                value={action}
+                defaultValue={action}
+                onChange={(e) => {
+                  setAction(e.target.value);
+                }}
+                disabled={!change}
+                sx={{
+                  minWidth: 200, fontFamily: 'Montserrat-Regular, sans-serif',
+                }}
+                size="small"
+              >
+                <MenuItem value="Approve" sx={{ fontFamily: 'Montserrat-Regular, sans-serif' }}>Approve</MenuItem>
+                <MenuItem value="Reject" sx={{ fontFamily: 'Montserrat-Regular, sans-serif' }}>Reject</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
         </Box>
         <Box>
-          <Typography>Comments</Typography>
+          <p className="details-label">Comments</p>
           <TextField
             fullWidth
+            multiline
             value={comments}
             InputProps={{
               readOnly: !change,
             }}
             onChange={(e) => setComments(e.target.value)}
+            sx={{ mb: 5 }}
           />
         </Box>
         <Box>
@@ -385,7 +399,17 @@ function SubmissionDetailsPage() {
             <Box>
               {details.status === 'Incomplete' ? (
                 <Button
-                  sx={{ backgroundColor: '#4C4C9B' }}
+                  sx={{
+                    backgroundColor: '#4C4C9B',
+                    fontFamily: 'Montserrat-Medium',
+                    textTransform: 'none',
+                    boxShadow: 'none',
+                    '&:hover': {
+                      backgroundColor: '#262652',
+                    },
+                    pl: 3,
+                    pr: 3,
+                  }}
                   variant="contained"
                   onClick={() => {
                     handleSubmit();

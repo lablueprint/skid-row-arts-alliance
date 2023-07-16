@@ -1,4 +1,5 @@
 .title {
+    color: var(--blackcurrent, #1E2021);
     font-family: "Montserrat-Medium", sans-serif;
     font-size: 1.5rem;
 }
@@ -9,6 +10,7 @@
 }
 
 .details-label {
+    color: var(--grey-dark, #53595C);
     font-family: "Montserrat-Medium", sans-serif;
     font-size: 1rem;
     line-height: 150%;
@@ -16,6 +18,7 @@
 }
 
 .details-text {
+    color: var(--grey-dark, #53595C);
     font-family: "Montserrat-Regular", sans-serif;
     font-size: 1rem;
     line-height: 150%;
