@@ -5,6 +5,12 @@ import axios from 'axios';
 import { React, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import './SubmissionDetailsPage.css';
+import '../../fonts/Montserrat.css';
+import imgIcon from '../../assets/imgIcon.png';
+import vidIcon from '../../assets/vidIcon.png';
+import audIcon from '../../assets/audIcon.png';
+import editIcon from '../../assets/editIcon.png';
 
 function SubmissionDetailsPage() {
   const { authHeader } = useSelector((state) => state.sliceAuth);
@@ -121,103 +127,165 @@ function SubmissionDetailsPage() {
     setChange(false);
   };
 
+  const mediaTypeIconMap = {
+    image: <img src={imgIcon} alt="Pic icon" className="media-type-icon" />,
+    video: <img src={vidIcon} alt="Video icon" className="media-type-icon" />,
+    audio: <img src={audIcon} alt="Audio icon" className="media-type-icon" />,
+  };
+
   return (
     <Box sx={{ display: 'flex', backgroundColor: '#F8F8F8' }}>
       <Box sx={{
-        width: '60%', marginLeft: '5%', marginTop: '5%', marginBottom: '5%', marginRight: '1%', padding: '2%', backgroundColor: '#FFFFFF',
+        width: '60%', marginLeft: '5%', marginTop: '5%', marginBottom: '5%', marginRight: '1%', padding: '4%', backgroundColor: '#FFFFFF', boxShadow: 1, borderRadius: 2,
       }}
       >
-        <Box sx={{ display: 'flex' }}>
-          <Typography variant="h6">
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <h1 className="title">
             Submission Details
-          </Typography>
+          </h1>
           <Box sx={{ marginLeft: 'auto' }}>
-            { (edit) ? (
+            {edit ? (
               <>
               </>
             ) : (
-              <Button sx={{ backgroundColor: '#4C4C9B' }} onClick={() => setEdit(true)} variant="contained">Edit</Button>
+              <button type="button" onClick={() => setEdit(true)} style={{ border: 'none', background: 'transparent', cursor: 'pointer' }}>
+                <img src={editIcon} alt="Pencil" className="edit-icon" />
+              </button>
             )}
           </Box>
         </Box>
         <Box sx={{ display: 'flex' }}>
-          <Typography sx={{ width: 200, height: 30 }}>
+          <p className="details-label">
             Date Submitted:
-          </Typography>
-          <Typography>
+          </p>
+          <p className="details-text">
             {details.date}
-          </Typography>
+          </p>
         </Box>
         <Box sx={{ display: 'flex' }}>
-          <Typography sx={{ width: 200, height: 30 }}>
+          <p className="details-label">
             Art Title:
-          </Typography>
+          </p>
           {(edit) ? (
             <TextField
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              inputProps={{
+                style: {
+                  color: '#53595C',
+                  border: '0.75px solid #8A9195',
+                  borderRadius: '5px',
+                  backgroundColor: '#F8F8F8',
+                },
+              }}
             />
           ) : (
-            <Typography>
+            <p className="details-text">
               {title}
-            </Typography>
+            </p>
           )}
         </Box>
         <Box sx={{ display: 'flex' }}>
-          <Typography sx={{ width: 200, height: 30 }}>
+          <p className="details-label">
             Uploader:
-          </Typography>
-          <Typography>
+          </p>
+          <p className="details-text">
             {details.uploader}
-          </Typography>
+          </p>
         </Box>
         <Box sx={{ display: 'flex' }}>
-          <Typography sx={{ width: 200, height: 30 }}>
+          <p className="details-label">
             Email:
-          </Typography>
-          <Typography>
+          </p>
+          <p className="details-text">
             {details.email}
-          </Typography>
+          </p>
         </Box>
         <Box sx={{ display: 'flex' }}>
-          <Typography sx={{ width: 200, height: 30 }}>
+          <p className="details-label">
             Description:
-          </Typography>
+          </p>
           {(edit) ? (
             <TextField
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              inputProps={{
+                style: {
+                  color: '#53595C',
+                  border: '0.75px solid #8A9195',
+                  borderRadius: '5px',
+                  backgroundColor: '#F8F8F8',
+                },
+              }}
             />
           ) : (
-            <Typography>
+            <p className="details-text">
               {description}
-            </Typography>
+            </p>
           )}
         </Box>
         <Box sx={{ display: 'flex' }}>
-          <Typography sx={{ width: 200, height: 30 }}>
+          <p className="details-label">
             Media Type:
-          </Typography>
-          <Typography>
+          </p>
+          <div className="media-type-container">
             {details.mediaTypes.map((type) => (
-              <Typography>{type}</Typography>
+              <div className="media-type-item">
+                {mediaTypeIconMap[type]}
+                <p className="media-type-text">{type}</p>
+              </div>
             ))}
-          </Typography>
+          </div>
         </Box>
         <Box sx={{ display: 'flex' }}>
-          <Typography sx={{ width: 200, height: 30 }}>
+          <p className="details-label">
             Tags:
-          </Typography>
-          <Box sx={{ display: 'flex' }}>
+          </p>
+          <div className="tags-container">
             {details.tags.map((tag) => (
-              <Typography sx={{ marginRight: 1 }}>{tag}</Typography>
+              <p className="tag">{tag}</p>
             ))}
-          </Box>
+          </div>
         </Box>
-        <Box>
+        <Box sx={{ mt: 5 }}>
           {details.mediaData.map((media) => (
-          // TODO: adjust the rendering for each type of media
-            <img style={{ height: 300, width: 300 }} src={media.MediaURL} alt={media.ContentType} />
+            <div>
+              {media.ContentType?.startsWith('image/') && (
+              <img
+                style={{ width: '100%', borderRadius: 5, marginBottom: 20 }}
+                src={media.MediaURL}
+                alt={media.ContentType}
+              />
+              )}
+              {media.ContentType?.startsWith('video/') && (
+              <video
+                style={{ width: '100%', borderRadius: 5, marginBottom: 20 }}
+                src={media.MediaURL}
+                controls
+              >
+                <track
+                  kind="captions"
+                  src={media.Captions}
+                  srcLang={media.CaptionsLang || 'en'}
+                  label="English"
+                />
+              </video>
+              )}
+              {media.ContentType?.startsWith('audio/') && (
+              <audio
+                style={{ width: '100%', borderRadius: 5, marginBottom: 20 }}
+                src={media.MediaURL}
+                controls
+              >
+                <track
+                  kind="captions"
+                  src={media.Captions}
+                  srcLang={media.CaptionsLang || 'en'}
+                  label="English"
+                />
+              </audio>
+              )}
+            </div>
           ))}
         </Box>
         <Box>
@@ -228,7 +296,9 @@ function SubmissionDetailsPage() {
             <Box>
               <Button
                 variant="outlined"
-                sx={{ color: '#4C4C9B', borderColor: '#4C4C9B' }}
+                sx={{
+                  color: '#4C4C9B', borderColor: '#4C4C9B', mr: 2, width: '17%', fontFamily: 'Montserrat-Medium', textTransform: 'none',
+                }}
                 onClick={() => {
                   handleEditCancel();
                 }}
@@ -237,7 +307,16 @@ function SubmissionDetailsPage() {
               </Button>
               <Button
                 variant="contained"
-                sx={{ backgroundColor: '#4C4C9B' }}
+                sx={{
+                  backgroundColor: '#4C4C9B',
+                  width: '17%',
+                  fontFamily: 'Montserrat-Medium',
+                  textTransform: 'none',
+                  boxShadow: 'none',
+                  '&:hover': {
+                    backgroundColor: '#262652',
+                  },
+                }}
                 onClick={() => {
                   handleEditSave();
                 }}
@@ -249,7 +328,7 @@ function SubmissionDetailsPage() {
         </Box>
       </Box>
       <Box sx={{
-        width: '30%', marginRight: '5%', marginTop: '5%', marginBottom: '5%', marginLeft: '1%', padding: '2%', backgroundColor: '#FFFFFF',
+        width: '30%', marginRight: '5%', marginTop: '5%', marginBottom: '5%', marginLeft: '1%', padding: '4%', backgroundColor: '#FFFFFF', boxShadow: 1, borderRadius: 2,
       }}
       >
         <Box sx={{ display: 'flex' }}>
