@@ -6,7 +6,7 @@ const nonprofitController = require('../controllers/nonprofitController');
 nonprofitRouter.post('/add', nonprofitController.addNonprofit);
 nonprofitRouter.patch('/update/:id', nonprofitController.updateNonprofit);
 nonprofitRouter.get('/getall', nonprofitController.getAllNonprofits);
-nonprofitRouter.get('/get/:id', nonprofitController.getNonprofit);
+nonprofitRouter.get('/get/:title', nonprofitController.getNonprofit);
 nonprofitRouter.delete('/delete', nonprofitController.deleteNonprofit);
 
 module.exports = nonprofitRouter;

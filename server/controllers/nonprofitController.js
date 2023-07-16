@@ -33,7 +33,7 @@ const getAllNonprofits = async (_, res) => {
 
 const getNonprofit = async (req, res) => {
   try {
-    const data = await Nonprofit.findById(req.params.id);
+    const data = await Nonprofit.findOne({ organizationTitle: req.params.title });
     res.send(data);
   } catch (err) {
     res.status(err.statusCode ? err.statusCode : 400);
