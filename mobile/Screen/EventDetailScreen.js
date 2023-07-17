@@ -192,6 +192,17 @@ function EventDetailScreen({
     recurringWeekly,
   } = route.params || {};
 
+  let [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    console.log('Loading font...');
+  }
+
   const [allOrgs, setAllOrgs] = useState([]);
 
   const getAllOrgs = async () => {
@@ -216,13 +227,6 @@ function EventDetailScreen({
   const toggleShowFullDescription = () => {
     setShowFullDescription(!showFullDescription);
   };
-
-  const [fontsLoaded] = useFonts({
-    Montserrat: Montserrat_400Regular,
-    MontserratMedium: Montserrat_500Medium,
-    MontserratSemiBold: Montserrat_600SemiBold,
-    MontserratBold: Montserrat_700Bold,
-  });
 
   const getSavedEvents = async () => {
     try {

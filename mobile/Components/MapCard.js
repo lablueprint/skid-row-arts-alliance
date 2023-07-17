@@ -133,7 +133,7 @@ function MapCard({
   navigation,
   isEvent,
 }) {
-  const [fontsLoaded] = useFonts({
+  let [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
     MontserratMedium: Montserrat_500Medium,
     MontserratSemiBold: Montserrat_600SemiBold,

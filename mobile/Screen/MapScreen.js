@@ -112,14 +112,16 @@ function MapScreen({navigation}) {
       let index = Math.floor(value / CARD_WIDTH + 0.3);
       index = Math.max(0, Math.min(index, allCards.length - 1));
 
+      console.log(allCards[index])
+
       clearTimeout(mapRef.regionTimeout);
       mapRef.regionTimeout = setTimeout(() => {
         if ((mapRef.index !== index) || (mapRef.index === 0 && index === 0)) {
           mapRef.index = index;
-          const coordinate = allCards[index].location.coordinates || [];
+          const coordinates = allCards[index].locationDetails.coordinates || [];
           mapRef.current.animateToRegion(
             {
-              ...coordinate,
+              ...coordinates,
               latitudeDelta: state.region.latitudeDelta,
               longitudeDelta: state.region.longitudeDelta,
             },
@@ -220,7 +222,7 @@ function MapScreen({navigation}) {
             title={resource.ResourceData.title}
             location={resource.ResourceData.locationDetails}
             startTime={resource.ResourceData.dateDetails.startTime}
-            endTime={resource.ResrouceData.dateDetails.endTime}
+            endTime={resource.ResourceData.dateDetails.endTime}
             days={resource.ResourceData.dateDetails.days}
             description={resource.ResourceData.description}
             tag={resource.ResourceData.tag}

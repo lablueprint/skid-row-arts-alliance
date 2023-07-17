@@ -11,7 +11,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import { useFonts, Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
+import { useFonts, Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold, Montserrat_500Medium} from '@expo-google-fonts/montserrat';
 
 import MapScreen from '../Screen/MapScreen';
 import GalleryScreen from '../Screen/GalleryScreen';
@@ -178,6 +178,12 @@ function HomeStackScreen({ navigation }) {
 }
 
 function AppNavigator() {
+  let [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+    MontserratMedium: Montserrat_500Medium,
+  });
   const { id, token } = useSelector((state) => state.auth);
 
   return (

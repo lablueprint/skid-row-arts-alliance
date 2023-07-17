@@ -187,119 +187,68 @@ function ResourceDetailScreen({
     image,
   } = route.params || {};
 
-  const [allOrgs, setAllOrgs] = useState([]);
-
-  const getAllOrgs = async () => {
-    try {
-      const result = await axios.get(`${URL}/nonprofit/get`);
-      setAllOrgs(result.data || []);
-      return result.data;
-    } catch (err) {
-      console.error(err);
-      return err;
-    }
-  };
-
-  useEffect(() => {
-    getAllOrgs();
-  }, []);
-
-  const selectedOrganization = allOrgs.find((org) => org.organizationTitle === organization);
-
-  const [isEventSaved, setIsEventSaved] = useState(false);
-  const [showFullDescription, setShowFullDescription] = useState(false);
-  const toggleShowFullDescription = () => {
-    setShowFullDescription(!showFullDescription);
-  };
-
-  const [fontsLoaded] = useFonts({
+  // const [isEventSaved, setIsEventSaved] = useState(false);
+  // const [showFullDescription, setShowFullDescription] = useState(false);
+  // const toggleShowFullDescription = () => {
+  //   setShowFullDescription(!showFullDescription);
+  // };
+  let [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
     MontserratMedium: Montserrat_500Medium,
     MontserratSemiBold: Montserrat_600SemiBold,
     MontserratBold: Montserrat_700Bold,
   });
 
-  // const getSavedEvents = async () => {
-  //   try {
-  //     const res = await axios.get(`${URL}/user/getEvents/${id}`, {
-  //       headers: authHeader,
-  //     });
-  //     if ((res.data.msg[0].savedEvents.find((elem) => elem === eventId.toString())) === undefined) {
-  //       return false;
-  //     }
-  //     return true;
-  //   } catch (err) {
-  //     console.error(err);
-  //     return false;
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getSavedEvents().then((status) => setIsEventSaved(status));
-  // }, []);
-
-  // const addSavedEvent = async () => {
-  //   try {
-  //     const res = await axios.patch(`${URL}/user/addEvent/${id}`, [eventId], {
-  //       headers: authHeader,
-  //     });
-  //     setIsEventSaved(true);
-  //     return res;
-  //   } catch (err) {
-  //     return err;
-  //   }
-  // };
-
-  // const removeSavedEvent = async () => {
-  //   try {
-  //     const res = await axios.patch(`${URL}/user/removeEvent/${id}`, [eventId], {
-  //       headers: authHeader,
-  //     });
-  //     setIsEventSaved(false);
-  //     return res;
-  //   } catch (err) {
-  //     return err;
-  //   }
-  // };
-
-  // const onPressToggleSavedEvent = () => {
-  //   if (isEventSaved) {
-  //     removeSavedEvent();
-  //   } else {
-  //     addSavedEvent();
-  //   }
-  // };
-
-  const sortedDays = days.sort((a, b) => a - b);
-
-  // if there is 3+ consecutive days per week
-  const getConsecutiveInt = (arr) => {
-    const consecutiveIntegers = [];
-    let count = 1;
-    for (let i = 1; i < sortedArr.length; i += 1) {
-      if (sortedArr[i] === sortedArr[i - 1] + 1) {
-        count += 1;
-        if (count >= 3) {
-          consecutiveIntegers.push(sortedArr.slice(i - count + 1, i + 1));
-        }
-      } else {
-        count = 1;
+  const getSavedEvents = async () => {
+    try {
+      const res = await axios.get(`${URL}/user/getEvents/${id}`, {
+        headers: authHeader,
+      });
+      if ((res.data.msg[0].savedEvents.find((elem) => elem === eventId.toString())) === undefined) {
+        return false;
       }
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
     }
-    return consecutiveIntegers; // Return the array of consecutive integers
   };
 
-  const consecutiveInts = getConsecutiveInt(sortedDays);
+  useEffect(() => {
+    getSavedEvents().then((status) => setIsEventSaved(status));
+  }, []);
 
-  const weekdays = ['Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const daysOfWeek = [];
+  const addSavedEvent = async () => {
+    try {
+      const res = await axios.patch(`${URL}/user/addEvent/${id}`, [eventId], {
+        headers: authHeader,
+      });
+      setIsEventSaved(true);
+      return res;
+    } catch (err) {
+      return err;
+    }
+  };
 
-  if (consecutiveInts.length !== 0) {
-    consecutiveInts.map((int) => sortedDays.filter((day) => day !== int));
-    const consecutiveDays = weekdays[consecutiveInts[0]] + '-' + weekdays[consecutiveInts[consecutiveInts.length-1]];
-    daysOfWeek.push(consecutiveDays);
-  }
-  days.map((day) => daysOfWeek.push(weekday[day]));
+  const removeSavedEvent = async () => {
+    try {
+      const res = await axios.patch(`${URL}/user/removeEvent/${id}`, [eventId], {
+        headers: authHeader,
+      });
+      setIsEventSaved(false);
+      return res;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const onPressToggleSavedEvent = () => {
+    if (isEventSaved) {
+      removeSavedEvent();
+    } else {
+      addSavedEvent();
+    }
+  };
 
   const saveIcon = isEventSaved ? require('../assets/detailScreen/saved.png') : require('../assets/detailScreen/unsaved.png');
 
@@ -317,22 +266,7 @@ function ResourceDetailScreen({
             <Image style={styles.saveIcon} source={saveIcon} />
           </TouchableOpacity>
         </View>
-        {/* <TouchableOpacity style={styles.organizationContainer} onPress={() => onPressOrganization()}>
-          <Text style={styles.organizationText}>{organization}</Text>
-          <Image source={require('../assets/detailScreen/info.png')} style={styles.infoImage} />
-        </TouchableOpacity> */}
         <ScrollView style={styles.info}>
-          {/* <View style={styles.infoRow}>
-            <Image source={require('../assets/detailScreen/calendarIcon.png')} style={styles.infoIcon} />
-            <Text style={styles.infoText}>{weekOfMonth} {dayOfWeek}{'s'}</Text>
-            {!recurringMonthly && <Text style={styles.infoText}>{dayOfWeek}{'s'}</Text>}
-            {!recurringMonthly && !recurringWeekly && <Text style={styles.infoText}>{dayOfWeek}</Text>}
-            <View style={styles.frequency}>
-              {recurringMonthly && <Text style={styles.frequencyText}>Monthly</Text>}
-              {recurringWeekly && <Text style={styles.frequencyText}>Weekly</Text>}
-              {!recurringMonthly && !recurringWeekly && <Text style={styles.frequencyText}>Does not Repeat</Text>}
-            </View>
-          </View> */}
           <View style={styles.infoRow}>
             <Image source={require('../assets/detailScreen/clockIcon.png')} style={styles.infoIcon} />
             {daysOfWeek.map((day) => (

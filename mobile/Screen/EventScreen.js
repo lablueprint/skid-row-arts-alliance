@@ -26,16 +26,17 @@ const styles = StyleSheet.create({
 });
 
 function EventScreen({ navigation }) {
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [allEvents, setAllEvents] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
-  const [fontsLoaded] = useFonts({
+  let [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
     MontserratSemiBold: Montserrat_600SemiBold,
     MontserratBold: Montserrat_700Bold,
     MontserratMedium: Montserrat_500Medium,
   });
+
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [allEvents, setAllEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
   const eventThumbnails = {
     'art & community': require('../assets/eventThumbnails/artCommunity.png'),

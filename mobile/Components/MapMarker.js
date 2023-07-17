@@ -21,8 +21,8 @@ function MapMarker({ allCards, interpolations, onMarkerPress }) {
     };
 
     let markerImage;
-    if (!marker.startDate) { // Resources don't have startDates
-      switch (marker.resourceType) {
+    if (!marker.dateDetails.startDate) { // Resources don't have startDates
+      switch (marker.tag) {
         case 'food':
           markerImage = require('../assets/foodIcon.png');
           break;
@@ -47,7 +47,7 @@ function MapMarker({ allCards, interpolations, onMarkerPress }) {
     }
 
     return (
-      <Marker key={marker._id} coordinate={marker.location.coordinates} onPress={() => onMarkerPress(index)}>
+      <Marker key={marker._id} coordinate={marker.locationDetails.coordinates} onPress={() => onMarkerPress(index)}>
         <Animated.View style={[styles.markerWrap, opacityStyle]}>
           <View style={{ overflow: 'visible' }}>
             {marker.startDate ? (

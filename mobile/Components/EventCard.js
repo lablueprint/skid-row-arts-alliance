@@ -79,11 +79,14 @@ function EventCard({
   recurringWeekly,
   website,
 }) {
-  const [fontsLoaded] = useFonts({
+  let [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
     MontserratSemiBold: Montserrat_600SemiBold,
     MontserratBold: Montserrat_700Bold,
   });
+  if (!fontsLoaded) {
+    console.log('Loading font...');
+  }
 
   const onPressEvent = () => {
     navigation.navigate('Event Details', {
