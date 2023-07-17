@@ -1,0 +1,21 @@
+.card-title {
+    color: var(--blackcurrent, #1E2021);
+    font-family: 'Montserrat-Medium', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.8px;
+    margin-top: 0;
+    overflow: hidden;
+}
+
+.season-year {
+    color: var(--grey, #5B6772);
+    font-family: 'Montserrat-Regular', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.42px;
+}
+
+.pdf-icon {
+    height: 20px;
+    width: 20px;
+    margin-right: 0.4rem;
+}
