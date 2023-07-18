@@ -112,26 +112,28 @@ const styles = StyleSheet.create({
 });
 
 function MapCard({
-  key,
   id,
   image,
   location,
   title,
+  day,
+  days,
+  week,
+  startTime,
+  endTime,
   description,
   startDate,
-  endDate,
   tag,
   phoneNumber,
+  email,
+  website,
   organization,
   recurringMonthly,
   recurringWeekly,
-  website,
-  organizationDescription,
-  resourceType,
   navigation,
   isEvent,
 }) {
-  const [fontsLoaded] = useFonts({
+  let [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
     MontserratMedium: Montserrat_500Medium,
     MontserratSemiBold: Montserrat_600SemiBold,
@@ -142,27 +144,44 @@ function MapCard({
     console.log('Loading font...');
   }
 
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const dayOfWeek = daysOfWeek[startDate.getUTCDay()];
-  function formatTime(dateObject) {
-    const hours = dateObject.getHours();
-    const minutes = dateObject.getMinutes();
-    let formattedHours = hours % 12;
-    formattedHours = formattedHours === 0 ? 12 : formattedHours;
-    const period = hours >= 12 ? 'pm' : 'am';
-    const formattedMinutes = minutes.toString().padStart(2, '0');
-    return `${formattedHours}:${formattedMinutes} ${period}`;
-  }
-  const startTime = formatTime(new Date(startDate));
-  const endTime = formatTime(new Date(endDate));
-  let formattedDate = 'No date specified';
-  if (dayOfWeek !== undefined && startTime !== null && endTime !== null) {
-    formattedDate = `${dayOfWeek}, ${startTime} - ${endTime}`;
+  const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  let eventDay;
+  const daysOfWeek = [];
+
+  if (isEvent) {
+    eventDay = weekdays[day];
+  } else {
+    const sortedDays = days.sort((a, b) => a - b);
+
+    // if there is 3+ consecutive days per week
+    const getConsecutiveInt = (arr) => {
+      const consecutiveIntegers = [];
+      let count = 1;
+      for (let i = 1; i < arr.length; i += 1) {
+        if (arr[i] === arr[i - 1] + 1) {
+          count += 1;
+          if (count >= 3) {
+            consecutiveIntegers.push(arr.slice(i - count + 1, i + 1));
+          }
+        } else {
+          count = 1;
+        }
+      }
+      return consecutiveIntegers; // Return the array of consecutive integers
+    };
+
+    const consecutiveInts = getConsecutiveInt(sortedDays);
+    if (consecutiveInts.length !== 0) {
+      consecutiveInts.map((int) => sortedDays.filter((day) => day !== int));
+      const consecutiveDays = weekdays[consecutiveInts[0]] + '-' + weekdays[consecutiveInts[consecutiveInts.length-1]];
+      daysOfWeek.push(consecutiveDays);
+    }
+    days.map((day) => daysOfWeek.push(weekdays[day]));
   }
 
   let tagIcon;
   if (!isEvent) { // Resources don't have startDates
-    switch (resourceType) {
+    switch (tag) {
       case 'food':
         tagIcon = require('../assets/map/foodTag.png');
         break;
@@ -189,24 +208,34 @@ function MapCard({
   const onPressEvent = () => {
     if (isEvent) {
       navigation.navigate('Event Details', {
-        key,
         id,
         image,
-        // location,
+        location,
         title,
+        day,
+        week,
+        startTime,
+        endTime,
         description,
         startDate,
-        endDate,
-        tag,
         phoneNumber,
         organization,
         recurringMonthly,
         recurringWeekly,
-        website,
-        organizationDescription,
       });
     } else {
       navigation.navigate('Resource Details', {
+        id,
+        title,
+        image,
+        location,
+        days,
+        startTime,
+        endTime,
+        tag,
+        phoneNumber,
+        email,
+        website,
       });
     }
   };
@@ -238,9 +267,7 @@ function MapCard({
         )}
       </View>
       <View style={styles.textContent}>
-        <Text style={styles.organization}>
-          {organization}
-        </Text>
+        {isEvent && <Text style={styles.organization}>{organization}</Text>}
         <Text numberOfLines={1} style={styles.title}>
           {title}
         </Text>
@@ -249,13 +276,8 @@ function MapCard({
             source={require('../assets/map/calendar.png')}
             style={styles.infoIcon}
           />
-          <Text style={styles.infoText} numberOfLines={1}>
-            {isEvent ? (
-              formattedDate ?? 'No date specified'
-            ) : (
-              description
-            )}
-          </Text>
+           {isEvent && <Text style={styles.infoText} numberOfLines={1}>{eventDay}, {startTime} - {endTime}</Text>}
+           {!isEvent && <Text style={styles.infoText} numberOfLines={1}>{daysOfWeek[0]}, {startTime} - {endTime}</Text>}
         </View>
         <View style={styles.row}>
           <Image
@@ -283,7 +305,6 @@ function MapCard({
 }
 
 MapCard.propTypes = {
-  key: PropTypes.string,
   id: PropTypes.string.isRequired,
   image: PropTypes.shape.isRequired,
   location: PropTypes.shape({
@@ -302,14 +323,14 @@ MapCard.propTypes = {
   tag: PropTypes.string.isRequired,
   phoneNumber: PropTypes.string,
   organization: PropTypes.string,
-  recurringMonthly: PropTypes.bool,
-  recurringWeekly: PropTypes.bool,
+  recurringMonthly: PropTypes.bool.isRequired,
+  recurringWeekly: PropTypes.bool.isRequired,
   website: PropTypes.string,
-  organizationDescription: PropTypes.string,
   resourceType: PropTypes.string,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,
+  isEvent: PropTypes.bool.isRequired,
 };
 
 // MapCard.defaultProps = {

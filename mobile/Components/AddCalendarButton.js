@@ -4,21 +4,32 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import * as Calendar from 'expo-calendar';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 
 const styles = StyleSheet.create({
   calendarButton: {
-    backgroundColor: '#4C4C9B',
-    marginTop: 10,
     padding: 8,
     borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#424288',
+    marginVertical: 25,
   },
   calendarButtonText: {
-    color: '#ffffff',
+    fontFamily: 'MontserratSemiBold',
+    color: '#424288',
     textAlign: 'center',
   },
 });
 
 function AddToCalendarButton({ eventName, eventStartDate, eventEndDate }) {
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
   const [calendarPermission, setCalendarPermission] = useState(null);
 
   const requestCalendarPermissions = async () => {

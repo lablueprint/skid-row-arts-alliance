@@ -1,100 +1,167 @@
 import * as React from 'react';
 import {
-  Button, Card, Title, Paragraph,
-} from 'react-native-paper';
+  StyleSheet, Image, Text, View, TouchableOpacity,
+} from 'react-native';
 import PropTypes from 'prop-types';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
+
+const styles = StyleSheet.create({
+  card: {
+    borderRadius: 13,
+    backgroundColor: '#FFF',
+    marginHorizontal: 20,
+    marginVertical: 10,
+  },
+  cardImage: {
+    width: '100%',
+    height: 50,
+    alignSelf: 'center',
+    borderTopLeftRadius: 13,
+    borderTopRightRadius: 13,
+  },
+  tag: {
+    position: 'absolute',
+    flexDirection: 'row',
+    backgroundColor: '#F5E1E9',
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    right: 10,
+    top: 10,
+  },
+  tagImage: {
+    height: 15,
+    width: 15,
+  },
+  tagText: {
+    color: '#D26090',
+    fontFamily: 'Montserrat',
+    paddingLeft: 6,
+    fontSize: 14,
+  },
+  title: {
+    fontSize: 16,
+    fontFamily: 'MontserratSemiBold',
+    paddingHorizontal: 15,
+    paddingTop: 15,
+    paddingBottom: 7,
+    color: '#1E2021',
+  },
+  time: {
+    fontSize: 14,
+    fontFamily: 'Montserrat',
+    paddingHorizontal: 15,
+    paddingBottom: 20,
+    color: '#53595C',
+  },
+});
 
 function EventCard({
-  eventId,
-  title,
-  date,
-  day,
+  id,
+  image,
   location,
-  time,
-  organizations,
+  title,
   description,
-  summary,
-  url,
+  startTime,
+  endTime,
+  day,
+  week,
+  startDate,
+  tag,
   navigation,
-  number,
-  email,
+  phoneNumber,
+  organization,
+  recurringMonthly,
+  recurringWeekly,
   website,
 }) {
+  let [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
+  if (!fontsLoaded) {
+    console.log('Loading font...');
+  }
+
   const onPressEvent = () => {
     navigation.navigate('Event Details', {
-      eventId,
-      title,
-      organizations,
-      number,
-      email,
-      website,
-      date,
-      day,
+      id,
+      image,
       location,
-      time,
-      summary,
-      url,
+      title,
+      day,
+      week,
+      startTime,
+      endTime,
+      description,
+      startDate,
+      phoneNumber,
+      organization,
+      recurringMonthly,
+      recurringWeekly,
+      website,
     });
   };
 
   return (
-    <Card style={{ margin: 10 }}>
-      <Card.Content style={{ paddingBottom: 10 }}>
-        <Title style={{ fontSize: 25, fontWeight: 'bold' }}>
-          Title:
-          {' '}
-          {title}
-        </Title>
-        <Paragraph>
-          Date:
-          {' '}
-          {date}
-        </Paragraph>
-        <Paragraph>
-          Time:
-          {' '}
-          {time}
-        </Paragraph>
-        <Paragraph>
-          Location:
-          {' '}
-          {location}
-        </Paragraph>
-        <Paragraph>
-          Organizations:
-          {' '}
-          {organizations}
-        </Paragraph>
-        <Paragraph>
-          Description:
-          {' '}
-          {description}
-        </Paragraph>
-        <Paragraph>Tag0 | Tag1 | Tag2</Paragraph>
-      </Card.Content>
-      <Card.Cover source={{ uri: url }} />
-      <Card.Actions>
-        <Button onPress={onPressEvent}>Details</Button>
-        <Button>I&apos;m interested!</Button>
-      </Card.Actions>
-    </Card>
+    <View style={styles.card}>
+      <TouchableOpacity onPress={() => onPressEvent()}>
+        <View>
+          <Image
+            source={image}
+            style={styles.cardImage}
+          />
+          <View style={styles.tag}>
+            <Image
+              source={require('../assets/brush.png')}
+              style={styles.tagImage}
+            />
+            <Text style={styles.tagText}>{tag}</Text>
+          </View>
+        </View>
+        <View>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.time}>
+            {startTime}
+            -
+            {endTime}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 }
 
 EventCard.propTypes = {
-  eventId: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
+  image: PropTypes.number.isRequired,
+  location: PropTypes.shape({
+    name: PropTypes.string,
+    address: PropTypes.string,
+    specialinstructions: PropTypes.string,
+    coordinates: PropTypes.shape({
+      latitude: PropTypes.number,
+      longitude: PropTypes.number,
+    }).isRequired,
+  }).isRequired,
   title: PropTypes.string.isRequired,
-  date: PropTypes.string.isRequired,
-  day: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired,
-  time: PropTypes.string.isRequired,
-  organizations: PropTypes.string.isRequired,
-  number: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-  website: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  summary: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired,
+  startDate: PropTypes.instanceOf(Date).isRequired,
+  startTime: PropTypes.string.isRequired,
+  endTime: PropTypes.string.isRequired,
+  tag: PropTypes.string.isRequired,
+  day: PropTypes.number.isRequired,
+  week: PropTypes.number.isRequired,
+  phoneNumber: PropTypes.string.isRequired,
+  organization: PropTypes.string.isRequired,
+  recurringMonthly: PropTypes.bool.isRequired,
+  recurringWeekly: PropTypes.bool.isRequired,
+  website: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func,
   }).isRequired,

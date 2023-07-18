@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -6,10 +6,12 @@ import {
   View,
   Text,
 } from 'react-native';
+import axios from 'axios';
+import { URL } from '@env';
 import PropTypes from 'prop-types';
 import CalendarPicker from 'react-native-calendar-picker';
+import { useFonts, Montserrat_400Regular,  Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold } from '@expo-google-fonts/montserrat';
 import EventCard from '../Components/EventCard';
-import ResourceCard from '../Components/ResourceCard';
 
 const styles = StyleSheet.create({
   container: {
@@ -23,108 +25,93 @@ const styles = StyleSheet.create({
   },
 });
 
-const events = [{
-  id: 1,
-  title: 'Volunteering',
-  date: new Date('2023-03-01T20:00:00.000Z'),
-  day: 'Monday',
-  location: '3148 Rose Rd, LA',
-  organizations: 'BPlate',
-  description: 'helping artist hang artwork',
-  time: '1:00-2:00pm',
-  summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
-  number: '(123) 345 5678',
-  email: 'studio526@gmail.com',
-  website: 'studio526.com',
-  url: 'https:/upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-},
-{
-  id: 2,
-  title: 'Fundraiser',
-  date: new Date('2023-03-03T20:00:00.000Z'),
-  day: 'Tuesday',
-  location: '4102 Daisy Rd, LA',
-  organizations: 'Studio 526',
-  description: 'raising money for skid row artists',
-  time: '1:00-2:00pm',
-  summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
-  number: '(123) 345 5678',
-  email: 'studio526@gmail.com',
-  website: 'studio526.com',
-  url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-},
-{
-  id: 3,
-  title: 'Information Session',
-  date: new Date('2023-03-05T20:00:00.000Z'),
-  day: 'Wednesday',
-  location: '4123 Blue Rd, LA',
-  organizations: 'Cafe 1919',
-  description: 'information on the skid row artists',
-  time: '1:00-2:00pm',
-  summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
-  number: '(123) 345 5678',
-  email: 'studio526@gmail.com',
-  website: 'studio526.com',
-  url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-}];
-
-const resources = [
-  {
-    id: 1,
-    title: 'Food Bank',
-    day: 'Mon-Fri',
-    time: '2-5pm',
-    location: '3148 Rose Rd, LA',
-    summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
-    number: '(123) 345 5678',
-    email: 'studio526@gmail.com',
-    website: 'studio526.com',
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-  },
-  {
-    id: 2,
-    title: 'Shelter',
-    day: 'Tue, Thu',
-    time: '9am-5pm',
-    location: '4102 Daisy Rd, LA',
-    summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
-    number: '(123) 345 5678',
-    email: 'studio526@gmail.com',
-    website: 'studio526.com',
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-  },
-  {
-    id: 3,
-    title: 'Mission',
-    day: 'Mon, Wed, Fri',
-    time: '9-10am',
-    location: '4123 Blue Rd, LA',
-    summary: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod temporincididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam aquis nostrud exercitation ullamcolaboris nisi ut aliquip ex ea commodo consequat.',
-    number: '(123) 345 5678',
-    email: 'studio526@gmail.com',
-    website: 'studio526.com',
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1024px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg',
-  },
-
-];
-
 function EventScreen({ navigation }) {
+  let [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+    MontserratMedium: Montserrat_500Medium,
+  });
+
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [allEvents, setAllEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
+
+  const eventThumbnails = {
+    'art & community': require('../assets/eventThumbnails/artCommunity.png'),
+    exhibit: require('../assets/eventThumbnails/exhibit.png'),
+    film: require('../assets/eventThumbnails/film.png'),
+    music: require('../assets/eventThumbnails/music.png'),
+    performance: require('../assets/eventThumbnails/performance.png'),
+    'spoken word': require('../assets/eventThumbnails/spokenWord.png'),
+    miscellaneous: require('../assets/eventThumbnails/miscellaneous.png'),
+    'visual art': require('../assets/eventThumbnails/visualArt.png'),
+  };
+
+  const getAllEvents = async () => {
+    try {
+      const result = await axios.get(`${URL}/event/get`);
+      setAllEvents(result.data);
+      setFilteredEvents(result.data);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
+
+  useEffect(() => {
+    getAllEvents();
+  }, []);
 
   const handleButtonPress = () => {
     setShowCalendar(!showCalendar);
   };
 
+  const weekNum = (date, weekday) => {
+    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+
+    let count = 0;
+    for (let day = firstDay; day <= date; day.setDate(day.getDate() + 1)) {
+      if (day.getDay() === weekday) {
+        count += 1;
+      }
+    }
+    console.log(count);
+    return count;
+  };
+
+  // the way the calendar works is you have to double click it to select another date
+  const filterEvents = (date) => {
+    if (!date) {
+      setFilteredEvents(allEvents);
+    } else {
+      const inputDate = new Date(date);
+      inputDate.setHours(17, 0, 0);
+      const filtered = allEvents.filter((event) => {
+        const eventDate = new Date(event.EventData.dateDetails.date);
+        const dayOfWeek = event.EventData.dateDetails.day;
+        const rec = event.EventData.dateDetails.recurring;
+        const weekOfMonth = event.EventData.dateDetails.week;
+
+        if (rec === 'Weekly') {
+          return (inputDate >= eventDate && inputDate.getDay() === dayOfWeek);
+        }
+        if (rec === 'Monthly') {
+          return (inputDate >= eventDate && inputDate.getDay() === dayOfWeek && weekNum(inputDate, dayOfWeek) === weekOfMonth)
+        }
+        return (inputDate.getTime() === eventDate.getTime());
+      });
+      setFilteredEvents(filtered);
+    }
+  };
+
   const handleDateSelect = (date) => {
     setSelectedDate(date);
     setShowCalendar(false);
+    filterEvents(date);
   };
-
-  const filteredEvents = events.filter(
-    (event) => !selectedDate || new Date(event.date) >= new Date(selectedDate),
-  );
 
   return (
     <ScrollView style={styles.scrollView}>
@@ -141,46 +128,44 @@ function EventScreen({ navigation }) {
           onDateChange={handleDateSelect}
           selectedStartDate={selectedDate}
           selectedEndDate={selectedDate}
+          selectedDayColor="#7373BA"
+          selectedDayTextColor="white"
+          textStyle={{
+            fontFamily: 'MontserratSemiBold',
+          }}
+          todayBackgroundColor="#D0D0E8"
+          todayTextStyle={{ color: '#424288', fontFamily: 'MontserratBold' }}
+          previousTitle="<"
+          previousTitleStyle={{ fontSize: 20 }}
+          nextTitle=">"
+          nextTitleStyle={{ fontSize: 20 }}
         />
       )}
       {selectedDate !== null && (
         <Text style={{ textAlign: 'center' }}>
           Date selected:
           {' '}
-          { JSON.stringify(selectedDate).slice(1, 11) }
+          {JSON.stringify(selectedDate).slice(1, 11)}
         </Text>
       )}
       {filteredEvents.map((event) => (
         <EventCard
-          eventId={event.id}
-          title={event.title}
-          date={event.date.toLocaleDateString('en-US')}
-          day={event.day}
-          location={event.location}
-          time={event.time}
-          organizations={event.organizations}
-          number={event.number}
-          email={event.email}
-          website={event.website}
-          description={event.description}
-          summary={event.summary}
-          url={event.url}
+          key={event.EventData._id}
+          id={event.EventData._id}
+          startTime={event.EventData.dateDetails.startTime}
+          endTime={event.EventData.dateDetails.endTime}
+          day={event.EventData.dateDetails.day}
+          week={event.EventData.dateDetails.week}
+          image={eventThumbnails[event.EventData.tag]}
+          title={event.EventData.title}
+          location={event.EventData.locationDetails}
+          description={event.EventData.description}
+          startDate={new Date(event.EventData.dateDetails.date)}
+          tag={event.EventData.tag}
+          organization={event.EventData.host}
+          recurringMonthly={event.EventData.dateDetails.recurring === 'Monthly'}
+          recurringWeekly={event.EventData.dateDetails.recurring === 'Weekly'}
           navigation={navigation}
-        />
-      ))}
-      {resources.map((resource) => (
-        <ResourceCard
-          id={resource.id}
-          title={resource.title}
-          day={resource.day}
-          time={resource.time}
-          summary={resource.summary}
-          url={resource.url}
-          location={resource.location}
-          navigation={navigation}
-          number={resource.number}
-          email={resource.email}
-          website={resource.website}
         />
       ))}
     </ScrollView>

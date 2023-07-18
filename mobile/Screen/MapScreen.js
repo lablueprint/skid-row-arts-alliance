@@ -34,7 +34,27 @@ const styles = StyleSheet.create({
   },
 });
 
-function MapScreen({ navigation }) {
+function MapScreen({navigation}) {
+  const resourceThumbnails = {
+    shelter: require('../assets/resourceThumbnails/shelter.png'),
+    'legal services': require('../assets/resourceThumbnails/legalServices.png'),
+    mission: require('../assets/resourceThumbnails/mission.png'),
+    shower: require('../assets/resourceThumbnails/shower.png'),
+    food: require('../assets/resourceThumbnails/food.png'),
+    'social services': require('../assets/resourceThumbnails/socialServices.png'),
+    health: require('../assets/resourceThumbnails/health.png'),
+  };
+
+  const eventThumbnails = {
+    'art & community': require('../assets/eventThumbnails/artCommunity.png'),
+    exhibit: require('../assets/eventThumbnails/exhibit.png'),
+    film: require('../assets/eventThumbnails/film.png'),
+    music: require('../assets/eventThumbnails/music.png'),
+    performance: require('../assets/eventThumbnails/performance.png'),
+    'spoken word': require('../assets/eventThumbnails/spokenWord.png'),
+    miscellaneous: require('../assets/eventThumbnails/miscellaneous.png'),
+    'visual art': require('../assets/eventThumbnails/visualArt.png'),
+  };
   const [allEvents, setAllEvents] = useState([]);
   const [allResources, setAllResources] = useState([]);
   const [activeMarkerIndex, setActiveMarkerIndex] = useState(null);
@@ -92,14 +112,16 @@ function MapScreen({ navigation }) {
       let index = Math.floor(value / CARD_WIDTH + 0.3);
       index = Math.max(0, Math.min(index, allCards.length - 1));
 
+      console.log(allCards[index])
+
       clearTimeout(mapRef.regionTimeout);
       mapRef.regionTimeout = setTimeout(() => {
         if ((mapRef.index !== index) || (mapRef.index === 0 && index === 0)) {
           mapRef.index = index;
-          const coordinate = allCards[index].location.coordinates || [];
+          const coordinates = allCards[index].locationDetails.coordinates || [];
           mapRef.current.animateToRegion(
             {
-              ...coordinate,
+              ...coordinates,
               latitudeDelta: state.region.latitudeDelta,
               longitudeDelta: state.region.longitudeDelta,
             },
@@ -175,44 +197,38 @@ function MapScreen({ navigation }) {
       >
         {allEvents.map((event) => (
           <MapCard
-            key={event.EventData._id}
             id={event.EventData._id}
-            image={{ uri: event.ImageURL }}
+            startTime={event.EventData.dateDetails.startTime}
+            endTime={event.EventData.dateDetails.endTime}
+            day={event.EventData.dateDetails.day}
+            week={event.EventData.dateDetails.week}
+            image={eventThumbnails[event.EventData.tag]}
             title={event.EventData.title}
-            location={event.EventData.location}
+            location={event.EventData.locationDetails}
             description={event.EventData.description}
-            startDate={new Date(event.EventData.startDate)}
-            endDate={new Date(event.EventData.endDate)}
+            startDate={new Date(event.EventData.dateDetails.date)}
             tag={event.EventData.tag}
-            phoneNumber={event.EventData.phoneNumber}
-            organization={event.EventData.organization}
-            recurringMonthly={event.EventData.recurringMonthly}
-            recurringWeekly={event.EventData.recurringWeekly}
-            website={event.EventData.website}
-            organizationDescription={event.EventData.organizationDescription}
+            organization={event.EventData.host}
+            recurringMonthly={event.EventData.dateDetails.recurring === 'Monthly'}
+            recurringWeekly={event.EventData.dateDetails.recurring === 'Weekly'}
             navigation={navigation}
             isEvent
           />
         ))}
         {allResources.map((resource) => (
           <MapCard
-            key={resource.ResourceData._id}
             id={resource.ResourceData._id}
-            image={{ uri: resource.ImageURL }}
+            image={resourceThumbnails[resource.ResourceData.tag]}
             title={resource.ResourceData.title}
-            location={resource.ResourceData.location}
+            location={resource.ResourceData.locationDetails}
+            startTime={resource.ResourceData.dateDetails.startTime}
+            endTime={resource.ResourceData.dateDetails.endTime}
+            days={resource.ResourceData.dateDetails.days}
             description={resource.ResourceData.description}
-            startDate={new Date(resource.ResourceData.startDate)}
-            endDate={new Date(resource.ResourceData.endDate)}
             tag={resource.ResourceData.tag}
             phoneNumber={resource.ResourceData.phoneNumber}
-            organization={resource.ResourceData.organization}
-            recurringMonthly={resource.ResourceData.recurringMonthly}
-            recurringWeekly={resource.ResourceData.recurringWeekly}
             website={resource.ResourceData.website}
-            organizationDescription={resource.ResourceData.organizationDescription}
-            thumbnail={resource.ResourceData.thumbnail}
-            resourceType={resource.ResourceData.resourceType}
+            email={resource.ResourceData.email}
             navigation={navigation}
             isEvent={false}
           />
