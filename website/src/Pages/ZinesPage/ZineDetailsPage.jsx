@@ -9,7 +9,10 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-// import dayjs from 'dayjs';
+import './ZineDetailsPage.css';
+import '../../fonts/Montserrat.css';
+import editIcon from '../../assets/editIcon.png';
+import deleteIcon from '../../assets/deleteIcon.png';
 
 function ZineDetailsPage() {
   const { authHeader } = useSelector((state) => state.sliceAuth);
@@ -106,14 +109,23 @@ function ZineDetailsPage() {
     setEdit(false);
   };
 
+  const goBacktoZines = () => {
+    navigate('/zines');
+  };
+
   return (
-    <Box sx={{ backgroundColor: '#C4C8CA' }}>
-      <Box sx={{ backgroundColor: '#FFFFFF', margin: '3%' }}>
+    <Box>
+      <button type="button" className="back-to-zines-button" onClick={goBacktoZines}>
+        {'<'}
+        {' '}
+        Back to Zines
+      </button>
+      <Box sx={{
+        backgroundColor: '#FFFFFF', m: '2% 5% 5% 5%', p: '3%', border: '1px solid #E7E9EC', borderRadius: 3, boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.15)',
+      }}
+      >
         <Box sx={{ display: 'flex' }}>
           <Box>
-            <Typography variant="h5">
-              Zine Title
-            </Typography>
             {edit ? (
               <TextField
                 sx={{ width: 400 }}
@@ -121,9 +133,9 @@ function ZineDetailsPage() {
                 onChange={(e) => setTitle(e.target.value)}
               />
             ) : (
-              <Typography variant="h6">
+              <h1 className="zine-details-title">
                 {details.title}
-              </Typography>
+              </h1>
             )}
           </Box>
           <Box sx={{ marginLeft: 'auto' }}>
@@ -132,20 +144,19 @@ function ZineDetailsPage() {
               </>
             ) : (
               <Box>
-                <Button variant="contained" onClick={() => setEdit(true)}>
-                  Edit
-                </Button>
-                <Button variant="contained" onClick={() => handleDelete()}>
-                  Delete
-                </Button>
+                <button type="button" className="edit-delete-button" onClick={() => setEdit(true)}>
+                  <img src={editIcon} alt="Pencil icon" className="edit-delete-icons" />
+                  <p className="edit-delete-text">Edit</p>
+                </button>
+                <button type="button" className="edit-delete-button" onClick={() => handleDelete()}>
+                  <img src={deleteIcon} alt="Trash can icon" className="edit-delete-icons" />
+                  <p className="edit-delete-text">Delete</p>
+                </button>
               </Box>
             )}
           </Box>
         </Box>
         <Box>
-          <Typography>
-            Edition
-          </Typography>
           {edit ? (
             <Box>
               <FormControl fullWidth>
@@ -170,20 +181,20 @@ function ZineDetailsPage() {
               </LocalizationProvider>
             </Box>
           ) : (
-            <Typography>
+            <h2 className="zine-details-season-year">
               {details.season}
               {' '}
               {details.year}
-            </Typography>
+            </h2>
           )}
         </Box>
         <Box>
           <Box>
-            <Typography variant="h6">
+            <h3 className="table-of-contents">
               Table of Contents
-            </Typography>
+            </h3>
           </Box>
-          <Box>
+          <Box sx={{ mb: 5 }}>
             {edit ? (
               <Box>
                 {contents.map((section, index) => (
@@ -223,12 +234,15 @@ function ZineDetailsPage() {
                 {contents.map((section) => (
                   <Box sx={{ display: 'flex' }}>
                     <Box>
-                      <Typography sx={{ width: 600, height: 30 }}>
+                      <Typography sx={{
+                        width: 600, height: 30, fontFamily: 'Montserrat-Regular', color: '#53595C', mb: 2,
+                      }}
+                      >
                         {section.sectionTitle}
                       </Typography>
                     </Box>
                     <Box>
-                      <Typography>
+                      <Typography sx={{ fontFamily: 'Montserrat-Regular', color: '#53595C' }}>
                         {section.sectionPage}
                       </Typography>
                     </Box>
