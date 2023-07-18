@@ -13,6 +13,7 @@ import './ZineDetailsPage.css';
 import '../../fonts/Montserrat.css';
 import editIcon from '../../assets/editIcon.png';
 import deleteIcon from '../../assets/deleteIcon.png';
+import tocDeleteIcon from '../../assets/tocDeleteIcon.png';
 
 function ZineDetailsPage() {
   const { authHeader } = useSelector((state) => state.sliceAuth);
@@ -124,14 +125,33 @@ function ZineDetailsPage() {
         backgroundColor: '#FFFFFF', m: '2% 5% 5% 5%', p: '3%', border: '1px solid #E7E9EC', borderRadius: 3, boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.15)',
       }}
       >
+        <Box>
+          {edit ? <h1 className="zine-details-title">Edit Zine Info</h1>
+            : (
+              <>
+              </>
+            )}
+        </Box>
         <Box sx={{ display: 'flex' }}>
           <Box>
             {edit ? (
-              <TextField
-                sx={{ width: 400 }}
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
+              <div>
+                <p className="zine-details-field-label">Zine Title</p>
+                <TextField
+                  sx={{ width: 400 }}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  inputProps={{
+                    style: {
+                      fontFamily: 'Montserrat-Regular',
+                      color: '#53595C',
+                      border: '0.75px solid #8A9195',
+                      borderRadius: '5px',
+                      backgroundColor: '#F8F8F8',
+                    },
+                  }}
+                />
+              </div>
             ) : (
               <h1 className="zine-details-title">
                 {details.title}
@@ -156,29 +176,37 @@ function ZineDetailsPage() {
             )}
           </Box>
         </Box>
-        <Box>
+        <Box sx={{ mb: 8 }}>
           {edit ? (
-            <Box>
-              <FormControl fullWidth>
-                <Select
-                  value={season}
-                  onChange={(e) => {
-                    setSeason(e.target.value);
-                  }}
-                >
-                  <MenuItem value="Summer">Summer</MenuItem>
-                  <MenuItem value="Fall">Fall</MenuItem>
-                  <MenuItem value="Winter">Winter</MenuItem>
-                  <MenuItem value="Spring">Spring</MenuItem>
-                </Select>
-              </FormControl>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  views={['year']}
-                  value={year}
-                  onChange={(newYear) => setYear(newYear)}
-                />
-              </LocalizationProvider>
+            <Box sx={{ display: 'flex', mt: 2 }}>
+              <Box sx={{ mr: 5 }}>
+                <p className="zine-details-field-label">Season</p>
+                <FormControl fullWidth sx={{ backgroundColor: '#F8F8F8' }}>
+                  <Select
+                    value={season}
+                    onChange={(e) => {
+                      setSeason(e.target.value);
+                    }}
+                    sx={{ fontFamily: 'Montserrat-Regular', color: '#53595C' }}
+                  >
+                    <MenuItem value="Summer" sx={{ fontFamily: 'Montserrat-Regular', color: '#53595C' }}>Summer</MenuItem>
+                    <MenuItem value="Fall" sx={{ fontFamily: 'Montserrat-Regular', color: '#53595C' }}>Fall</MenuItem>
+                    <MenuItem value="Winter" sx={{ fontFamily: 'Montserrat-Regular', color: '#53595C' }}>Winter</MenuItem>
+                    <MenuItem value="Spring" sx={{ fontFamily: 'Montserrat-Regular', color: '#53595C' }}>Spring</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box>
+                <p className="zine-details-field-label">Year</p>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    views={['year']}
+                    value={year}
+                    onChange={(newYear) => setYear(newYear)}
+                    sx={{ backgroundColor: '#F8F8F8', fontFamily: 'Montserrat-Regular', color: '#53595C' }}
+                  />
+                </LocalizationProvider>
+              </Box>
             </Box>
           ) : (
             <h2 className="zine-details-season-year">
@@ -200,37 +228,70 @@ function ZineDetailsPage() {
                 {contents.map((section, index) => (
                   <Box sx={{ display: 'flex' }}>
                     <Box>
-                      <Typography>
+                      <p className="zine-details-field-label">
                         Chapter
-                      </Typography>
+                      </p>
                       <TextField
-                        sx={{ width: 600, height: 30 }}
+                        sx={{ width: 620, height: 30, mr: 5 }}
                         value={section.sectionTitle}
                         onChange={(e) => handleEditSection(index, e.target.value, 'Chapter')}
+                        inputProps={{
+                          style: {
+                            fontFamily: 'Montserrat-Regular',
+                            color: '#53595C',
+                            border: '0.75px solid #8A9195',
+                            borderRadius: '5px',
+                            backgroundColor: '#F8F8F8',
+                            overflow: 'hidden',
+                          },
+                        }}
                       />
                     </Box>
                     <Box>
-                      <Typography>
+                      <p className="zine-details-field-label">
                         Page
-                      </Typography>
+                      </p>
                       <TextField
                         value={section.sectionPage}
                         onChange={(e) => handleEditSection(index, e.target.value, 'Page')}
+                        inputProps={{
+                          style: {
+                            fontFamily: 'Montserrat-Regular',
+                            color: '#53595C',
+                            border: '0.75px solid #8A9195',
+                            borderRadius: '5px',
+                            backgroundColor: '#F8F8F8',
+                            textAlign: 'center',
+                          },
+                        }}
                       />
                     </Box>
                     <Box>
-                      <Button onClick={() => handleDeleteSection(index)}>Delete</Button>
+                      <button type="button" className="toc-delete-icon-container" onClick={() => handleDeleteSection(index)}><img src={tocDeleteIcon} alt="Trash can icon" className="toc-delete-icon" /></button>
                     </Box>
                   </Box>
                 ))}
                 <Button
                   onClick={() => handleAddSection()}
+                  variant="contained"
+                  sx={{
+                    mt: 4,
+                    p: 2,
+                    width: '80%',
+                    fontFamily: 'Montserrat-Medium',
+                    backgroundColor: '#4C4C9B',
+                    textTransform: 'none',
+                    boxShadow: 'none',
+                    '&:hover': {
+                      backgroundColor: '#262652',
+                    },
+                  }}
                 >
                   Add More Chapters +
                 </Button>
               </Box>
             ) : (
-              <Box>
+              <Box sx={{ mt: 5 }}>
                 {contents.map((section) => (
                   <Box sx={{ display: 'flex' }}>
                     <Box>
@@ -257,18 +318,33 @@ function ZineDetailsPage() {
         </Box>
         <Box>
           {edit ? (
-            <Box>
+            <Box sx={{ mt: 4 }}>
               <Button
                 variant="outlined"
-                sx={{ color: '#4C4C9B', borderColor: '#4C4C9B' }}
-                onClick={() => handleCancel()}
+                sx={{
+                  color: '#4C4C9B', borderColor: '#4C4C9B', mr: 2, width: '10%', fontFamily: 'Montserrat-Medium', textTransform: 'none',
+                }}
+                onClick={() => {
+                  handleCancel();
+                }}
               >
                 Cancel
               </Button>
               <Button
                 variant="contained"
-                sx={{ backgroundColor: '#4C4C9B' }}
-                onClick={() => handleSave()}
+                sx={{
+                  backgroundColor: '#4C4C9B',
+                  width: '10%',
+                  fontFamily: 'Montserrat-Medium',
+                  textTransform: 'none',
+                  boxShadow: 'none',
+                  '&:hover': {
+                    backgroundColor: '#262652',
+                  },
+                }}
+                onClick={() => {
+                  handleSave();
+                }}
               >
                 Save
               </Button>
