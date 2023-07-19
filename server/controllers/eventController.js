@@ -20,8 +20,16 @@ const createEvent = async (req, res) => {
     try {
       await Promise.all(
         // Upload the images to S3 and add their keys to the images array
-        files.map(async (file) => {
-          const imageKey = `EventImages/${file.originalname}`;
+        files.map(async (file, index) => {
+          const d = new Date().toLocaleString();
+          const date = d.slice(0, d.length - 3)
+            .split('/')
+            .join('_')
+            .split(' ')
+            .join('_')
+            .replace(',', '');
+
+          const imageKey = `EventImages/${date}_${eventData.title}_${index}.${file.mimetype.split('/')[1]}`;
           await s3.upload({
             Bucket: process.env.S3_BUCKET,
             Key: imageKey,
@@ -35,6 +43,12 @@ const createEvent = async (req, res) => {
       res.status(err.statusCode ? err.statusCode : 400);
       res.send(err);
     }
+    images.sort((a, b) => {
+      const numA = +a.match(/\d+/)[0];
+      const numB = +b.match(/\d+/)[0];
+
+      return numA - numB;
+    });
     eventData.images = images;
   }
 
@@ -79,9 +93,24 @@ const updateEvent = async (req, res) => {
   const eventData = JSON.parse(updatedEvent);
 
   const { files } = req;
-  const updatedImageKeys = files.map((file) => `EventImages/${file.originalname}`);
+
+  const d = new Date().toLocaleString();
+  const date = d.slice(0, d.length - 3)
+    .split('/')
+    .join('_')
+    .split(' ')
+    .join('_')
+    .replace(',', '');
+
+  const updatedImageKeys = files.map((file, index) => `EventImages/${date}_${eventData.title}_${index}.${file.mimetype.split('/')[1]}`);
   // Updated image keys that should appear in MongoDB and S3
   const updatedImages = [...eventData.images, ...updatedImageKeys];
+  updatedImageKeys.sort((a, b) => {
+    const numA = +a.match(/\d+/)[0];
+    const numB = +b.match(/\d+/)[0];
+
+    return numA - numB;
+  });
 
   eventData.images = updatedImages;
   try {
@@ -100,8 +129,8 @@ const updateEvent = async (req, res) => {
     }));
 
     // Add the image files that were added from the original
-    files.forEach(async (file) => {
-      const imageKey = `EventImages/${file.originalname}`;
+    files.forEach(async (file, index) => {
+      const imageKey = `EventImages/${date}_${eventData.title}_${index}.${file.mimetype.split('/')[1]}`;
       await s3.upload({
         Bucket: process.env.S3_BUCKET,
         Key: imageKey,
