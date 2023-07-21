@@ -94,7 +94,7 @@ const createSubmission = async (req, res) => {
 
 const deleteSubmission = async (req, res) => {
   try {
-    const response = await Submission.findById(req.params.id);
+    const response = await Submission.findByIdAndRemove(req.params.id);
     await Promise.all(response.s3keys.map(async (key) => {
       await s3.deleteObject({
         Bucket: process.env.S3_BUCKET,
