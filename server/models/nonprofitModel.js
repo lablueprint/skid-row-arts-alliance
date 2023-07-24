@@ -13,7 +13,7 @@ const nonprofitSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  phoneNumer: {
+  phoneNumber: {
     required: true,
     type: String,
   },

@@ -57,15 +57,15 @@ function ResourcesPage() {
     setOpenPreview(false);
   };
 
-  const previewResourceDetails = (eventDetails) => {
+  const previewResourceDetails = (resourceDetails) => {
     setOpenPreview(true);
-    setPreviewDetails(eventDetails);
+    setPreviewDetails(resourceDetails);
   };
 
   return (
     <Container>
       <Box>
-        <Typography variant="h5">Events</Typography>
+        <Typography variant="h5">Resources</Typography>
       </Box>
       <Box>
         <Box>

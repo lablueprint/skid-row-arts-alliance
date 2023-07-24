@@ -31,6 +31,7 @@ function EditResourcePage() {
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
+  const daysOfWeek = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
 
   useEffect(() => {
     setTitle(resourceDetails.title);
@@ -44,21 +45,28 @@ function EditResourcePage() {
     setAddress(resourceDetails.locationDetails.address);
     setEmail(resourceDetails.email);
     setWebsite(resourceDetails.website);
-    const daysOfWeek = [0, 0, 0, 0, 0, 0, 0];
-    resourceDetails.dateDetails.days.forEach((dayIndex) => {
-      daysOfWeek[dayIndex] = 1;
-    });
-    setDays(daysOfWeek);
+    setDays(resourceDetails.dateDetails.days);
   }, []);
-
-  const updateDays = (num) => {
-    const updatedDaysStatus = [...days];
-    updatedDaysStatus[num] = updatedDaysStatus[num] ? 0 : 1;
-    setDays(updatedDaysStatus);
-  };
 
   const backToResources = () => {
     navigate('/resources');
+  };
+
+  const updateDays = (dayValue) => {
+    const foundIndex = days.findIndex((day) => day === dayValue);
+    if (foundIndex !== -1) {
+      setDays((prevDays) => {
+        const newDays = [...prevDays];
+        newDays.splice(foundIndex, 1);
+        return newDays;
+      });
+    } else {
+      setDays((prevDays) => {
+        const newDays = [...prevDays, dayValue];
+        newDays.sort((a, b) => a - b);
+        return newDays;
+      });
+    }
   };
 
   const handlePhoneNumberChange = (event) => {
@@ -76,15 +84,27 @@ function EditResourcePage() {
     }
   };
 
+  const validEmail = ((e) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(e);
+  });
+
+  function validWebsite(url) {
+    const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/i;
+    return urlPattern.test(url);
+  }
+
+  const validateResourceInputs = () => (title === '' || tag === '' || days.length === 0
+  || latitude === '' || longitude === '' || address === '' || !validEmail(email) || !validWebsite(website));
+
   const editResource = async () => {
-    const daysOfWeek = [];
-    days.forEach((day, index) => {
-      if (day) {
-        daysOfWeek.push(index);
-      }
-    });
+    if (validateResourceInputs()) {
+      alert('Missing field or incorrect format.');
+      return;
+    }
+
     const dateDetails = {
-      days: daysOfWeek,
+      days,
       startTime: startTime.format('h:mm a'),
       endTime: endTime.format('h:mm a'),
     };
@@ -142,55 +162,15 @@ function EditResourcePage() {
         </FormControl>
       </Box>
       <Box sx={{ display: 'flex' }}>
-        <Button
-          variant="contained"
-          style={{ backgroundColor: days[0] ? '#4C4C9B' : '#D0D0E8' }}
-          onClick={() => updateDays(0)}
-        >
-          M
-        </Button>
-        <Button
-          variant="contained"
-          style={{ backgroundColor: days[1] ? '#4C4C9B' : '#D0D0E8' }}
-          onClick={() => updateDays(1)}
-        >
-          Tu
-        </Button>
-        <Button
-          variant="contained"
-          style={{ backgroundColor: days[2] ? '#4C4C9B' : '#D0D0E8' }}
-          onClick={() => updateDays(2)}
-        >
-          W
-        </Button>
-        <Button
-          variant="contained"
-          style={{ backgroundColor: days[3] ? '#4C4C9B' : '#D0D0E8' }}
-          onClick={() => updateDays(3)}
-        >
-          Th
-        </Button>
-        <Button
-          variant="contained"
-          style={{ backgroundColor: days[4] ? '#4C4C9B' : '#D0D0E8' }}
-          onClick={() => updateDays(4)}
-        >
-          F
-        </Button>
-        <Button
-          variant="contained"
-          style={{ backgroundColor: days[5] ? '#4C4C9B' : '#D0D0E8' }}
-          onClick={() => updateDays(5)}
-        >
-          Sa
-        </Button>
-        <Button
-          variant="contained"
-          style={{ backgroundColor: days[6] ? '#4C4C9B' : '#D0D0E8' }}
-          onClick={() => updateDays(6)}
-        >
-          Su
-        </Button>
+        { daysOfWeek.map((day, index) => (
+          <Button
+            variant="contained"
+            style={{ backgroundColor: days.includes(index) ? '#4C4C9B' : '#D0D0E8' }}
+            onClick={() => updateDays(index)}
+          >
+            {day}
+          </Button>
+        ))}
       </Box>
       <Box>
         <Typography>Phone Number</Typography>
