@@ -34,7 +34,15 @@ function AddEventPage() {
     navigate('/events');
   };
 
+  const validateEventInputs = () => (title === '' || host === '' || tag === ''
+  || latitude === '' || longitude === '' || description === '');
+
   const createEvent = async () => {
+    if (validateEventInputs()) {
+      alert('Missing input.');
+      return;
+    }
+
     const week = date.week() - date.startOf('month').week() + 1;
     const dateDetails = {
       recurring: recurrence,
