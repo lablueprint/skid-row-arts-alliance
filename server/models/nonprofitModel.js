@@ -13,7 +13,7 @@ const nonprofitSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  organizationTitle: {
+  title: {
     required: true,
     type: String,
   },

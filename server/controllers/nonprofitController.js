@@ -31,9 +31,9 @@ const getAllNonprofits = async (_, res) => {
   }
 };
 
-const getNonprofit = async (req, res) => {
+const getNonprofitFromTitle = async (req, res) => {
   try {
-    const data = await Nonprofit.findOne({ organizationTitle: req.params.title });
+    const data = await Nonprofit.findOne({ title: req.params.title });
     res.send(data);
   } catch (err) {
     res.status(err.statusCode ? err.statusCode : 400);
@@ -55,6 +55,6 @@ module.exports = {
   addNonprofit,
   updateNonprofit,
   getAllNonprofits,
-  getNonprofit,
+  getNonprofitFromTitle,
   deleteNonprofit,
 };
