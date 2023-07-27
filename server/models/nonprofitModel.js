@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const nonprofitSchema = new mongoose.Schema({
   image: {
-    required: false,
+    required: true,
     type: String,
   },
   description: {
