@@ -115,6 +115,7 @@ const createSubmission = async (req, res) => {
 const deleteSubmission = async (req, res) => {
   const { id } = req.params;
   try {
+    // TODO: delete the media stored in S3
     await Submission.deleteOne({ _id: id });
     res.send(`Successfully deleted ${id}`);
   } catch (err) {
