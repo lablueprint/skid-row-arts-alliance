@@ -11,12 +11,13 @@ const port = process.env.PORT;
 
 // Route imports
 const authRouter = require('./routes/authRoutes');
+const userRouter = require('./routes/userRoutes');
 const eventRouter = require('./routes/eventRoutes');
 const passwordResetRouter = require('./routes/passwordResetRoutes');
 const resourceRouter = require('./routes/resourceRoutes');
 const submissionRouter = require('./routes/submissionRoutes');
-const userRouter = require('./routes/userRoutes');
 const zineRouter = require('./routes/zineRoutes');
+const nonprofitRouter = require('./routes/nonprofitRoutes');
 
 // Start the Node Express server
 const app = express();
@@ -34,12 +35,13 @@ app.use(express.urlencoded({ limit: '200mb', extended: true }));
 
 // Use the api routes
 app.use('/auth', authRouter);
+app.use('/user', userRouter);
 app.use('/event', eventRouter);
 app.use('/passwordReset', passwordResetRouter);
 app.use('/resource', resourceRouter);
 app.use('/submissions', submissionRouter);
-app.use('/user', userRouter);
 app.use('/zine', zineRouter);
+app.use('/nonprofit', nonprofitRouter);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
