@@ -124,15 +124,17 @@ function ResourcesPage() {
                 {previewDetails.tag}
               </Typography>
             </Box>
-            <Box sx={{ display: 'flex' }}>
-              <Box>
-                {previewDetails.dateDetails.days.map((dayIndex) => daysOfWeek[dayIndex]).join(', ')}
-              </Box>
-              <Typography>
-                {previewDetails.dateDetails.startTime}
-                -
-                {previewDetails.dateDetails.endTime}
-              </Typography>
+            <Box>
+              {previewDetails.dateDetails.map((date) => (
+                <Box sx={{ display: 'flex' }}>
+                  <Typography>{date.days.map((dayIndex) => daysOfWeek[dayIndex]).join(', ')}</Typography>
+                  <Typography>
+                    {date.startTime}
+                    -
+                    {date.endTime}
+                  </Typography>
+                </Box>
+              ))}
             </Box>
             <Box>
               <Typography>

@@ -22,51 +22,59 @@ function EditResourcePage() {
 
   const [title, setTitle] = useState('');
   const [tag, setTag] = useState('');
-  const [days, setDays] = useState([]);
+  const [dayTimes, setDayTimes] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [startTime, setStartTime] = useState(dayjs());
-  const [endTime, setEndTime] = useState(dayjs().add(1, 'h'));
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
-  const daysOfWeek = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
+
+  const ungroupDayTimes = (dateDetails) => {
+    const ungroupedResults = [];
+    dateDetails.forEach((date) => {
+      date.days.forEach((day) => {
+        ungroupedResults.push({
+          day,
+          startTime: dayjs(date.startTime, 'h:mm a'),
+          endTime: dayjs(date.endTime, 'h:mm a'),
+        });
+      });
+    });
+    return ungroupedResults;
+  };
 
   useEffect(() => {
     setTitle(resourceDetails.title);
     setTag(resourceDetails.tag);
+    const ungroupedDays = ungroupDayTimes(resourceDetails.dateDetails);
+    setDayTimes(ungroupedDays);
     setPhoneNumber(resourceDetails.phoneNumber);
-    setDays(resourceDetails.days);
-    setStartTime(dayjs(resourceDetails.dateDetails.startTime, 'h:mm a'));
-    setEndTime(dayjs(resourceDetails.dateDetails.endTime, 'h:mm a'));
     setLatitude(resourceDetails.locationDetails.coordinates.latitude);
     setLongitude(resourceDetails.locationDetails.coordinates.longitude);
     setAddress(resourceDetails.locationDetails.address);
     setEmail(resourceDetails.email);
     setWebsite(resourceDetails.website);
-    setDays(resourceDetails.dateDetails.days);
   }, []);
 
   const backToResources = () => {
     navigate('/resources');
   };
 
-  const updateDays = (dayValue) => {
-    const foundIndex = days.findIndex((day) => day === dayValue);
-    if (foundIndex !== -1) {
-      setDays((prevDays) => {
-        const newDays = [...prevDays];
-        newDays.splice(foundIndex, 1);
-        return newDays;
-      });
-    } else {
-      setDays((prevDays) => {
-        const newDays = [...prevDays, dayValue];
-        newDays.sort((a, b) => a - b);
-        return newDays;
-      });
-    }
+  const addDayTime = () => {
+    const newDayTimes = [...dayTimes];
+    newDayTimes.push({
+      day: 0,
+      startTime: dayjs(),
+      endTime: dayjs().add(1, 'h'),
+    });
+    setDayTimes(newDayTimes);
+  };
+
+  const removeDayTime = (index) => {
+    const newDayTimes = [...dayTimes];
+    newDayTimes.splice(index, 1);
+    setDayTimes(newDayTimes);
   };
 
   const handlePhoneNumberChange = (event) => {
@@ -94,8 +102,39 @@ function EditResourcePage() {
     return urlPattern.test(url);
   }
 
-  const validateResourceInputs = () => (title === '' || tag === '' || days.length === 0
+  const validateResourceInputs = () => (title === '' || tag === ''
   || latitude === '' || longitude === '' || address === '' || !validEmail(email) || !validWebsite(website));
+
+  const groupDayTimes = () => {
+    const groupedMap = new Map();
+
+    // Iterate through the dayTimeArray
+    dayTimes.forEach((dayTime) => {
+      const startTimeString = dayTime.startTime.format('h:mm a');
+      const endTimeString = dayTime.endTime.format('h:mm a');
+      const key = `${startTimeString}-${endTimeString}`;
+
+      if (groupedMap.has(key)) {
+        const existingGroupedDayTime = groupedMap.get(key);
+        const updatedGroupedDayTime = {
+          ...existingGroupedDayTime,
+          days: [...new Set([...existingGroupedDayTime.days, dayTime.day])].sort((a, b) => a - b),
+        };
+        groupedMap.set(key, updatedGroupedDayTime);
+      } else {
+        groupedMap.set(key, {
+          days: [dayTime.day],
+          startTime: startTimeString,
+          endTime: endTimeString,
+        });
+      }
+    });
+
+    // Create an array of grouped objects
+    const groupedResults = Array.from(groupedMap.values());
+
+    return groupedResults;
+  };
 
   const editResource = async () => {
     if (validateResourceInputs()) {
@@ -103,11 +142,7 @@ function EditResourcePage() {
       return;
     }
 
-    const dateDetails = {
-      days,
-      startTime: startTime.format('h:mm a'),
-      endTime: endTime.format('h:mm a'),
-    };
+    const dateDetails = groupDayTimes();
     const locationDetails = {
       address,
       coordinates: {
@@ -161,16 +196,74 @@ function EditResourcePage() {
           </Select>
         </FormControl>
       </Box>
-      <Box sx={{ display: 'flex' }}>
-        { daysOfWeek.map((day, index) => (
-          <Button
-            variant="contained"
-            style={{ backgroundColor: days.includes(index) ? '#4C4C9B' : '#D0D0E8' }}
-            onClick={() => updateDays(index)}
-          >
-            {day}
-          </Button>
-        ))}
+      <Box>
+        {dayTimes ? (
+          <Box>
+            {dayTimes.map((_, index) => (
+              <Box sx={{ display: 'flex' }}>
+                <FormControl>
+                  <Select
+                    value={dayTimes[index].day}
+                    defaultValue={0}
+                    onChange={(e) => {
+                      const newDayTimes = [...dayTimes];
+                      newDayTimes[index].day = e.target.value;
+                      setDayTimes(newDayTimes);
+                    }}
+                  >
+                    <MenuItem value={0}>M</MenuItem>
+                    <MenuItem value={1}>Tu</MenuItem>
+                    <MenuItem value={2}>W</MenuItem>
+                    <MenuItem value={3}>Th</MenuItem>
+                    <MenuItem value={4}>F</MenuItem>
+                    <MenuItem value={5}>Sa</MenuItem>
+                    <MenuItem value={6}>Su</MenuItem>
+                  </Select>
+                </FormControl>
+                <Box sx={{ display: 'flex' }}>
+                  <Typography>Hours</Typography>
+                  <Box>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <TimePicker
+                        value={dayTimes[index].startTime}
+                        onChange={(newTime) => {
+                          const newDayTimes = [...dayTimes];
+                          newDayTimes[index].startTime = newTime;
+                          setDayTimes(newDayTimes);
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </Box>
+                  <Typography>to</Typography>
+                  <Box>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <TimePicker
+                        value={dayTimes[index].endTime}
+                        onChange={(newTime) => {
+                          const newDayTimes = [...dayTimes];
+                          newDayTimes[index].endTime = newTime;
+                          setDayTimes(newDayTimes);
+                        }}
+                      />
+                    </LocalizationProvider>
+                  </Box>
+                </Box>
+                {index > 0
+                  ? (
+                    <Button onClick={() => removeDayTime(index)}>
+                      Delete
+                    </Button>
+                  )
+                  : null}
+              </Box>
+            ))}
+          </Box>
+        ) : (
+          null
+        )}
+      </Box>
+      <Box>
+        <Button onClick={() => addDayTime()}>Add More Days</Button>
       </Box>
       <Box>
         <Typography>Phone Number</Typography>
@@ -178,26 +271,6 @@ function EditResourcePage() {
           value={phoneNumber}
           onChange={handlePhoneNumberChange}
         />
-      </Box>
-      <Box>
-        <Typography>Hours</Typography>
-        <Box>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <TimePicker
-              value={startTime}
-              onChange={(newTime) => setStartTime(newTime)}
-            />
-          </LocalizationProvider>
-        </Box>
-        <Typography>to</Typography>
-        <Box>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <TimePicker
-              value={endTime}
-              onChange={(newTime) => setEndTime(newTime)}
-            />
-          </LocalizationProvider>
-        </Box>
       </Box>
       <Box>
         <Box>
