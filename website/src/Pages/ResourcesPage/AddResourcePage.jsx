@@ -19,19 +19,22 @@ function AddResourcePage() {
   const [tag, setTag] = useState('');
   const [days, setDays] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [startTime, setStartTime] = useState(dayjs());
-  const [endTime, setEndTime] = useState(dayjs().add(1, 'h'));
+  const [dayTimes, setDayTimes] = useState([{
+    day: 0,
+    startTime: dayjs(),
+    endTime: dayjs().add(1, 'h'),
+  }]);
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [address, setAddress] = useState('');
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
-  const daysOfWeek = ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'];
 
   const backToResources = () => {
     navigate('/resources');
   };
 
+  // eslint-disable-next-line no-unused-vars
   const updateDays = (dayValue) => {
     const foundIndex = days.findIndex((day) => day === dayValue);
     if (foundIndex !== -1) {
@@ -47,6 +50,22 @@ function AddResourcePage() {
         return newDays;
       });
     }
+  };
+
+  const addDayTime = () => {
+    const newDayTimes = [...dayTimes];
+    newDayTimes.push({
+      day: 0,
+      startTime: dayjs(),
+      endTime: dayjs().add(1, 'h'),
+    });
+    setDayTimes(newDayTimes);
+  };
+
+  const removeDayTime = (index) => {
+    const newDayTimes = [...dayTimes];
+    newDayTimes.splice(index, 1);
+    setDayTimes(newDayTimes);
   };
 
   const handlePhoneNumberChange = (event) => {
@@ -85,8 +104,8 @@ function AddResourcePage() {
 
     const dateDetails = {
       days,
-      startTime: startTime.format('h:mm a'),
-      endTime: endTime.format('h:mm a'),
+      // startTime: startTime.format('h:mm a'),
+      // endTime: endTime.format('h:mm a'),
     };
     const locationDetails = {
       address,
@@ -141,16 +160,68 @@ function AddResourcePage() {
           </Select>
         </FormControl>
       </Box>
-      <Box sx={{ display: 'flex' }}>
-        { daysOfWeek.map((day, index) => (
-          <Button
-            variant="contained"
-            style={{ backgroundColor: days.includes(index) ? '#4C4C9B' : '#D0D0E8' }}
-            onClick={() => updateDays(index)}
-          >
-            {day}
-          </Button>
+      <Box>
+        {dayTimes.map((_, index) => (
+          <Box sx={{ display: 'flex' }}>
+            <FormControl>
+              <Select
+                value={dayTimes[index].day}
+                defaultValue={0}
+                onChange={(e) => {
+                  const newDayTimes = [...dayTimes];
+                  newDayTimes[index].day = e.target.value;
+                  setDayTimes(newDayTimes);
+                }}
+              >
+                <MenuItem value={0}>M</MenuItem>
+                <MenuItem value={1}>Tu</MenuItem>
+                <MenuItem value={2}>W</MenuItem>
+                <MenuItem value={3}>Th</MenuItem>
+                <MenuItem value={4}>F</MenuItem>
+                <MenuItem value={5}>Sa</MenuItem>
+                <MenuItem value={6}>Su</MenuItem>
+              </Select>
+            </FormControl>
+            <Box sx={{ display: 'flex' }}>
+              <Typography>Hours</Typography>
+              <Box>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <TimePicker
+                    value={dayTimes[index].startTime}
+                    onChange={(newTime) => {
+                      const newDayTimes = [...dayTimes];
+                      newDayTimes[index].startTime = newTime;
+                      setDayTimes(newDayTimes);
+                    }}
+                  />
+                </LocalizationProvider>
+              </Box>
+              <Typography>to</Typography>
+              <Box>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <TimePicker
+                    value={dayTimes[index].endTime}
+                    onChange={(newTime) => {
+                      const newDayTimes = [...dayTimes];
+                      newDayTimes[index].endTime = newTime;
+                      setDayTimes(newDayTimes);
+                    }}
+                  />
+                </LocalizationProvider>
+              </Box>
+            </Box>
+            {index > 0
+              ? (
+                <Button onClick={() => removeDayTime(index)}>
+                  Delete
+                </Button>
+              )
+              : null}
+          </Box>
         ))}
+      </Box>
+      <Box>
+        <Button onClick={() => addDayTime()}>Add More Days</Button>
       </Box>
       <Box>
         <Typography>Phone Number</Typography>
@@ -158,26 +229,6 @@ function AddResourcePage() {
           value={phoneNumber}
           onChange={handlePhoneNumberChange}
         />
-      </Box>
-      <Box>
-        <Typography>Hours</Typography>
-        <Box>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <TimePicker
-              value={startTime}
-              onChange={(newTime) => setStartTime(newTime)}
-            />
-          </LocalizationProvider>
-        </Box>
-        <Typography>to</Typography>
-        <Box>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <TimePicker
-              value={endTime}
-              onChange={(newTime) => setEndTime(newTime)}
-            />
-          </LocalizationProvider>
-        </Box>
       </Box>
       <Box>
         <Box>

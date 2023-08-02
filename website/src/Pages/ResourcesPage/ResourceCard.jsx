@@ -10,7 +10,8 @@ dayjs.extend(isoWeek);
 function ResourceCard({
   title, tag, days, startTime, endTime, address,
 }) {
-  const daysOfWeek = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
+  console.log(days);
+  // const daysOfWeek = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
 
   return (
     <Box sx={{ border: 1 }}>
@@ -24,7 +25,7 @@ function ResourceCard({
       </Box>
       <Box>
         <Box sx={{ display: 'flex' }}>
-          <Typography>{days.map((dayIndex) => daysOfWeek[dayIndex]).join(', ')}</Typography>
+          {/* <Typography>{days.map((dayIndex) => daysOfWeek[dayIndex]).join(', ')}</Typography> */}
           <Typography>{startTime}</Typography>
           <Typography>{endTime}</Typography>
         </Box>

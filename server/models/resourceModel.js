@@ -44,7 +44,7 @@ const resourceSchema = new mongoose.Schema({
   },
   dateDetails: {
     required: true,
-    type: dateSchema,
+    type: [dateSchema],
   },
   locationDetails: {
     required: true,
