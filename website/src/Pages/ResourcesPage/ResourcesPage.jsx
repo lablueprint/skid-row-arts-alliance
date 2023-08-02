@@ -86,9 +86,7 @@ function ResourcesPage() {
             <ResourceCard
               title={resource.title}
               tag={resource.tag}
-              days={resource.dateDetails.days}
-              startTime={resource.dateDetails.startTime}
-              endTime={resource.dateDetails.endTime}
+              dateDetails={resource.dateDetails}
               address={resource.locationDetails.address}
             />
           </Box>

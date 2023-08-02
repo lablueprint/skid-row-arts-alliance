@@ -17,7 +17,6 @@ function AddResourcePage() {
 
   const [title, setTitle] = useState('');
   const [tag, setTag] = useState('');
-  const [days, setDays] = useState([]);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [dayTimes, setDayTimes] = useState([{
     day: 0,
@@ -32,24 +31,6 @@ function AddResourcePage() {
 
   const backToResources = () => {
     navigate('/resources');
-  };
-
-  // eslint-disable-next-line no-unused-vars
-  const updateDays = (dayValue) => {
-    const foundIndex = days.findIndex((day) => day === dayValue);
-    if (foundIndex !== -1) {
-      setDays((prevDays) => {
-        const newDays = [...prevDays];
-        newDays.splice(foundIndex, 1);
-        return newDays;
-      });
-    } else {
-      setDays((prevDays) => {
-        const newDays = [...prevDays, dayValue];
-        newDays.sort((a, b) => a - b);
-        return newDays;
-      });
-    }
   };
 
   const addDayTime = () => {
@@ -93,8 +74,39 @@ function AddResourcePage() {
     return urlPattern.test(url);
   }
 
-  const validateResourceInputs = () => (title === '' || tag === '' || days.length === 0
+  const validateResourceInputs = () => (title === '' || tag === ''
   || latitude === '' || longitude === '' || address === '' || !validEmail(email) || !validWebsite(website));
+
+  const groupDayTimes = () => {
+    const groupedMap = new Map();
+
+    // Iterate through the dayTimeArray
+    dayTimes.forEach((dayTime) => {
+      const startTimeString = dayTime.startTime.format('h:mm a');
+      const endTimeString = dayTime.endTime.format('h:mm a');
+      const key = `${startTimeString}-${endTimeString}`;
+
+      if (groupedMap.has(key)) {
+        const existingGroupedDayTime = groupedMap.get(key);
+        const updatedGroupedDayTime = {
+          ...existingGroupedDayTime,
+          days: [...new Set([...existingGroupedDayTime.days, dayTime.day])].sort((a, b) => a - b),
+        };
+        groupedMap.set(key, updatedGroupedDayTime);
+      } else {
+        groupedMap.set(key, {
+          days: [dayTime.day],
+          startTime: startTimeString,
+          endTime: endTimeString,
+        });
+      }
+    });
+
+    // Create an array of grouped objects
+    const groupedResults = Array.from(groupedMap.values());
+
+    return groupedResults;
+  };
 
   const createResource = async () => {
     if (validateResourceInputs()) {
@@ -102,11 +114,7 @@ function AddResourcePage() {
       return;
     }
 
-    const dateDetails = {
-      days,
-      // startTime: startTime.format('h:mm a'),
-      // endTime: endTime.format('h:mm a'),
-    };
+    const dateDetails = groupDayTimes();
     const locationDetails = {
       address,
       coordinates: {

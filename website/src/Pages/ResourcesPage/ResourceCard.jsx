@@ -8,10 +8,9 @@ const isoWeek = require('dayjs/plugin/isoWeek');
 dayjs.extend(isoWeek);
 
 function ResourceCard({
-  title, tag, days, startTime, endTime, address,
+  title, tag, dateDetails, address,
 }) {
-  console.log(days);
-  // const daysOfWeek = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
+  const daysOfWeek = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
 
   return (
     <Box sx={{ border: 1 }}>
@@ -24,11 +23,16 @@ function ResourceCard({
         </Typography>
       </Box>
       <Box>
-        <Box sx={{ display: 'flex' }}>
-          {/* <Typography>{days.map((dayIndex) => daysOfWeek[dayIndex]).join(', ')}</Typography> */}
-          <Typography>{startTime}</Typography>
-          <Typography>{endTime}</Typography>
-        </Box>
+        {dateDetails.map((date) => (
+          <Box sx={{ display: 'flex' }}>
+            <Typography>{date.days.map((dayIndex) => daysOfWeek[dayIndex]).join(', ')}</Typography>
+            <Typography>
+              {date.startTime}
+              -
+              {date.endTime}
+            </Typography>
+          </Box>
+        ))}
       </Box>
       <Box>
         <Typography>
@@ -42,11 +46,14 @@ function ResourceCard({
 ResourceCard.propTypes = {
   title: PropTypes.string.isRequired,
   tag: PropTypes.string.isRequired,
-  days: PropTypes.arrayOf(
-    PropTypes.number,
+  dateDetails: PropTypes.arrayOf(
+    PropTypes.shape({
+      days: PropTypes.arrayOf(PropTypes.number),
+      startTime: PropTypes.string.isRequired,
+      endTime: PropTypes.string.isRequired,
+    }),
   ).isRequired,
-  startTime: PropTypes.string.isRequired,
-  endTime: PropTypes.string.isRequired,
+
   address: PropTypes.string.isRequired,
 };
 
