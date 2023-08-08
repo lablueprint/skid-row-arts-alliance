@@ -73,7 +73,7 @@ function AddEventPage() {
     imageData.forEach((image) => {
       formData.append('image', image);
     });
-    await axios.post('http://localhost:4000/event/create', formData, {
+    await axios.post(`${process.env.REACT_APP_SERVER_URL}/event/create`, formData, {
       headers: {
         ...authHeader,
         'Content-Type': 'multipart/form-data',

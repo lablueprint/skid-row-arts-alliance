@@ -81,7 +81,7 @@ function EventsPage() {
   };
 
   const getEvents = async () => {
-    const response = await axios.get('http://localhost:4000/event/getevents', {
+    const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/event/getevents`, {
       headers: authHeader,
     });
     const events = response.data;
@@ -115,7 +115,7 @@ function EventsPage() {
   };
 
   const deleteEvent = async (eventId) => {
-    await axios.delete(`http://localhost:4000/event/delete/${eventId}`, {
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/event/delete/${eventId}`, {
       headers: authHeader,
     });
     setOpenPreview(false);
