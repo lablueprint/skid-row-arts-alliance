@@ -18,6 +18,8 @@ import NavigationBar from './Components/NavigationBar/NavigationBar';
 import ZineDetailsPage from './Pages/ZinesPage/ZineDetailsPage';
 import NonprofitsPage from './Pages/NonprofitsPage/NonprofitsPage';
 import AddNonprofitPage from './Pages/NonprofitsPage/AddNonprofitPage';
+import AddEventPage from './Pages/EventsPage/AddEventPage';
+import EditEventPage from './Pages/EventsPage/EditEventPage';
 
 function App() {
   const { id, token } = useSelector((state) => state.sliceAuth);
@@ -44,6 +46,8 @@ function App() {
             <Route path="/zine" element={(<ZineDetailsPage />)} />
             <Route path="/nonprofits" element={(<NonprofitsPage />)} />
             <Route path="/nonprofits/add" element={(<AddNonprofitPage />)} />
+            <Route path="/events/add" element={(<AddEventPage />)} />
+            <Route path="/events/edit" element={(<EditEventPage />)} />
           </Routes>
         </div>
       </div>

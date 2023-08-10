@@ -1,0 +1,71 @@
+.back-to-zines-button {
+    border: none;
+    background-color: transparent;
+    margin: 4% 0 0 5%;
+    font-family: 'Montserrat-Medium', sans-serif;
+    color: var(--grey-dark, #53595C);
+}
+
+.zine-details-title {
+    font-family: 'Montserrat-Medium', sans-serif;
+    font-size: 1.5rem;
+    color: var(--blackcurrent, #1E2021);
+    margin: 0 0 1.5rem 0;
+    letter-spacing: 1.2px;
+}
+
+.zine-details-season-year {
+    font-family: 'Montserrat-Medium', sans-serif;
+    font-size: 1rem;
+    color: var(--grey-dark, #53595C);
+    margin: 0 0 4rem 0;
+    letter-spacing: 1px;
+}
+
+.table-of-contents {
+    font-family: 'Montserrat-Medium', sans-serif;
+    font-size: 1rem;
+    color: var(--blackcurrent, #1E2021);
+    margin: 2rem 0 0.5rem 0;
+}
+
+.edit-delete-button {
+    border: none;
+    background-color: transparent;
+    margin-right: 4rem;
+}
+
+.edit-delete-icons {
+    width: 20px;
+    height: 20px;
+}
+
+.edit-delete-text {
+    font-family: 'Montserrat-Regular', sans-serif;
+    font-size: 0.7rem;
+    line-height: 150%;
+}
+
+.zine-details-field-label {
+    color: var(--grey-dark, #53595C);
+    font-family: 'Montserrat-Regular', sans-serif;
+    line-height: 150%;
+    margin-bottom: 0.3rem;
+}
+
+.zine-details-text-field {
+    font-family: 'Montserrat-Regular', sans-serif;
+    color: var(--subtle-text-grey-dark, #53595C);
+}
+
+.toc-delete-icon-container {
+    border: none;
+    background-color: transparent;
+}
+
+.toc-delete-icon {
+    width: 30px;
+    height: 30px;
+    margin-top: 3.5rem;
+    margin-left: 2rem;
+}
