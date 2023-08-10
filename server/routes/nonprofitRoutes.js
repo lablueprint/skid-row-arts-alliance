@@ -10,6 +10,6 @@ nonprofitRouter.post('/add', nonprofitController.addNonprofit);
 nonprofitRouter.patch('/update/:id', nonprofitController.updateNonprofit);
 nonprofitRouter.get('/getall', nonprofitController.getAllNonprofits);
 nonprofitRouter.get('/getfromtitle/:title', nonprofitController.getNonprofitFromTitle);
-nonprofitRouter.delete('/delete', nonprofitController.deleteNonprofit);
+nonprofitRouter.delete('/delete/:id', nonprofitController.deleteNonprofit);
 
 module.exports = nonprofitRouter;

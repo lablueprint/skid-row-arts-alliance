@@ -1,13 +1,18 @@
-import { React, useState } from 'react';
+import { React, useEffect, useState } from 'react';
 import {
   Container, Box, Typography, Button, TextField,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 // import axios from 'axios';
 // import { useSelector } from 'react-redux';
 
-function AddNonprofitPage() {
-//   const { authHeader } = useSelector((state) => state.sliceAuth);
+function EditNonprofitPage() {
+  const location = useLocation();
+  const {
+    nonprofitDetails,
+  } = location.state;
+
+  //   const { authHeader } = useSelector((state) => state.sliceAuth);
 
   const navigate = useNavigate();
 
@@ -18,12 +23,17 @@ function AddNonprofitPage() {
   const [imageData, setImageData] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
+  useEffect(() => {
+    setTitle(nonprofitDetails.title);
+    setPhoneNumber(nonprofitDetails.phoneNumber);
+    setEmail(nonprofitDetails.email);
+    setWebsite(nonprofitDetails.website);
+  }, []);
+
   const backToNonprofits = () => {
     console.log(imageData);
     navigate('/nonprofits');
   };
-
-  // TODO: add new nonprofit
 
   const handlePhoneNumberChange = (event) => {
     const inputValue = event.target.value;
@@ -52,10 +62,12 @@ function AddNonprofitPage() {
     setImagePreview(null);
   };
 
+  // TODO: validate email and website
+
   return (
     <Container>
       <Box>
-        <Typography>Add NPO Partner</Typography>
+        <Typography>Edit NPO Partner</Typography>
       </Box>
       <Box>
         <Typography>NPO Name</Typography>
@@ -86,6 +98,10 @@ function AddNonprofitPage() {
           value={website}
           onChange={(e) => setWebsite(e.target.value)}
         />
+      </Box>
+      <Box>
+        <Button>Replace</Button>
+        <Button>X</Button>
       </Box>
       <Box>
         <Typography>Thumbnail</Typography>
@@ -124,4 +140,4 @@ function AddNonprofitPage() {
   );
 }
 
-export default AddNonprofitPage;
+export default EditNonprofitPage;
