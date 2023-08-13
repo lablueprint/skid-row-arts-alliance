@@ -50,6 +50,7 @@ function NonprofitsPage() {
 
   const previewEventDetails = (nonprofitDetails) => {
     setOpenPreview(true);
+    console.log(nonprofitDetails);
     setPreviewDetails(nonprofitDetails);
   };
 

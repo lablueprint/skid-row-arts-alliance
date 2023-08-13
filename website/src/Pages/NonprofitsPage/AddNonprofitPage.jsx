@@ -3,15 +3,16 @@ import {
   Container, Box, Typography, Button, TextField,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-// import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 function AddNonprofitPage() {
-//   const { authHeader } = useSelector((state) => state.sliceAuth);
+  const { authHeader } = useSelector((state) => state.sliceAuth);
 
   const navigate = useNavigate();
 
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
@@ -19,11 +20,30 @@ function AddNonprofitPage() {
   const [imagePreview, setImagePreview] = useState(null);
 
   const backToNonprofits = () => {
-    console.log(imageData);
     navigate('/nonprofits');
   };
 
-  // TODO: add new nonprofit
+  const createNonprofit = async () => {
+    // TODO: validate the inputs
+    const newNonprofit = {
+      title,
+      description,
+      phoneNumber,
+      email,
+      website,
+    };
+
+    const formData = new FormData();
+    formData.append('newNonprofit', JSON.stringify(newNonprofit));
+    formData.append('image', imageData);
+    await axios.post('http://localhost:4000/nonprofit/add', formData, {
+      headers: {
+        ...authHeader,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    backToNonprofits();
+  };
 
   const handlePhoneNumberChange = (event) => {
     const inputValue = event.target.value;
@@ -62,6 +82,13 @@ function AddNonprofitPage() {
         <TextField
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+        />
+      </Box>
+      <Box>
+        <Typography>Description</Typography>
+        <TextField
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </Box>
       <Box>
@@ -118,7 +145,7 @@ function AddNonprofitPage() {
       </Box>
       <Box>
         <Button onClick={() => backToNonprofits()}>Cancel</Button>
-        <Button>Save</Button>
+        <Button onClick={() => createNonprofit()}>Save</Button>
       </Box>
     </Container>
   );
