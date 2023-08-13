@@ -7,7 +7,11 @@ import { URL } from '@env';
 import {
   StyleSheet, Text, TextInput, View, Alert, TouchableOpacity,
 } from 'react-native';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 import { login } from '../redux/sliceAuth';
+import SraaLogo from '../Components/SraaLogo';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -18,9 +22,10 @@ const styles = StyleSheet.create({
   },
   signInContainer: {
     flexDirection: 'column',
-    width: '60%',
-    alignItems: 'center',
+    width: '66%',
+    alignItems: 'flex-start',
     justifyContent: 'center',
+    height: '45%',
   },
   signUpContainer: {
     backgroundColor: '#F8F8F8',
@@ -38,41 +43,58 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: '#8A9195',
     backgroundColor: '#F2F2F2',
+    fontFamily: 'Montserrat',
   },
   inputContainer: {
     flexDirection: 'column',
     height: '15%',
     width: '100%',
     justifyContent: 'space-between',
-    margin: 20,
+    marginVertical: '5%',
   },
   button: {
     height: 40,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 50,
+    marginTop: '12%',
     backgroundColor: '#4C4C9B',
   },
   link: {
     textAlign: 'right',
     textDecorationLine: 'underline',
+    fontFamily: 'Montserrat',
   },
   headerText: {
     fontSize: 25,
     paddingBottom: 20,
+    fontFamily: 'MontserratMedium',
   },
   inputLabel: {
     fontSize: 15,
+    fontFamily: 'Montserrat',
   },
   buttonText: {
     color: '#F8F8F8',
     fontWeight: 'bold',
     textAlign: 'center',
+    fontFamily: 'MontserratBold',
+  },
+  logo: {
+    width: '66%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
 function SignInScreen({ navigation }) {
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
+
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
   const dispatch = useDispatch();
@@ -124,8 +146,11 @@ function SignInScreen({ navigation }) {
 
   return (
     <View style={styles.mainContainer}>
+      <View style={styles.logo}>
+        <SraaLogo width={220} height={220} />
+      </View>
       <View style={styles.signInContainer}>
-        <Text style={styles.headerText}>Welcome back!</Text>
+        <Text style={styles.headerText}>Welcome!</Text>
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>
             Email
@@ -171,7 +196,7 @@ function SignInScreen({ navigation }) {
         </TouchableOpacity>
       </View>
       <View style={styles.signUpContainer}>
-        <Text>Dont have an account?</Text>
+        <Text style={styles.inputLabel}>Dont have an account?</Text>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('Sign Up');
