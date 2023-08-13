@@ -6,6 +6,9 @@ import { URL } from '@env';
 import {
   StyleSheet, Text, TextInput, View, Image, Alert, TouchableOpacity, Pressable,
 } from 'react-native';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 import { login } from '../redux/sliceAuth';
 
 const BackButton = require('../assets/backArrow.png');
@@ -19,26 +22,26 @@ const styles = StyleSheet.create({
   },
   signInContainer: {
     flexDirection: 'column',
-    width: '70%',
+    width: '66%',
     height: '80%',
-    alignItems: 'center',
-    textAlign: 'center',
+    alignItems: 'flex-start',
   },
   input: {
     height: 40,
     width: '100%',
-    padding: 10,
+    marginBottom: 20,
     borderWidth: 0.5,
     borderRadius: 8,
     borderColor: '#8A9195',
     backgroundColor: '#F2F2F2',
+    fontFamily: 'Montserrat',
   },
   inputContainer: {
     flexDirection: 'column',
     height: '18%',
     width: '100%',
     justifyContent: 'space-between',
-    margin: 20,
+    marginVertical: '5%',
   },
   codeContainer: {
     flexDirection: 'row',
@@ -57,11 +60,12 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-  backButtonPosiion: {
+  backButtonContainer: {
     alignItems: 'flex-start',
     width: '100%',
     marginLeft: '10%',
     marginTop: '10%',
+    marginBottom: '15%',
   },
   hiddenCodeInput: {
     position: 'absolute',
@@ -71,25 +75,31 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 25,
-    paddingBottom: 10,
+    paddingBottom: '5%',
+    fontFamily: 'MontserratMedium',
   },
   inputLabel: {
     fontSize: 15,
     marginBottom: 10,
+    fontFamily: 'Montserrat',
   },
   buttonText: {
     color: '#F8F8F8',
     fontWeight: 'bold',
     textAlign: 'center',
+    fontFamily: 'MontserratBold',
+    fontSize: 15,
   },
   link: {
     textAlign: 'right',
     textDecorationLine: 'underline',
+    fontFamily: 'Montserrat',
+    marginBottom: '5%',
   },
   digitInput: {
-    borderColor: '#1D763C',
-    backgroundColor: 'white',
-    borderWidth: 1,
+    borderColor: '#8A9195',
+    backgroundColor: '#F2F2F2',
+    borderWidth: 0.5,
     borderRadius: 8,
     height: 70,
     width: 50,
@@ -97,9 +107,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   digitInputEmpty: {
-    borderColor: '#e5e5e5',
-    backgroundColor: '#e5e5e5',
-    borderWidth: 1,
+    borderColor: '#8A9195',
+    backgroundColor: '#F2F2F2',
+    borderWidth: 0.5,
     borderRadius: 8,
     height: 70,
     width: 50,
@@ -116,10 +126,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+    marginBottom: '5%',
   },
 });
 
 function ForgotPasswordScreen({ navigation }) {
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
+
   const [email, onChangeEmail] = useState('');
   const [password, onChangePassword] = useState('');
   const [confirmPassword, onChangeConfirmPassword] = useState('');
@@ -224,7 +242,7 @@ function ForgotPasswordScreen({ navigation }) {
   if (page === 2) {
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.backButtonPosiion}>
+        <View style={styles.backButtonContainer}>
           <TouchableOpacity
             onPress={() => {
               setPage(1);
@@ -238,14 +256,16 @@ function ForgotPasswordScreen({ navigation }) {
         </View>
         <View style={styles.signInContainer}>
           <Text style={styles.headerText}>Verify Your Email</Text>
-          <Text>Please enter your email address below.</Text>
+          <Text style={styles.inputLabel}>Please enter your email address below.</Text>
           <TextInput
             style={styles.input}
             onChangeText={onChangeEmail}
             value={email}
             autoCapitalize={false}
           />
-          <Text>Please enter the 4-digit code sent to your email address below.</Text>
+          <Text style={styles.inputLabel}>
+            Please enter the 4-digit code sent to your email address below.
+          </Text>
           <View style={styles.inputContainer}>
             <Pressable style={styles.digitsContainer} onPress={handleDigitsPress}>
               {codeDigitsArray.map((element, index) => digitInput(index))}
@@ -286,7 +306,7 @@ function ForgotPasswordScreen({ navigation }) {
   if (page === 3) {
     return (
       <View style={styles.mainContainer}>
-        <View style={styles.backButtonPosiion}>
+        <View style={styles.backButtonContainer}>
           <TouchableOpacity
             onPress={() => {
               setPage(2);
@@ -346,7 +366,7 @@ function ForgotPasswordScreen({ navigation }) {
 
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.backButtonPosiion}>
+      <View style={styles.backButtonContainer}>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('Sign In');
@@ -364,7 +384,7 @@ function ForgotPasswordScreen({ navigation }) {
           Please enter your email address to receive a verification code.
         </Text>
         <View style={styles.inputContainer}>
-          <Text>
+          <Text style={styles.inputLabel}>
             Email
           </Text>
           <TextInput
