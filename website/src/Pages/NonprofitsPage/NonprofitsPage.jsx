@@ -50,7 +50,6 @@ function NonprofitsPage() {
 
   const previewEventDetails = (nonprofitDetails) => {
     setOpenPreview(true);
-    console.log(nonprofitDetails);
     setPreviewDetails(nonprofitDetails);
   };
 
@@ -70,7 +69,7 @@ function NonprofitsPage() {
             key={nonprofit._id}
             onClick={() => previewEventDetails(nonprofit)}
           >
-            <NonprofitCard image={nonprofit.image} title={nonprofit.title} />
+            <NonprofitCard image={nonprofit.imageURL} title={nonprofit.title} />
           </Box>
         ))}
       </Box>
@@ -109,7 +108,7 @@ function NonprofitsPage() {
               <Typography>{previewDetails.website}</Typography>
             </Box>
             <Box>
-              <img src={previewDetails.image} alt="Nonprofit" />
+              <img src={previewDetails.imageURL} alt="Nonprofit" />
             </Box>
           </Box>
         ) : (

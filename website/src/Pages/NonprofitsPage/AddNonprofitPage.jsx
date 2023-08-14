@@ -120,7 +120,6 @@ function AddNonprofitPage() {
           { imagePreview !== null ? (
             <Box>
               <img src={imagePreview} alt="Nonprofit" />
-              <Button>Replace</Button>
               <Button onClick={() => removeImage()}>Remove</Button>
             </Box>
           ) : (

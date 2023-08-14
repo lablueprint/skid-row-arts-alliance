@@ -8,11 +8,7 @@ function NonprofitCard({ image, title }) {
   return (
     <Box>
       <Box>
-        { image ? (
-          <img src={image} alt="Nonprofit" />
-        ) : (
-          null
-        )}
+        <img src={image} alt="Nonprofit" />
       </Box>
       <Box>
         <Typography>{title}</Typography>

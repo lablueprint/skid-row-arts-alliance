@@ -3,8 +3,8 @@ import {
   Container, Box, Typography, Button, TextField,
 } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-// import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 function EditNonprofitPage() {
   const location = useLocation();
@@ -12,11 +12,12 @@ function EditNonprofitPage() {
     nonprofitDetails,
   } = location.state;
 
-  //   const { authHeader } = useSelector((state) => state.sliceAuth);
+  const { authHeader } = useSelector((state) => state.sliceAuth);
 
   const navigate = useNavigate();
 
   const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
@@ -25,14 +26,39 @@ function EditNonprofitPage() {
 
   useEffect(() => {
     setTitle(nonprofitDetails.title);
+    setDescription(nonprofitDetails.description);
     setPhoneNumber(nonprofitDetails.phoneNumber);
     setEmail(nonprofitDetails.email);
     setWebsite(nonprofitDetails.website);
+    setImageData(nonprofitDetails.image);
+    setImagePreview(nonprofitDetails.imageURL);
   }, []);
 
   const backToNonprofits = () => {
-    console.log(imageData);
     navigate('/nonprofits');
+  };
+
+  const editNonprofit = async () => {
+    // TODO: validate the inputs
+    const updatedNonprofit = {
+      title,
+      description,
+      phoneNumber,
+      email,
+      website,
+      image: nonprofitDetails.image,
+    };
+
+    const formData = new FormData();
+    formData.append('updatedNonprofit', JSON.stringify(updatedNonprofit));
+    formData.append('image', imageData);
+    await axios.patch(`http://localhost:4000/nonprofit/update/${nonprofitDetails._id}`, formData, {
+      headers: {
+        ...authHeader,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    backToNonprofits();
   };
 
   const handlePhoneNumberChange = (event) => {
@@ -62,8 +88,6 @@ function EditNonprofitPage() {
     setImagePreview(null);
   };
 
-  // TODO: validate email and website
-
   return (
     <Container>
       <Box>
@@ -74,6 +98,13 @@ function EditNonprofitPage() {
         <TextField
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+        />
+      </Box>
+      <Box>
+        <Typography>Description</Typography>
+        <TextField
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
       </Box>
       <Box>
@@ -100,16 +131,11 @@ function EditNonprofitPage() {
         />
       </Box>
       <Box>
-        <Button>Replace</Button>
-        <Button>X</Button>
-      </Box>
-      <Box>
         <Typography>Thumbnail</Typography>
         <Box>
           { imagePreview !== null ? (
             <Box>
               <img src={imagePreview} alt="Nonprofit" />
-              <Button>Replace</Button>
               <Button onClick={() => removeImage()}>Remove</Button>
             </Box>
           ) : (
@@ -134,7 +160,7 @@ function EditNonprofitPage() {
       </Box>
       <Box>
         <Button onClick={() => backToNonprofits()}>Cancel</Button>
-        <Button>Save</Button>
+        <Button onClick={() => editNonprofit()}>Save</Button>
       </Box>
     </Container>
   );
