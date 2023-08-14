@@ -38,8 +38,34 @@ function EditNonprofitPage() {
     navigate('/nonprofits');
   };
 
+  const validEmail = ((e) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(e);
+  });
+
+  function validWebsite(url) {
+    const urlPattern = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[^\s]*)?$/;
+    return urlPattern.test(url);
+  }
+
+  const validateNonprofitInputs = () => (title === '' || description === '' || phoneNumber === '' || phoneNumber.length !== 14
+  || !validEmail(email) || !validWebsite(website) || imagePreview === null);
+
   const editNonprofit = async () => {
-    // TODO: validate the inputs
+    if (validateNonprofitInputs()) {
+      const updatedNonprofit = {
+        title,
+        description,
+        phoneNumber,
+        email,
+        website,
+        imagePreview,
+      };
+      console.log(updatedNonprofit);
+      alert('Missing field or incorrect format.');
+      return;
+    }
+
     const updatedNonprofit = {
       title,
       description,
