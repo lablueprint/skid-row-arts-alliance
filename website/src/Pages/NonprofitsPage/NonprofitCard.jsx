@@ -8,7 +8,7 @@ function NonprofitCard({ image, title }) {
   return (
     <Box>
       <Box>
-        <img src={image} alt="Nonprofit" />
+        <img style={{ height: 75, width: 75 }} src={image} alt="Nonprofit" />
       </Box>
       <Box>
         <Typography>{title}</Typography>

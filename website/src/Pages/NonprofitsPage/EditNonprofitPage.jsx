@@ -161,7 +161,7 @@ function EditNonprofitPage() {
         <Box>
           { imagePreview !== null ? (
             <Box>
-              <img src={imagePreview} alt="Nonprofit" />
+              <img style={{ height: 225, width: 450 }} src={imagePreview} alt="Nonprofit" />
               <Button onClick={() => removeImage()}>Remove</Button>
             </Box>
           ) : (

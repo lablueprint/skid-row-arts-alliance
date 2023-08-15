@@ -108,7 +108,7 @@ function NonprofitsPage() {
               <Typography>{previewDetails.website}</Typography>
             </Box>
             <Box>
-              <img src={previewDetails.imageURL} alt="Nonprofit" />
+              <img style={{ height: 225, width: 450 }} src={previewDetails.imageURL} alt="Nonprofit" />
             </Box>
           </Box>
         ) : (
