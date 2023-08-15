@@ -23,6 +23,10 @@ const styles = StyleSheet.create({
     flex: 3,
     backgroundColor: '#fff',
   },
+  backArrow: {
+    marginTop: 40,
+    paddingLeft: 13,
+  },
   aboveImage: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -278,10 +282,6 @@ function ArtworkDetailScreen({
     setShowFullDescription(!showFullDescription);
   };
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({ headerTitle: '' });
-  }, [navigation]);
-
   useEffect(() => {
     getSavedArt().then((status) => setIsArtSaved(status));
     getSubmission();
@@ -291,6 +291,14 @@ function ArtworkDetailScreen({
 
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.backArrow}>
+        <TouchableOpacity onPress={() => navigation.navigate('Gallery')}>
+          <Image
+            source={require('../assets/backArrow.png')}
+            style={{ width: 21, height: 21 }}
+          />
+        </TouchableOpacity>
+      </View>
       <View style={styles.aboveImage}>
         <Image
           source={require('../assets/artDetails/defaultAvatar.png')}
@@ -442,6 +450,7 @@ ArtworkDetailScreen.propTypes = {
   }).isRequired,
   navigation: PropTypes.shape({
     setOptions: PropTypes.func.isRequired,
+    navigate: PropTypes.func,
   }).isRequired,
 };
 

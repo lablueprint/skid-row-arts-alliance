@@ -186,7 +186,7 @@ function AppNavigator() {
         <Stack.Navigator>
           <Stack.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false, gestureEnabled: false }} />
           <Stack.Screen name="Event Details" component={EventDetailScreen} />
-          <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} />
+          <Stack.Screen name="Artwork Details" component={ArtworkDetailScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Resource Details" component={ResourceDetailScreen} />
           <Stack.Screen name="Organization Details" component={OrganizationDetailScreen} />
           <Stack.Screen name="Artwork Filter" component={ArtworkFilterScreen} />
