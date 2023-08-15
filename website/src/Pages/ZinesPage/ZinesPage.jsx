@@ -11,7 +11,7 @@ function ZinesPage() {
   const [zines, setZines] = useState([]);
 
   const getZines = async () => {
-    const allZines = await axios.get('http://localhost:4000/zine/get', {
+    const allZines = await axios.get(`${process.env.REACT_APP_SERVER_URL}/zine/get`, {
       headers: authHeader,
     });
     setZines(allZines.data);
