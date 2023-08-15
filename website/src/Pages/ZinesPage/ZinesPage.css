@@ -1,0 +1,7 @@
+.title {
+    color: var(--blackcurrent, #1E2021);
+    font-family: 'Montserrat-SemiBold', sans-serif;
+    letter-spacing: 1.6px;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}

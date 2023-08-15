@@ -1,15 +1,19 @@
 const mongoose = require('mongoose');
 
 const nonprofitSchema = new mongoose.Schema({
-  organizationTitle: {
-    required: true,
+  image: {
+    required: false,
     type: String,
   },
-  descriptions: {
+  description: {
     required: true,
     type: String,
   },
   email: {
+    required: true,
+    type: String,
+  },
+  title: {
     required: true,
     type: String,
   },
