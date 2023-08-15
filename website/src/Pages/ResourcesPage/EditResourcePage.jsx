@@ -98,12 +98,17 @@ function EditResourcePage() {
   });
 
   function validWebsite(url) {
-    const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/i;
+    const urlPattern = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[^\s]*)?$/;
     return urlPattern.test(url);
   }
 
-  const validateResourceInputs = () => (title === '' || tag === ''
-  || latitude === '' || longitude === '' || address === '' || !validEmail(email) || !validWebsite(website));
+  function validCoord(value) {
+    return value === '' || Number.isNaN(Number(value));
+  }
+
+  const validateResourceInputs = () => (title === '' || tag === '' || phoneNumber === ''
+  || phoneNumber.length !== 14 || validCoord(latitude) || validCoord(longitude)
+  || address === '' || !validEmail(email) || !validWebsite(website));
 
   const groupDayTimes = () => {
     const groupedMap = new Map();
