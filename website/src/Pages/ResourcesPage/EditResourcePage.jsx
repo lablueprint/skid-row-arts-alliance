@@ -164,7 +164,7 @@ function EditResourcePage() {
       email,
       website,
     };
-    await axios.patch(`http://localhost:4000/resource/update/${resourceDetails._id}`, updatedResource, {
+    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/resource/update/${resourceDetails._id}`, updatedResource, {
       headers: authHeader,
     });
     backToResources();

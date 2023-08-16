@@ -136,7 +136,7 @@ function AddResourcePage() {
       email,
       website,
     };
-    await axios.post('http://localhost:4000/resource/post', newResource, {
+    await axios.post(`${process.env.REACT_APP_SERVER_URL}/resource/post`, newResource, {
       headers: authHeader,
     });
     backToResources();

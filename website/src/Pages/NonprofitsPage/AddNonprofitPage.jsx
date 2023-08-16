@@ -53,7 +53,7 @@ function AddNonprofitPage() {
     const formData = new FormData();
     formData.append('newNonprofit', JSON.stringify(newNonprofit));
     formData.append('image', imageData);
-    await axios.post('http://localhost:4000/nonprofit/add', formData, {
+    await axios.post(`${process.env.REACT_APP_SERVER_URL}/nonprofit/add`, formData, {
       headers: {
         ...authHeader,
         'Content-Type': 'multipart/form-data',

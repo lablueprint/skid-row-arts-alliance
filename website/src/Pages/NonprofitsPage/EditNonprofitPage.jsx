@@ -78,7 +78,7 @@ function EditNonprofitPage() {
     const formData = new FormData();
     formData.append('updatedNonprofit', JSON.stringify(updatedNonprofit));
     formData.append('image', imageData);
-    await axios.patch(`http://localhost:4000/nonprofit/update/${nonprofitDetails._id}`, formData, {
+    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/nonprofit/update/${nonprofitDetails._id}`, formData, {
       headers: {
         ...authHeader,
         'Content-Type': 'multipart/form-data',

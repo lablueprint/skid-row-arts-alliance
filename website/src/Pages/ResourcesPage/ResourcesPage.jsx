@@ -25,7 +25,7 @@ function ResourcesPage() {
   const daysOfWeek = ['Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat', 'Sun'];
 
   const getResources = async () => {
-    const response = await axios.get('http://localhost:4000/resource/get', {
+    const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/resource/get`, {
       headers: authHeader,
     });
     const resources = response.data;
@@ -50,7 +50,7 @@ function ResourcesPage() {
   };
 
   const deleteResource = async (id) => {
-    await axios.delete(`http://localhost:4000/resource/delete/${id}`, {
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/resource/delete/${id}`, {
       headers: authHeader,
     });
     setRefresh((val) => val + 1);

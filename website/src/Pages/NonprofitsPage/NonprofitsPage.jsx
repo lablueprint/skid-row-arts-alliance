@@ -17,7 +17,7 @@ function NonprofitsPage() {
   const [refresh, setRefresh] = useState(0);
 
   const getNonprofits = async () => {
-    const response = await axios.get('http://localhost:4000/nonprofit/getall', {
+    const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/nonprofit/getall`, {
       headers: authHeader,
     });
     const nonprofitsData = response.data;
@@ -41,7 +41,7 @@ function NonprofitsPage() {
   };
 
   const deleteNonprofit = async (nonprofitId) => {
-    await axios.delete(`http://localhost:4000/nonprofit/delete/${nonprofitId}`, {
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/nonprofit/delete/${nonprofitId}`, {
       headers: authHeader,
     });
     setOpenPreview(false);
