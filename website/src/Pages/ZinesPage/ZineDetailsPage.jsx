@@ -42,7 +42,7 @@ function ZineDetailsPage() {
   const [update, setUpdate] = useState(0);
 
   const getZineDetails = async () => {
-    const zine = await axios.get(`http://localhost:4000/zine/getzine/${id}`, {
+    const zine = await axios.get(`${process.env.REACT_APP_SERVER_URL}/zine/getzine/${id}`, {
       headers: authHeader,
     });
     setDetails({
@@ -63,7 +63,7 @@ function ZineDetailsPage() {
   }, [update]);
 
   const handleDelete = async () => {
-    await axios.delete(`http://localhost:4000/zine/delete/${id}`, {
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/zine/delete/${id}`, {
       headers: authHeader,
     });
     navigate('/zines');
@@ -98,7 +98,7 @@ function ZineDetailsPage() {
 
   const handleSave = async () => {
     // TODO: handle edge case where someone adds a bunch of empty slots
-    await axios.patch(`http://localhost:4000/zine/update/${id}`, {
+    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/zine/update/${id}`, {
       title,
       season,
       year: String(year.year()),

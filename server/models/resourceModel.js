@@ -1,5 +1,20 @@
 const mongoose = require('mongoose');
 
+const dateSchema = new mongoose.Schema({
+  days: {
+    required: true,
+    type: [Number],
+  },
+  startTime: {
+    required: true,
+    type: String,
+  },
+  endTime: {
+    required: true,
+    type: String,
+  },
+});
+
 const locationCoordsSchema = new mongoose.Schema({
   latitude: {
     required: true,
@@ -12,15 +27,7 @@ const locationCoordsSchema = new mongoose.Schema({
 });
 
 const locationSchema = new mongoose.Schema({
-  name: {
-    required: true,
-    type: String,
-  },
   address: {
-    required: true,
-    type: String,
-  },
-  specialinstructions: {
     required: true,
     type: String,
   },
@@ -35,23 +42,27 @@ const resourceSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  location: {
+  dateDetails: {
+    required: true,
+    type: [dateSchema],
+  },
+  locationDetails: {
     required: true,
     type: locationSchema,
   },
-  nonprofits: {
-    required: true,
-    type: [String],
-  },
-  description: {
+  phoneNumber: {
     required: true,
     type: String,
   },
-  resourceType: {
+  tag: {
     required: true,
     type: String,
   },
-  thumbnail: {
+  email: {
+    required: true,
+    type: String,
+  },
+  website: {
     required: true,
     type: String,
   },

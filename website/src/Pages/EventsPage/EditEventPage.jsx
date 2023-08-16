@@ -96,7 +96,7 @@ function EditEventPage() {
     imageData.forEach((image) => {
       formData.append('image', image);
     });
-    await axios.patch(`http://localhost:4000/event/update/${eventDetails._id}`, formData, {
+    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/event/update/${eventDetails._id}`, formData, {
       headers: {
         ...authHeader,
         'Content-Type': 'multipart/form-data',
@@ -122,7 +122,7 @@ function EditEventPage() {
   };
 
   const deleteEvent = async () => {
-    await axios.delete(`http://localhost:4000/event/delete/${eventDetails._id}`, {
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/event/delete/${eventDetails._id}`, {
       headers: authHeader,
     });
     backToEvents();

@@ -18,6 +18,8 @@ import NavigationBar from './Components/NavigationBar/NavigationBar';
 import ZineDetailsPage from './Pages/ZinesPage/ZineDetailsPage';
 import NonprofitsPage from './Pages/NonprofitsPage/NonprofitsPage';
 import AddNonprofitPage from './Pages/NonprofitsPage/AddNonprofitPage';
+import AddResourcePage from './Pages/ResourcesPage/AddResourcePage';
+import EditResourcePage from './Pages/ResourcesPage/EditResourcePage';
 import AddEventPage from './Pages/EventsPage/AddEventPage';
 import EditEventPage from './Pages/EventsPage/EditEventPage';
 import EditNonprofitPage from './Pages/NonprofitsPage/EditNonprofitPage';
@@ -46,6 +48,8 @@ function App() {
             <Route path="/submission" element={(<SubmissionDetailsPage />)} />
             <Route path="/zine" element={(<ZineDetailsPage />)} />
             <Route path="/nonprofits" element={(<NonprofitsPage />)} />
+            <Route path="/resources/add" element={(<AddResourcePage />)} />
+            <Route path="/resources/edit" element={(<EditResourcePage />)} />
             <Route path="/events/add" element={(<AddEventPage />)} />
             <Route path="/events/edit" element={(<EditEventPage />)} />
             <Route path="/nonprofits/add" element={(<AddNonprofitPage />)} />
