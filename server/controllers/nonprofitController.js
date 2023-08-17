@@ -121,7 +121,11 @@ const getNonprofitFromTitle = async (req, res) => {
 
 const deleteNonprofit = async (req, res) => {
   try {
-    const data = await Nonprofit.findByIdAndRemove(req.params.id);
+    const data = await Nonprofit.findByIdAndRemove(req.params.id, { new: true });
+    await s3.deleteObject({
+      Bucket: process.env.S3_BUCKET,
+      Key: data.image,
+    }).promise();
     res.send(data);
   } catch (err) {
     res.status(err.statusCode ? err.statusCode : 400);

@@ -48,7 +48,7 @@ function NonprofitsPage() {
     setRefresh((val) => val + 1);
   };
 
-  const previewEventDetails = (nonprofitDetails) => {
+  const previewNonprofitDetails = (nonprofitDetails) => {
     setOpenPreview(true);
     setPreviewDetails(nonprofitDetails);
   };
@@ -67,7 +67,7 @@ function NonprofitsPage() {
         {nonprofits.map((nonprofit) => (
           <Box
             key={nonprofit._id}
-            onClick={() => previewEventDetails(nonprofit)}
+            onClick={() => previewNonprofitDetails(nonprofit)}
           >
             <NonprofitCard image={nonprofit.imageURL} title={nonprofit.title} />
           </Box>
