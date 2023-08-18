@@ -105,8 +105,7 @@ function EventsPage() {
     navigate('/events/add');
   };
 
-  const editEventDetails = (id) => {
-    const eventDetails = allEvents.find((e) => e._id === id);
+  const editEventDetails = (eventDetails) => {
     navigate('/events/edit', {
       state: {
         eventDetails,
@@ -200,7 +199,7 @@ function EventsPage() {
           }}
           >
             <Box>
-              <Button onClick={() => editEventDetails(previewDetails._id)}>Edit</Button>
+              <Button onClick={() => editEventDetails(previewDetails)}>Edit</Button>
               <Button onClick={() => deleteEvent(previewDetails._id)}>Delete</Button>
               <Button onClick={() => setOpenPreview(false)}>Close</Button>
             </Box>
