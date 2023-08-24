@@ -207,7 +207,7 @@ function EventDetailScreen({
 
   const getAllOrgs = async () => {
     try {
-      const result = await axios.get(`${URL}/nonprofit/get`);
+      const result = await axios.get(`${URL}/nonprofit/getall`);
       setAllOrgs(result.data || []);
       return result.data;
     } catch (err) {
@@ -220,7 +220,10 @@ function EventDetailScreen({
     getAllOrgs();
   }, []);
 
+  console.log('allOrgs', allOrgs);
+
   const selectedOrganization = allOrgs.find((org) => org.organizationTitle === organization);
+  console.log('selectedOrg', selectedOrganization);
 
   const [isEventSaved, setIsEventSaved] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);

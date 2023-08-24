@@ -49,14 +49,14 @@ function OrganizationDetailScreen({ route, navigation }) {
     selectedOrganization,
   } = route.params || {};
 
-  const orgImages = {
-    'Los Angeles Poverty Department': require('../assets/orgPics/lapd.png'),
-    'Piece by Piece': require('../assets/orgPics/piecebypiece.png'),
-    'Street Symphony': require('../assets/orgPics/streetsymphony.png'),
-    'Urban Voices Project': require('../assets/orgPics/urbanvoices.png'),
-  };
+  // const orgImages = {
+  //   'Los Angeles Poverty Department': require('../assets/orgPics/lapd.png'),
+  //   'Piece by Piece': require('../assets/orgPics/piecebypiece.png'),
+  //   'Street Symphony': require('../assets/orgPics/streetsymphony.png'),
+  //   'Urban Voices Project': require('../assets/orgPics/urbanvoices.png'),
+  // };
 
-  const orgImage = orgImages[selectedOrganization.organizationTitle]
+  // const orgImage = orgImages[selectedOrganization.organizationTitle]
 
   const [fontsLoaded] = useFonts({
     Montserrat: Montserrat_400Regular,
@@ -64,13 +64,13 @@ function OrganizationDetailScreen({ route, navigation }) {
   });
 
   React.useLayoutEffect(() => {
-    navigation.setOptions({ headerTitle: selectedOrganization.organizationTitle });
-  }, [navigation, selectedOrganization.organizationTitle]);
+    navigation.setOptions({ headerTitle: selectedOrganization.title });
+  }, [navigation, selectedOrganization.title]);
 
   return (
     <View style={styles.container}>
       <Image
-        source={orgImage}
+        source={selectedOrganization.image}
         style={styles.image}
       />
       <View style={styles.textContainer}>

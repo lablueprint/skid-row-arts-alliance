@@ -144,39 +144,33 @@ function MapCard({
     console.log('Loading font...');
   }
 
-  const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const weekdayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   let eventDay;
-  const daysOfWeek = [];
+  let daysOfWeek = [];
 
   if (isEvent) {
-    eventDay = weekdays[day];
+    eventDay = weekdayNames[day];
   } else {
-    const sortedDays = days.sort((a, b) => a - b);
-
-    // if there is 3+ consecutive days per week
-    const getConsecutiveInt = (arr) => {
-      const consecutiveIntegers = [];
-      let count = 1;
-      for (let i = 1; i < arr.length; i += 1) {
-        if (arr[i] === arr[i - 1] + 1) {
-          count += 1;
-          if (count >= 3) {
-            consecutiveIntegers.push(arr.slice(i - count + 1, i + 1));
+    const formatConsecutiveDays = (weekdays) => {
+      weekdays.sort(); // Sort the days in ascending order
+      const res = [];
+      let rangeStart = weekdays[0];
+      for (let i = 1; i <= weekdays.length; i += 1) {
+        if (i === weekdays.length || weekdays[i] !== weekdays[i - 1] + 1) {
+          if (i - rangeStart >= 2) {
+            res.push(`${weekdayNames[rangeStart]}-${weekdayNames[weekdays[i - 1]]}`);
+          } else {
+            res.push(weekdayNames[rangeStart]);
+            if (i - rangeStart === 2) {
+              res.push(weekdayNames[rangeStart + 1]);
+            }
           }
-        } else {
-          count = 1;
+          rangeStart = weekdays[i];
         }
       }
-      return consecutiveIntegers; // Return the array of consecutive integers
+      return res;
     };
-
-    const consecutiveInts = getConsecutiveInt(sortedDays);
-    if (consecutiveInts.length !== 0) {
-      consecutiveInts.map((int) => sortedDays.filter((day) => day !== int));
-      const consecutiveDays = weekdays[consecutiveInts[0]] + '-' + weekdays[consecutiveInts[consecutiveInts.length-1]];
-      daysOfWeek.push(consecutiveDays);
-    }
-    days.map((day) => daysOfWeek.push(weekdays[day]));
+    daysOfWeek = formatConsecutiveDays(days);
   }
 
   let tagIcon;
@@ -276,7 +270,8 @@ function MapCard({
             source={require('../assets/map/calendar.png')}
             style={styles.infoIcon}
           />
-           {isEvent && <Text style={styles.infoText} numberOfLines={1}>{eventDay}, {startTime} - {endTime}</Text>}
+           {isEvent && <Text style={styles.infoText} >{eventDay}, {startTime} - {endTime}</Text>}
+           {/* {!isEvent && daysOfWeek.map((day)=>(<Text style={styles.infoText}>{day}, {startTime}-{endTime}</Text>))} */}
            {!isEvent && <Text style={styles.infoText} numberOfLines={1}>{daysOfWeek[0]}, {startTime} - {endTime}</Text>}
         </View>
         <View style={styles.row}>

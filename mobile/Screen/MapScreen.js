@@ -112,8 +112,6 @@ function MapScreen({navigation}) {
       let index = Math.floor(value / CARD_WIDTH + 0.3);
       index = Math.max(0, Math.min(index, allCards.length - 1));
 
-      console.log(allCards[index])
-
       clearTimeout(mapRef.regionTimeout);
       mapRef.regionTimeout = setTimeout(() => {
         if ((mapRef.index !== index) || (mapRef.index === 0 && index === 0)) {
@@ -221,9 +219,9 @@ function MapScreen({navigation}) {
             image={resourceThumbnails[resource.ResourceData.tag]}
             title={resource.ResourceData.title}
             location={resource.ResourceData.locationDetails}
-            startTime={resource.ResourceData.dateDetails.startTime}
-            endTime={resource.ResourceData.dateDetails.endTime}
-            days={resource.ResourceData.dateDetails.days}
+            startTime={resource.ResourceData.dateDetails[0].startTime}
+            endTime={resource.ResourceData.dateDetails[0].endTime}
+            days={resource.ResourceData.dateDetails[0].days}
             description={resource.ResourceData.description}
             tag={resource.ResourceData.tag}
             phoneNumber={resource.ResourceData.phoneNumber}

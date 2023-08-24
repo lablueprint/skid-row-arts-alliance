@@ -172,10 +172,9 @@ const styles = StyleSheet.create({
 });
 
 function ResourceDetailScreen({
-  navigation, route,
+  route,
 }) {
   const {
-    id,
     startTime,
     endTime,
     days,
@@ -199,58 +198,77 @@ function ResourceDetailScreen({
     MontserratBold: Montserrat_700Bold,
   });
 
-  const getSavedEvents = async () => {
-    try {
-      const res = await axios.get(`${URL}/user/getEvents/${id}`, {
-        headers: authHeader,
-      });
-      if ((res.data.msg[0].savedEvents.find((elem) => elem === eventId.toString())) === undefined) {
-        return false;
+  // const getSavedEvents = async () => {
+  //   try {
+  //     const res = await axios.get(`${URL}/user/getEvents/${id}`, {
+  //       headers: authHeader,
+  //     });
+  //     if ((res.data.msg[0].savedEvents.find((elem) => elem === eventId.toString())) === undefined) {
+  //       return false;
+  //     }
+  //     return true;
+  //   } catch (err) {
+  //     console.error(err);
+  //     return false;
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   getSavedEvents().then((status) => setIsEventSaved(status));
+  // }, []);
+
+  // const addSavedEvent = async () => {
+  //   try {
+  //     const res = await axios.patch(`${URL}/user/addEvent/${id}`, [eventId], {
+  //       headers: authHeader,
+  //     });
+  //     setIsEventSaved(true);
+  //     return res;
+  //   } catch (err) {
+  //     return err;
+  //   }
+  // };
+
+  // const removeSavedEvent = async () => {
+  //   try {
+  //     const res = await axios.patch(`${URL}/user/removeEvent/${id}`, [eventId], {
+  //       headers: authHeader,
+  //     });
+  //     setIsEventSaved(false);
+  //     return res;
+  //   } catch (err) {
+  //     return err;
+  //   }
+  // };
+
+  // const onPressToggleSavedEvent = () => {
+  //   if (isEventSaved) {
+  //     removeSavedEvent();
+  //   } else {
+  //     addSavedEvent();
+  //   }
+  // };
+
+  // const saveIcon = isEventSaved ? require('../assets/detailScreen/saved.png') : require('../assets/detailScreen/unsaved.png');
+
+  const formatConsecutiveDays = (weekdays) => {
+    weekdays.sort(); // Sort the days in ascending order
+    const weekdayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const daysOfWeek = [];
+    let rangeStart = weekdays[0];
+    for (let i = 1; i <= weekdays.length; i += 1) {
+      if (i === weekdays.length || weekdays[i] !== weekdays[i - 1] + 1) {
+        if (i - rangeStart >= 3) {
+          daysOfWeek.push(`${weekdayNames[rangeStart]}-${weekdayNames[weekdays[i - 1]]}`);
+        } else {
+          daysOfWeek.push(...Array.from({ length: i - rangeStart }, (_, j) => weekdayNames[rangeStart + j]));
+        }
+        rangeStart = weekdays[i];
       }
-      return true;
-    } catch (err) {
-      console.error(err);
-      return false;
     }
+    return daysOfWeek;
   };
-
-  useEffect(() => {
-    getSavedEvents().then((status) => setIsEventSaved(status));
-  }, []);
-
-  const addSavedEvent = async () => {
-    try {
-      const res = await axios.patch(`${URL}/user/addEvent/${id}`, [eventId], {
-        headers: authHeader,
-      });
-      setIsEventSaved(true);
-      return res;
-    } catch (err) {
-      return err;
-    }
-  };
-
-  const removeSavedEvent = async () => {
-    try {
-      const res = await axios.patch(`${URL}/user/removeEvent/${id}`, [eventId], {
-        headers: authHeader,
-      });
-      setIsEventSaved(false);
-      return res;
-    } catch (err) {
-      return err;
-    }
-  };
-
-  const onPressToggleSavedEvent = () => {
-    if (isEventSaved) {
-      removeSavedEvent();
-    } else {
-      addSavedEvent();
-    }
-  };
-
-  const saveIcon = isEventSaved ? require('../assets/detailScreen/saved.png') : require('../assets/detailScreen/unsaved.png');
+  const daysOfWeek = formatConsecutiveDays(days);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
