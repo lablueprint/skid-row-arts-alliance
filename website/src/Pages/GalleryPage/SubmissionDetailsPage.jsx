@@ -4,7 +4,8 @@ import {
 import axios from 'axios';
 import { React, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import MediaRenderer from './MediaRenderer';
 
 function SubmissionDetailsPage() {
   const { authHeader } = useSelector((state) => state.sliceAuth);
@@ -12,9 +13,10 @@ function SubmissionDetailsPage() {
   const {
     id,
   } = location.state;
+  const navigate = useNavigate();
 
   const [details, setDetails] = useState({
-    mediaData: [''],
+    mediaData: null,
     status: '',
     title: '',
     uploader: '',
@@ -64,6 +66,10 @@ function SubmissionDetailsPage() {
   useEffect(() => {
     getSubmissionDetails();
   }, [update]);
+
+  const backToGallery = () => {
+    navigate('/');
+  };
 
   const handleEditCancel = () => {
     setTitle(details.title);
@@ -121,8 +127,27 @@ function SubmissionDetailsPage() {
     setChange(false);
   };
 
+  const handleDelete = async () => {
+    await axios.delete(`http://localhost:4000/submissions/deletesubmission/${id}`, {
+      headers: authHeader,
+    });
+    backToGallery();
+  };
+
   return (
     <Box sx={{ display: 'flex', backgroundColor: '#F8F8F8' }}>
+      <Box>
+        <Box>
+          <Button onClick={() => backToGallery()}>
+            Back to Gallery
+          </Button>
+        </Box>
+        <Box>
+          <Button onClick={() => handleDelete()}>
+            Delete Submission
+          </Button>
+        </Box>
+      </Box>
       <Box sx={{
         width: '60%', marginLeft: '5%', marginTop: '5%', marginBottom: '5%', marginRight: '1%', padding: '2%', backgroundColor: '#FFFFFF',
       }}
@@ -215,10 +240,11 @@ function SubmissionDetailsPage() {
           </Box>
         </Box>
         <Box>
-          {details.mediaData.map((media) => (
-          // TODO: adjust the rendering for each type of media
-            <img style={{ height: 300, width: 300 }} src={media.MediaURL} alt={media.ContentType} />
-          ))}
+          { details.mediaData ? (
+            <MediaRenderer mediaArray={details.mediaData} />
+          ) : (
+            null
+          )}
         </Box>
         <Box>
           {!edit ? (
