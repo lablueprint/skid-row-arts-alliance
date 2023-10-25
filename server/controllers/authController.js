@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
 const Admin = require('../models/adminModel');
 const passport = require('../utils/passportConfig');
@@ -11,7 +11,7 @@ const userSignUp = async (req, res) => {
     return res.json({ error: 'That email already exists.' });
   }
   try {
-    // Generate a salted passwordr
+    // Generate a salted password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hashSync(req.body.password, salt);
     // Create a new user object with secure password
