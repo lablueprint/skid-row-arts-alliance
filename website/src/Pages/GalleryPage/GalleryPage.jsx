@@ -64,12 +64,10 @@ function GalleryPage() {
   ];
 
   const getSubmissionData = async () => {
-    const response = await axios.get(
-      'http://localhost:4000/submissions/getsubmissions',
-      {
-        headers: authHeader,
-      },
-    );
+    const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/submissions/getsubmissions`, {
+      headers: authHeader,
+    });
+
     const data = response.data.map((submission, index) => ({
       id: index,
       submissionId: submission.id,

@@ -14,7 +14,7 @@ function SignInPage() {
   const [password, setPassword] = useState('');
 
   const handleSignIn = async () => {
-    const response = await axios.post('http://localhost:4000/auth/admin-sign-in', { username, password });
+    const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/auth/admin-sign-in`, { username, password });
     if (response.data) {
       dispatch(login(response.data));
     } else {

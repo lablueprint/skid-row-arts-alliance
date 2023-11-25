@@ -59,6 +59,7 @@ MediaRenderer.propTypes = {
     mediaData: PropTypes.arrayOf(
       PropTypes.shape({
         ContentType: PropTypes.string.isRequired,
+        MediaURL: PropTypes.string.isRequired,
       }),
     ).isRequired,
   }).isRequired,

@@ -4,7 +4,7 @@ import {
 import axios from 'axios';
 import { React, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './SubmissionDetailsPage.css';
 import '../../fonts/Montserrat.css';
 import imgIcon from '../../assets/imgIcon.png';
@@ -22,9 +22,10 @@ function SubmissionDetailsPage() {
   const {
     id,
   } = location.state;
+  const navigate = useNavigate();
 
   const [details, setDetails] = useState({
-    mediaData: [''],
+    mediaData: null,
     status: '',
     title: '',
     uploader: '',
@@ -43,7 +44,7 @@ function SubmissionDetailsPage() {
   const [update, setUpdate] = useState(0);
 
   const getSubmissionDetails = async () => {
-    const artwork = await axios.get(`http://localhost:4000/submissions/getartwork/${id}`, {
+    const artwork = await axios.get(`${process.env.REACT_APP_SERVER_URL}/submissions/getartwork/${id}`, {
       headers: authHeader,
     });
     setDetails({
@@ -75,6 +76,10 @@ function SubmissionDetailsPage() {
     getSubmissionDetails();
   }, [update]);
 
+  const backToGallery = () => {
+    navigate('/');
+  };
+
   const handleEditCancel = () => {
     setTitle(details.title);
     setDescription(details.description);
@@ -83,7 +88,7 @@ function SubmissionDetailsPage() {
 
   const handleEditSave = async () => {
     // TODO: pop up message for the approval or switching of status
-    await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
+    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/submissions/updatesubmission/${id}`, {
       title,
       description,
     }, {
@@ -98,7 +103,7 @@ function SubmissionDetailsPage() {
     if (action === 'Reject') {
       formatStatus = 'Rejected';
     }
-    await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
+    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/submissions/updatesubmission/${id}`, {
       status: formatStatus,
       comments,
     }, {
@@ -119,7 +124,7 @@ function SubmissionDetailsPage() {
     if (action === 'Reject') {
       formatStatus = 'Rejected';
     }
-    await axios.patch(`http://localhost:4000/submissions/updatesubmission/${id}`, {
+    await axios.patch(`${process.env.REACT_APP_SERVER_URL}/submissions/updatesubmission/${id}`, {
       title,
       description,
       status: formatStatus,
@@ -129,6 +134,13 @@ function SubmissionDetailsPage() {
     });
     setUpdate((val) => val + 1);
     setChange(false);
+  };
+
+  const handleDelete = async () => {
+    await axios.delete(`${process.env.REACT_APP_SERVER_URL}/submissions/deletesubmission/${id}`, {
+      headers: authHeader,
+    });
+    backToGallery();
   };
 
   const mediaTypeIconMap = {
@@ -152,6 +164,18 @@ function SubmissionDetailsPage() {
 
   return (
     <Box sx={{ display: 'flex', backgroundColor: '#F8F8F8' }}>
+      <Box>
+        <Box>
+          <Button onClick={() => backToGallery()}>
+            Back to Gallery
+          </Button>
+        </Box>
+        <Box>
+          <Button onClick={() => handleDelete()}>
+            Delete Submission
+          </Button>
+        </Box>
+      </Box>
       <Box sx={{
         width: '60%', marginLeft: '5%', marginTop: '5%', marginBottom: '5%', marginRight: '1%', padding: '4%', backgroundColor: '#FFFFFF', boxShadow: 1, borderRadius: 2,
       }}

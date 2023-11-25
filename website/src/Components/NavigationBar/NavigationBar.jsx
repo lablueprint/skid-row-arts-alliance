@@ -43,6 +43,11 @@ function NavigationBar() {
           Resources
         </Link>
       </li>
+      <li className={isPageActive('/nonprofits')}>
+        <Link to="/nonprofits" className={`nav-link ${isPageActive('/nonprofits')}`}>
+          NPO Partners
+        </Link>
+      </li>
       <Button
         variant="outlined"
         className="sign-out-button"
