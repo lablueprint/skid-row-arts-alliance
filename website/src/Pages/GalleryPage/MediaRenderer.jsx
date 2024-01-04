@@ -1,44 +1,68 @@
-/* eslint-disable jsx-a11y/media-has-caption */
 import { Box } from '@mui/material';
 import PropTypes from 'prop-types';
 import React from 'react';
 
-function MediaRenderer({ mediaArray }) {
+function MediaRenderer({ details }) {
   return (
-    <Box>
-      {mediaArray.map((media, index) => {
-        const contentType = media.ContentType.slice(0, 5);
-        const mediaUrl = media.MediaURL;
-
-        if (contentType === 'image') {
-          return <img style={{ height: 300, width: 300 }} src={mediaUrl} alt={`${index}`} />;
-        } if (contentType === 'audio') {
-          return (
-            <audio style={{ height: 300, width: 300 }} controls>
-              <source src={mediaUrl} type="audio/mpeg" />
-            </audio>
-          );
-        } if (contentType === 'video') {
-          return (
-            <video style={{ height: 300, width: 300 }} controls>
-              <source src={mediaUrl} type="video/mp4" />
-            </video>
-          );
-        }
-
-        return null;
-      })}
+    <Box sx={{ mt: 5 }}>
+      {details.mediaData.map((media) => (
+        <div>
+          {media.ContentType?.startsWith('image/') && (
+          <img
+            style={{
+              width: '100%', borderRadius: 5, marginBottom: 20, border: '1px solid #4C4C9B',
+            }}
+            src={media.MediaURL}
+            alt={media.ContentType}
+          />
+          )}
+          {media.ContentType?.startsWith('video/') && (
+          <video
+            style={{
+              width: '100%', borderRadius: 5, marginBottom: 20, border: '1px solid #4C4C9B',
+            }}
+            src={media.MediaURL}
+            controls
+          >
+            <track
+              kind="captions"
+              src={media.Captions}
+              srcLang={media.CaptionsLang || 'en'}
+              label="English"
+            />
+          </video>
+          )}
+          {media.ContentType?.startsWith('audio/') && (
+          <audio
+            style={{
+              width: '100%', borderRadius: 5, marginBottom: 20,
+            }}
+            src={media.MediaURL}
+            controls
+          >
+            <track
+              kind="captions"
+              src={media.Captions}
+              srcLang={media.CaptionsLang || 'en'}
+              label="English"
+            />
+          </audio>
+          )}
+        </div>
+      ))}
     </Box>
   );
 }
 
 MediaRenderer.propTypes = {
-  mediaArray: PropTypes.arrayOf(
-    PropTypes.shape({
-      ContentType: PropTypes.string.isRequired,
-      MediaURL: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
+  details: PropTypes.shape({
+    mediaData: PropTypes.arrayOf(
+      PropTypes.shape({
+        ContentType: PropTypes.string.isRequired,
+        MediaURL: PropTypes.string.isRequired,
+      }),
+    ).isRequired,
+  }).isRequired,
 };
 
 export default MediaRenderer;

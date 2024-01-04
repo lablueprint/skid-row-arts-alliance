@@ -5,7 +5,7 @@
   font-family: "Montserrat-Regular", sans-serif;
   border-right: 1px solid #c4c8ca;
   height: calc(100vh - 70px);
-  width: 165px;
+  width: 200px;
 }
 
 .NavBar li {
@@ -37,7 +37,7 @@
   color: #202049;
   font-family: "Montserrat-SemiBold", sans-serif;
   display: inline;
-  padding: 0.6rem 10rem 0.6rem calc(1.5rem - 6px);
+  padding: 0.6rem 2rem 0.6rem calc(1.5rem - 6px);
   margin: 0;
   border-left: 6px solid #4C4C9B;
 }
