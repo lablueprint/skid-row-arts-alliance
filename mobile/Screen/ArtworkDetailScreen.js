@@ -1,35 +1,130 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet, View, Text, ScrollView, Image, Switch, Button,
+  Dimensions, StyleSheet, View, Text, ScrollView, Image, TouchableOpacity,
 } from 'react-native';
 import { useSelector } from 'react-redux';
+import { Card } from 'react-native-paper';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import VideoPlayer from 'expo-video-player';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { URL } from '@env';
+import {
+  useFonts, Montserrat_400Regular, Montserrat_500Medium, Montserrat_600SemiBold, Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 import AudioPlayer from '../Components/AudioPlayer';
+
+const screenWidth = Dimensions.get('window').width;
+const MAX_LINES = 3; // max number of lines to show in artwork description by default
 
 const styles = StyleSheet.create({
   container: {
     flex: 3,
     backgroundColor: '#fff',
   },
-  square: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#D9D9D9',
-    margin: 40,
+  backArrow: {
+    marginTop: 40,
+    paddingLeft: 13,
   },
-  heading: {
+  aboveImage: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingLeft: 15,
+    paddingRight: 15,
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  belowImage: {
+    paddingLeft: 15,
+    paddingRight: 15,
+    marginBottom: 40,
+  },
+  tags: {
+    paddingTop: 20,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  tag: {
+    borderColor: '#4C4C9B',
+    borderRadius: 20,
+    borderWidth: 0.6,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 20,
+    paddingVertical: 7,
+    marginRight: 15,
+    marginBottom: 10,
+  },
+  tagText: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 14,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: '#4C4C9B',
+  },
+  item: {
+    backgroundColor: 'white',
+    borderRadius: 5,
+    elevation: 3,
+    padding: 10,
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    borderRadius: 5,
+  },
+  mediaContainer: {
+    padding: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  mediaTitle: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 24,
+  },
+  mediaDate: {
+    fontFamily: 'Montserrat',
+    color: '#5B6772',
+    paddingTop: 4,
+  },
+  saveIcon: {
+    width: 24,
+    height: 24,
+  },
+  shareIcon: {
+    width: 23,
+    height: 23,
+    marginLeft: 10,
+  },
+  line: {
+    borderBottomColor: '#D4D4D4',
+    borderBottomWidth: 1,
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  savedArtCard: {
+    borderRadius: 20,
+    marginRight: 15,
+  },
+  userArtTitle: {
+    fontFamily: 'MontserratMedium',
+    fontSize: 18,
+    paddingTop: 70,
+  },
+  userArtContainer: {
+    paddingVertical: 10,
+    flexDirection: 'row',
+  },
+  loading: {
+    textAlign: 'center',
   },
 });
 
 function ArtworkDetailScreen({
-  route,
+  route, navigation,
 }) {
   const {
     artworkId,
@@ -38,6 +133,16 @@ function ArtworkDetailScreen({
   const [allMediaData, setAllMediaData] = useState([]);
   const [loadImages, setLoadImages] = useState(false);
   const [isArtSaved, setIsArtSaved] = useState(false);
+  const [loadSavedArt, setLoadSavedArt] = useState(false);
+  const [savedArt, setSavedArt] = useState([]);
+  const [loadAllThumnails, setLoadAllThumbnails] = useState(false);
+  const [allThumbnails, setAllThumbnails] = useState([]);
+  const [fontsLoaded] = useFonts({
+    Montserrat: Montserrat_400Regular,
+    MontserratMedium: Montserrat_500Medium,
+    MontserratSemiBold: Montserrat_600SemiBold,
+    MontserratBold: Montserrat_700Bold,
+  });
   const { id, authHeader } = useSelector((state) => state.auth);
 
   const handleShare = async (mediaUrl) => {
@@ -55,7 +160,7 @@ function ArtworkDetailScreen({
   const getSubmission = async () => {
     try {
       setLoadImages(false);
-      const res = await axios.get(`${URL}/submissions/getsubmission/${artworkId}`, {
+      const res = await axios.get(`${URL}/submissions/getartwork/${artworkId}`, {
         headers: authHeader,
       });
       setSubmission(res.data.Submission);
@@ -118,33 +223,91 @@ function ArtworkDetailScreen({
     }
   };
 
+  const findThumbnail = (artID) => {
+    const artInfo = {
+      thumbNail: 'No Tag',
+    };
+    if (loadAllThumnails) {
+      allThumbnails.forEach((thumbnail) => {
+        if (thumbnail.SubmissionId === artID) {
+          artInfo.thumbNail = (thumbnail.ImageURL);
+        }
+      });
+    }
+    return artInfo.thumbNail;
+  };
+
+  const getOtherArtwork = async () => {
+    try {
+      setLoadSavedArt(false);
+      const res = await axios.get(`${URL}/user/getUser/${id}`, {
+        headers: authHeader,
+      });
+      setSavedArt(res.data.msg.userArtwork);
+      return res;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadSavedArt(true);
+    }
+  };
+
+  const getThumbnails = async () => {
+    try {
+      setLoadAllThumbnails(false);
+      const result = await axios.get(`${URL}/submissions/getthumbnails`, {
+        headers: authHeader,
+      });
+      setAllThumbnails(result.data);
+      return result.data;
+    } catch (err) {
+      console.error(err);
+      return err;
+    } finally {
+      setLoadAllThumbnails(true);
+    }
+  };
+
+  const saveIcon = isArtSaved ? require('../assets/artDetails/saved.png') : require('../assets/artDetails/unsaved.png');
+
+  const formattedDate = new Date(submission.date).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const toggleShowFullDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
   useEffect(() => {
     getSavedArt().then((status) => setIsArtSaved(status));
     getSubmission();
+    getOtherArtwork();
+    getThumbnails();
   }, []);
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.heading}>
-        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>
-          Title:
-          {submission.title}
-        </Text>
-        <Switch value={isArtSaved} onValueChange={onPressToggleSavedArt} title="Art Save Button" />
+      <View style={styles.backArrow}>
+        <TouchableOpacity onPress={() => navigation.navigate('Gallery')}>
+          <Image
+            source={require('../assets/backArrow.png')}
+            style={{ width: 21, height: 21 }}
+          />
+        </TouchableOpacity>
       </View>
-      <Text>
-        Name:
-        {submission.name}
-        {'\n'}
-        Description:
-        {submission.description}
-        {'\n'}
-        Email:
-        {submission.email}
-        {'\n'}
-        Tags:
-        {submission.tags}
-      </Text>
+      <View style={styles.aboveImage}>
+        <Image
+          source={require('../assets/artDetails/defaultAvatar.png')}
+          style={{ width: 18, height: 18 }}
+        />
+        <Text style={{ fontFamily: 'Montserrat', fontSize: 16, paddingLeft: 8 }}>
+          {submission.name}
+        </Text>
+      </View>
       {
         loadImages ? (
           <>
@@ -155,12 +318,22 @@ function ArtworkDetailScreen({
                   return (
                     <>
                       <Image
-                        style={{ width: 200, height: 200 }}
+                        style={{ width: screenWidth, height: screenWidth }}
                         source={{ uri: mediaData.MediaURL }}
                       />
-                      <Button title="Share" onPress={() => handleShare(mediaData.MediaURL)}>
-                        <Text>Share</Text>
-                      </Button>
+                      <View style={styles.mediaContainer}>
+                        <View>
+                          <Text style={styles.mediaTitle}>{submission.title}</Text>
+                          <Text style={styles.mediaDate}>{formattedDate}</Text>
+                        </View>
+                        <View style={{ flex: 1 }} />
+                        <TouchableOpacity onPress={onPressToggleSavedArt}>
+                          <Image source={saveIcon} style={styles.saveIcon} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleShare(mediaData.MediaURL)}>
+                          <Image source={require('../assets/artDetails/share.png')} style={styles.shareIcon} />
+                        </TouchableOpacity>
+                      </View>
                     </>
                   );
                 }
@@ -175,9 +348,19 @@ function ArtworkDetailScreen({
                           },
                         }}
                       />
-                      <Button title="Share" onPress={() => handleShare(mediaData.MediaURL)}>
-                        <Text>Share</Text>
-                      </Button>
+                      <View style={styles.mediaContainer}>
+                        <View>
+                          <Text style={styles.mediaTitle}>{submission.title}</Text>
+                          <Text style={styles.mediaDate}>{formattedDate}</Text>
+                        </View>
+                        <View style={{ flex: 1 }} />
+                        <TouchableOpacity onPress={onPressToggleSavedArt}>
+                          <Image source={saveIcon} style={styles.saveIcon} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleShare(mediaData.MediaURL)}>
+                          <Image source={require('../assets/artDetails/share.png')} style={styles.shareIcon} />
+                        </TouchableOpacity>
+                      </View>
                     </>
                   );
                 }
@@ -187,9 +370,19 @@ function ArtworkDetailScreen({
                       <AudioPlayer
                         source={mediaData.MediaURL}
                       />
-                      <Button title="Share" onPress={() => handleShare(mediaData.MediaURL)}>
-                        <Text>Share</Text>
-                      </Button>
+                      <View style={styles.mediaContainer}>
+                        <View>
+                          <Text style={styles.mediaTitle}>{submission.title}</Text>
+                          <Text style={styles.mediaDate}>{formattedDate}</Text>
+                        </View>
+                        <View style={{ flex: 1 }} />
+                        <TouchableOpacity onPress={onPressToggleSavedArt}>
+                          <Image source={saveIcon} style={styles.saveIcon} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleShare(mediaData.MediaURL)}>
+                          <Image source={require('../assets/artDetails/share.png')} style={styles.shareIcon} />
+                        </TouchableOpacity>
+                      </View>
                     </>
                   );
                 }
@@ -199,8 +392,50 @@ function ArtworkDetailScreen({
               })
             }
           </>
-        ) : <Text>Loading</Text>
+        ) : <Text style={styles.loading}>Loading...</Text>
       }
+      <View style={styles.belowImage}>
+        <Text style={{ fontFamily: 'Montserrat', paddingTop: 6 }} numberOfLines={showFullDescription ? undefined : MAX_LINES} ellipsizeMode="tail">{submission.description}</Text>
+        {submission.description?.length > MAX_LINES && (
+          <TouchableOpacity onPress={toggleShowFullDescription}>
+            <Text style={{ fontFamily: 'MontserratSemiBold', paddingTop: 10 }}>
+              {showFullDescription ? 'Read Less' : 'Read More'}
+            </Text>
+          </TouchableOpacity>
+        )}
+        <View style={styles.tags}>
+          {submission.tags?.map((tag) => (
+            <View
+              key={tag}
+              style={styles.tag}
+            >
+              <Text style={styles.tagText}>{tag}</Text>
+            </View>
+          ))}
+        </View>
+        <View style={styles.line} />
+        <Text style={{ fontFamily: 'MontserratMedium', fontSize: 18, marginBottom: 20 }}>
+          Other work from
+          {' '}
+          {submission.name}
+        </Text>
+        <ScrollView
+          horizontal
+          contentContainerStyle={styles.userArtContainer}
+          showsHorizontalScrollIndicator={false}
+        >
+          {loadSavedArt ? (
+            savedArt.map((oneArt) => (
+              <Card style={styles.savedArtCard}>
+                <Card.Cover
+                  style={{ height: 200, width: 200 }}
+                  source={{ uri: findThumbnail(oneArt) }}
+                />
+              </Card>
+            ))
+          ) : <Text>There is no user art</Text>}
+        </ScrollView>
+      </View>
     </ScrollView>
   );
 }
@@ -212,6 +447,10 @@ ArtworkDetailScreen.propTypes = {
       tags: PropTypes.arrayOf(PropTypes.string),
       artworkId: PropTypes.string.isRequired,
     }),
+  }).isRequired,
+  navigation: PropTypes.shape({
+    setOptions: PropTypes.func.isRequired,
+    navigate: PropTypes.func,
   }).isRequired,
 };
 

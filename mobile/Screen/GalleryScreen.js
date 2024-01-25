@@ -91,7 +91,7 @@ function GalleryScreen({ navigation, route }) {
   const getAllSubmissions = async () => {
     try {
       setLoadImages(false);
-      const res = await axios.get(`${URL}/submissions/get`, {
+      const res = await axios.get(`${URL}/submissions/getthumbnails`, {
         headers: authHeader,
       });
       setAllImageData(res.data);
@@ -143,12 +143,12 @@ function GalleryScreen({ navigation, route }) {
       </ScrollView>
       <FlatList
         data={filteredData}
-        keyExtractor={(item) => item.SubmissionData._id}
+        keyExtractor={(item) => item.SubmissionId}
         numColumns={2}
         renderItem={({ item }) => (
           <ArtworkCard
             ImageURL={item.ImageURL}
-            id={item.SubmissionData._id}
+            id={item.SubmissionId}
             navigation={navigation}
           />
         )}
